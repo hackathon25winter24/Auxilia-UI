@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dc9bda740bbbe439814d3cb1d517ea, type: 3}
+  m_Name: InputData
+  m_EditorClassIdentifier: 
+  left_mouse_button_ispressed: 0
+  right_mouse_button_ispressed: 0
+  mouse_wheel: {x: 0, y: 0}
+  mouse_position: {x: 0, y: 0}
+  up_key_ispressed: 0
+  down_key_ispressed: 0
+  right_key_ispressed: 0
+  left_key_ispressed: 0
+  space_key_ispressed: 0
