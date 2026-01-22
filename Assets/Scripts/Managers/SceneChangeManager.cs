@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class SceneChangeManager : MonoBehaviour
 {
     public SceneData sceneData;
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        sceneData.now_scene_number = 0;
+        sceneData.next_scene_number = 0;
     }
     void Update()
     {
