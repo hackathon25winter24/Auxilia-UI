@@ -12,4 +12,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7262f68ea2ec44925baa671f0e21a3b9, type: 3}
   m_Name: CharacterData
   m_EditorClassIdentifier: 
-  _characters: []
+  _characters:
+  - _default_name: Sophie
+    _default_id: 0
+    _default_hp: 150
+    _default_move_cost: 10
+    _attacks:
+    - _default_attack_name: "\u7A81\u304D\u201Dsprout\uFF5E\u82BD\u751F\u3048\uFF5E\u201D"
+      _default_attack_cost: 10
+      _default_attack_power: 10
+      _default_attack_range:
+      - {x: 1, y: 0}
+    - _default_attack_name: "\u7BC4\u56F2\u72D9\u6483\u201Dgrowth\uFF5E\u6210\u9577\uFF5E\u201D"
+      _default_attack_cost: 30
+      _default_attack_power: 40
+      _default_attack_range:
+      - {x: 3, y: 1}
+      - {x: 3, y: 0}
+      - {x: 3, y: -1}
+    - _default_attack_name: "\u96C6\u4E2D\u72D9\u6483\u201Dbloom\uFF5E\u958B\u82B1\uFF5E\u201D"
+      _default_attack_cost: 50
+      _default_attack_power: 200
+      _default_attack_range:
+      - {x: 3, y: 0}
+  - _default_name: Nadia
+    _default_id: 1
+    _default_hp: 150
+    _default_move_cost: 7
+    _attacks:
+    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
+      _default_attack_cost: 10
+      _default_attack_power: 20
+      _default_attack_range:
+      - {x: 1, y: 0}
+      - {x: 0, y: 1}
+      - {x: -1, y: 0}
+      - {x: 0, y: -1}
+    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
+      _default_attack_cost: 20
+      _default_attack_power: 40
+      _default_attack_range:
+      - {x: 1, y: 1}
+      - {x: 1, y: 0}
+      - {x: 1, y: -1}
+    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
+      _default_attack_cost: 30
+      _default_attack_power: 60
+      _default_attack_range:
+      - {x: 1, y: 0}
