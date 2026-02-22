@@ -9,25 +9,25 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/TitleScene.unity
+    path: Assets/Scenes/GameScene/TitleScene.unity
     guid: 3821b9e20ca3e4048981c3cef7bdd4d5
   - enabled: 1
-    path: Assets/Scenes/HomeScene.unity
+    path: Assets/Scenes/GameScene/HomeScene.unity
     guid: e0d4fab1b9015104dbeb7017a59bde78
   - enabled: 1
-    path: Assets/Scenes/StageSelectScene.unity
+    path: Assets/Scenes/GameScene/StageSelectScene.unity
     guid: c1e1622bc534d09468508649c7d32b0d
   - enabled: 1
-    path: Assets/Scenes/MatchingScene.unity
+    path: Assets/Scenes/GameScene/MatchingScene.unity
     guid: 224729a6d7e004241899f81e039890ab
   - enabled: 1
-    path: Assets/Scenes/CharacterSelectScene.unity
+    path: Assets/Scenes/GameScene/CharacterSelectScene.unity
     guid: 636243241b589a049a3d5a3088f63e08
   - enabled: 1
-    path: Assets/Scenes/BattleScene.unity
+    path: Assets/Scenes/GameScene/BattleScene.unity
     guid: bdf8ad15523bc054d8b7af05bf1835c9
   - enabled: 1
-    path: Assets/Scenes/ResultScene.unity
+    path: Assets/Scenes/GameScene/ResultScene.unity
     guid: 92543f9fa40b4e84b8f8cad715257b5b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
