@@ -5,12 +5,20 @@ public class TitleManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public Image targetImage;  // 表示先のUI Image
-    public Sprite newSprite;   // 切り替えたいPNG画像（Sprite）
+    public Image titleImage;  // 表示先のUI Image
+    public Image rogoImage;
+    public Image tap_to_startImage;
+    public Sprite title_image;   // 切り替えたいPNG画像（Sprite）
+    public Sprite rogo_image;
+    public Sprite tap_to_start_image;
+    public Image targetImage; // インスペクターでImageをドラッグ＆ドロップ
+    public float speed = 5.0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        targetImage.sprite = newSprite;
+        titleImage.sprite = title_image;
+        rogoImage.sprite = rogo_image;
+        tap_to_startImage.sprite = tap_to_start_image;
     }
 
     // Update is called once per frame
@@ -20,5 +28,15 @@ public class TitleManager : MonoBehaviour
         {
             sceneData.next_scene_number = 1;
         }
+        if (targetImage == null) return;
+
+        // サイン波を使用して 0.0 〜 1.0 の値を作成
+        // 公式: alpha = (sin(時間 * 速度) + 1) / 2
+        float alpha = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
+
+        // 色を取得してアルファ値を更新し、再代入
+        Color c = targetImage.color;
+        c.a = alpha;
+        targetImage.color = c;
     }
 }

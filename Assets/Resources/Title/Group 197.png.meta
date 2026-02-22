@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6fd69900127a3cd4582ffe5b1fa4079d
+guid: a3c0e4dfc9a553544baa7240c7660585
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2433634671541216425
-    second: Group 196_0
+      213: 132205938534566700
+    second: Group 197_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Group 196_0
+      name: Group 197_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2560
-        height: 1440
+        width: 1287
+        height: 119
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9a4e94ef6d106c120800000000000000
-      internalID: 2433634671541216425
+      spriteID: c2bcc83c990b5d100800000000000000
+      internalID: 132205938534566700
       vertices: []
       indices: 
       edges: []
