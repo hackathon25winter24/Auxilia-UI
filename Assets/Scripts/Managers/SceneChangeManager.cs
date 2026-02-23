@@ -15,7 +15,7 @@ public class SceneChangeManager : MonoBehaviour
     {
         if (sceneData.now_scene_number != sceneData.next_scene_number)
         {
-            SceneManager.LoadScene(sceneData.next_scene_number);
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneData.next_scene_number);
             sceneData.now_scene_number = sceneData.next_scene_number;
         }
     }
