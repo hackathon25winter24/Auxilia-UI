@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 759f3da6e7e281f45b6b9bbf0bee4039, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  player_name: 
-  player_rate: 0
+  player_name: name
+  player_rate: 10
   home_character_ID: 0
   story_progress: 0

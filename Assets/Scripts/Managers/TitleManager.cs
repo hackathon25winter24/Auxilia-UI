@@ -5,15 +5,15 @@ public class TitleManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public Image titleImage;  // 表示先のUI Image
+    public Image titleImage;
     public Image rogoImage;
     public Image tap_to_startImage;
-    public Sprite title_image;   // 切り替えたいPNG画像（Sprite）
+    public Sprite title_image;
     public Sprite rogo_image;
     public Sprite tap_to_start_image;
-    public Image targetImage; // インスペクターでImageをドラッグ＆ドロップ
+    public Image targetImage; 
     public float speed = 5.0f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public GameObject targetUI;
     void Start()
     {
         titleImage.sprite = title_image;
@@ -27,6 +27,7 @@ public class TitleManager : MonoBehaviour
         if (inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true)
         {
             sceneData.next_scene_number = 1;
+            targetUI.SetActive(false);
         }
         if (targetImage == null) return;
 
