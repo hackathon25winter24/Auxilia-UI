@@ -1,9 +1,19 @@
 using UnityEngine;
+using TMPro;
 
 public class HomeUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
+    public PlayerData playerData;
+    public TextMeshProUGUI playerName;
+    public TextMeshProUGUI playerRate;
+
+    void Start()
+    {
+        playerName.text = playerData.player_name;
+        playerRate.text = "Rate:" + playerData.player_rate.ToString();
+    }
     public void OnButtonClick(string buttonName)
     {
         switch (buttonName)
