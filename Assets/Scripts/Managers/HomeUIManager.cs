@@ -181,7 +181,7 @@ public class HomeUIManager : MonoBehaviour
         if (scrollInput != 0)
         {
             // 時間経過(Time.deltaTime)を考慮して滑らかに動かす
-            float moveAmount = scrollInput * scrollSpeed * Time.deltaTime;
+            float moveAmount = scrollInput * scrollSpeed * Time.deltaTime * -1;
             
             // 現在の座標に加算
             HomeCharacterSetUI.anchoredPosition += new Vector2(0, moveAmount);
