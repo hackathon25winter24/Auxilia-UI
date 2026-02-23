@@ -72,6 +72,6 @@ public class HomeManager : MonoBehaviour
 
     void Update()
     {
-        
+        ChangeToPhoto();
     }
 }

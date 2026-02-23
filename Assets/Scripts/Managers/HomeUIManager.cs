@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 public class HomeUIManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform uiContainer;
     public RectTransform uiContainer_left;
     public RectTransform backBottun;
+    public RectTransform HomeCharacterSetUI;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -20,11 +22,44 @@ public class HomeUIManager : MonoBehaviour
     public Vector2 exitBackBottunPosition = new Vector2(600, 200);
     public float duration = 0.5f;
     private bool isExiting = false;
+    private bool isHomeCharacterSelecting = false;
+    public float scrollSpeed = 500f;
+    public Sprite Sophie_ui;
+    public Sprite Shincho_ui;
+    public Sprite Aoi_ui;
+    public Sprite Berenice_ui;
+    public Sprite Chiyo_ui;
+    public Sprite Jude_ui;
+    public Sprite Nadia_ui;
+    public Sprite Sena_ui;
+    public Sprite Tsukiha_ui;
+    public Sprite Zina_ui;
+    public Image SophieUI;
+    public Image ShinchoUI;
+    public Image AoiUI;
+    public Image BereniceUI;
+    public Image ChiyoUI;
+    public Image JudeUI;
+    public Image NadiaUI;
+    public Image SenaUI;
+    public Image TsukihaUI;
+    public Image ZinaUI;
 
-    void Start()
+    void Awake()
     {
+        SophieUI.sprite = Sophie_ui;
+        ShinchoUI.sprite = Shincho_ui;
+        SenaUI.sprite = Sena_ui;
+        AoiUI.sprite = Aoi_ui;
+        BereniceUI.sprite = Berenice_ui;
+        ChiyoUI.sprite = Chiyo_ui;
+        JudeUI.sprite = Jude_ui;
+        NadiaUI.sprite = Nadia_ui;
+        TsukihaUI.sprite = Tsukiha_ui;
+        ZinaUI.sprite = Zina_ui;
         playerName.text = playerData.player_name;
         playerRate.text = "Rate:" + playerData.player_rate.ToString();
+        HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
     }
     IEnumerator AnimateExit(int nextScene)
@@ -122,14 +157,35 @@ public class HomeUIManager : MonoBehaviour
             case "HomeCharacter":
                 StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateBackKeyEnter());
+                HomeCharacterSetUI.gameObject.SetActive(true);
+                isHomeCharacterSelecting = true;
                 break;
             case "Back":
                 StartCoroutine(AnimateEnter());
                 StartCoroutine(AnimateBackKeyExit());
+                HomeCharacterSetUI.gameObject.SetActive(false);
+                isHomeCharacterSelecting = false;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
         }
+    }
+    public void Update()
+    {
+        if (isHomeCharacterSelecting) 
+    {
+        // mouse_wheel.y に回転量が入っている場合
+        float scrollInput = inputData.mouse_wheel.y;
+
+        if (scrollInput != 0)
+        {
+            // 時間経過(Time.deltaTime)を考慮して滑らかに動かす
+            float moveAmount = scrollInput * scrollSpeed * Time.deltaTime;
+            
+            // 現在の座標に加算
+            HomeCharacterSetUI.anchoredPosition += new Vector2(0, moveAmount);
+        }
+    }
     }
 }
