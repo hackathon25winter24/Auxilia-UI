@@ -175,16 +175,21 @@ public class HomeUIManager : MonoBehaviour
     {
         if (isHomeCharacterSelecting) 
     {
-        // mouse_wheel.y に回転量が入っている場合
         float scrollInput = inputData.mouse_wheel.y;
 
         if (scrollInput != 0)
         {
             // 時間経過(Time.deltaTime)を考慮して滑らかに動かす
             float moveAmount = scrollInput * scrollSpeed * Time.deltaTime * -1;
-            
-            // 現在の座標に加算
             HomeCharacterSetUI.anchoredPosition += new Vector2(0, moveAmount);
+            if (HomeCharacterSetUI.anchoredPosition.y < -250)
+            {
+                HomeCharacterSetUI.anchoredPosition = new Vector2(0, -250);
+            }
+            if (HomeCharacterSetUI.anchoredPosition.y > 0)
+            {
+                HomeCharacterSetUI.anchoredPosition = new Vector2(0, 0);
+            }
         }
     }
     }
