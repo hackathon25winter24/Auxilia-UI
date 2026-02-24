@@ -391,6 +391,7 @@ MonoBehaviour:
   exitBattleUIPosition: {x: 600, y: 0}
   duration: 0.5
   scrollSpeed: 2000
+  isPlayerNameRemain: 0
   Sophie_ui: {fileID: 6243996182548713461, guid: 005373198704b8341948552215cc2575, type: 3}
   Shincho_ui: {fileID: 7066386212557895141, guid: e0d04c1bb792ebc4f9a7e164924d76ab, type: 3}
   Aoi_ui: {fileID: -6211510306040543583, guid: 046d4b18239ea524c9286f305eb25a33, type: 3}
@@ -3818,7 +3819,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1729464346}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 117091608}
+        m_TargetAssemblyTypeName: HomeUIManager, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: RandomMatch
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1729464346
 MonoBehaviour:
   m_ObjectHideFlags: 0

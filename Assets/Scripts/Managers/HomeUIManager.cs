@@ -164,9 +164,10 @@ public class HomeUIManager : MonoBehaviour
         }
         isExiting = false;
     }
-    IEnumerator AnimateBattleUIExit()
+    IEnumerator AnimateBattleUIExit(int nextScene)
     {
         Vector2 startPos_BattleUI = BattleUI.anchoredPosition;
+        Vector2 startPos_left = uiContainer_left.anchoredPosition;
         float elapsed = 0;
 
         while (elapsed < duration)
@@ -177,7 +178,15 @@ public class HomeUIManager : MonoBehaviour
             t = t * t; 
 
             BattleUI.anchoredPosition = Vector2.Lerp(startPos_BattleUI, exitBattleUIPosition, t);
+            if (isPlayerNameRemain ==  false)
+            {
+            uiContainer_left.anchoredPosition = Vector2.Lerp(startPos_left, exitPosition_left, t);
+            }
             yield return null;
+        }
+        if (nextScene != -1) 
+        {
+        sceneData.next_scene_number = nextScene;
         }
     }
     public void OnButtonClick(string buttonName)
@@ -214,7 +223,11 @@ public class HomeUIManager : MonoBehaviour
                 break;
             case "BackfromBattleUI":
                 StartCoroutine(AnimateEnter());
-                StartCoroutine(AnimateBattleUIExit());
+                StartCoroutine(AnimateBattleUIExit(-1));
+                break;
+            case "RandomMatch":
+                isPlayerNameRemain = false;
+                StartCoroutine(AnimateBattleUIExit(3));
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
