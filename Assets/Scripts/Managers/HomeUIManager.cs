@@ -14,16 +14,20 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform uiContainer_left;
     public RectTransform backBottun;
     public RectTransform HomeCharacterSetUI;
+    public RectTransform BattleUI;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
     public Vector2 enterBackBottunPosition = new Vector2(300, 200);
     public Vector2 enterPosition_left = new Vector2(-300, 0);
     public Vector2 exitBackBottunPosition = new Vector2(600, 200);
+    public Vector2 enterBattleUIPosition = new Vector2(300, 0);
+    public Vector2 exitBattleUIPosition = new Vector2(600, 0);
     public float duration = 0.5f;
     private bool isExiting = false;
     private bool isHomeCharacterSelecting = false;
     public float scrollSpeed = 500f;
+    public bool isPlayerNameRemain = false;
     public Sprite Sophie_ui;
     public Sprite Shincho_ui;
     public Sprite Aoi_ui;
@@ -76,7 +80,10 @@ public class HomeUIManager : MonoBehaviour
             t = t * t; 
 
             uiContainer.anchoredPosition = Vector2.Lerp(startPos, exitPosition, t);
+            if (isPlayerNameRemain ==  false)
+            {
             uiContainer_left.anchoredPosition = Vector2.Lerp(startPos_left, exitPosition_left, t);
+            }
             yield return null;
         }
         Debug.Log("すべてのUIが退場しました");
@@ -99,7 +106,10 @@ public class HomeUIManager : MonoBehaviour
             t = t * t; 
 
             uiContainer.anchoredPosition = Vector2.Lerp(startPos, enterPosition, t);
+            if (isPlayerNameRemain ==  false)
+            {
             uiContainer_left.anchoredPosition = Vector2.Lerp(startPos_left, enterPosition_left, t);
+            }
             yield return null;
         }
         isExiting = false;
@@ -137,6 +147,39 @@ public class HomeUIManager : MonoBehaviour
             yield return null;
         }
     }
+    IEnumerator AnimateBattleUIEnter()
+    {
+        Vector2 startPos_BattleUI = BattleUI.anchoredPosition;
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            t = t * t; 
+
+            BattleUI.anchoredPosition = Vector2.Lerp(startPos_BattleUI, enterBattleUIPosition, t);
+            yield return null;
+        }
+        isExiting = false;
+    }
+    IEnumerator AnimateBattleUIExit()
+    {
+        Vector2 startPos_BattleUI = BattleUI.anchoredPosition;
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            t = t * t; 
+
+            BattleUI.anchoredPosition = Vector2.Lerp(startPos_BattleUI, exitBattleUIPosition, t);
+            yield return null;
+        }
+    }
     public void OnButtonClick(string buttonName)
     {
         if (isExiting) return; // 退場中なら何もしない
@@ -144,7 +187,9 @@ public class HomeUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Battle":
-                StartCoroutine(AnimateExit(3));
+                isPlayerNameRemain = true;
+                StartCoroutine(AnimateExit(-1));
+                StartCoroutine(AnimateBattleUIEnter());
                 Debug.Log("battle button was plessed");
                 break;
             case "Story":
@@ -155,6 +200,7 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateExit(7));
                 break;
             case "HomeCharacter":
+                isPlayerNameRemain = false;
                 StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateBackKeyEnter());
                 HomeCharacterSetUI.gameObject.SetActive(true);
@@ -165,6 +211,10 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateBackKeyExit());
                 HomeCharacterSetUI.gameObject.SetActive(false);
                 isHomeCharacterSelecting = false;
+                break;
+            case "BackfromBattleUI":
+                StartCoroutine(AnimateEnter());
+                StartCoroutine(AnimateBattleUIExit());
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
