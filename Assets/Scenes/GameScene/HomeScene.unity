@@ -857,7 +857,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 889, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &472281390
 MonoBehaviour:
@@ -1427,8 +1427,8 @@ MonoBehaviour:
   backImage: {fileID: 2022563825}
   back_image: {fileID: 8608827522239398513, guid: 31381e1d1a8e9134c8c73955b1069bfa, type: 3}
   CharacterImage: {fileID: 472281390}
-  Sophie: {fileID: 21300000, guid: e7191a992edfa1b4f8e2b3d4fa10b425, type: 3}
-  Shincho: {fileID: 21300000, guid: 8c2e13a73c74fe24aab0e432edc1d441, type: 3}
+  Sophie: {fileID: 21300000, guid: ce1780b6a49ea524ea5cb6a377e398f8, type: 3}
+  Shincho: {fileID: 21300000, guid: 23d28333ff07e26449540cdd9507602a, type: 3}
   Aoi: {fileID: 21300000, guid: cea0a661ec406e14185d2d2a39788041, type: 3}
   Berenice: {fileID: 21300000, guid: 5bf0d7b9d22fc744194e08dc50857ce5, type: 3}
   Chiyo: {fileID: 21300000, guid: 9324b25e7b561004e8d845090a3aeca6, type: 3}
