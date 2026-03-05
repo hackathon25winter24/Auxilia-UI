@@ -11,6 +11,7 @@ public class MatchingManager : MonoBehaviour
     void Start()
     {
         matchingImage.sprite = matching_iamge;
+        Debug.Log("konnnitiha");
     }
 
     // Update is called once per frame
