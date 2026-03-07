@@ -87,4 +87,41 @@ public class GameConnector : MonoBehaviour
             return null;
         }
     }
+
+    // --- 4. ���񂾂s���g�� (DeleteAllUsers) ---
+    /// <summary>
+    /// Calls a RPC to delete every user in the database.  
+    /// The server must implement a unary method "DeleteAllUsers" taking and returning
+    /// google.protobuf.Empty; otherwise this will throw an RpcException.
+    /// </summary>
+    public async Task<bool> DeleteAllUsers()
+    {
+        try
+        {
+            var request = new Google.Protobuf.WellKnownTypes.Empty();
+
+            // manually construct a Method descriptor in case the generated client
+            // doesn't include the RPC (proto may not yet have been updated).
+            var method = new Grpc.Core.Method<Google.Protobuf.WellKnownTypes.Empty, Google.Protobuf.WellKnownTypes.Empty>(
+                Grpc.Core.MethodType.Unary,
+                "user.UserService",
+                "DeleteAllUsers",
+                Grpc.Core.Marshallers.Create(
+                    arg => arg.ToByteArray(),
+                    Google.Protobuf.WellKnownTypes.Empty.Parser.ParseFrom),
+                Grpc.Core.Marshallers.Create(
+                    arg => arg.ToByteArray(),
+                    Google.Protobuf.WellKnownTypes.Empty.Parser.ParseFrom)
+            );
+
+            var response = await _client.CallInvoker.AsyncUnaryCall(method, null, new Grpc.Core.CallOptions(), request);
+            Debug.Log("<color=red>DeleteAllUsers succeeded</color>");
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"DeleteAllUsers Error: {e.Message}");
+            return false;
+        }
+    }
 }

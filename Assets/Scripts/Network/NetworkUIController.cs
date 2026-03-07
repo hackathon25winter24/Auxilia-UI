@@ -58,14 +58,33 @@ public class NetworkUIController : MonoBehaviour
 
     public async void OnClick_FetchAllUsers()
     {
-        userListDisplay.text = "B";
+        userListDisplay.text = "Fetching users...";
         List<UserResponse> users = await connector.GetAllUsers();
 
         if (users != null)
         {
-            string res = "User List:\n";
-            foreach (var u in users) res += $"- {u.Hash} ({u.Rate})\n";
+            //string res = "User List:\n";
+
+            string res = "";
+            foreach (var u in users) res += $"Name: {u.Hash} , Rate:{u.Rate}\n";
             userListDisplay.text = res;
+        }
+    }
+
+    public async void OnClick_DeleteAllUsers()
+    {
+        userListDisplay.text = "Deleting...";
+        bool success = await connector.DeleteAllUsers();
+
+        if (success)
+        {
+            userListDisplay.text = "All users deleted.";
+            userListDisplay.color = Color.green;
+        }
+        else
+        {
+            userListDisplay.text = "Delete failed";
+            userListDisplay.color = Color.red;
         }
     }
 }
