@@ -88,39 +88,45 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    // --- 4. ���񂾂s���g�� (DeleteAllUsers) ---
-    /// <summary>
-    /// Calls a RPC to delete every user in the database.  
-    /// The server must implement a unary method "DeleteAllUsers" taking and returning
-    /// google.protobuf.Empty; otherwise this will throw an RpcException.
-    /// </summary>
-    public async Task<bool> DeleteAllUsers()
+    // --- 4. ユーザー削除 (DeleteUser) ---
+    /// <param name="userId">削除したいユーザーのUUID（未指定の場合は保存されている自分のIDを削除）</param>
+    public async Task<bool> DeleteUser(string userId = "")
     {
         try
         {
-            var request = new Google.Protobuf.WellKnownTypes.Empty();
+            // 引数が空なら、PlayerPrefsに保存されている自分のIDを取得
+            string targetId = string.IsNullOrEmpty(userId) ? PlayerPrefs.GetString("USER_ID", "") : userId;
 
-            // manually construct a Method descriptor in case the generated client
-            // doesn't include the RPC (proto may not yet have been updated).
-            var method = new Grpc.Core.Method<Google.Protobuf.WellKnownTypes.Empty, Google.Protobuf.WellKnownTypes.Empty>(
-                Grpc.Core.MethodType.Unary,
-                "user.UserService",
-                "DeleteAllUsers",
-                Grpc.Core.Marshallers.Create(
-                    arg => arg.ToByteArray(),
-                    Google.Protobuf.WellKnownTypes.Empty.Parser.ParseFrom),
-                Grpc.Core.Marshallers.Create(
-                    arg => arg.ToByteArray(),
-                    Google.Protobuf.WellKnownTypes.Empty.Parser.ParseFrom)
-            );
+            if (string.IsNullOrEmpty(targetId))
+            {
+                Debug.LogWarning("DeleteUser: Target ID is empty.");
+                return false;
+            }
 
-            var response = await _client.CallInvoker.AsyncUnaryCall(method, null, new Grpc.Core.CallOptions(), request);
-            Debug.Log("<color=red>DeleteAllUsers succeeded</color>");
-            return true;
+            // DeleteUserRequest を作成
+            var request = new DeleteUserRequest { Id = targetId };
+            
+            // サーバーに削除リクエストを送信
+            var response = await _client.DeleteUserAsync(request);
+
+            if (response.Success)
+            {
+                Debug.Log($"<color=red>ユーザー削除成功:</color> {targetId}");
+                
+                // もし自分自身のIDを消したなら、PlayerPrefsもクリアする
+                if (targetId == PlayerPrefs.GetString("USER_ID", ""))
+                {
+                    PlayerPrefs.DeleteKey("USER_ID");
+                    PlayerPrefs.Save();
+                }
+                return true;
+            }
+            
+            return false;
         }
         catch (Exception e)
         {
-            Debug.LogError($"DeleteAllUsers Error: {e.Message}");
+            Debug.LogError($"DeleteUser Error: {e.Message}");
             return false;
         }
     }

@@ -9,13 +9,15 @@ public class NetworkUIController : MonoBehaviour
     public GameConnector connector;
 
     [Header("Login UI")]
-    public TMP_InputField loginHashInput; // TMP�łɕύX
-    public TMP_InputField signUpHashInput; // TMP�łɕύX
-    public TextMeshProUGUI loginResultText; // TMP�łɕύX
-    public TextMeshProUGUI signUpResultText; // TMP�łɕύX
+    public TMP_InputField loginHashInput; 
+    public TMP_InputField signUpHashInput;
+    public TMP_InputField deleteUserIDInput;
+    public TextMeshProUGUI loginResultText; 
+    public TextMeshProUGUI signUpResultText; 
 
     [Header("User List UI")]
-    public TextMeshProUGUI userListDisplay; // TMP�łɕύX
+    public TextMeshProUGUI userListDisplay; 
+    public TextMeshProUGUI deleteResultText;
 
     public async void OnClick_Login()
     {
@@ -66,25 +68,27 @@ public class NetworkUIController : MonoBehaviour
             //string res = "User List:\n";
 
             string res = "";
-            foreach (var u in users) res += $"Name: {u.Hash} , Rate:{u.Rate}\n";
+            foreach (var u in users)
+            {
+                res += $"Name: {u.Hash} , ID: {u.Id}, Rate: {u.Rate}\n";
+                Debug.Log($"Name: {u.Hash} ,\nID: {u.Id},\nRate: {u.Rate}\n");
+            }
             userListDisplay.text = res;
         }
     }
 
-    public async void OnClick_DeleteAllUsers()
+    public async void OnClick_DeleteUser()
     {
-        userListDisplay.text = "Deleting...";
-        bool success = await connector.DeleteAllUsers();
-
+        bool success = await connector.DeleteUser(deleteUserIDInput.text);
         if (success)
         {
-            userListDisplay.text = "All users deleted.";
-            userListDisplay.color = Color.green;
-        }
+            deleteUserIDInput.text = "";
+            deleteResultText.text = "User deleted successfully.";
+        }   
         else
         {
-            userListDisplay.text = "Delete failed";
-            userListDisplay.color = Color.red;
+            deleteResultText.text = "Failed to delete user.";
         }
+
     }
 }
