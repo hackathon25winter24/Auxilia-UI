@@ -62,7 +62,7 @@ public class HomeUIManager : MonoBehaviour
         TsukihaUI.sprite = Tsukiha_ui;
         ZinaUI.sprite = Zina_ui;
         playerName.text = playerData.player_name;
-        playerRate.text = "Rate:" + playerData.player_rate.ToString();
+        playerRate.text = "レート:" + playerData.player_rate.ToString();
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
     }
