@@ -15,6 +15,7 @@ MonoBehaviour:
   _characters:
   - _default_name: Sophie
     _default_id: 0
+    _default_sprite: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
     _default_hp: 150
     _default_move_cost: 10
     _attacks:
@@ -37,6 +38,7 @@ MonoBehaviour:
       - {x: 3, y: 0}
   - _default_name: Nadia
     _default_id: 1
+    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
