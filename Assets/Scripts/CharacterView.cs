@@ -21,7 +21,7 @@ public class CharacterView : MonoBehaviour
     {
         Vector3 startPosition = transform.position;
         Vector3 endPosition = new Vector3(targetPosition.x, targetPosition.y, transform.position.z);
-        float duration = 0.5f;//移動時間
+        float duration = 0.25f;//移動時間
         float t = 0f;
         while (t < duration)
         {
@@ -30,6 +30,10 @@ public class CharacterView : MonoBehaviour
             yield return null;
         }
         transform.position = endPosition;
+    }
+    public void SetSprite(Sprite sprite)
+    {
+        GetComponent<SpriteRenderer>().sprite = sprite;
     }
 
     void Update()

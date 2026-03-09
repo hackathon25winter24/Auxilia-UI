@@ -18,6 +18,7 @@ public class CharactersData
 {
     [SerializeField] string _default_name;
     [SerializeField] int _default_id;
+    [SerializeField] Sprite _default_sprite;
     [SerializeField] int _default_hp;
     [SerializeField] int _default_move_cost;
     [SerializeField] Attacks[] _attacks;
@@ -30,6 +31,11 @@ public class CharactersData
     public int default_id
     {
         get{return _default_id;}
+    }
+    
+    public Sprite default_sprite
+    {
+        get{return _default_sprite;}
     }
 
     public int default_hp

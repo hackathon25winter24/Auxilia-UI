@@ -888,6 +888,7 @@ MonoBehaviour:
   - {fileID: 132516211}
   - {fileID: 1824519888}
   - {fileID: 1011701993}
+  data: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
 --- !u!4 &1866449148
 Transform:
   m_ObjectHideFlags: 0
