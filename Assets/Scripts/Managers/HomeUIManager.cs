@@ -15,6 +15,7 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform backBottun;
     public RectTransform HomeCharacterSetUI;
     public RectTransform BattleUI;
+    public RectTransform CharacterUI;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -28,45 +29,15 @@ public class HomeUIManager : MonoBehaviour
     private bool isHomeCharacterSelecting = false;
     public float scrollSpeed = 500f;
     public bool isPlayerNameRemain = false;
-    public Sprite Sophie_ui;
-    public Sprite Shincho_ui;
-    public Sprite Aoi_ui;
-    public Sprite Berenice_ui;
-    public Sprite Chiyo_ui;
-    public Sprite Jude_ui;
-    public Sprite Nadia_ui;
-    public Sprite Sena_ui;
-    public Sprite Tsukiha_ui;
-    public Sprite Zina_ui;
-    public Image SophieUI;
-    public Image ShinchoUI;
-    public Image AoiUI;
-    public Image BereniceUI;
-    public Image ChiyoUI;
-    public Image JudeUI;
-    public Image NadiaUI;
-    public Image SenaUI;
-    public Image TsukihaUI;
-    public Image ZinaUI;
 
     void Awake()
     {
-        SophieUI.sprite = Sophie_ui;
-        ShinchoUI.sprite = Shincho_ui;
-        SenaUI.sprite = Sena_ui;
-        AoiUI.sprite = Aoi_ui;
-        BereniceUI.sprite = Berenice_ui;
-        ChiyoUI.sprite = Chiyo_ui;
-        JudeUI.sprite = Jude_ui;
-        NadiaUI.sprite = Nadia_ui;
-        TsukihaUI.sprite = Tsukiha_ui;
-        ZinaUI.sprite = Zina_ui;
         playerName.text = playerData.player_name;
         playerRate.text = "レート:" + playerData.player_rate.ToString();
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
     }
-    IEnumerator AnimateExit(int nextScene)
+    IEnumerator AnimateExit()
     {
         Vector2 startPos = uiContainer.anchoredPosition;
         Vector2 startPos_left = uiContainer_left.anchoredPosition;
@@ -85,11 +56,6 @@ public class HomeUIManager : MonoBehaviour
             uiContainer_left.anchoredPosition = Vector2.Lerp(startPos_left, exitPosition_left, t);
             }
             yield return null;
-        }
-        Debug.Log("すべてのUIが退場しました");
-        if (nextScene != -1) 
-        {
-        sceneData.next_scene_number = nextScene;
         }
     }
     IEnumerator AnimateEnter()
@@ -189,6 +155,50 @@ public class HomeUIManager : MonoBehaviour
         sceneData.next_scene_number = nextScene;
         }
     }
+
+    IEnumerator AnimateCharacterUIEnter()
+    {
+        Vector2 startPos_CharacterUI = CharacterUI.anchoredPosition;
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            t = t * t; 
+
+            CharacterUI.anchoredPosition = Vector2.Lerp(startPos_CharacterUI, enterBattleUIPosition, t);
+            yield return null;
+        }
+        isExiting = false;
+    }
+    IEnumerator AnimateCharacterUIExit(int nextScene)
+    {
+        Vector2 startPos_CharacterUI = CharacterUI.anchoredPosition;
+        Vector2 startPos_left = uiContainer_left.anchoredPosition;
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            t = t * t; 
+
+            CharacterUI.anchoredPosition = Vector2.Lerp(startPos_CharacterUI, exitBattleUIPosition, t);
+            if (isPlayerNameRemain ==  false)
+            {
+            uiContainer_left.anchoredPosition = Vector2.Lerp(startPos_left, exitPosition_left, t);
+            }
+            yield return null;
+        }
+        if (nextScene != -1) 
+        {
+        sceneData.next_scene_number = nextScene;
+        }
+    }
+
     public void OnButtonClick(string buttonName)
     {
         if (isExiting) return; // 退場中なら何もしない
@@ -197,20 +207,20 @@ public class HomeUIManager : MonoBehaviour
         {
             case "Battle":
                 isPlayerNameRemain = true;
-                StartCoroutine(AnimateExit(-1));
+                StartCoroutine(AnimateExit());
                 StartCoroutine(AnimateBattleUIEnter());
-                Debug.Log("battle button was plessed");
                 break;
             case "Story":
-                StartCoroutine(AnimateExit(-1));
-                Debug.Log("story button was plessed");
+                StartCoroutine(AnimateExit());
                 break;
             case "Character":
-                StartCoroutine(AnimateExit(7));
+                isPlayerNameRemain = true;
+                StartCoroutine(AnimateExit());
+                StartCoroutine(AnimateCharacterUIEnter());
                 break;
             case "HomeCharacter":
                 isPlayerNameRemain = false;
-                StartCoroutine(AnimateExit(-1));
+                StartCoroutine(AnimateExit());
                 StartCoroutine(AnimateBackKeyEnter());
                 HomeCharacterSetUI.gameObject.SetActive(true);
                 isHomeCharacterSelecting = true;
@@ -226,6 +236,14 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateBattleUIExit(-1));
                 break;
             case "RandomMatch":
+                isPlayerNameRemain = false;
+                StartCoroutine(AnimateBattleUIExit(3));
+                break;
+            case "BackFromCharacter":
+                StartCoroutine(AnimateEnter());
+                StartCoroutine(AnimateCharacterUIExit(-1));
+                break;
+            case "RoomMatch":
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateBattleUIExit(3));
                 break;

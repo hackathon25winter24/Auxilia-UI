@@ -1,4 +1,7 @@
 using UnityEngine;
+using TMPro;
+using System.Collections;
+using UnityEngine.UI;
 
 public class MatchingUIManager : MonoBehaviour
 {
@@ -17,7 +20,6 @@ public class MatchingUIManager : MonoBehaviour
         {
             case "Back":
                 sceneData.next_scene_number = 1;
-                Debug.Log("battle button was plessed");
                 break;
             case "Story":
                 Debug.Log("story button was plessed");
