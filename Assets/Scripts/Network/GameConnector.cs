@@ -2,19 +2,28 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using Game.Network; // ���Ȃ���Namespace
+using Game.Network;
 
 public class GameConnector : MonoBehaviour
 {
-    // NeoShowcase�̌��JURL (�����̃X���b�V���Ȃ�)
     private const string ServerUrl = "https://auxilia.trap.show/";
     private UserService.UserServiceClient _client;
 
+    // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
+    public event Action<string> OnErrorMessage;
+
+    // internal helper: ログ出力も兼ねてイベントを発火
+    private void ShowErrorMessage(string message)
+    {
+        Debug.LogError($"GameConnector error: {message}");
+        OnErrorMessage?.Invoke(message);
+    }
+
     void Awake()
     {
-        // HTTPS�o�R��gRPC-Web�ʐM���s�����߂̐ݒ�
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         var channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
@@ -24,57 +33,88 @@ public class GameConnector : MonoBehaviour
         _client = new UserService.UserServiceClient(channel);
     }
 
-    // --- 1. �V�K�o�^ (SignUp) ---
-    public async Task<UserResponse> SignUp(string userHash, int story, int rate)
+    public async Task<UserResponse> SignUp(string userName, string password)
     {
         try
         {
-            var request = new CreateUserRequest { Hash = userHash, Story = story, Rate = rate };
+            var request = new CreateUserRequest { Name = userName, Password = password };
             var response = await _client.CreateUserAsync(request);
 
-            // ����������ID��ۑ�
             PlayerPrefs.SetString("USER_ID", response.Id);
             PlayerPrefs.Save();
 
-            //Debug.Log($"<color=yellow>�V�K�o�^����:</color> {response.Id}");
+            Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
             return response;
         }
-        catch (Exception e)
+        catch (RpcException e)
         {
-            Debug.LogError($"SignUp Error: {e.Message}");
+            string errorMessage = "";
+            switch (e.StatusCode)
+            {
+                case StatusCode.AlreadyExists:
+                    errorMessage = "そのユーザー名は既に使用されています。";
+                    break;
+                case StatusCode.InvalidArgument:
+                    errorMessage = "入力内容（名前またはパスワード）が正しくありません。";
+                    break;
+                case StatusCode.Unavailable:
+                    errorMessage = "サーバーに接続できません。";
+                    break;
+                default:
+                    errorMessage = $"登録に失敗しました: {e.Status.Detail}";
+                    break;
+            }
+            ShowErrorMessage(errorMessage);
             return null;
         }
     }
-
-    // --- 2. ���O�C�� (Login) ---
-    public async Task<UserResponse> Login(string userHash)
+public async Task<UserResponse> Login(string userName, string password)
+{
+    try
     {
-        try
-        {
-            // LoginRequest���쐬���đ��M
-            var request = new LoginRequest { Hash = userHash };
-            var response = await _client.LoginAsync(request);
-
-            // ���O�C�������������[�U�[��ID��ۑ�
-            PlayerPrefs.SetString("USER_ID", response.Id);
-            PlayerPrefs.Save();
-
-            Debug.Log($"<color=cyan>Hash:</color> {response.Hash} (Rate: {response.Rate})");
-            return response;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Login Error: {e.Message}");
-            return null;
-        }
+        var request = new LoginRequest { Name = userName, Password = password };
+        var response = await _client.LoginAsync(request);
+        
+        // 成功時の処理
+        PlayerPrefs.SetString("USER_ID", response.Id);
+        PlayerPrefs.Save();
+        return response;
     }
+    catch (RpcException e)
+    {
+        // ステータスコードに応じたメッセージの出し分け
+        string errorMessage = "";
 
-    // --- 3. �S���[�U�[�ꗗ�擾 (GetAllUsers) ---
+        switch (e.StatusCode)
+        {
+            case StatusCode.Unauthenticated:
+                errorMessage = "ユーザー名またはパスワードが正しくありません。";
+                break;
+            case StatusCode.NotFound:
+                errorMessage = "ユーザーが見つかりませんでした。";
+                break;
+            case StatusCode.Unavailable:
+                errorMessage = "サーバーに接続できません。通信環境を確認してください。";
+                break;
+            case StatusCode.DeadlineExceeded:
+                errorMessage = "通信がタイムアウトしました。";
+                break;
+            default:
+                errorMessage = "予期せぬエラーが発生しました: " + e.Status.Detail;
+                break;
+        }
+
+        // ここでUI（テキストなど）にメッセージをセットする
+        ShowErrorMessage(errorMessage);
+        
+        Debug.LogError($"Login failed: {e.StatusCode} - {e.Message}");
+        return null; // 失敗時はnullを返して、呼び出し側で遷移を止める
+    }
+}
     public async Task<List<UserResponse>> GetAllUsers()
     {
         try
         {
-            // ListUsersRequest�𑗐M (���g�͋�)
             var request = new ListUsersRequest();
             var response = await _client.ListUsersAsync(request);
 
