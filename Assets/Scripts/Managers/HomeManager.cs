@@ -60,21 +60,21 @@ public class HomeManager : MonoBehaviour
             CharacterImage.sprite = Tsukiha;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
-            HomeCharacterName.text = "三雲 月葉(みくも つきは)";
+            HomeCharacterName.text = "三雲 月葉";
         }
         if(playerData.home_character_ID == 4)
         {
             CharacterImage.sprite = Aoi;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
-            HomeCharacterName.text = "藤原 扇衣(ふじわら あおい)";
+            HomeCharacterName.text = "藤原 扇衣";
         }
         if(playerData.home_character_ID == 5)
         {
             CharacterImage.sprite = Sena;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
-            HomeCharacterName.text = "一条 星凪(いちじょう せな)";
+            HomeCharacterName.text = "一条 星凪";
         }
         if(playerData.home_character_ID == 6)
         {
@@ -88,14 +88,14 @@ public class HomeManager : MonoBehaviour
             CharacterImage.sprite = Chiyo;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
-            HomeCharacterName.text = "望月 千代(もちつき ちよ)";
+            HomeCharacterName.text = "望月 千代";
         }
         if(playerData.home_character_ID == 8)
         {
             CharacterImage.sprite = Shincho;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
-            HomeCharacterName.text = "新著 久無子(しんちょ くなし)";
+            HomeCharacterName.text = "新著 久無子";
         }
         if(playerData.home_character_ID == 9)
         {
