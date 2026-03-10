@@ -12,6 +12,16 @@ public class GameConnector : MonoBehaviour
     private const string ServerUrl = "https://auxilia.trap.show/";
     private UserService.UserServiceClient _client;
 
+    // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
+    public event Action<string> OnErrorMessage;
+
+    // internal helper: ログ出力も兼ねてイベントを発火
+    private void ShowErrorMessage(string message)
+    {
+        Debug.LogError($"GameConnector error: {message}");
+        OnErrorMessage?.Invoke(message);
+    }
+
     void Awake()
     {
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
@@ -27,57 +37,80 @@ public class GameConnector : MonoBehaviour
     {
         try
         {
-            // 1. リクエストの作成
-            // proto側でフィールド名を Password に変更している場合はそれを使います
-            var request = new CreateUserRequest 
-            { 
-                Name = userName, 
-                Password = password // 生のパスワードを送信（サーバー側でハッシュ化される）
-            };
-
-            // 2. サーバーへ送信
+            var request = new CreateUserRequest { Name = userName, Password = password };
             var response = await _client.CreateUserAsync(request);
 
-            // 3. サーバーから返ってきた一意の ID (UUID) をローカルに保存
-            // 今後はこの ID を使ってログイン(LoginRequest.Id)することになります
             PlayerPrefs.SetString("USER_ID", response.Id);
             PlayerPrefs.Save();
 
             Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
             return response;
         }
-        catch (Exception e)
+        catch (RpcException e)
         {
-            Debug.LogError($"SignUp Error: {e.Message}");
+            string errorMessage = "";
+            switch (e.StatusCode)
+            {
+                case StatusCode.AlreadyExists:
+                    errorMessage = "そのユーザー名は既に使用されています。";
+                    break;
+                case StatusCode.InvalidArgument:
+                    errorMessage = "入力内容（名前またはパスワード）が正しくありません。";
+                    break;
+                case StatusCode.Unavailable:
+                    errorMessage = "サーバーに接続できません。";
+                    break;
+                default:
+                    errorMessage = $"登録に失敗しました: {e.Status.Detail}";
+                    break;
+            }
+            ShowErrorMessage(errorMessage);
             return null;
         }
     }
-
-    public async Task<UserResponse> Login(string userName, string password)
+public async Task<UserResponse> Login(string userName, string password)
+{
+    try
     {
-        try
-        {
-            var request = new LoginRequest
-            {
-                Name = userName,
-                Password = password
-            };
-
-            var response = await _client.LoginAsync(request);
-            
-            Debug.Log($"ログイン成功: {response.Name}");
-            PlayerPrefs.SetString("USER_ID", response.Id);
-            PlayerPrefs.Save();
-            return response;
-        }
-        catch (RpcException e)
-        {
-            Debug.LogError($"ログイン失敗: {e.Status.Detail}");
-            // e.StatusCode が Unauthenticated なら「パスワード間違い」
-            throw;
-        }
+        var request = new LoginRequest { Name = userName, Password = password };
+        var response = await _client.LoginAsync(request);
+        
+        // 成功時の処理
+        PlayerPrefs.SetString("USER_ID", response.Id);
+        PlayerPrefs.Save();
+        return response;
     }
+    catch (RpcException e)
+    {
+        // ステータスコードに応じたメッセージの出し分け
+        string errorMessage = "";
 
+        switch (e.StatusCode)
+        {
+            case StatusCode.Unauthenticated:
+                errorMessage = "ユーザー名またはパスワードが正しくありません。";
+                break;
+            case StatusCode.NotFound:
+                errorMessage = "ユーザーが見つかりませんでした。";
+                break;
+            case StatusCode.Unavailable:
+                errorMessage = "サーバーに接続できません。通信環境を確認してください。";
+                break;
+            case StatusCode.DeadlineExceeded:
+                errorMessage = "通信がタイムアウトしました。";
+                break;
+            default:
+                errorMessage = "予期せぬエラーが発生しました: " + e.Status.Detail;
+                break;
+        }
+
+        // ここでUI（テキストなど）にメッセージをセットする
+        ShowErrorMessage(errorMessage);
+        
+        Debug.LogError($"Login failed: {e.StatusCode} - {e.Message}");
+        return null; // 失敗時はnullを返して、呼び出し側で遷移を止める
+    }
+}
     public async Task<List<UserResponse>> GetAllUsers()
     {
         try

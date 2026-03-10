@@ -21,6 +21,35 @@ public class NetworkUIController : MonoBehaviour
     public TextMeshProUGUI userListDisplay; 
     public TextMeshProUGUI deleteResultText;
 
+    // 汎用エラーメッセージ表示用
+    public TextMeshProUGUI generalErrorText;
+
+    void Awake()
+    {
+        if (connector != null)
+            connector.OnErrorMessage += HandleError;
+    }
+
+    void OnDestroy()
+    {
+        if (connector != null)
+            connector.OnErrorMessage -= HandleError;
+    }
+
+    private void HandleError(string msg)
+    {
+        if (generalErrorText != null)
+        {
+            generalErrorText.text = msg;
+            generalErrorText.color = Color.red;
+        }
+        else
+        {
+            loginResultText.text = msg;
+            loginResultText.color = Color.red;
+        }
+    }
+
     public async void OnClick_Login()
     {
         string hash = loginHashInput.text;
