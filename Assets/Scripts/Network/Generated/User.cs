@@ -26,37 +26,38 @@ namespace Game.Network {
           string.Concat(
             "Cgp1c2VyLnByb3RvEgR1c2VyIhIKEExpc3RVc2Vyc1JlcXVlc3QiNgoRTGlz",
             "dFVzZXJzUmVzcG9uc2USIQoFdXNlcnMYASADKAsyEi51c2VyLlVzZXJSZXNw",
-            "b25zZSIcCgxMb2dpblJlcXVlc3QSDAoEaGFzaBgBIAEoCSIbCgtOYW1lUmVx",
-            "dWVzdBIMCgRuYW1lGAEgASgJIhwKDkdldFVzZXJSZXF1ZXN0EgoKAmlkGAEg",
-            "ASgJIkwKEUNyZWF0ZVVzZXJSZXF1ZXN0EgwKBG5hbWUYASABKAkSDAoEaGFz",
-            "aBgCIAEoCRINCgVzdG9yeRgDIAEoBRIMCgRyYXRlGAQgASgFIlgKEVVwZGF0",
-            "ZVVzZXJSZXF1ZXN0EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEaGFz",
-            "aBgDIAEoCRINCgVzdG9yeRgEIAEoBRIMCgRyYXRlGAUgASgFIlMKDFVzZXJS",
-            "ZXNwb25zZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBGhhc2gYAyAB",
-            "KAkSDQoFc3RvcnkYBCABKAUSDAoEcmF0ZRgFIAEoBSIfChFEZWxldGVVc2Vy",
-            "UmVxdWVzdBIKCgJpZBgBIAEoCSIlChJEZWxldGVVc2VyUmVzcG9uc2USDwoH",
-            "c3VjY2VzcxgBIAEoCDKgAwoLVXNlclNlcnZpY2USMwoHR2V0VXNlchIULnVz",
-            "ZXIuR2V0VXNlclJlcXVlc3QaEi51c2VyLlVzZXJSZXNwb25zZRI2Cg1HZXRV",
-            "c2VyQnlOYW1lEhEudXNlci5OYW1lUmVxdWVzdBoSLnVzZXIuVXNlclJlc3Bv",
-            "bnNlEjkKCkNyZWF0ZVVzZXISFy51c2VyLkNyZWF0ZVVzZXJSZXF1ZXN0GhIu",
-            "dXNlci5Vc2VyUmVzcG9uc2USOQoKVXBkYXRlVXNlchIXLnVzZXIuVXBkYXRl",
-            "VXNlclJlcXVlc3QaEi51c2VyLlVzZXJSZXNwb25zZRI8CglMaXN0VXNlcnMS",
-            "Fi51c2VyLkxpc3RVc2Vyc1JlcXVlc3QaFy51c2VyLkxpc3RVc2Vyc1Jlc3Bv",
-            "bnNlEi8KBUxvZ2luEhIudXNlci5Mb2dpblJlcXVlc3QaEi51c2VyLlVzZXJS",
-            "ZXNwb25zZRI/CgpEZWxldGVVc2VyEhcudXNlci5EZWxldGVVc2VyUmVxdWVz",
-            "dBoYLnVzZXIuRGVsZXRlVXNlclJlc3BvbnNlQhtaCmF1eGlsaWEvcGKqAgxH",
-            "YW1lLk5ldHdvcmtiBnByb3RvMw=="));
+            "b25zZSIuCgxMb2dpblJlcXVlc3QSDAoEbmFtZRgBIAEoCRIQCghwYXNzd29y",
+            "ZBgCIAEoCSIbCgtOYW1lUmVxdWVzdBIMCgRuYW1lGAEgASgJIhwKDkdldFVz",
+            "ZXJSZXF1ZXN0EgoKAmlkGAEgASgJIjMKEUNyZWF0ZVVzZXJSZXF1ZXN0EgwK",
+            "BG5hbWUYASABKAkSEAoIcGFzc3dvcmQYAiABKAkicwoRVXBkYXRlVXNlclJl",
+            "cXVlc3QSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCghwYXNzd29yZBgD",
+            "IAEoCRINCgVzdG9yeRgEIAEoBRIPCgdudW1XaW5zGAUgASgFEhIKCm51bUJh",
+            "dHRsZXMYBiABKAUiXAoMVXNlclJlc3BvbnNlEgoKAmlkGAEgASgJEgwKBG5h",
+            "bWUYAiABKAkSDQoFc3RvcnkYAyABKAUSDwoHbnVtV2lucxgEIAEoBRISCgpu",
+            "dW1CYXR0bGVzGAUgASgFIh8KEURlbGV0ZVVzZXJSZXF1ZXN0EgoKAmlkGAEg",
+            "ASgJIiUKEkRlbGV0ZVVzZXJSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIMqAD",
+            "CgtVc2VyU2VydmljZRIzCgdHZXRVc2VyEhQudXNlci5HZXRVc2VyUmVxdWVz",
+            "dBoSLnVzZXIuVXNlclJlc3BvbnNlEjYKDUdldFVzZXJCeU5hbWUSES51c2Vy",
+            "Lk5hbWVSZXF1ZXN0GhIudXNlci5Vc2VyUmVzcG9uc2USOQoKQ3JlYXRlVXNl",
+            "chIXLnVzZXIuQ3JlYXRlVXNlclJlcXVlc3QaEi51c2VyLlVzZXJSZXNwb25z",
+            "ZRI5CgpVcGRhdGVVc2VyEhcudXNlci5VcGRhdGVVc2VyUmVxdWVzdBoSLnVz",
+            "ZXIuVXNlclJlc3BvbnNlEjwKCUxpc3RVc2VycxIWLnVzZXIuTGlzdFVzZXJz",
+            "UmVxdWVzdBoXLnVzZXIuTGlzdFVzZXJzUmVzcG9uc2USLwoFTG9naW4SEi51",
+            "c2VyLkxvZ2luUmVxdWVzdBoSLnVzZXIuVXNlclJlc3BvbnNlEj8KCkRlbGV0",
+            "ZVVzZXISFy51c2VyLkRlbGV0ZVVzZXJSZXF1ZXN0GhgudXNlci5EZWxldGVV",
+            "c2VyUmVzcG9uc2VCG1oKYXV4aWxpYS9wYqoCDEdhbWUuTmV0d29ya2IGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.ListUsersRequest), global::Game.Network.ListUsersRequest.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.ListUsersResponse), global::Game.Network.ListUsersResponse.Parser, new[]{ "Users" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.LoginRequest), global::Game.Network.LoginRequest.Parser, new[]{ "Hash" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.LoginRequest), global::Game.Network.LoginRequest.Parser, new[]{ "Name", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.NameRequest), global::Game.Network.NameRequest.Parser, new[]{ "Name" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.GetUserRequest), global::Game.Network.GetUserRequest.Parser, new[]{ "Id" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.CreateUserRequest), global::Game.Network.CreateUserRequest.Parser, new[]{ "Name", "Hash", "Story", "Rate" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.UpdateUserRequest), global::Game.Network.UpdateUserRequest.Parser, new[]{ "Id", "Name", "Hash", "Story", "Rate" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.UserResponse), global::Game.Network.UserResponse.Parser, new[]{ "Id", "Name", "Hash", "Story", "Rate" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.CreateUserRequest), global::Game.Network.CreateUserRequest.Parser, new[]{ "Name", "Password" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.UpdateUserRequest), global::Game.Network.UpdateUserRequest.Parser, new[]{ "Id", "Name", "Password", "Story", "NumWins", "NumBattles" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.UserResponse), global::Game.Network.UserResponse.Parser, new[]{ "Id", "Name", "Story", "NumWins", "NumBattles" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.DeleteUserRequest), global::Game.Network.DeleteUserRequest.Parser, new[]{ "Id" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.DeleteUserResponse), global::Game.Network.DeleteUserResponse.Parser, new[]{ "Success" }, null, null, null, null)
           }));
@@ -448,7 +449,8 @@ namespace Game.Network {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LoginRequest(LoginRequest other) : this() {
-      hash_ = other.hash_;
+      name_ = other.name_;
+      password_ = other.password_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -458,15 +460,27 @@ namespace Game.Network {
       return new LoginRequest(this);
     }
 
-    /// <summary>Field number for the "hash" field.</summary>
-    public const int HashFieldNumber = 1;
-    private string hash_ = "";
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Hash {
-      get { return hash_; }
+    public string Name {
+      get { return name_; }
       set {
-        hash_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 2;
+    private string password_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Password {
+      get { return password_; }
+      set {
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -485,7 +499,8 @@ namespace Game.Network {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Hash != other.Hash) return false;
+      if (Name != other.Name) return false;
+      if (Password != other.Password) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -493,7 +508,8 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Hash.Length != 0) hash ^= Hash.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -512,9 +528,13 @@ namespace Game.Network {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Hash.Length != 0) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Hash);
+        output.WriteString(Name);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -526,9 +546,13 @@ namespace Game.Network {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Hash.Length != 0) {
+      if (Name.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Hash);
+        output.WriteString(Name);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Password);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -540,8 +564,11 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Hash.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Hash);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -555,8 +582,11 @@ namespace Game.Network {
       if (other == null) {
         return;
       }
-      if (other.Hash.Length != 0) {
-        Hash = other.Hash;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      if (other.Password.Length != 0) {
+        Password = other.Password;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -578,7 +608,11 @@ namespace Game.Network {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Hash = input.ReadString();
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
+            Password = input.ReadString();
             break;
           }
         }
@@ -601,7 +635,11 @@ namespace Game.Network {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Hash = input.ReadString();
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
+            Password = input.ReadString();
             break;
           }
         }
@@ -1046,9 +1084,7 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateUserRequest(CreateUserRequest other) : this() {
       name_ = other.name_;
-      hash_ = other.hash_;
-      story_ = other.story_;
-      rate_ = other.rate_;
+      password_ = other.password_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1070,39 +1106,15 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "hash" field.</summary>
-    public const int HashFieldNumber = 2;
-    private string hash_ = "";
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 2;
+    private string password_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Hash {
-      get { return hash_; }
+    public string Password {
+      get { return password_; }
       set {
-        hash_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "story" field.</summary>
-    public const int StoryFieldNumber = 3;
-    private int story_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Story {
-      get { return story_; }
-      set {
-        story_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "rate" field.</summary>
-    public const int RateFieldNumber = 4;
-    private int rate_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Rate {
-      get { return rate_; }
-      set {
-        rate_ = value;
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1122,9 +1134,7 @@ namespace Game.Network {
         return true;
       }
       if (Name != other.Name) return false;
-      if (Hash != other.Hash) return false;
-      if (Story != other.Story) return false;
-      if (Rate != other.Rate) return false;
+      if (Password != other.Password) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1133,9 +1143,7 @@ namespace Game.Network {
     public override int GetHashCode() {
       int hash = 1;
       if (Name.Length != 0) hash ^= Name.GetHashCode();
-      if (Hash.Length != 0) hash ^= Hash.GetHashCode();
-      if (Story != 0) hash ^= Story.GetHashCode();
-      if (Rate != 0) hash ^= Rate.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1158,17 +1166,9 @@ namespace Game.Network {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
+      if (Password.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Hash);
-      }
-      if (Story != 0) {
-        output.WriteRawTag(24);
-        output.WriteInt32(Story);
-      }
-      if (Rate != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Rate);
+        output.WriteString(Password);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1184,17 +1184,9 @@ namespace Game.Network {
         output.WriteRawTag(10);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
+      if (Password.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Hash);
-      }
-      if (Story != 0) {
-        output.WriteRawTag(24);
-        output.WriteInt32(Story);
-      }
-      if (Rate != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Rate);
+        output.WriteString(Password);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1209,14 +1201,8 @@ namespace Game.Network {
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (Hash.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Hash);
-      }
-      if (Story != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Story);
-      }
-      if (Rate != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Rate);
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1233,14 +1219,8 @@ namespace Game.Network {
       if (other.Name.Length != 0) {
         Name = other.Name;
       }
-      if (other.Hash.Length != 0) {
-        Hash = other.Hash;
-      }
-      if (other.Story != 0) {
-        Story = other.Story;
-      }
-      if (other.Rate != 0) {
-        Rate = other.Rate;
+      if (other.Password.Length != 0) {
+        Password = other.Password;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1266,15 +1246,7 @@ namespace Game.Network {
             break;
           }
           case 18: {
-            Hash = input.ReadString();
-            break;
-          }
-          case 24: {
-            Story = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            Rate = input.ReadInt32();
+            Password = input.ReadString();
             break;
           }
         }
@@ -1301,15 +1273,7 @@ namespace Game.Network {
             break;
           }
           case 18: {
-            Hash = input.ReadString();
-            break;
-          }
-          case 24: {
-            Story = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            Rate = input.ReadInt32();
+            Password = input.ReadString();
             break;
           }
         }
@@ -1359,9 +1323,10 @@ namespace Game.Network {
     public UpdateUserRequest(UpdateUserRequest other) : this() {
       id_ = other.id_;
       name_ = other.name_;
-      hash_ = other.hash_;
+      password_ = other.password_;
       story_ = other.story_;
-      rate_ = other.rate_;
+      numWins_ = other.numWins_;
+      numBattles_ = other.numBattles_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1395,15 +1360,15 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "hash" field.</summary>
-    public const int HashFieldNumber = 3;
-    private string hash_ = "";
+    /// <summary>Field number for the "password" field.</summary>
+    public const int PasswordFieldNumber = 3;
+    private string password_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Hash {
-      get { return hash_; }
+    public string Password {
+      get { return password_; }
       set {
-        hash_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        password_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1419,15 +1384,27 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "rate" field.</summary>
-    public const int RateFieldNumber = 5;
-    private int rate_;
+    /// <summary>Field number for the "numWins" field.</summary>
+    public const int NumWinsFieldNumber = 5;
+    private int numWins_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Rate {
-      get { return rate_; }
+    public int NumWins {
+      get { return numWins_; }
       set {
-        rate_ = value;
+        numWins_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "numBattles" field.</summary>
+    public const int NumBattlesFieldNumber = 6;
+    private int numBattles_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int NumBattles {
+      get { return numBattles_; }
+      set {
+        numBattles_ = value;
       }
     }
 
@@ -1448,9 +1425,10 @@ namespace Game.Network {
       }
       if (Id != other.Id) return false;
       if (Name != other.Name) return false;
-      if (Hash != other.Hash) return false;
+      if (Password != other.Password) return false;
       if (Story != other.Story) return false;
-      if (Rate != other.Rate) return false;
+      if (NumWins != other.NumWins) return false;
+      if (NumBattles != other.NumBattles) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1460,9 +1438,10 @@ namespace Game.Network {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
-      if (Hash.Length != 0) hash ^= Hash.GetHashCode();
+      if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (Story != 0) hash ^= Story.GetHashCode();
-      if (Rate != 0) hash ^= Rate.GetHashCode();
+      if (NumWins != 0) hash ^= NumWins.GetHashCode();
+      if (NumBattles != 0) hash ^= NumBattles.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1489,17 +1468,21 @@ namespace Game.Network {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
+      if (Password.Length != 0) {
         output.WriteRawTag(26);
-        output.WriteString(Hash);
+        output.WriteString(Password);
       }
       if (Story != 0) {
         output.WriteRawTag(32);
         output.WriteInt32(Story);
       }
-      if (Rate != 0) {
+      if (NumWins != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(Rate);
+        output.WriteInt32(NumWins);
+      }
+      if (NumBattles != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(NumBattles);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1519,17 +1502,21 @@ namespace Game.Network {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
+      if (Password.Length != 0) {
         output.WriteRawTag(26);
-        output.WriteString(Hash);
+        output.WriteString(Password);
       }
       if (Story != 0) {
         output.WriteRawTag(32);
         output.WriteInt32(Story);
       }
-      if (Rate != 0) {
+      if (NumWins != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(Rate);
+        output.WriteInt32(NumWins);
+      }
+      if (NumBattles != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(NumBattles);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1547,14 +1534,17 @@ namespace Game.Network {
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (Hash.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Hash);
+      if (Password.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
       }
       if (Story != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Story);
       }
-      if (Rate != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Rate);
+      if (NumWins != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(NumWins);
+      }
+      if (NumBattles != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(NumBattles);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1574,14 +1564,17 @@ namespace Game.Network {
       if (other.Name.Length != 0) {
         Name = other.Name;
       }
-      if (other.Hash.Length != 0) {
-        Hash = other.Hash;
+      if (other.Password.Length != 0) {
+        Password = other.Password;
       }
       if (other.Story != 0) {
         Story = other.Story;
       }
-      if (other.Rate != 0) {
-        Rate = other.Rate;
+      if (other.NumWins != 0) {
+        NumWins = other.NumWins;
+      }
+      if (other.NumBattles != 0) {
+        NumBattles = other.NumBattles;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1611,7 +1604,7 @@ namespace Game.Network {
             break;
           }
           case 26: {
-            Hash = input.ReadString();
+            Password = input.ReadString();
             break;
           }
           case 32: {
@@ -1619,7 +1612,11 @@ namespace Game.Network {
             break;
           }
           case 40: {
-            Rate = input.ReadInt32();
+            NumWins = input.ReadInt32();
+            break;
+          }
+          case 48: {
+            NumBattles = input.ReadInt32();
             break;
           }
         }
@@ -1650,7 +1647,7 @@ namespace Game.Network {
             break;
           }
           case 26: {
-            Hash = input.ReadString();
+            Password = input.ReadString();
             break;
           }
           case 32: {
@@ -1658,7 +1655,11 @@ namespace Game.Network {
             break;
           }
           case 40: {
-            Rate = input.ReadInt32();
+            NumWins = input.ReadInt32();
+            break;
+          }
+          case 48: {
+            NumBattles = input.ReadInt32();
             break;
           }
         }
@@ -1705,9 +1706,9 @@ namespace Game.Network {
     public UserResponse(UserResponse other) : this() {
       id_ = other.id_;
       name_ = other.name_;
-      hash_ = other.hash_;
       story_ = other.story_;
-      rate_ = other.rate_;
+      numWins_ = other.numWins_;
+      numBattles_ = other.numBattles_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1741,20 +1742,8 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "hash" field.</summary>
-    public const int HashFieldNumber = 3;
-    private string hash_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Hash {
-      get { return hash_; }
-      set {
-        hash_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
     /// <summary>Field number for the "story" field.</summary>
-    public const int StoryFieldNumber = 4;
+    public const int StoryFieldNumber = 3;
     private int story_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1765,15 +1754,27 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "rate" field.</summary>
-    public const int RateFieldNumber = 5;
-    private int rate_;
+    /// <summary>Field number for the "numWins" field.</summary>
+    public const int NumWinsFieldNumber = 4;
+    private int numWins_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Rate {
-      get { return rate_; }
+    public int NumWins {
+      get { return numWins_; }
       set {
-        rate_ = value;
+        numWins_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "numBattles" field.</summary>
+    public const int NumBattlesFieldNumber = 5;
+    private int numBattles_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int NumBattles {
+      get { return numBattles_; }
+      set {
+        numBattles_ = value;
       }
     }
 
@@ -1794,9 +1795,9 @@ namespace Game.Network {
       }
       if (Id != other.Id) return false;
       if (Name != other.Name) return false;
-      if (Hash != other.Hash) return false;
       if (Story != other.Story) return false;
-      if (Rate != other.Rate) return false;
+      if (NumWins != other.NumWins) return false;
+      if (NumBattles != other.NumBattles) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1806,9 +1807,9 @@ namespace Game.Network {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
-      if (Hash.Length != 0) hash ^= Hash.GetHashCode();
       if (Story != 0) hash ^= Story.GetHashCode();
-      if (Rate != 0) hash ^= Rate.GetHashCode();
+      if (NumWins != 0) hash ^= NumWins.GetHashCode();
+      if (NumBattles != 0) hash ^= NumBattles.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1835,17 +1836,17 @@ namespace Game.Network {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(Hash);
-      }
       if (Story != 0) {
-        output.WriteRawTag(32);
+        output.WriteRawTag(24);
         output.WriteInt32(Story);
       }
-      if (Rate != 0) {
+      if (NumWins != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(NumWins);
+      }
+      if (NumBattles != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(Rate);
+        output.WriteInt32(NumBattles);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1865,17 +1866,17 @@ namespace Game.Network {
         output.WriteRawTag(18);
         output.WriteString(Name);
       }
-      if (Hash.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(Hash);
-      }
       if (Story != 0) {
-        output.WriteRawTag(32);
+        output.WriteRawTag(24);
         output.WriteInt32(Story);
       }
-      if (Rate != 0) {
+      if (NumWins != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(NumWins);
+      }
+      if (NumBattles != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(Rate);
+        output.WriteInt32(NumBattles);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1893,14 +1894,14 @@ namespace Game.Network {
       if (Name.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
-      if (Hash.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Hash);
-      }
       if (Story != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Story);
       }
-      if (Rate != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Rate);
+      if (NumWins != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(NumWins);
+      }
+      if (NumBattles != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(NumBattles);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1920,14 +1921,14 @@ namespace Game.Network {
       if (other.Name.Length != 0) {
         Name = other.Name;
       }
-      if (other.Hash.Length != 0) {
-        Hash = other.Hash;
-      }
       if (other.Story != 0) {
         Story = other.Story;
       }
-      if (other.Rate != 0) {
-        Rate = other.Rate;
+      if (other.NumWins != 0) {
+        NumWins = other.NumWins;
+      }
+      if (other.NumBattles != 0) {
+        NumBattles = other.NumBattles;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1956,16 +1957,16 @@ namespace Game.Network {
             Name = input.ReadString();
             break;
           }
-          case 26: {
-            Hash = input.ReadString();
-            break;
-          }
-          case 32: {
+          case 24: {
             Story = input.ReadInt32();
             break;
           }
+          case 32: {
+            NumWins = input.ReadInt32();
+            break;
+          }
           case 40: {
-            Rate = input.ReadInt32();
+            NumBattles = input.ReadInt32();
             break;
           }
         }
@@ -1995,16 +1996,16 @@ namespace Game.Network {
             Name = input.ReadString();
             break;
           }
-          case 26: {
-            Hash = input.ReadString();
-            break;
-          }
-          case 32: {
+          case 24: {
             Story = input.ReadInt32();
             break;
           }
+          case 32: {
+            NumWins = input.ReadInt32();
+            break;
+          }
           case 40: {
-            Rate = input.ReadInt32();
+            NumBattles = input.ReadInt32();
             break;
           }
         }

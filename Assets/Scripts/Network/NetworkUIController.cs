@@ -10,7 +10,9 @@ public class NetworkUIController : MonoBehaviour
 
     [Header("Login UI")]
     public TMP_InputField loginHashInput; 
+    public TMP_InputField loginUserNameInput;
     public TMP_InputField signUpHashInput;
+    public TMP_InputField signUpUserNameInput;
     public TMP_InputField deleteUserIDInput;
     public TextMeshProUGUI loginResultText; 
     public TextMeshProUGUI signUpResultText; 
@@ -22,14 +24,15 @@ public class NetworkUIController : MonoBehaviour
     public async void OnClick_Login()
     {
         string hash = loginHashInput.text;
-        if (string.IsNullOrEmpty(hash)) return;
+        string userName = loginUserNameInput.text;
+        if (string.IsNullOrEmpty(hash) || string.IsNullOrEmpty(userName)) return;
 
-        loginResultText.text = "A";
-        var user = await connector.Login(hash);
+        loginResultText.text = "Connecting...";
+        var user = await connector.Login(userName, hash);
 
         if (user != null)
         {
-            loginResultText.text = $"Hash: {user.Hash}\nRate: {user.Rate}";
+            loginResultText.text = $"Name: {user.Name}\nWins: {user.NumWins},\nBattles: {user.NumBattles}";
             loginResultText.color = Color.green;
         }
         else
@@ -41,10 +44,12 @@ public class NetworkUIController : MonoBehaviour
     public async void OnClick_SignUp()
     {
         string hash = signUpHashInput.text;
+        string userName = signUpUserNameInput.text;
         if (string.IsNullOrEmpty(hash)) return;
 
-        signUpResultText.text = "C";
-        var user = await connector.SignUp(hash, 1, 100); // Story=1, Rate=100
+        signUpResultText.text = "Connecting...";
+
+        var user = await connector.SignUp(userName, hash); 
 
         if (user != null)
         {
@@ -70,8 +75,8 @@ public class NetworkUIController : MonoBehaviour
             string res = "";
             foreach (var u in users)
             {
-                res += $"Name: {u.Hash} , ID: {u.Id}, Rate: {u.Rate}\n";
-                Debug.Log($"Name: {u.Hash} ,\nID: {u.Id},\nRate: {u.Rate}\n");
+                res += $"Name: {u.Name} , ID: {u.Id}, Wins: {u.NumWins}, Battles: {u.NumBattles}\n";
+                Debug.Log($"Name: {u.Name} ,\nID: {u.Id},\nWins: {u.NumWins},\nBattles: {u.NumBattles}\n");
             }
             userListDisplay.text = res;
         }

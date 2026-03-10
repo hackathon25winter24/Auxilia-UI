@@ -2,19 +2,18 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using Game.Network; // ���Ȃ���Namespace
+using Game.Network;
 
 public class GameConnector : MonoBehaviour
 {
-    // NeoShowcase�̌��JURL (�����̃X���b�V���Ȃ�)
     private const string ServerUrl = "https://auxilia.trap.show/";
     private UserService.UserServiceClient _client;
 
     void Awake()
     {
-        // HTTPS�o�R��gRPC-Web�ʐM���s�����߂̐ݒ�
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         var channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
@@ -24,19 +23,27 @@ public class GameConnector : MonoBehaviour
         _client = new UserService.UserServiceClient(channel);
     }
 
-    // --- 1. �V�K�o�^ (SignUp) ---
-    public async Task<UserResponse> SignUp(string userHash, int story, int rate)
+    public async Task<UserResponse> SignUp(string userName, string password)
     {
         try
         {
-            var request = new CreateUserRequest { Hash = userHash, Story = story, Rate = rate };
+            // 1. リクエストの作成
+            // proto側でフィールド名を Password に変更している場合はそれを使います
+            var request = new CreateUserRequest 
+            { 
+                Name = userName, 
+                Password = password // 生のパスワードを送信（サーバー側でハッシュ化される）
+            };
+
+            // 2. サーバーへ送信
             var response = await _client.CreateUserAsync(request);
 
-            // ����������ID��ۑ�
+            // 3. サーバーから返ってきた一意の ID (UUID) をローカルに保存
+            // 今後はこの ID を使ってログイン(LoginRequest.Id)することになります
             PlayerPrefs.SetString("USER_ID", response.Id);
             PlayerPrefs.Save();
 
-            //Debug.Log($"<color=yellow>�V�K�o�^����:</color> {response.Id}");
+            Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
             return response;
         }
         catch (Exception e)
@@ -46,35 +53,35 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    // --- 2. ���O�C�� (Login) ---
-    public async Task<UserResponse> Login(string userHash)
+    public async Task<UserResponse> Login(string userName, string password)
     {
         try
         {
-            // LoginRequest���쐬���đ��M
-            var request = new LoginRequest { Hash = userHash };
-            var response = await _client.LoginAsync(request);
+            var request = new LoginRequest
+            {
+                Name = userName,
+                Password = password
+            };
 
-            // ���O�C�������������[�U�[��ID��ۑ�
+            var response = await _client.LoginAsync(request);
+            
+            Debug.Log($"ログイン成功: {response.Name}");
             PlayerPrefs.SetString("USER_ID", response.Id);
             PlayerPrefs.Save();
-
-            Debug.Log($"<color=cyan>Hash:</color> {response.Hash} (Rate: {response.Rate})");
             return response;
         }
-        catch (Exception e)
+        catch (RpcException e)
         {
-            Debug.LogError($"Login Error: {e.Message}");
-            return null;
+            Debug.LogError($"ログイン失敗: {e.Status.Detail}");
+            // e.StatusCode が Unauthenticated なら「パスワード間違い」
+            throw;
         }
     }
 
-    // --- 3. �S���[�U�[�ꗗ�擾 (GetAllUsers) ---
     public async Task<List<UserResponse>> GetAllUsers()
     {
         try
         {
-            // ListUsersRequest�𑗐M (���g�͋�)
             var request = new ListUsersRequest();
             var response = await _client.ListUsersAsync(request);
 
