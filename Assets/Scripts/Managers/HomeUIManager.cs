@@ -16,6 +16,7 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform HomeCharacterSetUI;
     public RectTransform BattleUI;
     public RectTransform CharacterUI;
+    public RectTransform BigBackButton;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -25,7 +26,7 @@ public class HomeUIManager : MonoBehaviour
     public Vector2 enterBattleUIPosition = new Vector2(300, 0);
     public Vector2 exitBattleUIPosition = new Vector2(600, 0);
     public float duration = 0.5f;
-    private bool isExiting = false;
+    public bool isExiting = false;
     private bool isHomeCharacterSelecting = false;
     public float scrollSpeed = 500f;
     public bool isPlayerNameRemain = false;
@@ -36,6 +37,7 @@ public class HomeUIManager : MonoBehaviour
         playerRate.text = "レート:" + playerData.player_rate.ToString();
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
+        BigBackButton.gameObject.SetActive(false);
     }
     IEnumerator AnimateExit()
     {
@@ -57,6 +59,7 @@ public class HomeUIManager : MonoBehaviour
             }
             yield return null;
         }
+        isExiting = false;
     }
     IEnumerator AnimateEnter()
     {
@@ -212,6 +215,7 @@ public class HomeUIManager : MonoBehaviour
                 break;
             case "Story":
                 StartCoroutine(AnimateExit());
+                sceneData.next_scene_number = 8;
                 break;
             case "Character":
                 isPlayerNameRemain = true;
@@ -246,6 +250,16 @@ public class HomeUIManager : MonoBehaviour
             case "RoomMatch":
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateBattleUIExit(3));
+                break;
+            case "ToAllImage":
+                isPlayerNameRemain = false;
+                StartCoroutine(AnimateExit());
+                BigBackButton.gameObject.SetActive(true);
+                isExiting = false;
+                break;
+            case "BackButton":
+                StartCoroutine(AnimateEnter());
+                BigBackButton.gameObject.SetActive(false);
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
