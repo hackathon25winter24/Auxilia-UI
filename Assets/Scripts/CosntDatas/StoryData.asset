@@ -12,4 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87ca7e9ce5e76b0488f4c2b71228a97e, type: 3}
   m_Name: StoryData
   m_EditorClassIdentifier: 
-  serifs: []
+  now_story_number: 0
+  stories:
+  - story_number: 0
+    serifs:
+    - characterID: 0
+      character_face: 0
+      character_move: 0
+      name: ...?
+      serif: "\u3053\u3093\u306B\u3061\u306F"
+    - characterID: 0
+      character_face: 0
+      character_move: 0
+      name: ...?
+      serif: "\u3042\u3001\u7533\u3057\u9045\u308C\u307E\u3057\u305F\u3002"
+  - story_number: 0
+    serifs: []

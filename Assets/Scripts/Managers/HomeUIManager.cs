@@ -215,6 +215,7 @@ public class HomeUIManager : MonoBehaviour
                 break;
             case "Story":
                 StartCoroutine(AnimateExit());
+                sceneData.next_scene_number = 8;
                 break;
             case "Character":
                 isPlayerNameRemain = true;
