@@ -6,11 +6,14 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Game.Network;
+using Roommatch;
 
 public class GameConnector : MonoBehaviour
 {
     private const string ServerUrl = "https://auxilia.trap.show/";
-    private UserService.UserServiceClient _client;
+    private UserService.UserServiceClient _userClient;
+    private RoomMatchService.RoomMatchServiceClient _roomClient;
+
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
     public event Action<string> OnErrorMessage;
@@ -30,7 +33,8 @@ public class GameConnector : MonoBehaviour
             HttpHandler = handler
         });
 
-        _client = new UserService.UserServiceClient(channel);
+        _userClient = new UserService.UserServiceClient(channel);
+        _roomClient = new RoomMatchService.RoomMatchServiceClient(channel);
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -38,7 +42,7 @@ public class GameConnector : MonoBehaviour
         try
         {
             var request = new CreateUserRequest { Name = userName, Password = password };
-            var response = await _client.CreateUserAsync(request);
+            var response = await _userClient.CreateUserAsync(request);
 
             PlayerPrefs.SetString("USER_ID", response.Id);
             PlayerPrefs.Save();
@@ -68,55 +72,55 @@ public class GameConnector : MonoBehaviour
             return null;
         }
     }
-public async Task<UserResponse> Login(string userName, string password)
-{
-    try
+    public async Task<UserResponse> Login(string userName, string password)
     {
-        var request = new LoginRequest { Name = userName, Password = password };
-        var response = await _client.LoginAsync(request);
-        
-        // 成功時の処理
-        PlayerPrefs.SetString("USER_ID", response.Id);
-        PlayerPrefs.Save();
-        return response;
-    }
-    catch (RpcException e)
-    {
-        // ステータスコードに応じたメッセージの出し分け
-        string errorMessage = "";
-
-        switch (e.StatusCode)
+        try
         {
-            case StatusCode.Unauthenticated:
-                errorMessage = "ユーザー名またはパスワードが正しくありません。";
-                break;
-            case StatusCode.NotFound:
-                errorMessage = "ユーザーが見つかりませんでした。";
-                break;
-            case StatusCode.Unavailable:
-                errorMessage = "サーバーに接続できません。通信環境を確認してください。";
-                break;
-            case StatusCode.DeadlineExceeded:
-                errorMessage = "通信がタイムアウトしました。";
-                break;
-            default:
-                errorMessage = "予期せぬエラーが発生しました: " + e.Status.Detail;
-                break;
-        }
+            var request = new LoginRequest { Name = userName, Password = password };
+            var response = await _userClient.LoginAsync(request);
 
-        // ここでUI（テキストなど）にメッセージをセットする
-        ShowErrorMessage(errorMessage);
-        
-        Debug.LogError($"Login failed: {e.StatusCode} - {e.Message}");
-        return null; // 失敗時はnullを返して、呼び出し側で遷移を止める
+            // 成功時の処理
+            PlayerPrefs.SetString("USER_ID", response.Id);
+            PlayerPrefs.Save();
+            return response;
+        }
+        catch (RpcException e)
+        {
+            // ステータスコードに応じたメッセージの出し分け
+            string errorMessage = "";
+
+            switch (e.StatusCode)
+            {
+                case StatusCode.Unauthenticated:
+                    errorMessage = "ユーザー名またはパスワードが正しくありません。";
+                    break;
+                case StatusCode.NotFound:
+                    errorMessage = "ユーザーが見つかりませんでした。";
+                    break;
+                case StatusCode.Unavailable:
+                    errorMessage = "サーバーに接続できません。通信環境を確認してください。";
+                    break;
+                case StatusCode.DeadlineExceeded:
+                    errorMessage = "通信がタイムアウトしました。";
+                    break;
+                default:
+                    errorMessage = "予期せぬエラーが発生しました: " + e.Status.Detail;
+                    break;
+            }
+
+            // ここでUI（テキストなど）にメッセージをセットする
+            ShowErrorMessage(errorMessage);
+            
+            Debug.LogError($"Login failed: {e.StatusCode} - {e.Message}");
+            return null; // 失敗時はnullを返して、呼び出し側で遷移を止める
+        }
     }
-}
     public async Task<List<UserResponse>> GetAllUsers()
     {
         try
         {
             var request = new ListUsersRequest();
-            var response = await _client.ListUsersAsync(request);
+            var response = await _userClient.ListUsersAsync(request);
 
             Debug.Log($"<color=green>ユーザー数:</color> {response.Users.Count}");
             return new List<UserResponse>(response.Users);
@@ -147,7 +151,7 @@ public async Task<UserResponse> Login(string userName, string password)
             var request = new DeleteUserRequest { Id = targetId };
             
             // サーバーに削除リクエストを送信
-            var response = await _client.DeleteUserAsync(request);
+            var response = await _userClient.DeleteUserAsync(request);
 
             if (response.Success)
             {
@@ -170,4 +174,56 @@ public async Task<UserResponse> Login(string userName, string password)
             return false;
         }
     }
+
+    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isPrivate)
+    {
+        try
+        {
+            var request = new CreateRoomMatchRequest 
+            { 
+                RoomName = roomName, 
+                OwnerId = ownerId, 
+                IsPrivate = isPrivate 
+            };
+
+            // サーバーへ送信
+            var response = await _roomClient.CreateRoomMatchAsync(request);
+
+            // response.Room が実データを持っている構造
+            Debug.Log($"<color=cyan>Room Created:</color> ID={response.Room.RoomId}, Name={response.Room.RoomName}");
+            return response.Room;
+        }
+        catch (RpcException e)
+        {
+            string errorMessage = e.StatusCode switch
+            {
+                StatusCode.InvalidArgument => "部屋名が正しくありません（10文字以内）。",
+                StatusCode.Internal => "サーバーエラーで部屋を作成できませんでした。",
+                _ => $"部屋作成エラー: {e.Status.Detail}"
+            };
+            ShowErrorMessage(errorMessage);
+            return null;
+        }
+    }
+
+    public async Task<List<RoomMatch>> GetAllRoomMatch()
+    {
+        try
+        {
+            var request = new ListRoomMatchRequest();
+            var response = await _roomClient.ListRoomMatchAsync(request);
+
+            Debug.Log($"<color=green>部屋一覧取得成功:</color> {response.Rooms.Count}件");
+            
+            // repeated フィールドは Google.Protobuf.Collections.RepeatedField として返るため
+            // List に変換して返すと扱いやすいです
+            return new List<RoomMatch>(response.Rooms);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"部屋リストの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
 }
