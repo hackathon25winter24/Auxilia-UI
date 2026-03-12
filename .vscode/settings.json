@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "Auxilia.sln"
+    "dotnet.defaultSolution": "Auxilia-UI.sln"
 }
