@@ -7,12 +7,14 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Game.Network;
 using Roommatch;
+using Room;
 
 public class GameConnector : MonoBehaviour
 {
     private const string ServerUrl = "https://auxilia.trap.show/";
     private UserService.UserServiceClient _userClient;
-    private RoomMatchService.RoomMatchServiceClient _roomClient;
+    private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
+    private RoomService.RoomServiceClient _roomClient;
 
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
@@ -34,7 +36,8 @@ public class GameConnector : MonoBehaviour
         });
 
         _userClient = new UserService.UserServiceClient(channel);
-        _roomClient = new RoomMatchService.RoomMatchServiceClient(channel);
+        _roomMatchClient = new RoomMatchService.RoomMatchServiceClient(channel);
+        _roomClient = new RoomService.RoomServiceClient(channel);
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -187,7 +190,7 @@ public class GameConnector : MonoBehaviour
             };
 
             // サーバーへ送信
-            var response = await _roomClient.CreateRoomMatchAsync(request);
+            var response = await _roomMatchClient.CreateRoomMatchAsync(request);
 
             // response.Room が実データを持っている構造
             Debug.Log($"<color=cyan>Room Created:</color> ID={response.Room.RoomId}, Name={response.Room.RoomName}");
@@ -211,7 +214,7 @@ public class GameConnector : MonoBehaviour
         try
         {
             var request = new ListRoomMatchRequest();
-            var response = await _roomClient.ListRoomMatchAsync(request);
+            var response = await _roomMatchClient.ListRoomMatchAsync(request);
 
             Debug.Log($"<color=green>部屋一覧取得成功:</color> {response.Rooms.Count}件");
             
@@ -226,4 +229,28 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
+{
+    try
+    {
+        var request = new JoinRoomRequest { RoomId = roomId, UserId = userId };
+        
+        // 修正点: メソッド名を JoinRoomAsync に変更
+        var response = await _roomClient.JoinRoomAsync(request);
+
+        Debug.Log($"<color=green>部屋参加成功:</color> RoomID={roomId}, UserID={userId}");
+        return response;
+    }
+    catch (RpcException e)
+    {
+        string errorMessage = e.StatusCode switch
+        {
+            StatusCode.NotFound => "指定された部屋が見つかりませんでした。",
+            StatusCode.Internal => "サーバーエラーで部屋に参加できませんでした。",
+            _ => $"部屋参加エラー: {e.Status.Detail}"
+        };
+        ShowErrorMessage(errorMessage);
+        return null;
+    }
+}
 }

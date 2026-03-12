@@ -8,7 +8,7 @@ public class TestConnection : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
     {
-        Test2();
+        await TestJoinRoom();
     }
 
     // Update is called once per frame
@@ -38,11 +38,21 @@ public class TestConnection : MonoBehaviour
 
                 foreach (var u in roomMatches)
                 {
-                    Debug.Log($"Name: {u.RoomName} ,\nID: {u.OwnerId},\nIsPrivate: {u.IsPrivate}\n");
+                    Debug.Log($"RoomID:{u.RoomId} ,\nName: {u.RoomName} ,\nID: {u.OwnerId},\nIsPrivate: {u.IsPrivate}\n");
                 }
             }
         }
     }
+
+    async Task TestJoinRoom()
+    {
+        if (GC != null)
+        {
+            var result = await GC.JoinRoom(1, "f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f");
+            Debug.Log("Join Room Result: " + "Success");
+        }
+    }
+
 }
 
 
