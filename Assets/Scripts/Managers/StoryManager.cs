@@ -43,6 +43,11 @@ public class StoryManager : MonoBehaviour
 
         if(inputData.space_key_ispressed == true ||inputData.left_mouse_button_ispressed == true)
         {
+            if (storyData.stories[storyData.now_story_number].serifs.Length -2 < serif_number)
+            {
+            sceneData.next_scene_number = 1;
+            }else 
+            {
             if(serif_loading == true)
             {
                 StopAllCoroutines();
@@ -55,10 +60,7 @@ public class StoryManager : MonoBehaviour
             TellingCharacterName.text = storyData.stories[storyData.now_story_number].serifs[serif_number].name;
             StartCoroutine(ShowText(storyData.stories[storyData.now_story_number].serifs[serif_number].serif));
             }
-        }
-        if (storyData.stories[storyData.now_story_number].serifs.Length -1 < serif_number)
-        {
-            sceneData.next_scene_number = 1;
+            }
         }
     }
 

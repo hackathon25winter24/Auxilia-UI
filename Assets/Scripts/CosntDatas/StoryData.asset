@@ -26,5 +26,10 @@ MonoBehaviour:
       character_move: 0
       name: ...?
       serif: "\u3042\u3001\u7533\u3057\u9045\u308C\u307E\u3057\u305F\u3002"
+    - characterID: 0
+      character_face: 0
+      character_move: 0
+      name: "\u30BD\u30D5\u30A3\u30FC"
+      serif: "\u308F\u305F\u304F\u3057\u3001\u30BD\u30D5\u30A3\u30FC\u30FB\u30DE\u30E4\u30FB\u30D5\u30ED\u30FC\u30EC\u30B9\u3068\u7533\u3057\u307E\u3059"
   - story_number: 0
     serifs: []
