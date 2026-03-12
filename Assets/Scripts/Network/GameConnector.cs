@@ -15,6 +15,7 @@ public class GameConnector : MonoBehaviour
     private UserService.UserServiceClient _userClient;
     private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
     private RoomService.RoomServiceClient _roomClient;
+    private BattleService.BattleServiceClient _battleClient;
 
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
@@ -38,6 +39,7 @@ public class GameConnector : MonoBehaviour
         _userClient = new UserService.UserServiceClient(channel);
         _roomMatchClient = new RoomMatchService.RoomMatchServiceClient(channel);
         _roomClient = new RoomService.RoomServiceClient(channel);
+        _battleClient = new BattleService.BattleServiceClient(channel);
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -229,28 +231,64 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
-{
-    try
+    public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
     {
-        var request = new JoinRoomRequest { RoomId = roomId, UserId = userId };
-        
-        // 修正点: メソッド名を JoinRoomAsync に変更
-        var response = await _roomClient.JoinRoomAsync(request);
-
-        Debug.Log($"<color=green>部屋参加成功:</color> RoomID={roomId}, UserID={userId}");
-        return response;
-    }
-    catch (RpcException e)
-    {
-        string errorMessage = e.StatusCode switch
+        try
         {
-            StatusCode.NotFound => "指定された部屋が見つかりませんでした。",
-            StatusCode.Internal => "サーバーエラーで部屋に参加できませんでした。",
-            _ => $"部屋参加エラー: {e.Status.Detail}"
-        };
-        ShowErrorMessage(errorMessage);
-        return null;
+            var request = new JoinRoomRequest { RoomId = roomId, UserId = userId };
+            
+            // 修正点: メソッド名を JoinRoomAsync に変更
+            var response = await _roomClient.JoinRoomAsync(request);
+
+            Debug.Log($"<color=green>部屋参加成功:</color> RoomID={roomId}, UserID={userId}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            string errorMessage = e.StatusCode switch
+            {
+                StatusCode.NotFound => "指定された部屋が見つかりませんでした。",
+                StatusCode.Internal => "サーバーエラーで部屋に参加できませんでした。",
+                _ => $"部屋参加エラー: {e.Status.Detail}"
+            };
+            ShowErrorMessage(errorMessage);
+            return null;
+        }
     }
-}
+
+    public async Task<GameDataResponse> GetGameData(uint roomId)
+    {
+        try
+        {
+            var request = new GetGameDataRequest { RoomId = roomId };
+            var response = await _battleClient.GetGameDataAsync(request);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ゲームデータの取得に失敗しました: {e.Status.Detail}");
+            return null;
+
+        }
+    }
+
+    public async Task<GameDataResponse> CreateGameData(uint roomID,string player1Id,string player2Id)
+    {
+        try
+        {
+            var request = new CreateGameRequest { 
+                RoomId = roomID, 
+                Player1Id = player1Id, 
+                Player2Id = player2Id 
+            };
+            var response = await _battleClient.CreateGameAsync(request);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ゲームデータの作成に失敗しました: {e.Status.Detail}");
+            return null;
+
+        }
+    }
 }

@@ -8,7 +8,7 @@ public class TestConnection : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
     {
-        await TestJoinRoom();
+        await TestGetGame();
     }
 
     // Update is called once per frame
@@ -50,6 +50,46 @@ public class TestConnection : MonoBehaviour
         {
             var result = await GC.JoinRoom(1, "f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f");
             Debug.Log("Join Room Result: " + "Success");
+        }
+    }
+    async Task TestStartGame()
+    {
+        // 例: RoomID 123, プレイヤーIDを渡して作成
+        var response = await GC.CreateGameData(1, "f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f", "7c789797-aabb-477d-962b-6bf8796a0178");
+
+        if (response != null)
+        {
+            Debug.Log($"Turn: {response.Turn}, 1P Turn?: {response.Is1PTurn}");
+            
+            // さきほど確認した通り、この時点では Characters は空(Count == 0)のはず
+            Debug.Log($"所属キャラクター数: {response.Characters.Count}");
+            
+            
+            if (response.Characters.Count == 0)
+            {
+                Debug.Log("キャラクターが未登録です。キャラクター選択画面へ移行します。");
+                // ここでキャラ選択UIを表示するなどの処理
+            }
+        }
+    }
+
+    async Task TestGetGame()
+    {
+        var response = await GC.GetGameData(1);
+
+        if (response != null)
+        {
+            Debug.Log($"Turn: {response.Turn}, 1P Turn?: {response.Is1PTurn}");
+            
+            // さきほど確認した通り、この時点では Characters は空(Count == 0)のはず
+            Debug.Log($"所属キャラクター数: {response.Characters.Count}");
+            
+            
+            if (response.Characters.Count == 0)
+            {
+                Debug.Log("キャラクターが未登録です。キャラクター選択画面へ移行します。");
+                // ここでキャラ選択UIを表示するなどの処理
+            }
         }
     }
 
