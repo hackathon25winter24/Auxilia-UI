@@ -3,21 +3,23 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 
-public class RoomUIManager : MonoBehaviour
+public class ResultUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
     public PlayerData playerData;
-    
     public void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
-            case "Back":
-                sceneData.next_scene_number = 3;
+            case "BackToHome":
+                sceneData.next_scene_number = 1;
                 break;
-            case "StartBattle":
-                sceneData.next_scene_number = 10;
+            case "BackToMatchingRoom":
+                sceneData.next_scene_number = 9;
+                break;
+            case "BackToMatching":
+                sceneData.next_scene_number = 3;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
