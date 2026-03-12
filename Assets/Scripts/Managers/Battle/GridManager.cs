@@ -1,37 +1,55 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
     public GridDataforOnline gridDataforOnline;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public Image[] grids; 
+
+    public Sprite NormalGrid;
+    public Sprite ProhibitGrid;
+    public Sprite BaseGrid;
+
     void Awake()
     {
-        gridDataforOnline.grid_state[9] = -1;
-        gridDataforOnline.grid_state[13] = -1;
-        gridDataforOnline.grid_state[26] = -1;
-        gridDataforOnline.grid_state[30] = -1;
+        for (int i = 0; i < gridDataforOnline.grid_state.Length; i++)
+        {
+            gridDataforOnline.grid_state[i] = 0;
+        }
+        gridDataforOnline.grid_state[9] = -2;
+        gridDataforOnline.grid_state[13] = -2;
+        gridDataforOnline.grid_state[16] = -1;
+        gridDataforOnline.grid_state[23] = -1;
+        gridDataforOnline.grid_state[26] = -2;
+        gridDataforOnline.grid_state[30] = -2;
     }
 
     void Start()
     {
-        for (int i = 0; i < 41; i++)
+        // データの数（grid_stateの長さ）に合わせてループ
+        for (int i = 0; i < gridDataforOnline.grid_state.Length; i++)
         {
-            if (gridDataforOnline.grid_state[i] != 0)
+            // インデックスが grids 配列の範囲内かチェック（安全策）
+            if (i < grids.Length)
             {
-                SetGrids(i);
+                SetGridVisual(i);
             }
         }
     }
 
-    public void SetGrids(int grig_number)
+    public void SetGridVisual(int grid_index)
     {
-        switch (gridDataforOnline.grid_state[grig_number])
+        // grid_stateの内容を見て、見た目を切り替える
+        switch (gridDataforOnline.grid_state[grid_index])
         {
             case -1:
-                Debug.Log("移動不能マス: ");
+                grids[grid_index].sprite = BaseGrid;
+                break;
+            case -2:
+                grids[grid_index].sprite = ProhibitGrid;
                 break;
             default:
-                Debug.Log("不明なボタン: ");
+                grids[grid_index].sprite = NormalGrid;
                 break;
         }
     }
