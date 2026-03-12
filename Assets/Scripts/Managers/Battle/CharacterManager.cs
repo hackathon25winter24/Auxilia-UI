@@ -126,10 +126,12 @@ public class CharacterManager : MonoBehaviour
             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
             break;
             default:
-            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] += -8] >= 0)
+            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] + -8] >= 0)
             {
             characters[selected_character_id].anchoredPosition += new Vector2(0, 50); 
             on_grid_number[selected_character_id] += -8;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +8] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
             }
             break;
             }
@@ -144,10 +146,12 @@ public class CharacterManager : MonoBehaviour
             case 32: case 33: case 34: case 35: case 36: case 37: case 38: case 39:
             break;
             default:
-            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] += 8] >= 0)
+            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] + 8] >= 0)
             {
             characters[selected_character_id].anchoredPosition += new Vector2(0, -50); 
             on_grid_number[selected_character_id] += 8;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -8] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
             }
             break;
             }
@@ -162,10 +166,12 @@ public class CharacterManager : MonoBehaviour
             case 7: case 15: case 23: case 31: case 39:
             break;
             default:
-            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] += 1] >= 0)
+            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] + 1] >= 0)
             {
             characters[selected_character_id].anchoredPosition += new Vector2(50, 0); 
             on_grid_number[selected_character_id] += 1;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -1] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
             }
             break;
             }
@@ -180,10 +186,12 @@ public class CharacterManager : MonoBehaviour
             case 0: case 8: case 16: case 24: case 32:
             break;
             default:
-            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] += -1] >= 0)
+            if (gridDataforOnline.grid_state[on_grid_number[selected_character_id] - 1] >= 0)
             {
             characters[selected_character_id].anchoredPosition += new Vector2(-50, 0); 
             on_grid_number[selected_character_id] += -1;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +1] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
             }
             break;
             }
