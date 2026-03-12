@@ -19,7 +19,7 @@ public class TitleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true)
+        if (inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true)
         {
             sceneData.next_scene_number = 1;
             targetUI.SetActive(false);
