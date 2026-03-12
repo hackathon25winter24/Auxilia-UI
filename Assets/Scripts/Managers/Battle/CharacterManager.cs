@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class CharacterManager : MonoBehaviour
     public bool[] character_isSelected;
     public int[] on_grid_number;
     public int selected_character_id;
+    public RectTransform AttackButton;
+    public Image AttackButtonImage;
+    public Image[] CharacterSmallwindow;
+    public Sprite[] CharacterSmallwindowImage;
 
     void Awake()
     {
@@ -28,25 +33,33 @@ public class CharacterManager : MonoBehaviour
         character_isSelected[i] = false;
         }
 
+        AttackButton.gameObject.SetActive(false);
+
         // anchoredPositionを使用して、Canvas内の相対座標で配置する
         characters[0].anchoredPosition = new Vector2(-175, 30); 
         character_image[0].sprite = Character_mini_image[battleDataforLocal.character_id1];
         on_grid_number[0] = 0;
+        CharacterSmallwindow[0].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id1];
         characters[1].anchoredPosition = new Vector2(-125, -70); 
         character_image[1].sprite = Character_mini_image[battleDataforLocal.character_id2];
         on_grid_number[1] = 17;
+        CharacterSmallwindow[1].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id2];
         characters[2].anchoredPosition = new Vector2(-175, -170); 
         character_image[2].sprite = Character_mini_image[battleDataforLocal.character_id3];
         on_grid_number[2] = 32;
+        CharacterSmallwindow[2].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id3];
         characters[3].anchoredPosition = new Vector2(175, 30); 
         character_image[3].sprite = Character_mini_image[battleDataforLocal.character_id4];
         on_grid_number[3] = 7;
+        CharacterSmallwindow[3].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id4];
         characters[4].anchoredPosition = new Vector2(125, -70); 
         character_image[4].sprite = Character_mini_image[battleDataforLocal.character_id5];
         on_grid_number[4] = 22;
+        CharacterSmallwindow[4].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id5];
         characters[5].anchoredPosition = new Vector2(175, -170); 
         character_image[5].sprite = Character_mini_image[battleDataforLocal.character_id6];
         on_grid_number[5] = 39;
+        CharacterSmallwindow[5].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id6];
 
         for (int i = 0; i <= 2; i++)
         {
@@ -78,26 +91,20 @@ public class CharacterManager : MonoBehaviour
             case "1":
             selected_character_id = 0;
             character_isSelected[selected_character_id] = true;
+            AttackButton.gameObject.SetActive(true);
+            AttackButton.anchoredPosition = characters[0].anchoredPosition + new Vector2(100, 0); 
                 break;
             case "2":
             selected_character_id = 1;
             character_isSelected[selected_character_id] = true;
+            AttackButton.gameObject.SetActive(true);
+            AttackButton.anchoredPosition = characters[1].anchoredPosition + new Vector2(100, 0); 
                 break;
             case "3":
             selected_character_id = 2;
             character_isSelected[selected_character_id] = true;
-                break;
-            case "4":
-            selected_character_id = 3;
-            character_isSelected[selected_character_id] = true;
-                break;
-            case "5":
-            selected_character_id = 4;
-            character_isSelected[selected_character_id] = true;
-                break;
-            case "6":
-            selected_character_id = 5;
-            character_isSelected[selected_character_id] = true;
+            AttackButton.gameObject.SetActive(true);
+            AttackButton.anchoredPosition = characters[2].anchoredPosition + new Vector2(100, 0); 
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -114,6 +121,7 @@ public class CharacterManager : MonoBehaviour
             for (int i = 0; i <= 5; i++)
             {
             character_isSelected[i] = false;
+            AttackButton.gameObject.SetActive(false);
             }
             }
         }
