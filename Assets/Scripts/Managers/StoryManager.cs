@@ -45,7 +45,16 @@ public class StoryManager : MonoBehaviour
         {
             if (storyData.stories[storyData.now_story_number].serifs.Length -2 < serif_number)
             {
-            sceneData.next_scene_number = 1;
+                if(serif_loading == true)
+                {
+                StopAllCoroutines();
+                Tell.text = "";
+                Tell.text = storyData.stories[storyData.now_story_number].serifs[serif_number].serif;
+                serif_loading = false;
+                }else if(serif_loading == false)
+                {
+                sceneData.next_scene_number = 1;
+                }
             }else 
             {
             if(serif_loading == true)
