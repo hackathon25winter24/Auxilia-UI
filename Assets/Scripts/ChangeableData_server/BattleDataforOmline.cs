@@ -3,7 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BattleDataforOmline", menuName = "Scriptable Objects/BattleDataforOmline")]
 public class BattleDataforOmline : ScriptableObject
 {
-    [SerializeField] CharactersBattleData[] charactersBattleDatas;
+    public CharactersBattleData[] charactersBattleDatas;
+    public int now_my_cost;
 }
 
 [System.Serializable]
@@ -11,7 +12,7 @@ public class CharactersBattleData
 {
     public int now_character_hp;
     public int now_character_maxhp;
-    public int now_character_atk;
+    public int now_character_move_cost;
     public bool is_attack_up;
     public bool is_speed_up;
     public bool is_attackcost_down;

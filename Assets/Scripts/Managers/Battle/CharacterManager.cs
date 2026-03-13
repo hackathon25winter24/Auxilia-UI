@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class CharacterManager : MonoBehaviour
     public InputData inputData;
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
+    public BattleDataforOmline battleDataforOnline;
     public Sprite[] Character_mini_image;
     public bool[] character_isSelected;
     public int[] on_grid_number;
@@ -21,6 +23,7 @@ public class CharacterManager : MonoBehaviour
     public Image[] CharacterSmallwindow;
     public Sprite[] CharacterSmallwindowImage;
     public RectTransform BackButton;
+    public TextMeshProUGUI[] CharacterHP;
 
     void Awake()
     {
@@ -64,6 +67,19 @@ public class CharacterManager : MonoBehaviour
         character_image[5].sprite = Character_mini_image[battleDataforLocal.character_id[5]];
         on_grid_number[5] = 39;
         CharacterSmallwindow[5].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id[5]];
+
+        for (int i = 0; i <= 5; i++)
+        {
+        battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
+        }
+        battleDataforOnline.now_my_cost = 50;
+
+        for (int i = 0; i <= 5; i++)
+        {
+            CharacterHP[i].text = battleDataforOnline.charactersBattleDatas[i].now_character_hp+  "/" +battleDataforOnline.charactersBattleDatas[i].now_character_maxhp;
+        }
 
         for (int i = 0; i <= 2; i++)
         {
