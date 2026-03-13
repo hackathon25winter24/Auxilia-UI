@@ -18,9 +18,11 @@ public class CharacterManager : MonoBehaviour
     public Image AttackButtonImage;
     public Image[] CharacterSmallwindow;
     public Sprite[] CharacterSmallwindowImage;
+    public RectTransform BackButton;
 
     void Awake()
     {
+        BackButton.gameObject.SetActive(false);
         // 配列が空、または要素が足りない場合の安全策
         if (characters == null || characters.Length < 6)
         {
@@ -80,28 +82,61 @@ public class CharacterManager : MonoBehaviour
 
     public void OnButtonClick(string buttonName)
     {
-        if (character_isSelected[0]) return;
-        if (character_isSelected[1]) return;
-        if (character_isSelected[2]) return;
-        if (character_isSelected[3]) return;
-        if (character_isSelected[4]) return;
-        if (character_isSelected[5]) return;
+        if (character_isSelected[0])
+        {
+            if(buttonName == "BackButton")
+            {
+            for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            AttackButton.gameObject.SetActive(false);
+            BackButton.gameObject.SetActive(false);
+            }
+            }
+        }
+        if (character_isSelected[1])
+        {
+            if(buttonName == "BackButton")
+            {
+            for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            AttackButton.gameObject.SetActive(false);
+            BackButton.gameObject.SetActive(false);
+            }
+            }
+        }
+        if (character_isSelected[2])
+        {
+            if(buttonName == "BackButton")
+            {
+            for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            AttackButton.gameObject.SetActive(false);
+            BackButton.gameObject.SetActive(false);
+            }
+            }
+        }
         switch (buttonName)
         {
             case "1":
             selected_character_id = 0;
+            BackButton.gameObject.SetActive(true);
             character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[0].anchoredPosition + new Vector2(100, 0); 
                 break;
             case "2":
             selected_character_id = 1;
+            BackButton.gameObject.SetActive(true);
             character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[1].anchoredPosition + new Vector2(100, 0); 
                 break;
             case "3":
             selected_character_id = 2;
+            BackButton.gameObject.SetActive(true);
             character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[2].anchoredPosition + new Vector2(100, 0); 
@@ -114,17 +149,6 @@ public class CharacterManager : MonoBehaviour
 
     void Update()
     {
-        if (inputData.left_mouse_button_ispressed || inputData.right_mouse_button_ispressed)
-        {
-            if(character_isSelected[0] || character_isSelected[1] || character_isSelected[2] || character_isSelected[3] || character_isSelected[4] || character_isSelected[5])
-            {
-            for (int i = 0; i <= 5; i++)
-            {
-            character_isSelected[i] = false;
-            AttackButton.gameObject.SetActive(false);
-            }
-            }
-        }
         if (inputData.up_key_ispressed)
         {
             if(character_isSelected[0] || character_isSelected[1] || character_isSelected[2] || character_isSelected[3] || character_isSelected[4] || character_isSelected[5])
