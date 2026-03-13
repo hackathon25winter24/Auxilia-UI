@@ -12,4 +12,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e90a9cbbe56a5043ac99c32bdf0fb4b, type: 3}
   m_Name: BattleDataforOmline
   m_EditorClassIdentifier: 
-  charactersBattleDatas: []
+  charactersBattleDatas:
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+  - now_character_hp: 0
+    now_character_maxhp: 0
+    now_character_atk: 0
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0

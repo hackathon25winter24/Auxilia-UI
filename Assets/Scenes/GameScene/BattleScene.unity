@@ -463,6 +463,24 @@ MonoBehaviour:
   selected_character_id: 0
   AttackButton: {fileID: 966120276}
   AttackButtonImage: {fileID: 966120274}
+  CharacterSmallwindow:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  CharacterSmallwindowImage:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
