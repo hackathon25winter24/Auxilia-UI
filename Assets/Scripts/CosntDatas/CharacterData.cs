@@ -22,6 +22,7 @@ public class CharactersData
     [SerializeField] int _default_hp;
     [SerializeField] int _default_move_cost;
     [SerializeField] Attacks[] _attacks;
+    [SerializeField] Sprite _attack_button_backimage;
 
     public string default_name
     {
@@ -52,6 +53,11 @@ public class CharactersData
     {
         get{return _attacks;}
     }
+
+    public Sprite attack_button_backimage
+    {
+        get{return _attack_button_backimage;}
+    }
 }
 
 
@@ -62,6 +68,7 @@ public class Attacks
     [SerializeField] string _default_attack_name;
     [SerializeField] int _default_attack_cost;
     [SerializeField] int _default_attack_power;
+    [SerializeField] Sprite _attack_button;
     [SerializeField] Vector2Int[] _default_attack_range;
 
     public string default_attack_name
@@ -77,6 +84,11 @@ public class Attacks
     public int default_attack_power
     {
         get{return _default_attack_power;}
+    }
+
+    public Sprite attack_button
+    {
+        get { return _attack_button; }
     }
 
     public Vector2Int[] default_attack_range
