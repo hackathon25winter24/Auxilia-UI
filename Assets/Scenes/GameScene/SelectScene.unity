@@ -128,7 +128,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5851698}
-  - component: {fileID: 5851697}
   - component: {fileID: 5851696}
   m_Layer: 0
   m_Name: SelectUIManager
@@ -152,24 +151,10 @@ MonoBehaviour:
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
-  party_move_cost: {fileID: 0}
-  FormTime: {fileID: 0}
-  start_game_text: {fileID: 0}
-  player_ui: {fileID: 0}
---- !u!114 &5851697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5851695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b801ed7c58c0348b334d0e1ec1eb99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleDataforOnline: {fileID: 0}
-  battleDataforLocal: {fileID: 0}
+  party_move_cost: {fileID: 1756608400}
+  FormTime: {fileID: 167233743}
+  start_game_text: {fileID: 2046071760}
+  player_ui: {fileID: 840944213}
 --- !u!4 &5851698
 Transform:
   m_ObjectHideFlags: 0
