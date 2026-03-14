@@ -82,6 +82,11 @@ public class CharacterManager : MonoBehaviour
 
     public void OnButtonClick(string buttonName)
     {
+        if (buttonName == "1" || buttonName == "2" || buttonName == "3" || buttonName == "BackButton")
+        {
+        DeselectAll();
+        }
+
         if (character_isSelected[0] || character_isSelected[1] || character_isSelected[2])
         {
             if(buttonName == "BackButton")
@@ -101,9 +106,7 @@ public class CharacterManager : MonoBehaviour
             }
 
             if(buttonName == "Attack1" || buttonName == "Attack2" || buttonName == "Attack3")
-    {
-        // 【修正】ここで character_isSelected を false にしない！
-        // 攻撃対象を選択し終わるまで、キャラの選択状態は維持します。
+        {
         
         AttackButton.gameObject.SetActive(false);
         if(buttonName == "Attack1") attack_number = 0;
@@ -111,8 +114,7 @@ public class CharacterManager : MonoBehaviour
         if(buttonName == "Attack3") attack_number = 2;
         
         is_attacking = true;
-        // Attack(); // Updateで毎フレーム呼ぶので、ここでは呼ばなくてもOK
-    }
+        }
         }
         if(buttonName == "BackButton")
             {
@@ -233,7 +235,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
             on_grid_number[selected_character_id] = nextY * 8 + nextX;
 
             // 新しい場所を「キャラあり」にする
-            UpdateGridState(nextX, nextY, 1);
+            UpdateGridState(nextX, nextY, -1);
 
             // 見た目の移動
             characters[selected_character_id].anchoredPosition += posDelta;
@@ -331,6 +333,8 @@ public void ConfirmAttack()
         }
     }
 
+    gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
+
     // 3. 攻撃状態の解除
     is_attacking = false;
     ClearAttackRange();
@@ -364,6 +368,25 @@ private void ProcessDeath(int targetId)
     characters[targetId].gameObject.SetActive(false);
     // グリッド上の存在情報を消す
     UpdateGridState(on_grid_number_x[targetId], on_grid_number_y[targetId], 0);
+}
+
+private void DeselectAll()
+{
+    for (int i = 0; i <= 5; i++)
+    {
+        // 1. もしそのキャラが選択中だったら、その足元のグリッドを0に戻す
+        if (character_isSelected[i])
+        {
+            gridDataforLocal.grid_character_position[on_grid_number[i]] = 0;
+        }
+        // 2. 選択フラグをすべて false にする
+        character_isSelected[i] = false;
+    }
+
+    // 攻撃状態や範囲表示もリセットしておく
+    is_attacking = false;
+    ClearAttackRange();
+    AttackButton.gameObject.SetActive(false);
 }
 
 }

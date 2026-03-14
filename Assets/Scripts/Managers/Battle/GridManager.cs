@@ -98,6 +98,10 @@ public class GridManager : MonoBehaviour
             {
                 grids[grid_index].sprite = AttackGrid;
             }
+            if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1)
+            {
+                grids[grid_index].sprite = AttackGrid;
+            }
         }
     }
     
