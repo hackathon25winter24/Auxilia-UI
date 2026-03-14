@@ -49,6 +49,26 @@ namespace Room {
     static readonly grpc::Marshaller<global::Room.JoinRoomRequest> __Marshaller_room_JoinRoomRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.JoinRoomRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Room.JoinRoomResponse> __Marshaller_room_JoinRoomResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.JoinRoomResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.LeaveRoomRequest> __Marshaller_room_LeaveRoomRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.LeaveRoomRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.LeaveRoomResponse> __Marshaller_room_LeaveRoomResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.LeaveRoomResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.ListRoomRequest> __Marshaller_room_ListRoomRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.ListRoomRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.ListRoomResponse> __Marshaller_room_ListRoomResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.ListRoomResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.EnterRingRequest> __Marshaller_room_EnterRingRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.EnterRingRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.EnterRingResponse> __Marshaller_room_EnterRingResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.EnterRingResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.LeaveRingRequest> __Marshaller_room_LeaveRingRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.LeaveRingRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.LeaveRingResponse> __Marshaller_room_LeaveRingResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.LeaveRingResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.SetReadyRequest> __Marshaller_room_SetReadyRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.SetReadyRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.SetReadyResponse> __Marshaller_room_SetReadyResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.SetReadyResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Room.JoinRoomRequest, global::Room.JoinRoomResponse> __Method_JoinRoom = new grpc::Method<global::Room.JoinRoomRequest, global::Room.JoinRoomResponse>(
@@ -57,6 +77,46 @@ namespace Room {
         "JoinRoom",
         __Marshaller_room_JoinRoomRequest,
         __Marshaller_room_JoinRoomResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.LeaveRoomRequest, global::Room.LeaveRoomResponse> __Method_LeaveRoom = new grpc::Method<global::Room.LeaveRoomRequest, global::Room.LeaveRoomResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "LeaveRoom",
+        __Marshaller_room_LeaveRoomRequest,
+        __Marshaller_room_LeaveRoomResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.ListRoomRequest, global::Room.ListRoomResponse> __Method_ListRoom = new grpc::Method<global::Room.ListRoomRequest, global::Room.ListRoomResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ListRoom",
+        __Marshaller_room_ListRoomRequest,
+        __Marshaller_room_ListRoomResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.EnterRingRequest, global::Room.EnterRingResponse> __Method_EnterRing = new grpc::Method<global::Room.EnterRingRequest, global::Room.EnterRingResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "EnterRing",
+        __Marshaller_room_EnterRingRequest,
+        __Marshaller_room_EnterRingResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.LeaveRingRequest, global::Room.LeaveRingResponse> __Method_LeaveRing = new grpc::Method<global::Room.LeaveRingRequest, global::Room.LeaveRingResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "LeaveRing",
+        __Marshaller_room_LeaveRingRequest,
+        __Marshaller_room_LeaveRingResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.SetReadyRequest, global::Room.SetReadyResponse> __Method_SetReady = new grpc::Method<global::Room.SetReadyRequest, global::Room.SetReadyResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "SetReady",
+        __Marshaller_room_SetReadyRequest,
+        __Marshaller_room_SetReadyResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -70,6 +130,36 @@ namespace Room {
     {
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::Room.JoinRoomResponse> JoinRoom(global::Room.JoinRoomRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.LeaveRoomResponse> LeaveRoom(global::Room.LeaveRoomRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.ListRoomResponse> ListRoom(global::Room.ListRoomRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.EnterRingResponse> EnterRing(global::Room.EnterRingRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.LeaveRingResponse> LeaveRing(global::Room.LeaveRingRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.SetReadyResponse> SetReady(global::Room.SetReadyRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -123,6 +213,106 @@ namespace Room {
       {
         return CallInvoker.AsyncUnaryCall(__Method_JoinRoom, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.LeaveRoomResponse LeaveRoom(global::Room.LeaveRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaveRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.LeaveRoomResponse LeaveRoom(global::Room.LeaveRoomRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_LeaveRoom, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.LeaveRoomResponse> LeaveRoomAsync(global::Room.LeaveRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaveRoomAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.LeaveRoomResponse> LeaveRoomAsync(global::Room.LeaveRoomRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_LeaveRoom, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.ListRoomResponse ListRoom(global::Room.ListRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ListRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.ListRoomResponse ListRoom(global::Room.ListRoomRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ListRoom, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.ListRoomResponse> ListRoomAsync(global::Room.ListRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ListRoomAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.ListRoomResponse> ListRoomAsync(global::Room.ListRoomRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ListRoom, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.EnterRingResponse EnterRing(global::Room.EnterRingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EnterRing(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.EnterRingResponse EnterRing(global::Room.EnterRingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_EnterRing, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.EnterRingResponse> EnterRingAsync(global::Room.EnterRingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EnterRingAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.EnterRingResponse> EnterRingAsync(global::Room.EnterRingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_EnterRing, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.LeaveRingResponse LeaveRing(global::Room.LeaveRingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaveRing(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.LeaveRingResponse LeaveRing(global::Room.LeaveRingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_LeaveRing, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.LeaveRingResponse> LeaveRingAsync(global::Room.LeaveRingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaveRingAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.LeaveRingResponse> LeaveRingAsync(global::Room.LeaveRingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_LeaveRing, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.SetReadyResponse SetReady(global::Room.SetReadyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return SetReady(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.SetReadyResponse SetReady(global::Room.SetReadyRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_SetReady, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.SetReadyResponse> SetReadyAsync(global::Room.SetReadyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return SetReadyAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.SetReadyResponse> SetReadyAsync(global::Room.SetReadyRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_SetReady, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override RoomServiceClient NewInstance(ClientBaseConfiguration configuration)
@@ -137,7 +327,12 @@ namespace Room {
     public static grpc::ServerServiceDefinition BindService(RoomServiceBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_JoinRoom, serviceImpl.JoinRoom).Build();
+          .AddMethod(__Method_JoinRoom, serviceImpl.JoinRoom)
+          .AddMethod(__Method_LeaveRoom, serviceImpl.LeaveRoom)
+          .AddMethod(__Method_ListRoom, serviceImpl.ListRoom)
+          .AddMethod(__Method_EnterRing, serviceImpl.EnterRing)
+          .AddMethod(__Method_LeaveRing, serviceImpl.LeaveRing)
+          .AddMethod(__Method_SetReady, serviceImpl.SetReady).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -148,6 +343,11 @@ namespace Room {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, RoomServiceBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_JoinRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.JoinRoomRequest, global::Room.JoinRoomResponse>(serviceImpl.JoinRoom));
+      serviceBinder.AddMethod(__Method_LeaveRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.LeaveRoomRequest, global::Room.LeaveRoomResponse>(serviceImpl.LeaveRoom));
+      serviceBinder.AddMethod(__Method_ListRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.ListRoomRequest, global::Room.ListRoomResponse>(serviceImpl.ListRoom));
+      serviceBinder.AddMethod(__Method_EnterRing, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.EnterRingRequest, global::Room.EnterRingResponse>(serviceImpl.EnterRing));
+      serviceBinder.AddMethod(__Method_LeaveRing, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.LeaveRingRequest, global::Room.LeaveRingResponse>(serviceImpl.LeaveRing));
+      serviceBinder.AddMethod(__Method_SetReady, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.SetReadyRequest, global::Room.SetReadyResponse>(serviceImpl.SetReady));
     }
 
   }
