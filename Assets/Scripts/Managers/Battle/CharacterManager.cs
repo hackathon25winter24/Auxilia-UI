@@ -5,7 +5,6 @@ using TMPro;
 
 public class CharacterManager : MonoBehaviour
 {
-    // Imageそのものよりも、位置をいじるならRectTransformで持つ方が効率的です
     public RectTransform[] characters; 
     public Image[] character_image;
     public BattleDataforLocal battleDataforLocal;
@@ -24,6 +23,7 @@ public class CharacterManager : MonoBehaviour
     public Sprite[] CharacterSmallwindowImage;
     public RectTransform BackButton;
     public TextMeshProUGUI[] CharacterHP;
+    public Slider[] hpSlider;
 
     void Awake()
     {
@@ -79,6 +79,7 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i <= 5; i++)
         {
             CharacterHP[i].text = battleDataforOnline.charactersBattleDatas[i].now_character_hp+  "/" +battleDataforOnline.charactersBattleDatas[i].now_character_maxhp;
+            SetMaxHealth(battleDataforOnline.charactersBattleDatas[i].now_character_maxhp);
         }
 
         for (int i = 0; i <= 2; i++)
@@ -262,6 +263,25 @@ public class CharacterManager : MonoBehaviour
             break;
             }
             }
+        }
+    }
+
+    // 最大HPを設定し、スライダーの最大値を合わせる
+    public void SetMaxHealth(int health)
+    {
+        for (int i = 0; i <= 5; i++)
+        {
+            hpSlider[i].maxValue = health;
+            hpSlider[i].value = health;
+        }
+    }
+
+    // 現在のHPをスライダーに反映させる
+    public void SetHealth(int health)
+    {
+        for (int i = 0; i <= 5; i++)
+        {
+            hpSlider[i].value = health;
         }
     }
 }
