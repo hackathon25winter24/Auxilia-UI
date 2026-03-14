@@ -599,6 +599,7 @@ MonoBehaviour:
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  gridDataforLocal: {fileID: 11400000, guid: f68b038995858a549a2395466e7f5f2f, type: 2}
   Character_mini_image:
   - {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
   - {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
@@ -652,6 +653,7 @@ MonoBehaviour:
   - {fileID: 491966201}
   - {fileID: 840603033}
   - {fileID: 1813632468}
+  attack_number: 0
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
@@ -4320,6 +4322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
+  gridDataforLocal: {fileID: 11400000, guid: f68b038995858a549a2395466e7f5f2f, type: 2}
   grids:
   - {fileID: 939007880}
   - {fileID: 856278059}
@@ -4364,6 +4367,7 @@ MonoBehaviour:
   NormalGrid: {fileID: 21300000, guid: ac254dacda15dd54aa83920b1a1c5ce7, type: 3}
   ProhibitGrid: {fileID: 21300000, guid: b268ad554bd093445b5460883607e06a, type: 3}
   BaseGrid: {fileID: 21300000, guid: 08e9bb45358a79e41ab9b3c6347d49b9, type: 3}
+  CharacterGrid: {fileID: 21300000, guid: 56299ae192556e04a94de1e1cb981a96, type: 3}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0
@@ -7590,7 +7594,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1870815619}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 56944129}
+        m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Attack3
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1870815619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7882,7 +7898,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1900378553}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 56944129}
+        m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Attack1
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1900378553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8002,7 +8030,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1940744645}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 56944129}
+        m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Attack2
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1940744645
 MonoBehaviour:
   m_ObjectHideFlags: 0

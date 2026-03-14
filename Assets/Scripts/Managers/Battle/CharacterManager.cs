@@ -12,6 +12,7 @@ public class CharacterManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
+    public GridDataforLocal gridDataforLocal;
     public Sprite[] Character_mini_image;
     public bool[] character_isSelected;
     public int[] on_grid_number;
@@ -24,6 +25,7 @@ public class CharacterManager : MonoBehaviour
     public RectTransform BackButton;
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
+    public int attack_number;
 
     void Awake()
     {
@@ -88,55 +90,60 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        gridDataforOnline.grid_state[0] = -1;
-        gridDataforOnline.grid_state[17] = -1;
-        gridDataforOnline.grid_state[32] = -1;
-        gridDataforOnline.grid_state[7] = -1;
-        gridDataforOnline.grid_state[22] = -1;
-        gridDataforOnline.grid_state[39] = -1;
-
-    }
-
     public void OnButtonClick(string buttonName)
     {
-        if (character_isSelected[0])
+        if (character_isSelected[0] || character_isSelected[1] || character_isSelected[2])
         {
             if(buttonName == "BackButton")
             {
             for (int i = 0; i <= 5; i++)
             {
             character_isSelected[i] = false;
+            }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
             }
+
+            if(buttonName == "Attack1")
+            {
+                for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            }
+                AttackButton.gameObject.SetActive(false);
+                attack_number = 0;
+            }
+            if(buttonName == "Attack2")
+            {
+                for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            }
+                AttackButton.gameObject.SetActive(false);
+                attack_number = 1;
+            }
+            if(buttonName == "Attack3")
+            {
+                for (int i = 0; i <= 5; i++)
+            {
+            character_isSelected[i] = false;
+            }
+                AttackButton.gameObject.SetActive(false);
+                attack_number = 2;
             }
         }
-        if (character_isSelected[1])
-        {
-            if(buttonName == "BackButton")
+        if(buttonName == "BackButton")
             {
             for (int i = 0; i <= 5; i++)
             {
             character_isSelected[i] = false;
+            }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
             }
-            }
-        }
-        if (character_isSelected[2])
-        {
-            if(buttonName == "BackButton")
-            {
-            for (int i = 0; i <= 5; i++)
-            {
-            character_isSelected[i] = false;
-            AttackButton.gameObject.SetActive(false);
-            BackButton.gameObject.SetActive(false);
-            }
-            }
-        }
+        
         switch (buttonName)
         {
             case "1":
@@ -149,6 +156,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[1].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[1].attack_button;
             AttackButtonOne[2].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[2].attack_button;
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
                 break;
             case "2":
             selected_character_id = 1;
@@ -160,6 +168,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[1].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[1].attack_button;
             AttackButtonOne[2].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[2].attack_button;
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
                 break;
             case "3":
             selected_character_id = 2;
@@ -171,6 +180,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[1].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[1].attack_button;
             AttackButtonOne[2].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[2].attack_button;
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -193,8 +203,10 @@ public class CharacterManager : MonoBehaviour
             {
             characters[selected_character_id].anchoredPosition += new Vector2(0, 50); 
             on_grid_number[selected_character_id] += -8;
-            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +8] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +8] = gridDataforOnline.sub_grid_state[on_grid_number[selected_character_id] +8];
             gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id] +8] = 0;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
             AttackButton.anchoredPosition += new Vector2(0, 50); 
             }
             break;
@@ -214,8 +226,10 @@ public class CharacterManager : MonoBehaviour
             {
             characters[selected_character_id].anchoredPosition += new Vector2(0, -50); 
             on_grid_number[selected_character_id] += 8;
-            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -8] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -8] = gridDataforOnline.sub_grid_state[on_grid_number[selected_character_id] -8];
             gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id] -8] = 0;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
             AttackButton.anchoredPosition += new Vector2(0, -50); 
             }
             break;
@@ -235,8 +249,10 @@ public class CharacterManager : MonoBehaviour
             {
             characters[selected_character_id].anchoredPosition += new Vector2(50, 0); 
             on_grid_number[selected_character_id] += 1;
-            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -1] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] -1] = gridDataforOnline.sub_grid_state[on_grid_number[selected_character_id] -1];
             gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id] -1] = 0;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
             AttackButton.anchoredPosition += new Vector2(50, 0); 
             }
             break;
@@ -256,8 +272,10 @@ public class CharacterManager : MonoBehaviour
             {
             characters[selected_character_id].anchoredPosition += new Vector2(-50, 0); 
             on_grid_number[selected_character_id] += -1;
-            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +1] = 0;
+            gridDataforOnline.grid_state[on_grid_number[selected_character_id] +1] = gridDataforOnline.sub_grid_state[on_grid_number[selected_character_id] +1];
             gridDataforOnline.grid_state[on_grid_number[selected_character_id]] = -1;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id] +1] = 0;
+            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
             AttackButton.anchoredPosition += new Vector2(-50, 0); 
             }
             break;
