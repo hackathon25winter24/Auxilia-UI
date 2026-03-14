@@ -14,32 +14,38 @@ public class BattleUIManager : MonoBehaviour
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        // 初期化処理
         for (int i = 0; i <= 5; i++)
         {
-            CharacterHP[i].text = battleDataforOnline.charactersBattleDatas[i].now_character_hp+  "/" +battleDataforOnline.charactersBattleDatas[i].now_character_maxhp;
-            SetMaxHealth(battleDataforOnline.charactersBattleDatas[i].now_character_maxhp);
+            var data = battleDataforOnline.charactersBattleDatas[i];
+            
+            // スライダーの最大値を設定
+            hpSlider[i].maxValue = data.now_character_maxhp;
+            // 現在の値をスライダーとテキストに反映
+            UpdateCharacterUI(i);
         }
     }
 
-    // 最大HPを設定し、スライダーの最大値を合わせる
-    public void SetMaxHealth(int health)
+    void Update()
     {
+        // 常に最新のデータをUIに反映
         for (int i = 0; i <= 5; i++)
         {
-            hpSlider[i].maxValue = health;
-            hpSlider[i].value = health;
+            UpdateCharacterUI(i);
         }
     }
 
-    // 現在のHPをスライダーに反映させる
-    public void SetHealth(int health)
+    // 特定のインデックス(i)のキャラクターUIを更新する専用メソッド
+    public void UpdateCharacterUI(int i)
     {
-        for (int i = 0; i <= 5; i++)
-        {
-            hpSlider[i].value = health;
-        }
+        var data = battleDataforOnline.charactersBattleDatas[i];
+        
+        // スライダーの現在値を更新（maxhpではなくhpを入れる）
+        hpSlider[i].value = data.now_character_hp;
+
+        // テキストの更新
+        CharacterHP[i].text = data.now_character_hp + "/" + data.now_character_maxhp;
     }
 }

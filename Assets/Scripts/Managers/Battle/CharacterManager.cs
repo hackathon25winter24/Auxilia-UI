@@ -174,7 +174,6 @@ public class CharacterManager : MonoBehaviour
 
     void Update()
 {
-    // 【修正】攻撃中か、キャラ選択中なら処理を続ける
     if (!AnyCharacterSelected() && !is_attacking) return;
 
     if (is_attacking) 
@@ -182,10 +181,11 @@ public class CharacterManager : MonoBehaviour
         ClearAttackRange(); 
         Attack(); 
 
-        // 【追加】左クリックで攻撃確定（例）
-        if (inputData.left_mouse_button_ispressed) {
-             is_attacking = false;
-             // 必要ならここで character_isSelected[selected_character_id] = false;
+        // 左クリックで攻撃を確定させる
+        // inputData.left_mouse_button_ispressed を使用
+        if (inputData.left_mouse_button_ispressed)
+        {
+            ConfirmAttack();
         }
     }
     else 
@@ -312,4 +312,58 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
         gridDataforLocal.grid_attack_position[i] = 0;
     }
 }
+
+public void ConfirmAttack()
+{
+    // 1. 現在の攻撃の威力を取得
+    int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
+
+    // 2. 敵キャラクター（ID: 3, 4, 5）が攻撃範囲内にいるかチェック
+    // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
+    for (int i = 3; i <= 5; i++)
+    {
+        int enemyGridIndex = on_grid_number[i];
+
+        // 敵がいるマスの攻撃フラグが 1 ならヒット！
+        if (gridDataforLocal.grid_attack_position[enemyGridIndex] == 1)
+        {
+            ApplyDamage(i, power);
+        }
+    }
+
+    // 3. 攻撃状態の解除
+    is_attacking = false;
+    ClearAttackRange();
+    
+    // UIの非表示設定など（必要に応じて）
+    BackButton.gameObject.SetActive(false);
+    for (int i = 0; i < character_isSelected.Length; i++) character_isSelected[i] = false;
+
+    Debug.Log("攻撃完了");
+}
+
+private void ApplyDamage(int targetId, int damage)
+{
+    // HPを減らす
+    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= damage;
+
+    Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
+
+    // 死亡判定
+    if (battleDataforOnline.charactersBattleDatas[targetId].now_character_hp <= 0)
+    {
+        battleDataforOnline.charactersBattleDatas[targetId].now_character_hp = 0;
+        ProcessDeath(targetId);
+    }
+}
+
+private void ProcessDeath(int targetId)
+{
+    Debug.Log($"キャラ {targetId} は倒れた！");
+    // オブジェクトを非表示にする、または墓標にするなどの演出
+    characters[targetId].gameObject.SetActive(false);
+    // グリッド上の存在情報を消す
+    UpdateGridState(on_grid_number_x[targetId], on_grid_number_y[targetId], 0);
+}
+
 }
