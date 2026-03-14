@@ -8,7 +8,8 @@ public class TestConnection : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Start()
     {
-        await TestGetGame();
+        await TestJoinRoom();
+        await TestEnterRing();
     }
 
     // Update is called once per frame
@@ -93,6 +94,17 @@ public class TestConnection : MonoBehaviour
         }
     }
 
+    async Task TestEnterRing()
+    {
+        var response = await GC.EnterRing(1,"f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f");
+        foreach (var room in response.Rooms)
+        {
+            Debug.Log($"RoomID:{room.RoomId} ,\nUserID: {room.UserId},\nready: {room.IsReady}\n");   
+        }
+
+
+        
+
+    }
+
 }
-
-

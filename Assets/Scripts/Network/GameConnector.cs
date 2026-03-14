@@ -30,6 +30,7 @@ public class GameConnector : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(this.gameObject);
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         var channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
@@ -289,6 +290,20 @@ public class GameConnector : MonoBehaviour
             ShowErrorMessage($"ゲームデータの作成に失敗しました: {e.Status.Detail}");
             return null;
 
+        }
+    }
+
+    public async Task<EnterRingResponse> EnterRing(int roomId, string userId){
+        try
+        {
+            var request = new EnterRingRequest { RoomId = roomId, UserId = userId };
+            var response = await _roomClient.EnterRingAsync(request);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"リング参加に失敗しました: {e.Status.Detail}");
+            return null;
         }
     }
 }
