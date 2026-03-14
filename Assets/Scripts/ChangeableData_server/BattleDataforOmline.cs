@@ -4,6 +4,7 @@ using UnityEngine;
 public class BattleDataforOmline : ScriptableObject
 {
     public CharactersBattleData[] charactersBattleDatas;
+    public int[] selected_character;
     public int now_my_cost;
 }
 

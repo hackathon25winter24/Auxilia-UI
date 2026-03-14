@@ -5,15 +5,21 @@ public class TitleManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
+    public PlayerData playerData;
     public Image titleImage;
     public Image rogoImage;
     public Image tap_to_startImage;
     public Sprite title_image;
     public float speed = 5.0f;
     public GameObject targetUI;
+    public GameObject login_ui;
+    public GameObject signup_ui;
+
     void Start()
     {
         titleImage.sprite = title_image;
+        login_ui.SetActive(false);
+        signup_ui.SetActive(false);
     }
 
     // Update is called once per frame
@@ -21,10 +27,10 @@ public class TitleManager : MonoBehaviour
     {
         if (inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true)
         {
-            sceneData.next_scene_number = 1;
+            login_ui.SetActive(true);
             targetUI.SetActive(false);
         }
-        if (tap_to_startImage == null) return;
+
 
         // サイン波を使用して 0.0 〜 1.0 の値を作成
         // 公式: alpha = (sin(時間 * 速度) + 1) / 2
