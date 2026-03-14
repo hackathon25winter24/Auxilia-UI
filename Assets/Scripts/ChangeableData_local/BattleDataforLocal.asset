@@ -13,9 +13,4 @@ MonoBehaviour:
   m_Name: BattleDataforLocal
   m_EditorClassIdentifier: 
   is_myturn: 0
-  character_id1: 0
-  character_id2: 0
-  character_id3: 0
-  character_id4: 0
-  character_id5: 0
-  character_id6: 0
+  character_id: 000000000100000000000000000000000000000000000000
