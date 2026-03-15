@@ -224,8 +224,7 @@ public class CharacterManager : MonoBehaviour
         {
         int worldPosX = battleDataforOnline.charactersBattleDatas[i].now_character_position.x * 50 - 175;
         int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 30;
-        characters[i].anchoredPosition
-        = new Vector2Int(worldPosX, worldPosY);
+        characters[i].anchoredPosition = new Vector2Int(worldPosX, worldPosY);
         }
     }
 
