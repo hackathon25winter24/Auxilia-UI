@@ -10,7 +10,6 @@ public class BattleUIManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
-    public GridDataforLocal gridDataforLocal;
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
     public TextMeshProUGUI[] cost;

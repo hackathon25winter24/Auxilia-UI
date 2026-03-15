@@ -12,9 +12,6 @@ public class CharacterManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
-    public GridDataforLocal gridDataforLocal;
-    public Sprite[] Character_mini_image;
-    public bool[] character_isSelected;
     public int[] on_grid_number;
     public int[] on_grid_number_x;
     public int[] on_grid_number_y;
@@ -23,7 +20,6 @@ public class CharacterManager : MonoBehaviour
     public Image AttackButtonBackImage;
     public Image[] AttackButtonOne;
     public Image[] CharacterSmallwindow;
-    public Sprite[] CharacterSmallwindowImage;
     public RectTransform BackButton;
     public int attack_number;
     public bool is_attacking;
@@ -40,7 +36,7 @@ public class CharacterManager : MonoBehaviour
 
         for (int i = 0; i <= 5; i++)
         {
-        character_isSelected[i] = false;
+        battleDataforOnline.character_isSelected[i] = false;
         }
 
         AttackButton.gameObject.SetActive(false);
@@ -73,8 +69,8 @@ public class CharacterManager : MonoBehaviour
     void SetupCharacter(int id, Vector2 pos, int gridX, int gridY)
     {
         characters[id].anchoredPosition = pos;
-        character_image[id].sprite = Character_mini_image[battleDataforLocal.character_id[id]];
-        CharacterSmallwindow[id].sprite = CharacterSmallwindowImage[battleDataforLocal.character_id[id]];
+        character_image[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_mini;
+        CharacterSmallwindow[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_smallwindow;
         on_grid_number_x[id] = gridX;
         on_grid_number_y[id] = gridY;
         on_grid_number[id] = gridY * 8 + gridX; // 1次元番号も一応同期
@@ -87,23 +83,22 @@ public class CharacterManager : MonoBehaviour
         DeselectAll();
         }
 
-        if (character_isSelected[0] || character_isSelected[1] || character_isSelected[2])
+        if (battleDataforOnline.character_isSelected[0] || battleDataforOnline.character_isSelected[1] || battleDataforOnline.character_isSelected[2])
         {
             if(buttonName == "BackButton")
             {
             for (int i = 0; i <= 5; i++)
             {
-            character_isSelected[i] = false;
+            battleDataforOnline.character_isSelected[i] = false;
             }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
             is_attacking = false;
             for (int y = 0; y < 5; y++)
             {
                 for (int x = 0; x < 8; x++)
                 {
-                gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+                gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
                 }
             }
             }
@@ -136,11 +131,10 @@ public class CharacterManager : MonoBehaviour
             {
             for (int i = 0; i <= 5; i++)
             {
-            character_isSelected[i] = false;
+            battleDataforOnline.character_isSelected[i] = false;
             }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
             }
         
         switch (buttonName)
@@ -148,7 +142,7 @@ public class CharacterManager : MonoBehaviour
             case "1":
             selected_character_id = 0;
             BackButton.gameObject.SetActive(true);
-            character_isSelected[selected_character_id] = true;
+            battleDataforOnline.character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[0].anchoredPosition + new Vector2(100, 0); 
             for (int i = 0; i <= 2; i++)
@@ -156,12 +150,11 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             case "2":
             selected_character_id = 1;
             BackButton.gameObject.SetActive(true);
-            character_isSelected[selected_character_id] = true;
+            battleDataforOnline.character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[1].anchoredPosition + new Vector2(100, 0); 
             for (int i = 0; i <= 2; i++)
@@ -169,12 +162,11 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             case "3":
             selected_character_id = 2;
             BackButton.gameObject.SetActive(true);
-            character_isSelected[selected_character_id] = true;
+            battleDataforOnline.character_isSelected[selected_character_id] = true;
             AttackButton.gameObject.SetActive(true);
             AttackButton.anchoredPosition = characters[2].anchoredPosition + new Vector2(100, 0); 
             for (int i = 0; i <= 2; i++)
@@ -182,7 +174,6 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -265,9 +256,6 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     // グリッド情報の更新を一括で行う
     void UpdateGridState(int x, int y, int state)
 {
-    // 1. Local側の更新 (1:キャラあり, 0:なし)
-    gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] = (state == -1) ? 1 : 0;
-
     // 2. Online側の更新 (-1:キャラあり, それ以外:元の地形)
     if (state == -1)
     {
@@ -283,7 +271,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
     bool AnyCharacterSelected()
     {
-        foreach (bool selected in character_isSelected) if (selected) return true;
+        foreach (bool selected in battleDataforOnline.character_isSelected) if (selected) return true;
         return false;
     }
 
@@ -307,7 +295,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
         if (targetX >= 0 && targetX < 8 && targetY >= 0 && targetY < 5)
         {
-            gridDataforLocal.grid_attack_position_y[targetY].grid_attack_position_x[targetX] = 1;
+            gridDataforOnline.grid_attack_position_y[targetY].grid_attack_position_x[targetX] = 1;
         }
     }
     }
@@ -340,7 +328,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
         {
             for (int x = 0; x < 8; x++)
             {
-            gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+            gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
             }
         }
 }
@@ -357,13 +345,11 @@ public void ConfirmAttack()
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforLocal.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
         {
             ApplyDamage(i, power);
         }
     }
-
-    gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
 
     // 3. 攻撃状態の解除
     is_attacking = false;
@@ -371,7 +357,7 @@ public void ConfirmAttack()
     
     // UIの非表示設定など（必要に応じて）
     BackButton.gameObject.SetActive(false);
-    for (int i = 0; i < character_isSelected.Length; i++) character_isSelected[i] = false;
+    for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
     Debug.Log("攻撃完了");
 }
@@ -404,13 +390,8 @@ private void DeselectAll()
 {
     for (int i = 0; i <= 5; i++)
     {
-        // 1. もしそのキャラが選択中だったら、その足元のグリッドを0に戻す
-        if (character_isSelected[i])
-        {
-            gridDataforLocal.grid_character_position_y[on_grid_number_y[i]].grid_character_position_x[on_grid_number_x[i]] = 0;
-        }
         // 2. 選択フラグをすべて false にする
-        character_isSelected[i] = false;
+        battleDataforOnline.character_isSelected[i] = false;
     }
     is_attacking = false;
     ClearAttackRange();

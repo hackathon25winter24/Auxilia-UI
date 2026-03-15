@@ -7,6 +7,7 @@ public class BattleDataforOmline : ScriptableObject
     public int[] selected_character;
     public int now_my_cost;
     public int now_enemy_cost;
+    public bool[] character_isSelected;
 }
 
 [System.Serializable]
