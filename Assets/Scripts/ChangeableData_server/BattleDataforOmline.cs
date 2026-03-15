@@ -11,6 +11,7 @@ public class BattleDataforOmline : ScriptableObject
     public int my_player_id;
     public bool game_end;
     public int win_player_id;
+    public int all_move_cost;
 }
 
 [System.Serializable]
