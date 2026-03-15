@@ -151,10 +151,14 @@ MonoBehaviour:
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
+  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   party_move_cost: {fileID: 1756608400}
   FormTime: {fileID: 167233743}
   start_game_text: {fileID: 2046071760}
+  timertext: {fileID: 167233743}
   player_ui: {fileID: 840944213}
+  maxTime: 100
 --- !u!4 &5851698
 Transform:
   m_ObjectHideFlags: 0
