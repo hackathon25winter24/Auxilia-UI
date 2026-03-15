@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 989f56772644e4871ae17e8a2b6951a3
+guid: 5e6ea8edf1e93a64ab78d01f2d96a50c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5361337408296555133
-    second: aoi_one_0
+      213: 4973062987614131279
+    second: Status_nadia_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: aoi_one_0
+      name: Status_nadia_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2560
-        height: 1440
+        width: 1400
+        height: 1400
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 38d68716804b895b0800000000000000
-      internalID: -5361337408296555133
+      spriteID: f441266507ed30540800000000000000
+      internalID: 4973062987614131279
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      aoi_one_0: -5361337408296555133
+      Status_nadia_0: 4973062987614131279
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

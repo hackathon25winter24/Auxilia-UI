@@ -2204,14 +2204,14 @@ MonoBehaviour:
   CharacterImage: {fileID: 472281390}
   Sophie: {fileID: 21300000, guid: ce1780b6a49ea524ea5cb6a377e398f8, type: 3}
   Shincho: {fileID: 21300000, guid: 23d28333ff07e26449540cdd9507602a, type: 3}
-  Aoi: {fileID: 21300000, guid: 4409d9fde17b36e469ca85a8b6f2f7fc, type: 3}
+  Aoi: {fileID: 21300000, guid: 989f56772644e4871ae17e8a2b6951a3, type: 3}
   Berenice: {fileID: 21300000, guid: 5bf0d7b9d22fc744194e08dc50857ce5, type: 3}
-  Chiyo: {fileID: 21300000, guid: 9324b25e7b561004e8d845090a3aeca6, type: 3}
+  Chiyo: {fileID: 21300000, guid: 96dd63c2cbe6ad84b9229c5070b38a42, type: 3}
   Jude: {fileID: 21300000, guid: 4bd2e609981c961448e98e0d7dd7707a, type: 3}
   Nadia: {fileID: 21300000, guid: 56d8bbabda7abe742bfa1bfe68113e1b, type: 3}
   Sena: {fileID: 21300000, guid: cf4697800d5b8e64397536040f6ed249, type: 3}
   Tsukiha: {fileID: 21300000, guid: 32fd8ffc9e56f964fb3c7da76d81e6e2, type: 3}
-  Zina: {fileID: 21300000, guid: 0ddcd84c7c491e54a81c2f2087f2cd21, type: 3}
+  Zina: {fileID: 21300000, guid: 1a83532e305104e5e9250849fde44ece, type: 3}
   Player_icon: {fileID: 963515522}
   HomeCharacter_icon: {fileID: 276169486}
   First_squad_user: {fileID: 21300000, guid: 92b6dbdb5191c9744a093240dfb3d6ab, type: 3}

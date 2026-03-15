@@ -4,9 +4,8 @@ using UnityEngine.UI;
 public class GridManager : MonoBehaviour
 {
     public GridDataforOnline gridDataforOnline;
-    public GridDataforLocal gridDataforLocal;
+    public BattleDataforOmline battleDataforOnline;
     public Image[] grids; 
-
     public Sprite NormalGrid;
     public Sprite ProhibitGrid;
     public Sprite BaseGrid;
@@ -24,18 +23,14 @@ public class GridManager : MonoBehaviour
             if (gridDataforOnline.sub_grid_state_y[y] == null)
             gridDataforOnline.sub_grid_state_y[y] = new Sub_grid_state_y();
 
-            if (gridDataforLocal.grid_character_position_y[y] == null)
-            gridDataforLocal.grid_character_position_y[y] = new Grid_character_position_y();
-
-            if (gridDataforLocal.grid_attack_position_y[y] == null)
-            gridDataforLocal.grid_attack_position_y[y] = new Grid_attack_position_y();
+            if (gridDataforOnline.grid_attack_position_y[y] == null)
+            gridDataforOnline.grid_attack_position_y[y] = new Grid_attack_position_y();
 
             for (int x = 0; x < 8; x++)
             {
                 gridDataforOnline.grid_state_y[y].grid_state_x[x] = 0;
                 gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 0;
-                gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] = 0;
-                gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+                gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
             }
         }
         
@@ -93,13 +88,16 @@ public class GridManager : MonoBehaviour
         }
 
         // 2. キャラクター位置の反映 (上書き)
-        if (gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] == 1)
+        for(int i = 0; i <= 5; i++)
         {
-            grids[grid_index].sprite = CharacterGrid;
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataforOnline.character_isSelected[i])
+        {
+            grids[battleDataforOnline.charactersBattleDatas[i].now_character_position.x + battleDataforOnline.charactersBattleDatas[i].now_character_position.y * 8].sprite = CharacterGrid;
+        }
         }
 
         // 3. 攻撃範囲の反映
-        if (gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
         {
             // 地形が 0 (通常) の時だけ攻撃色にする
             if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == 0)
