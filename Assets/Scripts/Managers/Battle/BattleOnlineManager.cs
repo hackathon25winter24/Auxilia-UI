@@ -19,10 +19,7 @@ public class BattleOnlineManager : MonoBehaviour
 
     void Start()
     {
-        currentTime = maxTime;
-        timerSlider.maxValue = maxTime;
-        timerSlider.value = maxTime;
-        isTimerRunning = true;
+        TimerStart();
     }
 
     void Update()
@@ -36,22 +33,12 @@ public class BattleOnlineManager : MonoBehaviour
         {
             sceneData.next_scene_number = 6;
         }
-    }
 
-    void StartMyTurn()
-    {
-        battleDataforLocal.is_myturn = true;
-        battleDataforLocal.now_my_cost = 50;
-        TimerStart();
-    }
+        if (battleDataforOnline.game_end)
+        {
+            sceneData.next_scene_number = 6;
+        }
 
-    void EndMyTurn()
-    {
-        battleDataforLocal.is_myturn = false;
-    }
-
-    void TimerStart()
-    {
         if (isTimerRunning)
         {
             if (currentTime > 0)
@@ -71,8 +58,45 @@ public class BattleOnlineManager : MonoBehaviour
         }
     }
 
+    public void StartMyTurn()
+    {
+        battleDataforLocal.is_myturn = true;
+        battleDataforOnline.now_my_cost = 50;
+        TimerStart();
+    }
+
+    public void EndMyTurn()
+    {
+        battleDataforLocal.is_myturn = false;
+        StartOpponentTurn();
+    }
+
+    public void StartOpponentTurn()
+    {
+        TimerStart();
+    }
+
+    public void EntOpponentTurn()
+    {
+        StartMyTurn();
+    }
+
+    void TimerStart()
+    {
+        currentTime = maxTime;
+        timerSlider.maxValue = maxTime;
+        timerSlider.value = maxTime;
+        isTimerRunning = true;
+    }
+
     void OnTimeUp()
     {
-        EndMyTurn();
+        if (battleDataforLocal.is_myturn)
+        {
+            EndMyTurn();
+        }else
+        {
+            EntOpponentTurn();
+        }
     }
 }
