@@ -23,4 +23,5 @@ public class CharactersBattleData
     public bool is_speed_down;
     public bool is_attackcost_up;
     public bool is_bleeding;
+    public Vector2Int now_character_position;
 }
