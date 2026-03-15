@@ -108,16 +108,29 @@ public class CharacterManager : MonoBehaviour
             }
             }
 
-            if(buttonName == "Attack1" || buttonName == "Attack2" || buttonName == "Attack3")
+        if(buttonName == "Attack1") 
         {
-        
-        AttackButton.gameObject.SetActive(false);
-        if(buttonName == "Attack1") attack_number = 0;
-        if(buttonName == "Attack2") attack_number = 1;
-        if(buttonName == "Attack3") attack_number = 2;
-        
-        is_attacking = true;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            AttackButton.gameObject.SetActive(false);
+            attack_number = 0;
+            is_attacking = true;
         }
+        if(buttonName == "Attack2") 
+        {
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            AttackButton.gameObject.SetActive(false);
+            attack_number = 1;
+            is_attacking = true;
+        }
+        if(buttonName == "Attack3") 
+        {
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            AttackButton.gameObject.SetActive(false);
+            attack_number = 2;
+            is_attacking = true;
+        }
+        
+        
         }
         if(buttonName == "BackButton")
             {
@@ -187,7 +200,6 @@ public class CharacterManager : MonoBehaviour
         Attack(); 
 
         // 左クリックで攻撃を確定させる
-        // inputData.left_mouse_button_ispressed を使用
         if (inputData.left_mouse_button_ispressed)
         {
             ConfirmAttack();
@@ -203,7 +215,7 @@ public class CharacterManager : MonoBehaviour
     }
 }
 
-// 【修正】より正確な回転ロジック
+// 回転ロジック
 private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 {
     if (dir == Vector2Int.right) return range; 
@@ -224,6 +236,9 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
     if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;
 
+    if(battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost <0)
+    return;
+
     // 進入可能かチェック (Online側のデータを見る)
     if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
     {
@@ -241,6 +256,9 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
         // 見た目の移動
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
+
+        int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
+        battleDataforOnline.now_my_cost -= cost;
     }
 }
 
@@ -259,7 +277,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     {
         // キャラが去った後は、保存しておいた元の地形(sub_grid_state)を復元する
         gridDataforOnline.grid_state_y[y].grid_state_x[x] = 
-            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x];
+        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x];
     }
 }
 
