@@ -58,25 +58,25 @@ public class BattleOnlineManager : MonoBehaviour
         }
     }
 
-    void StartMyTurn()
+    public void StartMyTurn()
     {
         battleDataforLocal.is_myturn = true;
         battleDataforOnline.now_my_cost = 50;
         TimerStart();
     }
 
-    void EndMyTurn()
+    public void EndMyTurn()
     {
         battleDataforLocal.is_myturn = false;
         StartOpponentTurn();
     }
 
-    void StartOpponentTurn()
+    public void StartOpponentTurn()
     {
         TimerStart();
     }
 
-    void EntOpponentTurn()
+    public void EntOpponentTurn()
     {
         StartMyTurn();
     }

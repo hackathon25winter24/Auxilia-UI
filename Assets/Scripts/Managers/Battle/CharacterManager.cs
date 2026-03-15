@@ -126,8 +126,8 @@ public class CharacterManager : MonoBehaviour
             is_attacking = true;
         }
         
-        
         }
+
         if(buttonName == "BackButton")
             {
             for (int i = 0; i <= 5; i++)
@@ -183,7 +183,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     void Update()
-{
+    {
     if (!AnyCharacterSelected() && !is_attacking) return;
 
     if (is_attacking) 
@@ -211,11 +211,27 @@ public class CharacterManager : MonoBehaviour
     battleDataforOnline.charactersBattleDatas[i].now_character_position
      = new Vector2Int(on_grid_number_x[i],on_grid_number_y[i]);
     }
-}
 
-// 回転ロジック
-private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
-{
+    if (battleDataforLocal.is_myturn == false)
+    {
+        UpdateCharacterPosition();
+    }
+    }
+
+    public void UpdateCharacterPosition()
+    {
+    for (int i = 3; i <= 5; i++)
+        {
+        int worldPosX = battleDataforOnline.charactersBattleDatas[i].now_character_position.x * 50 - 175;
+        int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 30;
+        characters[i].anchoredPosition
+        = new Vector2Int(worldPosX, worldPosY);
+        }
+    }
+
+    // 回転ロジック
+    private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
+    {
     if (dir == Vector2Int.right) return range; 
     if (dir == Vector2Int.left)  return new Vector2Int(-range.x, -range.y); 
     
@@ -225,10 +241,10 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     if (dir == Vector2Int.down)  return new Vector2Int(-range.y, range.x); 
 
     return range;
-}
+    }
 
     void TryMove(int moveX, int moveY, Vector2 posDelta)
-{
+    {
     int nextX = on_grid_number_x[selected_character_id] + moveX;
     int nextY = on_grid_number_y[selected_character_id] + moveY;
 
@@ -251,18 +267,17 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
         // B. 新しい場所（移動先）を「キャラあり」状態にする
         UpdateGridState(nextX, nextY, -1);
 
-        // 見た目の移動
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
 
         int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
         battleDataforOnline.now_my_cost -= cost;
     }
-}
+    }
 
     // グリッド情報の更新を一括で行う
     void UpdateGridState(int x, int y, int state)
-{
+    {
     // 2. Online側の更新 (-1:キャラあり, それ以外:元の地形)
     if (state == -1)
     {
@@ -274,7 +289,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
         gridDataforOnline.grid_state_y[y].grid_state_x[x] = 
         gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x];
     }
-}
+    }
 
     bool AnyCharacterSelected()
     {
@@ -330,7 +345,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     }
 
     public void ClearAttackRange()
-{
+    {
     for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
@@ -338,10 +353,10 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
             gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
             }
         }
-}
+    }
 
-public void ConfirmAttack()
-{
+    public void ConfirmAttack()
+    {
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     battleDataforOnline.now_my_cost -= cost;
     // 1. 現在の攻撃の威力を取得
@@ -367,10 +382,10 @@ public void ConfirmAttack()
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
     Debug.Log("攻撃完了");
-}
+    }
 
-private void ApplyDamage(int targetId, int damage)
-{
+    private void ApplyDamage(int targetId, int damage)
+    {
     // HPを減らす
     battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= damage;
 
@@ -382,19 +397,19 @@ private void ApplyDamage(int targetId, int damage)
         battleDataforOnline.charactersBattleDatas[targetId].now_character_hp = 0;
         ProcessDeath(targetId);
     }
-}
+    }
 
-private void ProcessDeath(int targetId)
-{
+    private void ProcessDeath(int targetId)
+    {
     Debug.Log($"キャラ {targetId} は倒れた！");
     // オブジェクトを非表示にする、または墓標にするなどの演出
     characters[targetId].gameObject.SetActive(false);
     // グリッド上の存在情報を消す
     UpdateGridState(on_grid_number_x[targetId], on_grid_number_y[targetId], 0);
-}
+    }
 
-private void DeselectAll()
-{
+    private void DeselectAll()
+    {
     for (int i = 0; i <= 5; i++)
     {
         // 2. 選択フラグをすべて false にする
@@ -403,5 +418,5 @@ private void DeselectAll()
     is_attacking = false;
     ClearAttackRange();
     AttackButton.gameObject.SetActive(false);
-}
+    }
 }
