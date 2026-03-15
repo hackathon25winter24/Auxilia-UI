@@ -261,6 +261,14 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateEnter());
                 BigBackButton.gameObject.SetActive(false);
                 break;
+            case "CharacterStates":
+                isPlayerNameRemain = false;
+                StartCoroutine(AnimateCharacterUIExit(7));
+                break;
+            case "CharacterFormation":
+                isPlayerNameRemain = false;
+                StartCoroutine(AnimateCharacterUIExit(4));
+                break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;

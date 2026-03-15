@@ -21,10 +21,11 @@ public class MatchingUIManager : MonoBehaviour
             case "Back":
                 sceneData.next_scene_number = 1;
                 break;
-            case "Story":
-                Debug.Log("story button was plessed");
+            case "newmake":
+                sceneData.next_scene_number = 9;
                 break;
-            case "Character":
+            case "join":
+                sceneData.next_scene_number = 9;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
