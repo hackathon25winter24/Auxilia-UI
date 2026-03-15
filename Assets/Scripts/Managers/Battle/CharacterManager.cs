@@ -97,11 +97,14 @@ public class CharacterManager : MonoBehaviour
             }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
-            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
             is_attacking = false;
-            for (int i = 0; i <= 39; i++)
+            for (int y = 0; y < 5; y++)
             {
-            gridDataforLocal.grid_attack_position[i] = 0;
+                for (int x = 0; x < 8; x++)
+                {
+                gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+                }
             }
             }
 
@@ -124,7 +127,7 @@ public class CharacterManager : MonoBehaviour
             }
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
-            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
             }
         
         switch (buttonName)
@@ -140,7 +143,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             case "2":
             selected_character_id = 1;
@@ -153,7 +156,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             case "3":
             selected_character_id = 2;
@@ -166,7 +169,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 1;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 1;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -246,10 +249,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     // グリッド情報の更新を一括で行う
     void UpdateGridState(int x, int y, int state)
     {
-        int index = y * 8 + x;
-        // 1次元(Local)と2次元(Online)の両方を更新
-        gridDataforLocal.grid_character_position[index] = state;
-        // ※Online側の状態管理（-1にする等）が必要な場合はここに追加
+        gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] = state;
     }
 
     bool AnyCharacterSelected()
@@ -278,8 +278,7 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
         if (targetX >= 0 && targetX < 8 && targetY >= 0 && targetY < 5)
         {
-            int targetIndex = targetY * 8 + targetX;
-            gridDataforLocal.grid_attack_position[targetIndex] = 1;
+            gridDataforLocal.grid_attack_position_y[targetY].grid_attack_position_x[targetX] = 1;
         }
     }
     }
@@ -308,11 +307,13 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
     public void ClearAttackRange()
 {
-    // グリッド全体の攻撃フラグを0（なし）にリセット
-    for (int i = 0; i < gridDataforLocal.grid_attack_position.Length; i++)
-    {
-        gridDataforLocal.grid_attack_position[i] = 0;
-    }
+    for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+            gridDataforLocal.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+            }
+        }
 }
 
 public void ConfirmAttack()
@@ -324,16 +325,14 @@ public void ConfirmAttack()
     // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
     for (int i = 3; i <= 5; i++)
     {
-        int enemyGridIndex = on_grid_number[i];
-
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforLocal.grid_attack_position[enemyGridIndex] == 1)
+        if (gridDataforLocal.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
         {
             ApplyDamage(i, power);
         }
     }
 
-    gridDataforLocal.grid_character_position[on_grid_number[selected_character_id]] = 0;
+    gridDataforLocal.grid_character_position_y[on_grid_number_y[selected_character_id]].grid_character_position_x[on_grid_number_x[selected_character_id]] = 0;
 
     // 3. 攻撃状態の解除
     is_attacking = false;
@@ -377,7 +376,7 @@ private void DeselectAll()
         // 1. もしそのキャラが選択中だったら、その足元のグリッドを0に戻す
         if (character_isSelected[i])
         {
-            gridDataforLocal.grid_character_position[on_grid_number[i]] = 0;
+            gridDataforLocal.grid_character_position_y[on_grid_number_y[i]].grid_character_position_x[on_grid_number_x[i]] = 0;
         }
         // 2. 選択フラグをすべて false にする
         character_isSelected[i] = false;
