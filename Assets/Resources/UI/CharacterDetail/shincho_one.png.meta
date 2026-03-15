@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      shincho_one_0: 3915815009487230038
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
