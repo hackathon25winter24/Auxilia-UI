@@ -78,6 +78,7 @@ public class CharacterManager : MonoBehaviour
 
     public void OnButtonClick(string buttonName)
     {
+        if (battleDataforLocal.is_myturn == false)return;
         if (buttonName == "1" || buttonName == "2" || buttonName == "3" || buttonName == "BackButton")
         {
         DeselectAll();
