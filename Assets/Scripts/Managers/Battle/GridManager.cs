@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class GridManager : MonoBehaviour
 {
     public GridDataforOnline gridDataforOnline;
+    public BattleDataforOmline battleDataforOnline;
     public Image[] grids; 
     public Sprite NormalGrid;
     public Sprite ProhibitGrid;
@@ -87,9 +88,12 @@ public class GridManager : MonoBehaviour
         }
 
         // 2. キャラクター位置の反映 (上書き)
-        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1)
+        for(int i = 0; i <= 5; i++)
         {
-            grids[grid_index].sprite = CharacterGrid;
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataforOnline.character_isSelected[i])
+        {
+            grids[battleDataforOnline.charactersBattleDatas[i].now_character_position.x + battleDataforOnline.charactersBattleDatas[i].now_character_position.y * 8].sprite = CharacterGrid;
+        }
         }
 
         // 3. 攻撃範囲の反映

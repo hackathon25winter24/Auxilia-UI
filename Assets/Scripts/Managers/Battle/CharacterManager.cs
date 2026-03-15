@@ -204,6 +204,12 @@ public class CharacterManager : MonoBehaviour
         else if (inputData.right_key_ispressed) TryMove(1, 0, new Vector2(50, 0));
         else if (inputData.left_key_ispressed)  TryMove(-1, 0, new Vector2(-50, 0));
     }
+
+    for (int i = 0; i <= 5; i++)
+    {
+    battleDataforOnline.charactersBattleDatas[i].now_character_position
+     = new Vector2Int(on_grid_number_x[i],on_grid_number_y[i]);
+    }
 }
 
 // 回転ロジック
