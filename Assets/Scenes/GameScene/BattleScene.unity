@@ -251,7 +251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -613,6 +613,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a960522c0846b80429b90f7345017071, type: 3}
   character_isSelected: 000000000000
   on_grid_number: 000000000000000000000000000000000000000000000000
+  on_grid_number_x: 000000000000000000000000000000000000000000000000
+  on_grid_number_y: 000000000000000000000000000000000000000000000000
   selected_character_id: 0
   AttackButton: {fileID: 966120276}
   AttackButtonBackImage: {fileID: 966120274}
@@ -639,21 +641,8 @@ MonoBehaviour:
   - {fileID: -2365139385190051004, guid: ec24c88f89b81a84bb28a929f5c84c22, type: 3}
   - {fileID: 2643247969589346384, guid: 642296cb500e1f74fba8fb94e67032ff, type: 3}
   BackButton: {fileID: 712360788}
-  CharacterHP:
-  - {fileID: 1629088067}
-  - {fileID: 1433219959}
-  - {fileID: 1884490338}
-  - {fileID: 1700965990}
-  - {fileID: 847304716}
-  - {fileID: 1597985950}
-  hpSlider:
-  - {fileID: 2112868409}
-  - {fileID: 1319017722}
-  - {fileID: 316465903}
-  - {fileID: 491966201}
-  - {fileID: 840603033}
-  - {fileID: 1813632468}
   attack_number: 0
+  is_attacking: 0
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
@@ -1101,7 +1090,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 10
+  m_Value: 55
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1312,7 +1301,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1330,6 +1319,70 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435335762}
   m_CullTransparentMesh: 1
+--- !u!1 &441793169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 441793171}
+  - component: {fileID: 441793170}
+  m_Layer: 0
+  m_Name: BattleUIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &441793170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441793169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a89d29977a2d843ad164e94fc277a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
+  inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
+  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
+  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  gridDataforLocal: {fileID: 11400000, guid: f68b038995858a549a2395466e7f5f2f, type: 2}
+  CharacterHP:
+  - {fileID: 1629088067}
+  - {fileID: 1433219959}
+  - {fileID: 1884490338}
+  - {fileID: 1700965990}
+  - {fileID: 847304716}
+  - {fileID: 1597985950}
+  hpSlider:
+  - {fileID: 2112868409}
+  - {fileID: 1319017722}
+  - {fileID: 316465903}
+  - {fileID: 491966201}
+  - {fileID: 840603033}
+  - {fileID: 1813632468}
+--- !u!4 &441793171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441793169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 449.69327, y: 202.67078, z: -2.4102023}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &470910963
 GameObject:
   m_ObjectHideFlags: 0
@@ -2792,7 +2845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3599,7 +3652,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4088,7 +4141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4368,6 +4421,7 @@ MonoBehaviour:
   ProhibitGrid: {fileID: 21300000, guid: b268ad554bd093445b5460883607e06a, type: 3}
   BaseGrid: {fileID: 21300000, guid: 08e9bb45358a79e41ab9b3c6347d49b9, type: 3}
   CharacterGrid: {fileID: 21300000, guid: 56299ae192556e04a94de1e1cb981a96, type: 3}
+  AttackGrid: {fileID: 21300000, guid: 6f8673fdd312a794e9dc52e29eee1509, type: 3}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0
@@ -4665,7 +4719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4740,7 +4794,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5280,7 +5334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6507,7 +6561,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7495,7 +7549,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 872c9addcba34aa4081c9b425bbfd9d8, type: 3}
+  m_Sprite: {fileID: 6412579787547503759, guid: b81428540e9b3405b9f08994837222d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8456,7 +8510,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40eab7540a71b954494b52a34c297c42, type: 3}
+  m_Sprite: {fileID: -8794712277009861165, guid: 9ab861cf0291b4ee4a49eb3066af4ade, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8652,3 +8706,4 @@ SceneRoots:
   - {fileID: 260079060}
   - {fileID: 1061844919}
   - {fileID: 56944130}
+  - {fileID: 441793171}

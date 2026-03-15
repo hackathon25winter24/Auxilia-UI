@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BattleDataforOmline
   m_EditorClassIdentifier: 
   charactersBattleDatas:
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -24,9 +24,9 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 300
+    now_character_maxhp: 300
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -35,9 +35,9 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -57,9 +57,9 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -68,9 +68,9 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 0
-    now_character_maxhp: 0
-    now_character_move_cost: 0
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
     is_attack_up: 0
     is_speed_up: 0
     is_attackcost_down: 0
@@ -79,5 +79,5 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  selected_character: 000000000000000000000000000000000000000000000000
-  now_my_cost: 0
+  selected_character: 000000000100000000000000000000000000000000000000
+  now_my_cost: 50

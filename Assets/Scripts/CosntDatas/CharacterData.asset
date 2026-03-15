@@ -49,22 +49,22 @@ MonoBehaviour:
     - _default_attack_name: "\u6025\u8972"
       _default_attack_cost: 10
       _default_attack_power: 20
-      _attack_button: {fileID: -1708768211389677097, guid: 4b0870fa061cd724899298ab95fc5765, type: 3}
+      _attack_button: {fileID: -1708768211389677097, guid: 1783dcb18cdc74c1da9fe8efab8ae528, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
     - _default_attack_name: "\u5207\u308A\u88C2\u304D"
       _default_attack_cost: 20
       _default_attack_power: 40
-      _attack_button: {fileID: 2326456274582334177, guid: edc826ac4818d72469427e648e5a107f, type: 3}
+      _attack_button: {fileID: 2326456274582334177, guid: ac3810202edbf46fb857953b182a82fe, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
     - _default_attack_name: "\u5FDC\u6025\u624B\u5F53"
       _default_attack_cost: 30
       _default_attack_power: -20
-      _attack_button: {fileID: -1020282823678200800, guid: d67df69f5ed8fec4b85329a9126d367a, type: 3}
+      _attack_button: {fileID: -1020282823678200800, guid: 697e230460ca347f8868f4369710be6e, type: 3}
       _default_attack_range:
       - {x: 0, y: 0}
-    _attack_button_backimage: {fileID: 8082451066370681969, guid: df5028aa49634e6428b4065959e1343b, type: 3}
+    _attack_button_backimage: {fileID: 8082451066370681969, guid: 590838ee42ca1444eb2fec4ae3834e53, type: 3}
   - _default_name: Nadia
     _default_id: 1
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
