@@ -1368,7 +1368,9 @@ MonoBehaviour:
   - {fileID: 491966201}
   - {fileID: 840603033}
   - {fileID: 1813632468}
-  cost: []
+  cost:
+  - {fileID: 630293456}
+  - {fileID: 702537226}
 --- !u!4 &441793171
 Transform:
   m_ObjectHideFlags: 0
