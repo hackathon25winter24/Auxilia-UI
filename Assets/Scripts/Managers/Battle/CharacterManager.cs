@@ -217,40 +217,51 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
     return range;
 }
 
-    // 移動可能判定と実行をまとめた関数
     void TryMove(int moveX, int moveY, Vector2 posDelta)
+{
+    int nextX = on_grid_number_x[selected_character_id] + moveX;
+    int nextY = on_grid_number_y[selected_character_id] + moveY;
+
+    if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;
+
+    // 進入可能かチェック (Online側のデータを見る)
+    if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
     {
-        int nextX = on_grid_number_x[selected_character_id] + moveX;
-        int nextY = on_grid_number_y[selected_character_id] + moveY;
+        // A. 現在の場所（移動元）を元の地形に戻す
+        UpdateGridState(on_grid_number_x[selected_character_id], on_grid_number_y[selected_character_id], 0);
 
-        // 1. グリッドの範囲内かチェック
-        if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;
+        // 座標更新
+        on_grid_number_x[selected_character_id] = nextX;
+        on_grid_number_y[selected_character_id] = nextY;
+        on_grid_number[selected_character_id] = nextY * 8 + nextX;
 
-        // 2. 新しいグリッドが進入可能かチェック (修正後の構造を使用)
-        if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
-        {
-            // 現在の場所を元に戻す
-            UpdateGridState(on_grid_number_x[selected_character_id], on_grid_number_y[selected_character_id], 0);
+        // B. 新しい場所（移動先）を「キャラあり」状態にする
+        UpdateGridState(nextX, nextY, -1);
 
-            // 座標更新
-            on_grid_number_x[selected_character_id] = nextX;
-            on_grid_number_y[selected_character_id] = nextY;
-            on_grid_number[selected_character_id] = nextY * 8 + nextX;
-
-            // 新しい場所を「キャラあり」にする
-            UpdateGridState(nextX, nextY, -1);
-
-            // 見た目の移動
-            characters[selected_character_id].anchoredPosition += posDelta;
-            AttackButton.anchoredPosition += posDelta;
-        }
+        // 見た目の移動
+        characters[selected_character_id].anchoredPosition += posDelta;
+        AttackButton.anchoredPosition += posDelta;
     }
+}
 
     // グリッド情報の更新を一括で行う
     void UpdateGridState(int x, int y, int state)
+{
+    // 1. Local側の更新 (1:キャラあり, 0:なし)
+    gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] = (state == -1) ? 1 : 0;
+
+    // 2. Online側の更新 (-1:キャラあり, それ以外:元の地形)
+    if (state == -1)
     {
-        gridDataforLocal.grid_character_position_y[y].grid_character_position_x[x] = state;
+        gridDataforOnline.grid_state_y[y].grid_state_x[x] = -1;
     }
+    else
+    {
+        // キャラが去った後は、保存しておいた元の地形(sub_grid_state)を復元する
+        gridDataforOnline.grid_state_y[y].grid_state_x[x] = 
+            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x];
+    }
+}
 
     bool AnyCharacterSelected()
     {
@@ -318,6 +329,8 @@ private Vector2Int RotateRange(Vector2Int range, Vector2Int dir)
 
 public void ConfirmAttack()
 {
+    int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
+    battleDataforOnline.now_my_cost -= cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
@@ -381,11 +394,8 @@ private void DeselectAll()
         // 2. 選択フラグをすべて false にする
         character_isSelected[i] = false;
     }
-
-    // 攻撃状態や範囲表示もリセットしておく
     is_attacking = false;
     ClearAttackRange();
     AttackButton.gameObject.SetActive(false);
 }
-
 }

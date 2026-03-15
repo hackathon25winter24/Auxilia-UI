@@ -13,6 +13,7 @@ public class BattleUIManager : MonoBehaviour
     public GridDataforLocal gridDataforLocal;
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
+    public TextMeshProUGUI[] cost;
     
     void Awake()
     {
@@ -26,6 +27,9 @@ public class BattleUIManager : MonoBehaviour
             // 現在の値をスライダーとテキストに反映
             UpdateCharacterUI(i);
         }
+
+        cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
+        cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
     }
 
     void Update()
@@ -35,6 +39,8 @@ public class BattleUIManager : MonoBehaviour
         {
             UpdateCharacterUI(i);
         }
+        cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
+        cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
     }
 
     // 特定のインデックス(i)のキャラクターUIを更新する専用メソッド
@@ -47,5 +53,6 @@ public class BattleUIManager : MonoBehaviour
 
         // テキストの更新
         CharacterHP[i].text = data.now_character_hp + "/" + data.now_character_maxhp;
+
     }
 }
