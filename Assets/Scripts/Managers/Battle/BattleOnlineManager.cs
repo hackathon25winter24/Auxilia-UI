@@ -41,7 +41,7 @@ public class BattleOnlineManager : MonoBehaviour
     void StartMyTurn()
     {
         battleDataforLocal.is_myturn = true;
-        battleDataforLocal.now_my_cost = 50;
+        battleDataforOnline.now_my_cost = 50;
         TimerStart();
     }
 
