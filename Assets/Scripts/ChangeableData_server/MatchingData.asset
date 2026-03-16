@@ -13,12 +13,64 @@ MonoBehaviour:
   m_Name: MatchingData
   m_EditorClassIdentifier: 
   num_room: 10
-  room_is_selected: 01000000000000000000
-  num_room_joiner: 2
-  _joinners:
-  - name: radon
-    state: 0
-    rate: 10
-  - name: radonsub
-    state: 1
-    rate: 10
+  rooms:
+  - room_is_selected: 1
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []

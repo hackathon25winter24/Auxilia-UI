@@ -15,6 +15,19 @@ public class MatchingUIManager : MonoBehaviour
     public GameObject playerName;
     public Transform contentParentJoinner;
 
+    void Awake()
+    {
+        //ここに部屋の数を取得する関数を書いてください
+        //データはmatchingData.num_roomに格納してください
+        SetupRooms(matchingData.num_room);
+        //ここに部屋の情報を取得する関数を書いてください
+        for (int i = 0; i < matchingData.num_room; i++)
+        {
+        SetupJoinners(matchingData.rooms[i].num_room_joiner);
+        }
+        //ここに部屋の参加者の情報を取得する関数を書いてください
+    }
+
     void Start()
     {
         CreateRoomButtons(matchingData.num_room);
@@ -28,9 +41,6 @@ public class MatchingUIManager : MonoBehaviour
                 sceneData.next_scene_number = 1;
                 break;
             case "newmake":
-                sceneData.next_scene_number = 9;
-                break;
-            case "join":
                 sceneData.next_scene_number = 9;
                 break;
             case "koushin":
@@ -48,28 +58,39 @@ public class MatchingUIManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        matchingData.room_is_selected = new bool[roomCount];
-
         for (int i = 0; i < roomCount; i++)
         {
             GameObject newButton = Instantiate(roomButton, contentParent);
 
             newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"部屋 {i + 1}";
 
+            ShowRoom entity = newButton.GetComponent<ShowRoom>();
+
+        if (entity != null)
+        {
+            entity.SetRoomData(matchingData.rooms[i].room_name,
+            matchingData.rooms[i].room_host,
+            matchingData.rooms[i].room_is_gamestarted,
+            matchingData.rooms[i].num_room_joiner);
+        }
+
             int roomIndex = i; 
-            matchingData.room_is_selected[i] = false;
+            matchingData.rooms[i].room_is_selected = false;
             newButton.GetComponent<Button>().onClick.AddListener(() => OnRoomSelected(roomIndex));
         }
     }
 
-    public void CreateJoinnerNames(int joinnerCount)
+    public void CreateJoinnerNames(int roomNumber)
     {
+        int num_joinner = matchingData.rooms[roomNumber].num_room_joiner;
+        SetupJoinners(num_joinner);
+
         foreach (Transform child in contentParentJoinner)
         {
             Destroy(child.gameObject);
         }
 
-        for (int i = 0; i < joinnerCount; i++)
+        for (int i = 0; i < num_joinner; i++)
         {
             GameObject newButton = Instantiate(playerName, contentParentJoinner);
 
@@ -77,7 +98,9 @@ public class MatchingUIManager : MonoBehaviour
 
         if (entity != null)
         {
-            entity.SetRoomData(matchingData.joinners[i].name, matchingData.joinners[i].rate, matchingData.joinners[i].state);
+            entity.SetJoinnerData(matchingData.rooms[roomNumber].joinners[i].name,
+            matchingData.rooms[roomNumber].joinners[i].rate,
+            matchingData.rooms[roomNumber].joinners[i].state);
         }
 
         }
@@ -85,17 +108,39 @@ public class MatchingUIManager : MonoBehaviour
 
     void OnRoomSelected(int index)
     {
-        if (matchingData.room_is_selected[index])
+        if (matchingData.rooms[index].room_is_selected)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
+            //ここに部屋に入る関数を書いてください
+            sceneData.next_scene_number = 9;
         }else
         {
             for (int i = 0; i < matchingData.num_room; i++)
             {
-            matchingData.room_is_selected[i] = false;
+            matchingData.rooms[i].room_is_selected = false;
             }
-            matchingData.room_is_selected[index] = true;
-            CreateJoinnerNames(matchingData.num_room_joiner);
+            matchingData.rooms[index].room_is_selected = true;
+            CreateJoinnerNames(matchingData.rooms[index].num_room_joiner);
         }
+    }
+
+    public void SetupJoinners(int roomNumber)
+    {
+    matchingData.rooms[roomNumber].joinners.Clear();
+
+    for (int i = 0; i < matchingData.rooms[roomNumber].num_room_joiner; i++)
+    {
+        matchingData.rooms[roomNumber].joinners.Add(new JoinnersData()); 
+    }
+    }
+
+    public void SetupRooms(int count)
+    {
+    matchingData.rooms.Clear();
+
+    for (int i = 0; i < count; i++)
+    {
+        matchingData.rooms.Add(new RoomsData()); 
+    }
     }
 }

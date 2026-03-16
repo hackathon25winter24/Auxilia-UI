@@ -13,7 +13,7 @@ public class ShowJoinner : MonoBehaviour
     public Sprite[] StateBackImage;
 
     // データをセットするための関数を用意する
-    public void SetRoomData(string player_name, int player_rate, int state)
+    public void SetJoinnerData(string player_name, int player_rate, int state)
     {
         playerNameText.text = player_name;
         playerRateText.text = "レート：" + player_rate.ToString();
