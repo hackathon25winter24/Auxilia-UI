@@ -89,3 +89,12 @@ MonoBehaviour:
   now_my_cost: 0
   now_enemy_cost: 50
   character_isSelected: 000000000000
+  my_player_id: 0
+  game_end: 0
+  win_player_id: 1
+  all_move_cost: 0
+  opponent_name: radon_sub
+  opponent_rate: 12
+  rate: 12
+  my_rate_updown: -1
+  opponent_rate_updown: 12
