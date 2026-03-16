@@ -290,7 +290,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 150, y: 35}
-  m_SizeDelta: {x: 426, y: 214}
+  m_SizeDelta: {x: 426, y: 294}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &191431421
 MonoBehaviour:
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2972478066719127794, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -664,8 +664,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 260, y: 90}
-  m_SizeDelta: {x: 100, y: 50}
+  m_AnchoredPosition: {x: 250, y: 100}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &594783297
 MonoBehaviour:
@@ -721,7 +721,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1047,8 +1047,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4285361650
-  m_fontColor: {r: 0.9496855, g: 0.42705977, b: 0.42705977, a: 1}
+    rgba: 4294933114
+  m_fontColor: {r: 0.47843137, g: 0.47843137, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1149,6 +1149,51 @@ MonoBehaviour:
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  playerName: {fileID: 897000635}
+  myNewRate: {fileID: 1484515839}
+  MyRateUpDown: {fileID: 761715878}
+  NewRate: {fileID: 594783297}
+  RateUpDown: {fileID: 1287354970}
+  characters:
+  - {fileID: 2025594706}
+  - {fileID: 2141775460}
+  - {fileID: 1687618309}
+  - {fileID: 1789991762}
+  - {fileID: 1411209146}
+  - {fileID: 1334124818}
+  charactersFaceImage:
+  - {fileID: -2176349576800189170, guid: c6c9f3f82080d97419869b7dc75ca204, type: 3}
+  - {fileID: -3767032290567993356, guid: 605a8ac30d8c5774f93a95d7dff77960, type: 3}
+  - {fileID: -890315151483682747, guid: 989d1f2de12d2be4d966020e21d22741, type: 3}
+  - {fileID: 2742269720045207642, guid: 51f77a7edbbf4aa4bab7a3041c86d54c, type: 3}
+  - {fileID: -939691141459620176, guid: c99352fbd899cf74aac20452ec1333ce, type: 3}
+  - {fileID: 3211265273680694170, guid: b099fdb66256da94fa0b0a522a7b8cc5, type: 3}
+  - {fileID: 3449938049999031603, guid: 9a3a1949544643a45aace8115a2270b0, type: 3}
+  - {fileID: -5940655069615762119, guid: 65de8337440ced9428e804420046d7c6, type: 3}
+  - {fileID: 0}
+  - {fileID: 1311975781419735490, guid: dbb31748fdf81dc47b547307361739dd, type: 3}
+  charactersResult:
+  - {fileID: 5807676086723680668, guid: 909c834c4ce0ff841860b6061a192ee1, type: 3}
+  - {fileID: -1342272539021165802, guid: ad2be7afe73d3d04996e93d03da1fe33, type: 3}
+  - {fileID: 4253132803972995128, guid: df9d57ec54908a24599bab91bf3923bd, type: 3}
+  - {fileID: -6644232343008274144, guid: 015fa5adde186164ca3792f646bd2877, type: 3}
+  - {fileID: 4727709116607996365, guid: 9057a85a0dcc1e346b1b0c3bf90519ca, type: 3}
+  - {fileID: -8838519798667859472, guid: 5bb37eba19095724cb3b9e0d8952f260, type: 3}
+  - {fileID: -8365055415575978086, guid: 3b9199990642d70448cc82fb75637274, type: 3}
+  - {fileID: 4224830571519028647, guid: 3b7fe1c3d29ef644ea25e4a68e6f11ff, type: 3}
+  - {fileID: 0}
+  - {fileID: 3211886287304430669, guid: 52a5714823738fb4099d3c7d1dbafa99, type: 3}
+  result: {fileID: 1648592932}
+  resultImage:
+  - {fileID: 3705254718774364906, guid: 2acaf526a709bfc4e9eb28482e814c45, type: 3}
+  - {fileID: 2314594633267674750, guid: 5d2963607c702cd499a17894fec0b419, type: 3}
+  UpDown:
+  - {fileID: 191431421}
+  - {fileID: 1837249532}
+  UpDownImage:
+  - {fileID: 21300000, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
+  - {fileID: 21300000, guid: 58949ceb4e15a43408620d2a835f767f, type: 3}
 --- !u!4 &783372742
 Transform:
   m_ObjectHideFlags: 0
@@ -2105,8 +2150,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 280, y: 40}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 240, y: 40}
+  m_SizeDelta: {x: 130, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1484515839
 MonoBehaviour:
@@ -2162,7 +2207,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2733,7 +2778,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 180, y: 100}
-  m_SizeDelta: {x: 426, y: 214}
+  m_SizeDelta: {x: 426, y: 294}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1837249532
 MonoBehaviour:
@@ -2755,7 +2800,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2972478066719127794, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
