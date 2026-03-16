@@ -14,18 +14,15 @@ public class MatchingUIManager : MonoBehaviour
     public Transform contentParent;
     public GameObject playerName;
     public Transform contentParentJoinner;
+    public GameObject kensakuButton;
+    public TMP_InputField kensakuInput;
+
+    public string kensaku_room_name;
 
     void Awake()
     {
-        //ここに部屋の数を取得する関数を書いてください
-        //データはmatchingData.num_roomに格納してください
-        SetupRooms(matchingData.num_room);
-        //ここに部屋の情報を取得する関数を書いてください
-        for (int i = 0; i < matchingData.num_room; i++)
-        {
-        SetupJoinners(matchingData.rooms[i].num_room_joiner);
-        }
-        //ここに部屋の参加者の情報を取得する関数を書いてください
+        kensakuButton.SetActive(false);
+        UpDateRoomInformation();
     }
 
     void Start()
@@ -41,9 +38,20 @@ public class MatchingUIManager : MonoBehaviour
                 sceneData.next_scene_number = 1;
                 break;
             case "newmake":
+                //ここに新しく部屋をつくってそこに入る関数を書いてください
                 sceneData.next_scene_number = 9;
                 break;
             case "koushin":
+                UpDateRoomInformation();
+                break;
+            case "kensaku":
+                kensakuButton.SetActive(true);
+                break;
+            case "kensakuEnter":
+                kensaku_room_name = kensakuInput.text;
+                break;
+            case "Backfromkensaku":
+                kensakuButton.SetActive(false);
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -122,6 +130,20 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.rooms[index].room_is_selected = true;
             CreateJoinnerNames(matchingData.rooms[index].num_room_joiner);
         }
+    }
+
+    //部屋の情報を更新したいときはこのメソッドをたたいてください
+    void UpDateRoomInformation()
+    {
+        //ここに部屋の数を取得する関数を書いてください
+        //データはmatchingData.num_roomに格納してください
+        SetupRooms(matchingData.num_room);
+        //ここに部屋の情報を取得する関数を書いてください
+        for (int i = 0; i < matchingData.num_room; i++)
+        {
+        SetupJoinners(matchingData.rooms[i].num_room_joiner);
+        }
+        //ここに部屋の参加者の情報を取得する関数を書いてください
     }
 
     public void SetupJoinners(int roomNumber)
