@@ -16,7 +16,7 @@ public class ShowJoinner : MonoBehaviour
     public void SetRoomData(string player_name, int player_rate, int state)
     {
         playerNameText.text = player_name;
-        playerRateText.text = player_rate.ToString();
+        playerRateText.text = "レート：" + player_rate.ToString();
         StateIcon.sprite = StateImage[state]; 
         StateBack.sprite = StateBackImage[state];
     }
