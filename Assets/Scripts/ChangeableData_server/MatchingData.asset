@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c18351b8110879439ca78a04e31273a, type: 3}
+  m_Name: MatchingData
+  m_EditorClassIdentifier: 
+  num_room: 10
+  rooms:
+  - room_is_selected: 1
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
+  - room_is_selected: 0
+    num_room_joiner: 0
+    room_is_gamestarted: 0
+    room_host: 
+    room_name: 
+    joinners: []
