@@ -180,7 +180,9 @@ public class MatchingUIManager : MonoBehaviour
             Debug.Log("部屋名が入力されていないかユーザーIDが登録されていません");
             return;
         }
-        await gameConnector.CreateRoomMatch(room_name, ownerId, false);
+        var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
+        await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+
         sceneData.next_scene_number = 9;
     }
 }
