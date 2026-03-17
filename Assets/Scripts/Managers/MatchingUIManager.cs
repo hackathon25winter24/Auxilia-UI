@@ -25,6 +25,7 @@ public class MatchingUIManager : MonoBehaviour
     void Awake()
     {
         kensakuButton.SetActive(false);
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         UpDateRoomInformation();
     }
 
@@ -33,7 +34,6 @@ public class MatchingUIManager : MonoBehaviour
         CreateRoomButtons(matchingData.num_room);
         ownerId = playerData.user_id;
         ownerName = playerData.username;
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
     }
 
     public void OnButtonClick(string buttonName)
@@ -120,12 +120,14 @@ public class MatchingUIManager : MonoBehaviour
         }
     }
 
-    void OnRoomSelected(int index)
+    async void OnRoomSelected(int index)
     {
         if (matchingData.rooms[index].room_is_selected)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
+            await gameConnector.JoinRoom(index, playerData.user_id);
+
             sceneData.next_scene_number = 9;
         }else
         {
@@ -139,17 +141,32 @@ public class MatchingUIManager : MonoBehaviour
     }
 
     //部屋の情報を更新したいときはこのメソッドをたたいてください
-    void UpDateRoomInformation()
+    public async void UpDateRoomInformation()
     {
         //ここに部屋の数を取得する関数を書いてください
+        var room_list = await gameConnector.GetAllRoomMatch();
         //データはmatchingData.num_roomに格納してください
+        matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
         //ここに部屋の情報を取得する関数を書いてください
+
+        // List<RoomMatch> room_list に全部屋の情報が入ってます
+        // 取得例
+        for (int i = 0; i < room_list.Count; i++)
+        {
+            Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
+        }
+
         for (int i = 0; i < matchingData.num_room; i++)
         {
         SetupJoinners(matchingData.rooms[i].num_room_joiner);
         }
         //ここに部屋の参加者の情報を取得する関数を書いてください
+
+        // List<Room.Room>型で取得できます。なぜList<Room>じゃないの？？もしかしたら直すかも
+        // 取得例
+        var joiner_list = await gameConnector.ListRoom(11);
+        Debug.Log($"ユーザーID: {joiner_list[0].UserId}\n状態(0: 観戦者, 1: 1P, 2: 2P): {joiner_list[0].State}\n参加時刻: {joiner_list[0].JoinedAt}");
     }
 
     public void SetupJoinners(int roomNumber)
