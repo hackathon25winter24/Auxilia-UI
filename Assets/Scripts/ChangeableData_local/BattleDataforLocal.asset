@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bdf755e04c14c346966a3e11c25f09b, type: 3}
   m_Name: BattleDataforLocal
   m_EditorClassIdentifier: 
-  is_myturn: 0
+  is_myturn: 1
   character_id: 000000000100000000000000000000000000000000000000

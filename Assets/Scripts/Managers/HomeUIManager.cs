@@ -17,6 +17,7 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform BattleUI;
     public RectTransform CharacterUI;
     public RectTransform BigBackButton;
+    public RectTransform settingUI;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -38,6 +39,7 @@ public class HomeUIManager : MonoBehaviour
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
         BigBackButton.gameObject.SetActive(false);
+        settingUI.gameObject.SetActive(false);
     }
     IEnumerator AnimateExit()
     {
@@ -269,6 +271,23 @@ public class HomeUIManager : MonoBehaviour
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateCharacterUIExit(4));
                 break;
+            case "Setting":
+            isExiting = false;
+                settingUI.gameObject.SetActive(true);
+                break;
+            case "BackFromSetting":
+            isExiting = false;
+                settingUI.gameObject.SetActive(false);
+                break;
+            case "EndGame":
+            Application.Quit();
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+            break;
+            case "GotoTitle":
+            sceneData.next_scene_number = 0;
+            break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;

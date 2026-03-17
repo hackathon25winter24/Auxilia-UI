@@ -7,6 +7,17 @@ public class BattleDataforOmline : ScriptableObject
     public int[] selected_character;
     public int now_my_cost;
     public int now_enemy_cost;
+    public bool[] character_isSelected;
+    public int my_player_id;
+    public bool game_end;
+    public int win_player_id;
+    public int all_move_cost;
+    public string opponent_name;
+
+    public int opponent_rate;
+    public int rate;
+    public int my_rate_updown;
+    public int opponent_rate_updown;
 }
 
 [System.Serializable]

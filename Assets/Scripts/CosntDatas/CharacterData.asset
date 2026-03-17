@@ -24,12 +24,30 @@ MonoBehaviour:
     - _default_attack_name: "\u7A81\u304D\u201Dsprout\uFF5E\u82BD\u751F\u3048\uFF5E\u201D"
       _default_attack_cost: 10
       _default_attack_power: 10
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: -7753384238618468022, guid: 1bf964715377f134894fba03965ff334, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
     - _default_attack_name: "\u7BC4\u56F2\u72D9\u6483\u201Dgrowth\uFF5E\u6210\u9577\uFF5E\u201D"
       _default_attack_cost: 30
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 610908720128868772, guid: 8b147952e180b4e4d960da4781ae818e, type: 3}
       _default_attack_range:
       - {x: 3, y: 1}
@@ -38,10 +56,23 @@ MonoBehaviour:
     - _default_attack_name: "\u96C6\u4E2D\u72D9\u6483\u201Dbloom\uFF5E\u958B\u82B1\uFF5E\u201D"
       _default_attack_cost: 50
       _default_attack_power: 200
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: -7275747150402431968, guid: 868da72fb8aad51429e484c03411152e, type: 3}
       _default_attack_range:
       - {x: 3, y: 0}
     _attack_button_backimage: {fileID: 6679901996561104090, guid: ae8b2c4521dedef4285c054ecc6f5606, type: 3}
+    passive:
+    - _passive_power: 0
+      _passive_target: 0
+      _passive_range: []
   - _default_name: Jude
     _default_id: 1
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -53,22 +84,50 @@ MonoBehaviour:
     - _default_attack_name: "\u6025\u8972"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: -1708768211389677097, guid: 1783dcb18cdc74c1da9fe8efab8ae528, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
     - _default_attack_name: "\u5207\u308A\u88C2\u304D"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 2326456274582334177, guid: ac3810202edbf46fb857953b182a82fe, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
     - _default_attack_name: "\u5FDC\u6025\u624B\u5F53"
       _default_attack_cost: 30
       _default_attack_power: -20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: -1020282823678200800, guid: 697e230460ca347f8868f4369710be6e, type: 3}
       _default_attack_range:
       - {x: 0, y: 0}
     _attack_button_backimage: {fileID: 8082451066370681969, guid: 590838ee42ca1444eb2fec4ae3834e53, type: 3}
+    passive: []
   - _default_name: Nadia
     _default_id: 2
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -80,6 +139,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -89,6 +157,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -97,10 +174,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Tsukiha
     _default_id: 3
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -112,6 +199,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -121,6 +217,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -129,10 +234,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Aoi
     _default_id: 4
     _default_sprite: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
@@ -144,6 +259,15 @@ MonoBehaviour:
     - _default_attack_name: "\u6C50\u6C72\uFF5E\u3057\u304A\u304F\u307F\uFF5E"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -152,6 +276,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5973\u4F0A\u9054\uFF5E\u304A\u3093\u306A\u3060\u3066\uFF5E"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -160,6 +293,15 @@ MonoBehaviour:
     - _default_attack_name: "\u9DFA\u5A18\uFF5E\u3055\u304E\u3080\u3059\u3081\uFF5E"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -169,6 +311,7 @@ MonoBehaviour:
       - {x: 0, y: -1}
       - {x: -1, y: -1}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Sena
     _default_id: 5
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -180,6 +323,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -189,6 +341,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -197,10 +358,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Berenice
     _default_id: 6
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -212,6 +383,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -221,6 +401,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -229,10 +418,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Chiyo
     _default_id: 7
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -244,6 +443,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -253,6 +461,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -261,10 +478,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Shincho
     _default_id: 8
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -276,6 +503,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -285,6 +521,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -293,10 +538,20 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []
   - _default_name: Zina
     _default_id: 9
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -308,6 +563,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
       _default_attack_cost: 10
       _default_attack_power: 20
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
@@ -317,6 +581,15 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 1}
@@ -325,7 +598,17 @@ MonoBehaviour:
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
+      _default_attack_target: 0
+      _attack_up_probability: 0
+      _speed_up_probability: 0
+      _attackcost_down_probability: 0
+      _poison_probability: 0
+      _paralysis_probability: 0
+      _speed_down_probability: 0
+      _attackcost_up_probability: 0
+      _bleeding_probability: 0
       _attack_button: {fileID: 0}
       _default_attack_range:
       - {x: 1, y: 0}
     _attack_button_backimage: {fileID: 0}
+    passive: []

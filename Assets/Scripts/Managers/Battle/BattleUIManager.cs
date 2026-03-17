@@ -10,10 +10,13 @@ public class BattleUIManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
-    public GridDataforLocal gridDataforLocal;
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
     public TextMeshProUGUI[] cost;
+    public Image shadow;
+    public Image characterStates;
+    public RectTransform backfromStates;
+    public Sprite[] characterStatesImage;
     
     void Awake()
     {
@@ -30,6 +33,9 @@ public class BattleUIManager : MonoBehaviour
 
         cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
         cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
+        shadow.gameObject.SetActive(false);
+        characterStates.gameObject.SetActive(false);
+        backfromStates.gameObject.SetActive(false);
     }
 
     void Update()
@@ -54,5 +60,53 @@ public class BattleUIManager : MonoBehaviour
         // テキストの更新
         CharacterHP[i].text = data.now_character_hp + "/" + data.now_character_maxhp;
 
+    }
+
+        public void OnButtonClick(string buttonName)
+    {
+        switch(buttonName)
+        {
+            case "smallwindow1":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[0]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "smallwindow2":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[1]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "smallwindow3":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[2]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "smallwindow4":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[3]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "smallwindow5":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[4]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "smallwindow6":
+            characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[5]];
+            shadow.gameObject.SetActive(true);
+            characterStates.gameObject.SetActive(true);
+            backfromStates.gameObject.SetActive(true);
+                break;
+            case "backfromcharacterstates":
+            shadow.gameObject.SetActive(false);
+            characterStates.gameObject.SetActive(false);
+            backfromStates.gameObject.SetActive(false);
+                break;
+        }
     }
 }

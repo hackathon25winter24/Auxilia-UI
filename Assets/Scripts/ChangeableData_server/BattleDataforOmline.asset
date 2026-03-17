@@ -24,6 +24,7 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
   - now_character_hp: 300
     now_character_maxhp: 300
     now_character_move_cost: 10
@@ -35,6 +36,7 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -46,6 +48,7 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -57,6 +60,19 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
+  - now_character_hp: 130
+    now_character_maxhp: 150
+    now_character_move_cost: 10
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -68,16 +84,17 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-  - now_character_hp: 150
-    now_character_maxhp: 150
-    now_character_move_cost: 10
-    is_attack_up: 0
-    is_speed_up: 0
-    is_attackcost_down: 0
-    is_poison: 0
-    is_paralysis: 0
-    is_speed_down: 0
-    is_attackcost_up: 0
-    is_bleeding: 0
+    now_character_position: {x: 0, y: 0}
   selected_character: 000000000100000000000000000000000000000000000000
-  now_my_cost: 50
+  now_my_cost: 0
+  now_enemy_cost: 50
+  character_isSelected: 000000000000
+  my_player_id: 0
+  game_end: 0
+  win_player_id: 1
+  all_move_cost: 0
+  opponent_name: radon_sub
+  opponent_rate: 12
+  rate: 12
+  my_rate_updown: -1
+  opponent_rate_updown: 12
