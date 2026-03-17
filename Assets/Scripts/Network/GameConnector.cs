@@ -181,7 +181,7 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isPrivate)
+    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
     {
         try
         {
@@ -189,7 +189,7 @@ public class GameConnector : MonoBehaviour
             { 
                 RoomName = roomName, 
                 OwnerId = ownerId, 
-                IsPrivate = isPrivate 
+                IsGaming = isGaming 
             };
 
             // サーバーへ送信

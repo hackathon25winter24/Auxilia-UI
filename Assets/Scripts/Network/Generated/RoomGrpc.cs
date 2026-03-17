@@ -69,6 +69,14 @@ namespace Room {
     static readonly grpc::Marshaller<global::Room.SetReadyRequest> __Marshaller_room_SetReadyRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.SetReadyRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Room.SetReadyResponse> __Marshaller_room_SetReadyResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.SetReadyResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.UpdateRoomStateRequest> __Marshaller_room_UpdateRoomStateRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.UpdateRoomStateRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.UpdateRoomStateResponse> __Marshaller_room_UpdateRoomStateResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.UpdateRoomStateResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.StartMatchRequest> __Marshaller_room_StartMatchRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.StartMatchRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Room.StartMatchResponse> __Marshaller_room_StartMatchResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Room.StartMatchResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Room.JoinRoomRequest, global::Room.JoinRoomResponse> __Method_JoinRoom = new grpc::Method<global::Room.JoinRoomRequest, global::Room.JoinRoomResponse>(
@@ -118,6 +126,22 @@ namespace Room {
         __Marshaller_room_SetReadyRequest,
         __Marshaller_room_SetReadyResponse);
 
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.UpdateRoomStateRequest, global::Room.UpdateRoomStateResponse> __Method_UpdateRoomState = new grpc::Method<global::Room.UpdateRoomStateRequest, global::Room.UpdateRoomStateResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "UpdateRoomState",
+        __Marshaller_room_UpdateRoomStateRequest,
+        __Marshaller_room_UpdateRoomStateResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Room.StartMatchRequest, global::Room.StartMatchResponse> __Method_StartMatch = new grpc::Method<global::Room.StartMatchRequest, global::Room.StartMatchResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "StartMatch",
+        __Marshaller_room_StartMatchRequest,
+        __Marshaller_room_StartMatchResponse);
+
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
     {
@@ -160,6 +184,18 @@ namespace Room {
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::Room.SetReadyResponse> SetReady(global::Room.SetReadyRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.UpdateRoomStateResponse> UpdateRoomState(global::Room.UpdateRoomStateRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Room.StartMatchResponse> StartMatch(global::Room.StartMatchRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -313,6 +349,46 @@ namespace Room {
       {
         return CallInvoker.AsyncUnaryCall(__Method_SetReady, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.UpdateRoomStateResponse UpdateRoomState(global::Room.UpdateRoomStateRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return UpdateRoomState(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.UpdateRoomStateResponse UpdateRoomState(global::Room.UpdateRoomStateRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_UpdateRoomState, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.UpdateRoomStateResponse> UpdateRoomStateAsync(global::Room.UpdateRoomStateRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return UpdateRoomStateAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.UpdateRoomStateResponse> UpdateRoomStateAsync(global::Room.UpdateRoomStateRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_UpdateRoomState, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.StartMatchResponse StartMatch(global::Room.StartMatchRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return StartMatch(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Room.StartMatchResponse StartMatch(global::Room.StartMatchRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_StartMatch, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.StartMatchResponse> StartMatchAsync(global::Room.StartMatchRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return StartMatchAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Room.StartMatchResponse> StartMatchAsync(global::Room.StartMatchRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_StartMatch, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override RoomServiceClient NewInstance(ClientBaseConfiguration configuration)
@@ -332,7 +408,9 @@ namespace Room {
           .AddMethod(__Method_ListRoom, serviceImpl.ListRoom)
           .AddMethod(__Method_EnterRing, serviceImpl.EnterRing)
           .AddMethod(__Method_LeaveRing, serviceImpl.LeaveRing)
-          .AddMethod(__Method_SetReady, serviceImpl.SetReady).Build();
+          .AddMethod(__Method_SetReady, serviceImpl.SetReady)
+          .AddMethod(__Method_UpdateRoomState, serviceImpl.UpdateRoomState)
+          .AddMethod(__Method_StartMatch, serviceImpl.StartMatch).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -348,6 +426,8 @@ namespace Room {
       serviceBinder.AddMethod(__Method_EnterRing, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.EnterRingRequest, global::Room.EnterRingResponse>(serviceImpl.EnterRing));
       serviceBinder.AddMethod(__Method_LeaveRing, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.LeaveRingRequest, global::Room.LeaveRingResponse>(serviceImpl.LeaveRing));
       serviceBinder.AddMethod(__Method_SetReady, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.SetReadyRequest, global::Room.SetReadyResponse>(serviceImpl.SetReady));
+      serviceBinder.AddMethod(__Method_UpdateRoomState, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.UpdateRoomStateRequest, global::Room.UpdateRoomStateResponse>(serviceImpl.UpdateRoomState));
+      serviceBinder.AddMethod(__Method_StartMatch, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Room.StartMatchRequest, global::Room.StartMatchResponse>(serviceImpl.StartMatch));
     }
 
   }
