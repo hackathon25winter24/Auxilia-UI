@@ -41,7 +41,7 @@ public class MatchingUIManager : MonoBehaviour
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
                 sceneData.next_scene_number = 9;
                 break;
-            case "koushin":
+            case "ReRoad":
                 UpDateRoomInformation();
                 break;
             case "kensaku":
@@ -70,7 +70,7 @@ public class MatchingUIManager : MonoBehaviour
         {
             GameObject newButton = Instantiate(roomButton, contentParent);
 
-            newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"部屋 {i + 1}";
+            newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = matchingData.rooms[i].room_name;
 
             ShowRoom entity = newButton.GetComponent<ShowRoom>();
 
