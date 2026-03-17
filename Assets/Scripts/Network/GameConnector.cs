@@ -306,4 +306,25 @@ public class GameConnector : MonoBehaviour
             return null;
         }
     }
+
+    public async Task<List<Room.Room>> ListRoom(int roomId)
+    {
+        try
+        {
+            var request = new ListRoomRequest{RoomId = roomId};
+            var response = await _roomClient.ListRoomAsync(request);
+
+            Debug.Log($"<color=green>参加者一覧取得成功:</color> {response.Rooms.Count}件");
+            // Debug.Log($"response: {response}, Room.Room: {response.Rooms[0]}");
+            
+            // repeated フィールドは Google.Protobuf.Collections.RepeatedField として返るため
+            // List に変換して返すと扱いやすいです
+            return new List<Room.Room>(response.Rooms);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"参加者リストの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
 }
