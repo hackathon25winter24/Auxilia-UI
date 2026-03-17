@@ -106,23 +106,23 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
+            attack_number = 0;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 0;
             is_attacking = true;
         }
         if(buttonName == "Attack2") 
         {
+            attack_number = 1;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 1;
             is_attacking = true;
         }
         if(buttonName == "Attack3") 
         {
+            attack_number = 2;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 2;
             is_attacking = true;
         }
         
