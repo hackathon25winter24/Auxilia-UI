@@ -14,6 +14,8 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("通常画面")]
     public Button randomFormation;
     public Button backToTitle;
+    public TMP_Text partyHPText;
+    public TMP_Text partyMovText;
 
     [Header("パネル")]
     public GameObject characterSelectPanel;
@@ -114,6 +116,8 @@ public class CharacterSelectManager : MonoBehaviour
                 teamSlotImages[i].gameObject.SetActive(true);
             }
         }
+
+        PartyHPandMOV();
     }
 
     // スロット番号に応じた PlayerData の変数を読み込むヘルパーメソッド
@@ -200,6 +204,8 @@ public class CharacterSelectManager : MonoBehaviour
 
         characterDetailPanel.SetActive(false);
         characterSelectPanel.SetActive(false);
+
+        PartyHPandMOV();
     }
 
     void RandomFormation()
@@ -231,11 +237,26 @@ public class CharacterSelectManager : MonoBehaviour
                 teamSlotImages[i].sprite = defaultImage;
                 teamSlotImages[i].gameObject.SetActive(true);
             }
+
+            PartyHPandMOV();
         }
     }
 
     void BackToTitle()
     {
         sceneData.next_scene_number = 1;
+    }
+
+    // カスの関数でごめん
+    void PartyHPandMOV()
+    {
+        int partyHP = characterDataAsset.characters[playerData.character_formation_one].default_hp
+            + characterDataAsset.characters[playerData.character_formation_two].default_hp
+            + characterDataAsset.characters[playerData.character_formation_three].default_hp;
+        int partyMov = characterDataAsset.characters[playerData.character_formation_one].default_move_cost
+            + characterDataAsset.characters[playerData.character_formation_two].default_move_cost
+            + characterDataAsset.characters[playerData.character_formation_three].default_move_cost;
+        partyHPText.text = partyHP.ToString();
+        partyMovText.text = partyMov.ToString();
     }
 }
