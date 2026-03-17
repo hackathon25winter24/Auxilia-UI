@@ -1075,6 +1075,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275143986}
   m_CullTransparentMesh: 1
+--- !u!1 &303592203
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 303592205}
+  - component: {fileID: 303592204}
+  m_Layer: 0
+  m_Name: TutorialBattleUIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &303592204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303592203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8658c8deaf4349d4bbb0a9d2570f286a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
+  inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
+  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
+  CharacterHP:
+  - {fileID: 1629088067}
+  - {fileID: 1433219959}
+  - {fileID: 1884490338}
+  - {fileID: 1700965990}
+  - {fileID: 847304716}
+  - {fileID: 1597985950}
+  hpSlider:
+  - {fileID: 2112868409}
+  - {fileID: 1319017722}
+  - {fileID: 316465903}
+  - {fileID: 491966201}
+  - {fileID: 840603033}
+  - {fileID: 1813632468}
+  cost:
+  - {fileID: 630293456}
+  - {fileID: 702537226}
+  characterStatesImage:
+  - {fileID: 21300000, guid: a95e4ff99864a514f877be43058a903f, type: 3}
+  - {fileID: 21300000, guid: ffc341d05a042c640a01e415b78d31bb, type: 3}
+  - {fileID: 21300000, guid: 5e6ea8edf1e93a64ab78d01f2d96a50c, type: 3}
+  - {fileID: 21300000, guid: d86d970284f023e40bb724d2796b412f, type: 3}
+  - {fileID: 21300000, guid: 3885c6582e345914caea4b0547c7ec8c, type: 3}
+  - {fileID: 21300000, guid: b3149d4f081aaa742874ca014fa694ba, type: 3}
+  - {fileID: 21300000, guid: 844d76e616fda674b9b0323679b49bd7, type: 3}
+  - {fileID: 21300000, guid: ac2fa62a31842074dbd719a968bf0a24, type: 3}
+  - {fileID: 21300000, guid: c39125e17c146dd43b7aba4564ac4076, type: 3}
+  - {fileID: 21300000, guid: 6c6b145d8f69e364b957a3086594c420, type: 3}
+  characterStatus: {fileID: 1739614237}
+  characterStates: {fileID: 452606659}
+--- !u!4 &303592205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303592203}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 392.81232, y: 169.45158, z: -3.375156}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &316465901
 GameObject:
   m_ObjectHideFlags: 0
@@ -10009,3 +10087,4 @@ SceneRoots:
   - {fileID: 56944130}
   - {fileID: 441793171}
   - {fileID: 886884761}
+  - {fileID: 303592205}
