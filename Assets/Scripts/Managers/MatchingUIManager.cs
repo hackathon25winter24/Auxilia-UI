@@ -16,6 +16,9 @@ public class MatchingUIManager : MonoBehaviour
     public Transform contentParentJoinner;
     public GameObject kensakuButton;
     public TMP_InputField kensakuInput;
+    public GameConnector gameConnector;
+    public string ownerName;
+    public string ownerId;
 
     public string kensaku_room_name;
 
@@ -28,6 +31,9 @@ public class MatchingUIManager : MonoBehaviour
     void Start()
     {
         CreateRoomButtons(matchingData.num_room);
+        ownerId = playerData.user_id;
+        ownerName = playerData.username;
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
     }
 
     public void OnButtonClick(string buttonName)
@@ -39,7 +45,7 @@ public class MatchingUIManager : MonoBehaviour
                 break;
             case "newmake":
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
-                sceneData.next_scene_number = 9;
+                OnClick_CreateRoomMatch();
                 break;
             case "ReRoad":
                 UpDateRoomInformation();
@@ -164,5 +170,19 @@ public class MatchingUIManager : MonoBehaviour
     {
         matchingData.rooms.Add(new RoomsData()); 
     }
+    }
+
+    public async void OnClick_CreateRoomMatch()
+    {
+        string room_name = ownerName + "の部屋"; // ここを書き換えれば最初の部屋名が変わります
+        if (string.IsNullOrEmpty(room_name) || string.IsNullOrEmpty(ownerId))
+        {
+            Debug.Log("部屋名が入力されていないかユーザーIDが登録されていません");
+            return;
+        }
+        var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
+        await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+
+        sceneData.next_scene_number = 9;
     }
 }
