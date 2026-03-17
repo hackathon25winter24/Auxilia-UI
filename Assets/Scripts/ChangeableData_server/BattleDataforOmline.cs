@@ -18,6 +18,10 @@ public class BattleDataforOmline : ScriptableObject
     public int rate;
     public int my_rate_updown;
     public int opponent_rate_updown;
+    public int base_hp;
+    public int opponent_base_hp;
+    public Vector2Int base_position;
+    public Vector2Int opponent_base_position;
 }
 
 [System.Serializable]

@@ -371,6 +371,15 @@ public class CharacterManager : MonoBehaviour
             ApplyDamage(i, power);
         }
     }
+    if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
+    {
+        battleDataforOnline.opponent_base_hp -= power;
+        if (battleDataforOnline.opponent_base_hp <= 0)
+    {
+        battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
+        battleDataforOnline.game_end = true;
+    }
+    }
 
     // 3. 攻撃状態の解除
     is_attacking = false;
