@@ -12,6 +12,11 @@ public class RoomUIManager : MonoBehaviour
 
     public Image[] joinnersUI;
     public Sprite[] joinnersUIImage;
+
+    void Awake()
+    {
+        UpDateRoom();
+    }
     
     public void OnButtonClick(string buttonName)
     {
@@ -24,6 +29,10 @@ public class RoomUIManager : MonoBehaviour
                 sceneData.next_scene_number = 10;
                 break;
             case "ReRoad":
+                UpDateRoom();
+                break;
+            case "Spectator":
+                roomData.usersData[roomData.room_my_number].user_state = 0;
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);

@@ -12,5 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 418c93214552b60438de32050a673848, type: 3}
   m_Name: RoomData
   m_EditorClassIdentifier: 
-  usersData: []
+  usersData:
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
+  - user_name: 
+    user_rate: 0
+    is_host: 0
+    user_state: 0
   room_name: 
+  room_my_number: 0

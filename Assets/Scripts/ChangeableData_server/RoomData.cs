@@ -5,6 +5,7 @@ public class RoomData : ScriptableObject
 {
     public UsersData[] usersData;
     public string room_name;
+    public int room_my_number;
 }
 
 [System.Serializable]
