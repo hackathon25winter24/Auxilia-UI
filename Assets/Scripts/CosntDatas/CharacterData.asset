@@ -15,9 +15,9 @@ MonoBehaviour:
   _characters:
   - _default_name: Sophie
     _default_id: 0
-    _default_sprite: {fileID: 21300000, guid: e7191a992edfa1b4f8e2b3d4fa10b425, type: 3}
-    _default_sprite_mini: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
-    _default_sprite_smallwindow: {fileID: 6243996182548713461, guid: 005373198704b8341948552215cc2575, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
+    _select_image: {fileID: -4612181463540714612, guid: 3ef91d4f2681e3649b217fb243f97250, type: 3}
+    _detail_image: {fileID: 6054387925240145153, guid: f33908e385878e146a528aae2e077925, type: 3}
     _default_hp: 150
     _default_move_cost: 10
     _attacks:
@@ -75,9 +75,9 @@ MonoBehaviour:
       _passive_range: []
   - _default_name: Jude
     _default_id: 1
-    _default_sprite: {fileID: 21300000, guid: 20f7019905f9c8f438849b3a46818885, type: 3}
-    _default_sprite_mini: {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
-    _default_sprite_smallwindow: {fileID: 7971827419028771467, guid: c7b4330329114c04bbeb7737cd196093, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _select_image: {fileID: 6018669768705036611, guid: c6466b20ef3f826478bf77da6b9ac9d0, type: 3}
+    _detail_image: {fileID: 1819965903137606800, guid: 9764a0c6c095f7f4a81dc15535d8e5fe, type: 3}
     _default_hp: 300
     _default_move_cost: 10
     _attacks:
@@ -129,10 +129,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 8082451066370681969, guid: 590838ee42ca1444eb2fec4ae3834e53, type: 3}
     passive: []
   - _default_name: Nadia
-    _default_id: 1
+    _default_id: 2
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: -7827395209335436663, guid: e7e82f08eacb5454498f3caa00710af0, type: 3}
+    _detail_image: {fileID: 0}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -189,10 +189,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Tsukiha
-    _default_id: 1
+    _default_id: 3
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: 8651488872111958891, guid: 1f87728c4a4c9e94eb6d2bcc6a6dc12f, type: 3}
+    _detail_image: {fileID: 0}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -251,8 +251,8 @@ MonoBehaviour:
   - _default_name: Aoi
     _default_id: 4
     _default_sprite: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: 1695182302142793382, guid: 0fa23f44853b310459a8a38d70e9bf27, type: 3}
+    _detail_image: {fileID: 0}
     _default_hp: 250
     _default_move_cost: 10
     _attacks:
@@ -313,10 +313,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Sena
-    _default_id: 1
+    _default_id: 5
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: 1336907021764206030, guid: f16ef121a9f24ca42b10a843ee747eb7, type: 3}
+    _detail_image: {fileID: 2697861655978582065, guid: 70e54d1dd78d78e46a23715b170ca800, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -373,10 +373,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Berenice
-    _default_id: 1
+    _default_id: 6
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: -4509132481208037244, guid: 12db220d653655e4caa79651a86b7b34, type: 3}
+    _detail_image: {fileID: 0}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -433,10 +433,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Chiyo
-    _default_id: 1
+    _default_id: 7
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: 0}
+    _detail_image: {fileID: -3070752840234646761, guid: 7376e354e64dc5f40ad6c20ff9b5e166, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -493,10 +493,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Shincho
-    _default_id: 1
+    _default_id: 8
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: 0}
+    _detail_image: {fileID: 3915815009487230038, guid: 700860966cfee024881c4658b82539ec, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -553,10 +553,10 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 0}
     passive: []
   - _default_name: Zina
-    _default_id: 1
+    _default_id: 9
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _select_image: {fileID: -3138944076236679945, guid: a36032ebf2b782b49a4f19e1f3962b72, type: 3}
+    _detail_image: {fileID: 0}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:

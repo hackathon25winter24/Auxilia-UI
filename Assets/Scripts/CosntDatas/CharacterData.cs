@@ -19,6 +19,8 @@ public class CharactersData
     [SerializeField] string _default_name;
     [SerializeField] int _default_id;
     [SerializeField] Sprite _default_sprite;
+    [SerializeField] Sprite _select_image;
+    [SerializeField] Sprite _detail_image;
     [SerializeField] Sprite _default_sprite_mini;
     [SerializeField] Sprite _default_sprite_smallwindow;
     [SerializeField] int _default_hp;
@@ -42,6 +44,15 @@ public class CharactersData
         get{return _default_sprite;}
     }
 
+    public Sprite select_image
+    {
+        get { return _select_image; }
+    }
+
+    public Sprite detail_image
+    {
+        get { return _detail_image; }
+    }
     public Sprite default_sprite_mini
     {
         get{return _default_sprite_mini;}
