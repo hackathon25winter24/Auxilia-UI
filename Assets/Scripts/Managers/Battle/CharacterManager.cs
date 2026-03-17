@@ -106,23 +106,23 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
+            attack_number = 0;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 0;
             is_attacking = true;
         }
         if(buttonName == "Attack2") 
         {
+            attack_number = 1;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 1;
             is_attacking = true;
         }
         if(buttonName == "Attack3") 
         {
+            attack_number = 2;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 2;
             is_attacking = true;
         }
         
@@ -357,20 +357,64 @@ public class CharacterManager : MonoBehaviour
     public void ConfirmAttack()
     {
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
-    battleDataforOnline.now_my_cost -= cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
-    // 2. 敵キャラクター（ID: 3, 4, 5）が攻撃範囲内にいるかチェック
+    int target = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_target;
+
+    // 2. キャラクターが攻撃範囲内にいるかチェック
     // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
+    int hit_character = 0;
+    if (target == 1 || target == 2)
+    {
+    for (int i = 0; i <= 3; i++)
+    {
+        // 味方がいるマスの攻撃フラグが 1 ならヒット！
+        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        {
+            ApplyDamage(i, power);
+            hit_character++;
+        }
+    }
+    }
+
+    if (target == 0 || target == 2)
+    {
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
         if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
         {
             ApplyDamage(i, power);
+            hit_character++;
         }
     }
+    if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
+    {
+        hit_character++;
+        battleDataforOnline.opponent_base_hp -= power;
+        if (battleDataforOnline.opponent_base_hp <= 0)
+    {
+        battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
+        battleDataforOnline.game_end = true;
+    }
+    }
+    }
+
+    if (hit_character == 0)
+    {
+        //当たったキャラクターがいないときの処理を書く
+
+        // 3. 攻撃状態の解除
+    is_attacking = false;
+    ClearAttackRange();
+    
+    // UIの非表示設定など（必要に応じて）
+    BackButton.gameObject.SetActive(false);
+    for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
+    }else
+    {
+    battleDataforOnline.now_my_cost -= cost;
 
     // 3. 攻撃状態の解除
     is_attacking = false;
@@ -381,6 +425,7 @@ public class CharacterManager : MonoBehaviour
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
     Debug.Log("攻撃完了");
+    }
     }
 
     private void ApplyDamage(int targetId, int damage)

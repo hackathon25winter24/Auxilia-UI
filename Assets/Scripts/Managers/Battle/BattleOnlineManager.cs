@@ -11,6 +11,7 @@ public class BattleOnlineManager : MonoBehaviour
     public BattleDataforOmline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
     public TextMeshProUGUI gametext;
+    public RectTransform gameTextObject;
 
     public Slider timerSlider; 
     public float maxTime = 60f; 

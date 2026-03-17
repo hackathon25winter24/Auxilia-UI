@@ -98,3 +98,7 @@ MonoBehaviour:
   rate: 12
   my_rate_updown: -1
   opponent_rate_updown: 12
+  base_hp: 0
+  opponent_base_hp: 0
+  base_position: {x: 0, y: 2}
+  opponent_base_position: {x: 7, y: 2}
