@@ -41,7 +41,7 @@ public class MatchingUIManager : MonoBehaviour
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
                 sceneData.next_scene_number = 9;
                 break;
-            case "koushin":
+            case "ReRoad":
                 UpDateRoomInformation();
                 break;
             case "kensaku":
