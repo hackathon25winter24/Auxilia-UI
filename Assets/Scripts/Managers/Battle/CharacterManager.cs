@@ -360,9 +360,26 @@ public class CharacterManager : MonoBehaviour
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
-    // 2. 敵キャラクター（ID: 3, 4, 5）が攻撃範囲内にいるかチェック
+    int target = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_target;
+
+    // 2. キャラクターが攻撃範囲内にいるかチェック
     // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
     int hit_character = 0;
+    if (target == 1 || target == 2)
+    {
+    for (int i = 0; i <= 3; i++)
+    {
+        // 味方がいるマスの攻撃フラグが 1 ならヒット！
+        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        {
+            ApplyDamage(i, power);
+            hit_character++;
+        }
+    }
+    }
+
+    if (target == 0 || target == 2)
+    {
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
@@ -382,11 +399,12 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.game_end = true;
     }
     }
+    }
 
     if (hit_character == 0)
     {
         //当たったキャラクターがいないときの処理を書く
-        
+
         // 3. 攻撃状態の解除
     is_attacking = false;
     ClearAttackRange();
