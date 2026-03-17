@@ -374,6 +374,8 @@ public class CharacterManager : MonoBehaviour
         {
             ApplyDamage(i, power);
             hit_character++;
+
+            BuffDebuff(i);
         }
     }
     }
@@ -387,6 +389,8 @@ public class CharacterManager : MonoBehaviour
         {
             ApplyDamage(i, power);
             hit_character++;
+
+            BuffDebuff(i);
         }
     }
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
@@ -462,5 +466,128 @@ public class CharacterManager : MonoBehaviour
     is_attacking = false;
     ClearAttackRange();
     AttackButton.gameObject.SetActive(false);
+    }
+
+    public void BuffDebuff(int index)
+    {
+        int dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attack_up = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attack_up = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability > 0 )
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_speed_up = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_speed_up = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attackcost_down = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attackcost_down = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_poison = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_poison = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_paralysis = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_paralysis = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_speed_down = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_speed_down = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attackcost_up = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_attackcost_up = false;
+            }
+        }
+
+        dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability > 0)
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_bleeding = true;
+            }
+        }else
+        {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].is_bleeding = false;
+            }
+        }
     }
 }
