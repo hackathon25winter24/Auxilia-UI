@@ -42,7 +42,7 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
         battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
 
-        for(int j = 0; i <= 7; i++)
+        for(int j = 0; j <= 7; j++)
         {
             battleDataforOnline.charactersBattleDatas[i].debuffs[j] = false;
         }

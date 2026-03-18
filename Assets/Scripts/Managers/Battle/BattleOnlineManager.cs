@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Collections;
 
 public class BattleOnlineManager : MonoBehaviour
 {
@@ -18,9 +19,15 @@ public class BattleOnlineManager : MonoBehaviour
     private float currentTime;
     private bool isTimerRunning = false;
 
+    Vector2 startPosition = new Vector2(1000, 0);
+    Vector2 destination = new Vector2(-1000, 0);
+    public float duration = 2.0f;
+    public float elapsed = 0f;
+
     void Start()
     {
-        TimerStart();
+        gametext.text = "battle start!";
+        StartCoroutine(MoveRoutine());
     }
 
     void Update()
@@ -107,4 +114,31 @@ public class BattleOnlineManager : MonoBehaviour
             EntOpponentTurn();
         }
     }
+
+    IEnumerator MoveRoutine()
+{
+    Vector2 startPosition = gameTextObject.anchoredPosition;
+    float elapsed = 0f;
+
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration; // 0.0 ～ 1.0
+
+        // 【ここがポイント！】中間で緩やかになるカスタム曲線
+        // 3次関数を使って「S字を横に倒したような形」を作ります
+        float easedT = t * t * (3f - 2f * t); // 基本のスムーズ曲線
+        
+        // もしもっと極端に「中間で止まりそう」にしたいなら、
+        // サイン波を使って t の進み具合を調整します
+        // 下記は「0.5付近で時間の進みが遅くなる」計算の一例です
+        float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
+        // ※ 0.15f の値を大きくすると、中間での減速がより強くなります
+
+        gameTextObject.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+
+        yield return null;
+    }
+    gameTextObject.anchoredPosition = destination;
+}
 }
