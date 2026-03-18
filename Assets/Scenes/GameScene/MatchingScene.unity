@@ -2240,6 +2240,9 @@ MonoBehaviour:
   contentParentJoinner: {fileID: 878627131}
   kensakuButton: {fileID: 110178170}
   kensakuInput: {fileID: 159548804}
+  gameConnector: {fileID: 0}
+  ownerName: 
+  ownerId: 
   kensaku_room_name: 
 --- !u!4 &1139349785
 Transform:
@@ -3300,8 +3303,8 @@ RectTransform:
   - {fileID: 474782953}
   - {fileID: 1680885606}
   - {fileID: 1881777137}
-  - {fileID: 110178171}
   - {fileID: 163037184}
+  - {fileID: 110178171}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
