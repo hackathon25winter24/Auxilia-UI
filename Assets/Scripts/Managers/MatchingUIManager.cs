@@ -31,7 +31,6 @@ public class MatchingUIManager : MonoBehaviour
 
     void Start()
     {
-        CreateRoomButtons(matchingData.num_room);
         ownerId = playerData.user_id;
         ownerName = playerData.username;
     }
@@ -144,18 +143,11 @@ public class MatchingUIManager : MonoBehaviour
     public async void UpDateRoomInformation()
     {
         //ここに部屋の数を取得する関数を書いてください
+        // List<RoomMatch> room_list に全部屋の情報が入ってます
         var room_list = await gameConnector.GetAllRoomMatch();
         //データはmatchingData.num_roomに格納してください
         matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
-        //ここに部屋の情報を取得する関数を書いてください
-
-        // List<RoomMatch> room_list に全部屋の情報が入ってます
-        // 取得例
-        for (int i = 0; i < room_list.Count; i++)
-        {
-            Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
-        }
 
         for (int i = 0; i < matchingData.num_room; i++)
         {
@@ -166,6 +158,22 @@ public class MatchingUIManager : MonoBehaviour
         // List<Room.Room>型で取得できます。なぜList<Room>じゃないの？？もしかしたら直すかも
         // 取得例
         var joiner_list = await gameConnector.ListRoom(11);
+
+        // 取得例
+        for (int i = 0; i < room_list.Count; i++)
+        {
+            matchingData.rooms[i].room_name = room_list[i].RoomName;
+            matchingData.rooms[i].room_host = room_list[i].OwnerId;
+            matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
+            matchingData.rooms[i].num_room_joiner = joiner_list.Count;
+            for (int j = 0; j < joiner_list.Count; j++)
+            {
+            }
+            Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
+        }
+
+        CreateRoomButtons(matchingData.num_room);
+
         Debug.Log($"ユーザーID: {joiner_list[0].UserId}\n状態(0: 観戦者, 1: 1P, 2: 2P): {joiner_list[0].State}\n参加時刻: {joiner_list[0].JoinedAt}");
     }
 

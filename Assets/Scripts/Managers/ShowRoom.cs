@@ -18,7 +18,7 @@ public class ShowRoom : MonoBehaviour
         roomNameText.text = room_name;
         roomHostText.text = "親：" + room_host;
         roomJoinnerText.text = num_joinner.ToString() + "/8";
-        if (state)
+        if (state == false)
         {
             roomStateText.text = "対戦待機中";
             StateIcon.sprite = StateImage[0];
