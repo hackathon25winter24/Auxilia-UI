@@ -42,6 +42,7 @@ public class TitleUIManager : MonoBehaviour
             playerData.win_number = user.NumWins;
             playerData.story_progress = user.Story;
             playerData.user_id = user.Id;
+            playerData.player_rate = user.Rate;
             sceneData.next_scene_number = 1;
                 break;
             case "Signup":
