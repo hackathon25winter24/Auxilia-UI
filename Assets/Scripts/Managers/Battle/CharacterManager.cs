@@ -230,6 +230,16 @@ public class CharacterManager : MonoBehaviour
         UpdateCharacterPosition();
     }
 
+    // 死亡判定
+    for(int i = 0; i <= 5; i++)
+    {
+    if (battleDataforOnline.charactersBattleDatas[i].now_character_hp <= 0)
+    {
+        battleDataforOnline.charactersBattleDatas[i].now_character_hp = 0;
+        ProcessDeath(i);
+    }
+    }
+
     if(battleDataforLocal.is_myturn)
     {
         SendBattleData();
@@ -284,11 +294,23 @@ public class CharacterManager : MonoBehaviour
         on_grid_number_y[selected_character_id] = nextY;
         on_grid_number[selected_character_id] = nextY * 8 + nextX;
 
-        // B. 新しい場所（移動先）を「キャラあり」状態にする
-        UpdateGridState(nextX, nextY, -1);
-
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
+
+        //デバフマスの処理をする
+        if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 3)
+        {
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_hp -= 10;
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_move_cost += 2;
+        }
+        if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 4)
+        {
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_hp = 50;
+            gridDataforOnline.sub_grid_state_y[nextY].sub_grid_state_x[nextX] = 0;
+        }
+
+        // B. 新しい場所（移動先）を「キャラあり」状態にする
+        UpdateGridState(nextX, nextY, -1);
 
         int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
         if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1])
@@ -440,7 +462,49 @@ public class CharacterManager : MonoBehaviour
 
     if (hit_character == 0)
     {
-        //当たったキャラクターがいないときの処理を書く
+
+        if (battleDataforOnline.selected_character[selected_character_id] == 3 && attack_number == 2)
+        {
+            for (int y = 0; y <= 4; y++)
+            {
+                for (int x = 0; x <= 7; x++)
+                {
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    {
+                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                    {
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                    }
+                    }else
+                    {
+                        //当たったキャラクターがいないときの処理を書く
+                    }
+                }
+            }
+        }else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
+        {
+            for (int y = 0; y <= 4; y++)
+            {
+                for (int x = 0; x <= 7; x++)
+                {
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    {
+                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                    {
+                        gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
+                    }
+                    }else
+                    {
+                        //当たったキャラクターがいないときの処理を書く
+                    }
+                }
+            }
+        }else
+        {
+            //当たったキャラクターがいないときの処理を書く
+        }
 
         // 3. 攻撃状態の解除
     is_attacking = false;
@@ -496,13 +560,6 @@ public class CharacterManager : MonoBehaviour
     battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= now_damage;
 
     Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
-
-    // 死亡判定
-    if (battleDataforOnline.charactersBattleDatas[targetId].now_character_hp <= 0)
-    {
-        battleDataforOnline.charactersBattleDatas[targetId].now_character_hp = 0;
-        ProcessDeath(targetId);
-    }
     }
 
     private void ProcessDeath(int targetId)

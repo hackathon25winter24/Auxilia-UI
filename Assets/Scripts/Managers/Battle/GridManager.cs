@@ -11,6 +11,8 @@ public class GridManager : MonoBehaviour
     public Sprite BaseGrid;
     public Sprite CharacterGrid;
     public Sprite AttackGrid;
+    public Sprite MakibishiGrid;
+    public Sprite LandmineGrid;
 
     void Awake()
     {
@@ -84,6 +86,8 @@ public class GridManager : MonoBehaviour
             case 1:  grids[grid_index].sprite = BaseGrid; break;
             case -2: grids[grid_index].sprite = ProhibitGrid; break;
             case -1: grids[grid_index].sprite = NormalGrid; break;
+            case 3: grids[grid_index].sprite = MakibishiGrid; break;
+            case 4: grids[grid_index].sprite = LandmineGrid; break;
             default: grids[grid_index].sprite = NormalGrid; break;
         }
 

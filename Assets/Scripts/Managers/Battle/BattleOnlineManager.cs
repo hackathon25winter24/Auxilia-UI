@@ -100,6 +100,13 @@ public class BattleOnlineManager : MonoBehaviour
     public void EndMyTurn()
     {
         gametext.text = "turn end";
+        if(battleDataforOnline.now_moving_player == 0)
+        {
+            battleDataforOnline.now_moving_player = 1;
+        }else
+        {
+            battleDataforOnline.now_moving_player = 0;
+        }
         StartCoroutine(MoveRoutine());
 
         for (int i = 0; i <= 2; i++)
@@ -144,7 +151,7 @@ public class BattleOnlineManager : MonoBehaviour
     IEnumerator MoveRoutine()
 {
     is_text_moving = true;
-    
+
     float elapsed = 0f;
 
     while (elapsed < duration)

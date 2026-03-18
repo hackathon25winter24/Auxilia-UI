@@ -989,6 +989,7 @@ MonoBehaviour:
   maxTime: 60
   duration: 2
   elapsed: 0
+  is_text_moving: 0
 --- !u!4 &260079060
 Transform:
   m_ObjectHideFlags: 0
@@ -5226,6 +5227,8 @@ MonoBehaviour:
   BaseGrid: {fileID: 21300000, guid: 08e9bb45358a79e41ab9b3c6347d49b9, type: 3}
   CharacterGrid: {fileID: 21300000, guid: 56299ae192556e04a94de1e1cb981a96, type: 3}
   AttackGrid: {fileID: 21300000, guid: 6f8673fdd312a794e9dc52e29eee1509, type: 3}
+  MakibishiGrid: {fileID: 21300000, guid: e2fa266b6ee7e704aa320e028f590ac7, type: 3}
+  LandmineGrid: {fileID: 21300000, guid: c12cdbde715e0404b9e98204bfcd934a, type: 3}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0
