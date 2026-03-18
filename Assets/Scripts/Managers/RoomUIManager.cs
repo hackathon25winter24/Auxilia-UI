@@ -12,6 +12,8 @@ public class RoomUIManager : MonoBehaviour
 
     public Image[] joinnersUI;
     public Sprite[] joinnersUIImage;
+    public TextMeshProUGUI[] userName;
+    public TextMeshProUGUI[] userRate;
 
     void Awake()
     {
@@ -42,10 +44,19 @@ public class RoomUIManager : MonoBehaviour
 
     public void UpDateRoom()
     {
-        //バックエンドから部屋の情報を取得してください
-        for (int i = 0; i <= 8; i++)
+        for (int i = 0; i <= 7; i++)
         {
-        joinnersUI[i].sprite = joinnersUIImage[roomData.usersData[i].user_state];
+        roomData.usersData[i].user_state = -1;
+        joinnersUI[i].sprite = joinnersUIImage[roomData.usersData[i].user_state + 1];
+        userName[i].text = "募集中...";
+        userRate[i].text = "レート： - " ;
+        }
+
+        //バックエンドから部屋の情報を取得してください
+
+        for (int i = 0; i <= 7; i++)
+        {
+        joinnersUI[i].sprite = joinnersUIImage[roomData.usersData[i].user_state + 1];
         }
     }
 }

@@ -157,7 +157,7 @@ public class MatchingUIManager : MonoBehaviour
 
         // List<Room.Room>型で取得できます。なぜList<Room>じゃないの？？もしかしたら直すかも
         // 取得例
-        var joiner_list = await gameConnector.ListRoom(11);
+        
 
         // 取得例
         for (int i = 0; i < room_list.Count; i++)
@@ -165,16 +165,17 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.rooms[i].room_name = room_list[i].RoomName;
             matchingData.rooms[i].room_host = room_list[i].OwnerId;
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
+            var joiner_list = await gameConnector.ListRoom(i);
             matchingData.rooms[i].num_room_joiner = joiner_list.Count;
             for (int j = 0; j < joiner_list.Count; j++)
             {
+                matchingData.rooms[i].joinners[j].name = joiner_list[j].UserId;
+                matchingData.rooms[i].joinners[j].state = joiner_list[j].State;
             }
             Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
         }
 
         CreateRoomButtons(matchingData.num_room);
-
-        Debug.Log($"ユーザーID: {joiner_list[0].UserId}\n状態(0: 観戦者, 1: 1P, 2: 2P): {joiner_list[0].State}\n参加時刻: {joiner_list[0].JoinedAt}");
     }
 
     public void SetupJoinners(int roomNumber)
