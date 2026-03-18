@@ -69,6 +69,13 @@ public class BattleOnlineManager : MonoBehaviour
     public void EndMyTurn()
     {
         battleDataforLocal.is_myturn = false;
+        for (int i = 0; i <= 2; i++)
+        {
+            if(battleDataforOnline.charactersBattleDatas[i].debuffs[3])
+        {
+            battleDataforOnline.charactersBattleDatas[i].now_character_hp -= 20;
+        }
+        }
         StartOpponentTurn();
     }
 

@@ -23,6 +23,7 @@ public class CharacterManager : MonoBehaviour
     public RectTransform BackButton;
     public int attack_number;
     public bool is_attacking;
+    public int now_damage;
 
     void Awake()
     {
@@ -37,6 +38,14 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i <= 5; i++)
         {
         battleDataforOnline.character_isSelected[i] = false;
+        battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
+
+        for(int j = 0; i <= 7; i++)
+        {
+            battleDataforOnline.charactersBattleDatas[i].debuffs[j] = false;
+        }
         }
 
         AttackButton.gameObject.SetActive(false);
@@ -49,12 +58,6 @@ public class CharacterManager : MonoBehaviour
         SetupCharacter(4, new Vector2(125, -70), 6, 2); // 5人目: (6,2) ※22付近
         SetupCharacter(5, new Vector2(175, -170), 7, 4); // 6人目: (7,4) ※39付近
 
-        for (int i = 0; i <= 5; i++)
-        {
-        battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
-        battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
-        battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
-        }
         battleDataforOnline.now_my_cost = 50;
 
         for (int i = 0; i <= 2; i++)
@@ -199,11 +202,17 @@ public class CharacterManager : MonoBehaviour
     }
     else 
     {
+        if(battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[4])
+        {
+
+        }else
+        {
         // 移動処理
         if (inputData.up_key_ispressed)    TryMove(0, -1, new Vector2(0, 50));
         else if (inputData.down_key_ispressed)  TryMove(0, 1, new Vector2(0, -50));
         else if (inputData.right_key_ispressed) TryMove(1, 0, new Vector2(50, 0));
         else if (inputData.left_key_ispressed)  TryMove(-1, 0, new Vector2(-50, 0));
+        }
     }
 
     for (int i = 0; i <= 5; i++)
@@ -270,7 +279,19 @@ public class CharacterManager : MonoBehaviour
         AttackButton.anchoredPosition += posDelta;
 
         int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
+        if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1])
+    {
+        battleDataforOnline.now_my_cost -= cost -2;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
+        battleDataforOnline.now_my_cost -= cost +2;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
         battleDataforOnline.now_my_cost -= cost;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
+        battleDataforOnline.now_my_cost -= cost;
+    }
     }
     }
 
@@ -418,7 +439,19 @@ public class CharacterManager : MonoBehaviour
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
     }else
     {
-    battleDataforOnline.now_my_cost -= cost;
+    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2])
+    {
+        battleDataforOnline.now_my_cost -= cost -5;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost +5;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost;
+    }
 
     // 3. 攻撃状態の解除
     is_attacking = false;
@@ -435,7 +468,20 @@ public class CharacterManager : MonoBehaviour
     private void ApplyDamage(int targetId, int damage)
     {
     // HPを減らす
-    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= damage;
+    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = (int)(damage * 0.75);
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0])
+    {
+        now_damage = (int)(damage * 1.25);
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = damage;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = damage;
+    }
+    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= now_damage;
 
     Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
 
@@ -470,124 +516,40 @@ public class CharacterManager : MonoBehaviour
 
     public void BuffDebuff(int index)
     {
-        int dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability > 0)
+        for(int i = 0; i <= 7; i++)
         {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability <= dice)
+            int dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] > 0)
+        {
+            if (battleDataforOnline.charactersBattleDatas[index].debuffs[i] == false)
             {
-                battleDataforOnline.charactersBattleDatas[index].is_attack_up = true;
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].debuffs[i] = true;
+                switch(i)
+                {
+                    case 1:
+                    battleDataforOnline.charactersBattleDatas[index].now_character_move_cost -= 2;
+                    break;
+                    case 5:
+                    battleDataforOnline.charactersBattleDatas[index].now_character_move_cost += 2;
+                    break;
+                    default:
+                    break;
+                }
+            }
             }
         }else
         {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attack_up_probability * -1 <= dice)
+            if (battleDataforOnline.charactersBattleDatas[index].debuffs[i] == true)
             {
-                battleDataforOnline.charactersBattleDatas[index].is_attack_up = false;
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].debuffs[i] = false;
+            }
             }
         }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability > 0 )
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_speed_up = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_up_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_speed_up = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_attackcost_down = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_down_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_attackcost_down = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_poison = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].poison_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_poison = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_paralysis = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].paralysis_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_paralysis = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_speed_down = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].speed_down_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_speed_down = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_attackcost_up = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].attackcost_up_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_attackcost_up = false;
-            }
-        }
-
-        dice = Random.Range(1, 101);
-        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability > 0)
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_bleeding = true;
-            }
-        }else
-        {
-            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].bleeding_probability * -1 <= dice)
-            {
-                battleDataforOnline.charactersBattleDatas[index].is_bleeding = false;
-            }
         }
     }
+        
 }

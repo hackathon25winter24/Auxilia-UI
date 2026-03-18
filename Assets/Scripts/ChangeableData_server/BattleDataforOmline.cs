@@ -32,16 +32,9 @@ public class BattleDataforOmline : ScriptableObject
 [System.Serializable]
 public class CharactersBattleData
 {
+    public bool[] debuffs = new bool[8];
     public int now_character_hp;
     public int now_character_maxhp;
     public int now_character_move_cost;
-    public bool is_attack_up;
-    public bool is_speed_up;
-    public bool is_attackcost_down;
-    public bool is_poison;
-    public bool is_paralysis;
-    public bool is_speed_down;
-    public bool is_attackcost_up;
-    public bool is_bleeding;
     public Vector2Int now_character_position;
 }

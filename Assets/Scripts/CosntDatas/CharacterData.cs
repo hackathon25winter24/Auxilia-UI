@@ -93,14 +93,7 @@ public class Attacks
     [SerializeField] int _default_attack_cost;
     [SerializeField] int _default_attack_power;
     [SerializeField] int _default_attack_target;
-    [SerializeField] int _attack_up_probability;
-    [SerializeField] int _speed_up_probability;
-    [SerializeField] int _attackcost_down_probability;
-    [SerializeField] int _poison_probability;
-    [SerializeField] int _paralysis_probability;
-    [SerializeField] int _speed_down_probability;
-    [SerializeField] int _attackcost_up_probability;
-    [SerializeField] int _bleeding_probability;
+    public int[] debuffs = new int[8];
     [SerializeField] Sprite _attack_button;
     [SerializeField] Vector2Int[] _default_attack_range;
 
@@ -124,46 +117,6 @@ public class Attacks
         get{return _default_attack_target;}
     }
 
-    public int attack_up_probability
-    {
-        get{return _attack_up_probability;}
-    }
-
-    public int speed_up_probability
-    {
-        get{return _speed_up_probability;}
-    }
-
-    public int attackcost_down_probability
-    {
-        get{return _attackcost_down_probability;}
-    }
-
-    public int poison_probability
-    {
-        get{return _poison_probability;}
-    }
-
-    public int paralysis_probability
-    {
-        get{return _paralysis_probability;}
-    }
-
-    public int speed_down_probability
-    {
-        get{return _speed_down_probability;}
-    }
-    
-    public int attackcost_up_probability
-    {
-        get{return _attackcost_up_probability;}
-    }
-    
-    public int bleeding_probability
-    {
-        get{return _bleeding_probability;}
-    }
-    
     public Sprite attack_button
     {
         get { return _attack_button; }
