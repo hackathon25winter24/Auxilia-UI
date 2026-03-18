@@ -35,7 +35,7 @@ public class HomeUIManager : MonoBehaviour
     void Awake()
     {
         playerName.text = playerData.player_name;
-        playerRate.text = "レート:" + playerData.player_rate.ToString();
+        playerRate.text = "レート：" + playerData.player_rate.ToString();
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
         BigBackButton.gameObject.SetActive(false);

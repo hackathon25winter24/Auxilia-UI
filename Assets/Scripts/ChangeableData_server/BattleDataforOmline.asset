@@ -25,18 +25,6 @@ MonoBehaviour:
     is_attackcost_up: 0
     is_bleeding: 0
     now_character_position: {x: 0, y: 0}
-  - now_character_hp: 300
-    now_character_maxhp: 300
-    now_character_move_cost: 10
-    is_attack_up: 0
-    is_speed_up: 0
-    is_attackcost_down: 0
-    is_poison: 0
-    is_paralysis: 0
-    is_speed_down: 0
-    is_attackcost_up: 0
-    is_bleeding: 0
-    now_character_position: {x: 0, y: 0}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -48,7 +36,7 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-    now_character_position: {x: 0, y: 0}
+    now_character_position: {x: 2, y: 2}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -60,19 +48,7 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-    now_character_position: {x: 0, y: 0}
-  - now_character_hp: 130
-    now_character_maxhp: 150
-    now_character_move_cost: 10
-    is_attack_up: 0
-    is_speed_up: 0
-    is_attackcost_down: 0
-    is_poison: 0
-    is_paralysis: 0
-    is_speed_down: 0
-    is_attackcost_up: 0
-    is_bleeding: 0
-    now_character_position: {x: 0, y: 0}
+    now_character_position: {x: 0, y: 4}
   - now_character_hp: 150
     now_character_maxhp: 150
     now_character_move_cost: 10
@@ -84,21 +60,45 @@ MonoBehaviour:
     is_speed_down: 0
     is_attackcost_up: 0
     is_bleeding: 0
-    now_character_position: {x: 0, y: 0}
-  selected_character: 000000000100000000000000000000000000000000000000
-  now_my_cost: 0
+    now_character_position: {x: 7, y: 0}
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+    now_character_position: {x: 6, y: 2}
+  - now_character_hp: 150
+    now_character_maxhp: 150
+    now_character_move_cost: 10
+    is_attack_up: 0
+    is_speed_up: 0
+    is_attackcost_down: 0
+    is_poison: 0
+    is_paralysis: 0
+    is_speed_down: 0
+    is_attackcost_up: 0
+    is_bleeding: 0
+    now_character_position: {x: 7, y: 4}
+  selected_character: 000000000000000000000000000000000000000000000000
+  now_my_cost: 40
   now_enemy_cost: 50
   character_isSelected: 000000000000
   my_player_id: 0
   game_end: 0
   win_player_id: 1
-  all_move_cost: 10
+  all_move_cost: 30
   palyer1_cost: 12
   palyer2_cost: 12
   opponent_name: radon_sub
   palyer1_name: radon
   player2_name: radon_sub
-  isPlayer: 0
+  isPlayer: 1
   opponent_rate: 12
   rate: 12
   my_rate_updown: -1
