@@ -9,6 +9,7 @@ public class MatchingUIManager : MonoBehaviour
     public SceneData sceneData;
     public PlayerData playerData;
     public MatchingData matchingData;
+    public RoomData roomData;
 
     public GameObject roomButton;
     public Transform contentParent;
@@ -125,7 +126,15 @@ public class MatchingUIManager : MonoBehaviour
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
-            await gameConnector.JoinRoom(index, playerData.user_id);
+            var response = await gameConnector.JoinRoom(index, playerData.user_id);
+            roomData.room_id = response.Rooms[0].RoomId;
+            for (int i = 0; i < matchingData.num_room; i++)
+            {
+                if (matchingData.rooms[i].room_id == roomData.room_id)
+                {
+                    roomData.room_name = matchingData.rooms[i].room_name;
+                }
+            }
 
             sceneData.next_scene_number = 9;
         }else
@@ -148,31 +157,24 @@ public class MatchingUIManager : MonoBehaviour
         //データはmatchingData.num_roomに格納してください
         matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
-
-        for (int i = 0; i < matchingData.num_room; i++)
-        {
-        SetupJoinners(matchingData.rooms[i].num_room_joiner);
-        }
-        //ここに部屋の参加者の情報を取得する関数を書いてください
-
-        // List<Room.Room>型で取得できます。なぜList<Room>じゃないの？？もしかしたら直すかも
-        // 取得例
-        
-
-        // 取得例
         for (int i = 0; i < room_list.Count; i++)
         {
+            matchingData.rooms[i].room_id = room_list[i].RoomId;
             matchingData.rooms[i].room_name = room_list[i].RoomName;
             matchingData.rooms[i].room_host = room_list[i].OwnerId;
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
             var joiner_list = await gameConnector.ListRoom(i);
             matchingData.rooms[i].num_room_joiner = joiner_list.Count;
+            // 移動しました
+            SetupJoinners(i);
             for (int j = 0; j < joiner_list.Count; j++)
             {
-                matchingData.rooms[i].joinners[j].name = joiner_list[j].UserId;
+                var user = await gameConnector.GetUser(joiner_list[j].UserId);
+                Debug.Log($"{i}番目の部屋{j}番目のusername: {user.Name}");
+                matchingData.rooms[i].joinners[j].name = user.Name;
                 matchingData.rooms[i].joinners[j].state = joiner_list[j].State;
             }
-            Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
+            //Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
         }
 
         CreateRoomButtons(matchingData.num_room);
@@ -208,6 +210,9 @@ public class MatchingUIManager : MonoBehaviour
         }
         var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
         await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+        // 新たにRoomDataにIDを追加
+        roomData.room_id = response.RoomId;
+        roomData.room_name = room_name;
 
         sceneData.next_scene_number = 9;
     }

@@ -138,6 +138,21 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<UserResponse> GetUser(string userId)
+    {
+        try
+        {
+            var request = new GetUserRequest{Id = userId};
+            var response = await _userClient.GetUserAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"GetUser Error: {e.Message}");
+            return null;
+        }
+    }
+
     // --- 4. ユーザー削除 (DeleteUser) ---
     /// <param name="userId">削除したいユーザーのUUID（未指定の場合は保存されている自分のIDを削除）</param>
     public async Task<bool> DeleteUser(string userId = "")

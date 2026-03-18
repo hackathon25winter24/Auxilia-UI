@@ -12,6 +12,7 @@ public class MatchingData : ScriptableObject
 [System.Serializable]
 public class RoomsData
 {
+    public int room_id;
     public bool room_is_selected;
     public int num_room_joiner;
     public bool room_is_gamestarted;
