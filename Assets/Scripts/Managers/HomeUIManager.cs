@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class HomeUIManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class HomeUIManager : MonoBehaviour
     public PlayerData playerData;
     public TextMeshProUGUI playerName;
     public TextMeshProUGUI playerRate;
+    public TextMeshProUGUI messageText;
     public RectTransform uiContainer;
     public RectTransform uiContainer_left;
     public RectTransform backBottun;
@@ -40,8 +42,9 @@ public class HomeUIManager : MonoBehaviour
         StartCoroutine(AnimateEnter());
         BigBackButton.gameObject.SetActive(false);
         settingUI.gameObject.SetActive(false);
+        messageText.gameObject.SetActive(false);
     }
-    IEnumerator AnimateExit()
+    IEnumerator AnimateExit(int nextScene)
     {
         Vector2 startPos = uiContainer.anchoredPosition;
         Vector2 startPos_left = uiContainer_left.anchoredPosition;
@@ -62,6 +65,10 @@ public class HomeUIManager : MonoBehaviour
             yield return null;
         }
         isExiting = false;
+        if (nextScene != -1) 
+        {
+        sceneData.next_scene_number = nextScene;
+        }
     }
     IEnumerator AnimateEnter()
     {
@@ -204,7 +211,7 @@ public class HomeUIManager : MonoBehaviour
         }
     }
 
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         if (isExiting) return; // 退場中なら何もしない
         isExiting = true;
@@ -212,21 +219,20 @@ public class HomeUIManager : MonoBehaviour
         {
             case "Battle":
                 isPlayerNameRemain = true;
-                StartCoroutine(AnimateExit());
+                StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateBattleUIEnter());
                 break;
             case "Story":
-                StartCoroutine(AnimateExit());
-                sceneData.next_scene_number = 8;
+                StartCoroutine(AnimateExit(11));
                 break;
             case "Character":
                 isPlayerNameRemain = true;
-                StartCoroutine(AnimateExit());
+                StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateCharacterUIEnter());
                 break;
             case "HomeCharacter":
                 isPlayerNameRemain = false;
-                StartCoroutine(AnimateExit());
+                StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateBackKeyEnter());
                 HomeCharacterSetUI.gameObject.SetActive(true);
                 isHomeCharacterSelecting = true;
@@ -242,8 +248,18 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateBattleUIExit(-1));
                 break;
             case "RandomMatch":
-                isPlayerNameRemain = false;
-                StartCoroutine(AnimateBattleUIExit(3));
+                messageText.text = "開発中...";
+                messageText.gameObject.SetActive(true);
+                await Task.Delay(1000);
+                messageText.gameObject.SetActive(false);
+                isExiting = false;
+                break;
+            case "RateMatch":
+                messageText.text = "開発中...";
+                messageText.gameObject.SetActive(true);
+                await Task.Delay(1000);
+                messageText.gameObject.SetActive(false);
+                isExiting = false;
                 break;
             case "BackFromCharacter":
                 StartCoroutine(AnimateEnter());
@@ -255,7 +271,7 @@ public class HomeUIManager : MonoBehaviour
                 break;
             case "ToAllImage":
                 isPlayerNameRemain = false;
-                StartCoroutine(AnimateExit());
+                StartCoroutine(AnimateExit(-1));
                 BigBackButton.gameObject.SetActive(true);
                 isExiting = false;
                 break;
@@ -293,6 +309,7 @@ public class HomeUIManager : MonoBehaviour
                 break;
         }
     }
+
     public void Update()
     {
         if (isHomeCharacterSelecting) 
