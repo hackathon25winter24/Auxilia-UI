@@ -23,9 +23,11 @@ public class BattleOnlineManager : MonoBehaviour
     Vector2 destination = new Vector2(-1000, 0);
     public float duration = 2.0f;
     public float elapsed = 0f;
+    public bool is_text_moving;
 
     void Awake()
     {
+        battleDataforLocal.is_myturn = false;
         //ここに先行プレイヤーかどうかを受け取る関数を書いてください
     }
 
@@ -37,6 +39,7 @@ public class BattleOnlineManager : MonoBehaviour
 
     void Update()
     {
+        if (is_text_moving) return;
         if (battleDataforOnline.now_moving_player == battleDataforOnline.my_player_id)
         {
             if (battleDataforLocal.is_myturn != true)
@@ -140,7 +143,8 @@ public class BattleOnlineManager : MonoBehaviour
 
     IEnumerator MoveRoutine()
 {
-    Vector2 startPosition = gameTextObject.anchoredPosition;
+    is_text_moving = true;
+    
     float elapsed = 0f;
 
     while (elapsed < duration)
@@ -163,5 +167,7 @@ public class BattleOnlineManager : MonoBehaviour
         yield return null;
     }
     gameTextObject.anchoredPosition = destination;
+
+    is_text_moving = false;
 }
 }
