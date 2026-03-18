@@ -51,6 +51,8 @@ public class SelectUIManager : MonoBehaviour
             UpDateCharacterUI();
         }else
         {
+            //ここに試合をする人の名前を受け取る関数を書いてください
+            //データはそれぞれbattleDataforOnlineのpalyer1_nameとplayer2_nameに格納してください
             playerUI.SetActive(false);
             SpectatorUI.SetActive(true);
             ready.SetActive(false); 
@@ -123,6 +125,14 @@ public class SelectUIManager : MonoBehaviour
 
         costText.text = "cost：" + battleDataforOnline.palyer1_cost;
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
+        if (battleDataforOnline.isPlayer)
+        {
+            SendDatas();
+            GetOpponentDatas();
+        }else
+        {
+            GetDatas();
+        }
     }
 
     void TimerStart()
@@ -170,5 +180,20 @@ public class SelectUIManager : MonoBehaviour
 
             newButton.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => CharacterClick(buttonIndex));
         }
+    }
+
+    public void SendDatas()
+    {
+        //ここに自分の編成とコストを送る関数を書いてください
+    }
+
+    public void GetOpponentDatas()
+    {
+        //ここに相手の編成とコストを受け取る関数を書いてください
+    }
+
+    public void GetDatas()
+    {
+        //ここに試合中の全体の編成とコストを受け取る関数を書いてください
     }
 }
