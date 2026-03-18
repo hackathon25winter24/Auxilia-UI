@@ -12,8 +12,13 @@ public class BattleDataforOmline : ScriptableObject
     public bool game_end;
     public int win_player_id;
     public int all_move_cost;
+    public int palyer1_cost;
+    public int palyer2_cost;
     public string opponent_name;
+    public string palyer1_name;
+    public string player2_name;
 
+    public bool isPlayer;
     public int opponent_rate;
     public int rate;
     public int my_rate_updown;
