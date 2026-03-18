@@ -14,63 +14,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   num_room: 10
   rooms:
-  - room_is_selected: 1
-    num_room_joiner: 0
+  - room_is_selected: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f
+    room_name: TestRoom
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: f0f5f407-e3ee-4c5a-a1b0-05ec76465d8f
+    room_name: TestRoom
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 2e89d2ca-51b7-4439-b01a-76d9f62f61f8
+    room_name: test_5669
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 2e89d2ca-51b7-4439-b01a-76d9f62f61f8
+    room_name: test_5558
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 2e89d2ca-51b7-4439-b01a-76d9f62f61f8
+    room_name: test_8765
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 2e89d2ca-51b7-4439-b01a-76d9f62f61f8
+    room_name: test_6322
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 2e89d2ca-51b7-4439-b01a-76d9f62f61f8
+    room_name: test_6742
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: 96a48fa2-0634-471c-ba2f-654a85a4a4e2
+    room_name: "aspara4\u306E\u90E8\u5C4B"
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: b9dcdda5-9362-4b55-86ab-7a89ae4935f4
+    room_name: "radon\u306E\u90E8\u5C4B"
     joinners: []
   - room_is_selected: 0
-    num_room_joiner: 0
+    num_room_joiner: 1
     room_is_gamestarted: 0
-    room_host: 
-    room_name: 
+    room_host: b9dcdda5-9362-4b55-86ab-7a89ae4935f4
+    room_name: "radon\u306E\u90E8\u5C4B"
     joinners: []
