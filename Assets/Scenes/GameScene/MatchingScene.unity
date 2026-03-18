@@ -2234,6 +2234,7 @@ MonoBehaviour:
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
   matchingData: {fileID: 11400000, guid: 952c837f6f0af3b4a9d9e0c223443358, type: 2}
+  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
   roomButton: {fileID: 9112117412078363399, guid: e915e2e972df76e49ae261d92717a0d8, type: 3}
   contentParent: {fileID: 1484753612}
   playerName: {fileID: 422692948553079703, guid: 564399cb1417ad04c8f0613b057413e2, type: 3}

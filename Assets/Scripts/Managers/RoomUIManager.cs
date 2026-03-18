@@ -14,9 +14,13 @@ public class RoomUIManager : MonoBehaviour
     public Sprite[] joinnersUIImage;
     public TextMeshProUGUI[] userName;
     public TextMeshProUGUI[] userRate;
+    public GameConnector gameConnector;
+
+    public string room_name;
 
     void Awake()
     {
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         UpDateRoom();
     }
     
@@ -42,8 +46,9 @@ public class RoomUIManager : MonoBehaviour
         }
     }
 
-    public void UpDateRoom()
+    public async void UpDateRoom()
     {
+        Debug.Log("UpdateRoom実行");
         for (int i = 0; i <= 7; i++)
         {
         roomData.usersData[i].user_state = -1;
@@ -53,6 +58,26 @@ public class RoomUIManager : MonoBehaviour
         }
 
         //バックエンドから部屋の情報を取得してください
+        var joiner_list = await gameConnector.ListRoom(roomData.room_id);
+        var rooms = await gameConnector.GetAllRoomMatch();
+        var owner = new Game.Network.UserResponse();
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            if (rooms[i].RoomId == joiner_list[0].RoomId)
+            {
+                owner = await gameConnector.GetUser(rooms[i].OwnerId);
+                Debug.Log($"owner: {owner}");
+                roomData.room_name = owner.Name + "の部屋";
+            }
+        }
+        for (int i = 0; i < joiner_list.Count; i++)
+        {
+            var user = await gameConnector.GetUser(joiner_list[i].UserId);
+            roomData.usersData[i].user_name = user.Name;
+            roomData.usersData[i].user_rate = user.Rate;
+            roomData.usersData[i].is_host = (owner.Id == user.Id) ? true : false;
+            roomData.usersData[i].user_state = joiner_list[i].State;
+        }
 
         for (int i = 0; i <= 7; i++)
         {
