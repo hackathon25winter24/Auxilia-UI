@@ -18,6 +18,7 @@ public class BattleDataforOmline : ScriptableObject
     public string palyer1_name;
     public string player2_name;
 
+    public int now_moving_player;
     public bool isPlayer;
     public int opponent_rate;
     public int rate;

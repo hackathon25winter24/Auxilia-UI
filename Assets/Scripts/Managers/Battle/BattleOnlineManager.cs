@@ -24,6 +24,11 @@ public class BattleOnlineManager : MonoBehaviour
     public float duration = 2.0f;
     public float elapsed = 0f;
 
+    void Awake()
+    {
+        //ここに先行プレイヤーかどうかを受け取る関数を書いてください
+    }
+
     void Start()
     {
         gametext.text = "battle start!";
@@ -32,6 +37,21 @@ public class BattleOnlineManager : MonoBehaviour
 
     void Update()
     {
+        if (battleDataforOnline.now_moving_player == battleDataforOnline.my_player_id)
+        {
+            if (battleDataforLocal.is_myturn != true)
+            {
+            battleDataforLocal.is_myturn = true;
+            StartMyTurn();
+            }
+        }else
+        {
+            if(battleDataforLocal.is_myturn != false)
+            {
+            battleDataforLocal.is_myturn = false;
+            }
+        }
+
         if (inputData.space_key_ispressed)
         {
             EndMyTurn();
@@ -68,14 +88,17 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void StartMyTurn()
     {
-        battleDataforLocal.is_myturn = true;
+        gametext.text = "your turn";
+        StartCoroutine(MoveRoutine());
         battleDataforOnline.now_my_cost = 50;
         TimerStart();
     }
 
     public void EndMyTurn()
     {
-        battleDataforLocal.is_myturn = false;
+        gametext.text = "turn end";
+        StartCoroutine(MoveRoutine());
+
         for (int i = 0; i <= 2; i++)
         {
             if(battleDataforOnline.charactersBattleDatas[i].debuffs[3])

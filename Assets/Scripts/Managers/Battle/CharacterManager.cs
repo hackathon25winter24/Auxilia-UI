@@ -27,6 +27,10 @@ public class CharacterManager : MonoBehaviour
 
     void Awake()
     {
+        GetBattleData();
+    }
+    void Start()
+    {
         BackButton.gameObject.SetActive(false);
         // 配列が空、または要素が足りない場合の安全策
         if (characters == null || characters.Length < 6)
@@ -224,6 +228,14 @@ public class CharacterManager : MonoBehaviour
     if (battleDataforLocal.is_myturn == false)
     {
         UpdateCharacterPosition();
+    }
+
+    if(battleDataforLocal.is_myturn)
+    {
+        SendBattleData();
+    }else
+    {
+        GetBattleData();
     }
     }
 
@@ -551,5 +563,14 @@ public class CharacterManager : MonoBehaviour
         }
         }
     }
-        
+
+    void SendBattleData()
+    {
+        //ここにバックエンドにデータを送るための関数を書いてください
+    }
+
+    void GetBattleData()
+    {
+        //ここにバックエンドにデータを受け取るための関数を書いてください
+    }
 }
