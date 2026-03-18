@@ -3,7 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StoryData", menuName = "Scriptable Objects/StoryData")]
 public class StoryData : ScriptableObject
 {
-    public int now_story_number;
     [SerializeField] public StoriesData[] stories;
 }
 

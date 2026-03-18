@@ -39,5 +39,7 @@ public class InputManager : MonoBehaviour
     inputData.right_key_ispressed = kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame;
     inputData.left_key_ispressed  = kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame;
     inputData.space_key_ispressed = kb.spaceKey.wasPressedThisFrame;
+    inputData.a_key_ispressed = kb.aKey.wasPressedThisFrame;
+    inputData.s_key_ispressed = kb.sKey.wasPressedThisFrame;
 }
 }
