@@ -14,13 +14,21 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI party_move_cost;
     public TextMeshProUGUI start_game_text;
     public TextMeshProUGUI timertext;
-    public RectTransform player_ui;
 
+    public GameObject playerUI;
+    public GameObject SpectatorUI;
     public Image[] SelecuUI;
     public GameObject characterTub;
     public GameObject roomButtonPrefab; 
     public Transform contentParent;    
     public Image characterUI;
+    public GameObject ready; 
+    public GameObject ready2; 
+    public TextMeshProUGUI costText;
+    public TextMeshProUGUI costText2;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI nameText2;
+    public TextMeshProUGUI timertext2;
     
     public int selectedUI;
     public int selectedCharacterId;
@@ -31,12 +39,25 @@ public class SelectUIManager : MonoBehaviour
 
     void Awake()
     {
-        battleDataforOnline.selected_character[0] = playerData.character_formation_one;
-        battleDataforOnline.selected_character[1] = playerData.character_formation_two;
-        battleDataforOnline.selected_character[2] = playerData.character_formation_three;
-        characterTub.SetActive(false);
-        start_game_text.gameObject.SetActive(false);
-        UpDateCharacterUI();
+        if (battleDataforOnline.isPlayer)
+        {
+            playerUI.SetActive(true);
+            SpectatorUI.SetActive(false);
+            battleDataforOnline.selected_character[0] = playerData.character_formation_one;
+            battleDataforOnline.selected_character[1] = playerData.character_formation_two;
+            battleDataforOnline.selected_character[2] = playerData.character_formation_three;
+            characterTub.SetActive(false);
+            start_game_text.gameObject.SetActive(false);
+            UpDateCharacterUI();
+        }else
+        {
+            playerUI.SetActive(false);
+            SpectatorUI.SetActive(true);
+            ready.SetActive(false); 
+            ready2.SetActive(false);
+            nameText.text = battleDataforOnline.palyer1_name;
+            nameText2.text = battleDataforOnline.player2_name;
+        }
         TimerStart();
     }
 
@@ -90,6 +111,7 @@ public class SelectUIManager : MonoBehaviour
                 // 前のフレームからの経過時間を引く
                 currentTime -= Time.deltaTime;
                 timertext.text = Mathf.CeilToInt(currentTime).ToString();
+                timertext2.text = Mathf.CeilToInt(currentTime).ToString();
             }
             else
             {
@@ -98,6 +120,9 @@ public class SelectUIManager : MonoBehaviour
                 isTimerRunning = false;
             }
         }
+
+        costText.text = "cost：" + battleDataforOnline.palyer1_cost;
+        costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
     }
 
     void TimerStart()

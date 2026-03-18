@@ -92,8 +92,13 @@ MonoBehaviour:
   my_player_id: 0
   game_end: 0
   win_player_id: 1
-  all_move_cost: 0
+  all_move_cost: 10
+  palyer1_cost: 12
+  palyer2_cost: 12
   opponent_name: radon_sub
+  palyer1_name: radon
+  player2_name: radon_sub
+  isPlayer: 0
   opponent_rate: 12
   rate: 12
   my_rate_updown: -1
