@@ -327,49 +327,46 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 1681857339801680044, guid: a5402a98ffdd3e94884084f7023bda5c, type: 3}
     passive: []
   - _default_name: Chiyo
-    _default_name_japanese: 
+    _default_name_japanese: "\u5343\u4EE3"
     _default_id: 7
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _select_image: {fileID: 0}
-    _detail_image: {fileID: -3070752840234646761, guid: 7376e354e64dc5f40ad6c20ff9b5e166, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
-    _default_hp: 150
-    _default_move_cost: 7
+    _select_image: {fileID: 374504980988395012, guid: 2136e9af49b3c7c46b848e63c71a1050, type: 3}
+    _detail_image: {fileID: 21300000, guid: 96dd63c2cbe6ad84b9229c5070b38a42, type: 3}
+    _default_sprite_mini: {fileID: 21300000, guid: d485103fc44d7944fb4539e251e75839, type: 3}
+    _default_sprite_smallwindow: {fileID: -8580161024346603066, guid: 17be7c759d3dbf746a784dda23376615, type: 3}
+    _default_hp: 300
+    _default_move_cost: 5
     _attacks:
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
+    - _default_attack_name: "\u4E00\u6587\u5B57\u65AC\u308A"
       _default_attack_cost: 10
       _default_attack_power: 20
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
-      _default_attack_range:
-      - {x: 1, y: 0}
-      - {x: 0, y: 1}
-      - {x: -1, y: 0}
-      - {x: 0, y: -1}
-      _attack_range_image: {fileID: 0}
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
-      _default_attack_cost: 20
-      _default_attack_power: 40
-      _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      _attack_button: {fileID: -1708768211389677097, guid: f169cc687fb4374499fc901385522e03, type: 3}
       _default_attack_range:
       - {x: 1, y: 1}
       - {x: 1, y: 0}
       - {x: 1, y: -1}
-      _attack_range_image: {fileID: 0}
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
-      _default_attack_cost: 30
-      _default_attack_power: 60
+      _attack_range_image: {fileID: -2816736856130323868, guid: a980217d966a20f4eac573daf1a663b2, type: 3}
+    - _default_attack_name: "\u8888\u88DF\u65AC\u308A"
+      _default_attack_cost: 20
+      _default_attack_power: 40
       _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      debuffs: 0000000000000000000000000000000000000000000000000000000032000000
+      _attack_button: {fileID: 2326456274582334177, guid: be7266ee14d05d946bf2e72ec293d11b, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 0}
-    _attack_button_backimage: {fileID: 0}
+      _attack_range_image: {fileID: -8976871864021157439, guid: 4faa44b125d5e64449bf8dafabe8c21d, type: 3}
+    - _default_attack_name: "\u771F\u5411\u65AC\u308A"
+      _default_attack_cost: 50
+      _default_attack_power: 200
+      _default_attack_target: 0
+      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
+      _attack_button: {fileID: -1020282823678200800, guid: 3359df22f69b21e499724156e172dd63, type: 3}
+      _default_attack_range:
+      - {x: 1, y: 0}
+      _attack_range_image: {fileID: -7013554331711404983, guid: 4bbb55562c237194a83b01a826c26423, type: 3}
+    _attack_button_backimage: {fileID: 781509271235307724, guid: 5f0f5805761497b4b9def48e9e064034, type: 3}
     passive: []
   - _default_name: Shincho
     _default_name_japanese: 
