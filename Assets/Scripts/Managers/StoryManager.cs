@@ -238,7 +238,13 @@ IEnumerator AutoSelectFirstChoice()
 
     void EndStory()
     {
-        sceneData.next_scene_number = storyManagerData.is_tutorial ? 1 : 11;
+        if(storyManagerData.now_story_number == 0)
+        {
+            sceneData.next_scene_number = 12;
+        }else
+        {
+            sceneData.next_scene_number = 11;
+        }
     }
 
     public void SkipStory()
