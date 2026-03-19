@@ -202,7 +202,11 @@ public class MatchingUIManager : MonoBehaviour
         {
             matchingData.rooms[i].room_id = room_list[i].RoomId;
             matchingData.rooms[i].room_name = room_list[i].RoomName;
-            matchingData.rooms[i].room_host = room_list[i].OwnerId;
+            
+            // オーナーのユーザー情報を取得して名前を表示
+            var owner = await gameConnector.GetUser(room_list[i].OwnerId);
+            matchingData.rooms[i].room_host = (owner != null) ? owner.Name : room_list[i].OwnerId;
+
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
             var joiner_list = await gameConnector.ListRoom(room_list[i].RoomId);
             matchingData.rooms[i].num_room_joiner = joiner_list.Count;

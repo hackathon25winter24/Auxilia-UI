@@ -364,6 +364,21 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<LeaveRoomResponse> LeaveRoom(int roomId, string userId)
+    {
+        try
+        {
+            var request = new LeaveRoomRequest { RoomId = roomId, UserId = userId };
+            var response = await _roomClient.LeaveRoomAsync(request);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"部屋の退出に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
     public async Task<EnterRingResponse> EnterRing(int roomId, string userId){
         try
         {

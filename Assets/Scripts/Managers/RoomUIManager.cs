@@ -22,6 +22,8 @@ public class RoomUIManager : MonoBehaviour
 
     public string room_name;
     private TextMeshProUGUI startBattleButtonText;
+    private TextMeshProUGUI roomNameText; // 部屋名表示用
+    private GameObject editButton;        // ホスト用編集ボタン
 
     private AsyncServerStreamingCall<ListRoomResponse> _roomStream;
     private bool _isStreaming;
@@ -140,6 +142,12 @@ public class RoomUIManager : MonoBehaviour
                 }
             }
         }
+
+        // 部屋名テキストと編集ボタンを自動探索
+        var roomNameObj = GameObject.Find("RoomName") ?? GameObject.Find("RoomNameText") ?? GameObject.Find("TitleText");
+        if (roomNameObj != null) roomNameText = roomNameObj.GetComponent<TextMeshProUGUI>();
+
+        editButton = GameObject.Find("EditButton") ?? GameObject.Find("RoomEditButton") ?? GameObject.Find("SettingButton");
     }
     
     public async void OnButtonClick(string buttonName)
@@ -147,6 +155,7 @@ public class RoomUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Back":
+                await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
@@ -256,13 +265,20 @@ public class RoomUIManager : MonoBehaviour
             if (this == null) return;
 
             if (user.Id == playerData.user_id) roomData.room_my_number = i;
-
+ 
             roomData.usersData[i].user_name = user.Name;
             roomData.usersData[i].user_rate = user.Rate;
             roomData.usersData[i].is_host = (owner.Id == user.Id) ? true : false;
             roomData.usersData[i].user_state = joiner_list[i].State;
             roomData.usersData[i].is_ready = joiner_list[i].IsReady;
+
+            // UIテキストを即座に反映
+            if (i < userName.Length) userName[i].text = user.Name;
+            if (i < userRate.Length) userRate[i].text = "レート：" + user.Rate;
         }
+
+        // 部屋名を反映
+        if (roomNameText != null) roomNameText.text = roomData.room_name;
 
         for (int i = 0; i <= 7; i++)
         {
@@ -300,6 +316,9 @@ public class RoomUIManager : MonoBehaviour
             {
                 startBattleButtonText.text = amIReady ? "対戦開始を待っています..." : "準備完了";
             }
+
+            // ホストのみ編集ボタンを表示
+            if (editButton != null) editButton.SetActive(amIHost);
         }
 
         // 全てのステータス更新後にゲーム中か判定してゲスト・ホスト全員を遷移
