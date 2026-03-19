@@ -20,7 +20,7 @@ MonoBehaviour:
     _select_image: {fileID: -4612181463540714612, guid: 3ef91d4f2681e3649b217fb243f97250, type: 3}
     _detail_image: {fileID: 21300000, guid: ce1780b6a49ea524ea5cb6a377e398f8, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
-    _default_sprite_smallwindow: {fileID: 6243996182548713461, guid: 005373198704b8341948552215cc2575, type: 3}
+    _default_sprite_smallwindow: {fileID: -2176349576800189170, guid: c6c9f3f82080d97419869b7dc75ca204, type: 3}
     _default_hp: 150
     _default_move_cost: 10
     _attacks:
@@ -68,7 +68,7 @@ MonoBehaviour:
     _select_image: {fileID: 6018669768705036611, guid: c6466b20ef3f826478bf77da6b9ac9d0, type: 3}
     _detail_image: {fileID: 21300000, guid: 4bd2e609981c961448e98e0d7dd7707a, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
-    _default_sprite_smallwindow: {fileID: 7971827419028771467, guid: c7b4330329114c04bbeb7737cd196093, type: 3}
+    _default_sprite_smallwindow: {fileID: -3767032290567993356, guid: 605a8ac30d8c5774f93a95d7dff77960, type: 3}
     _default_hp: 300
     _default_move_cost: 10
     _attacks:
@@ -108,7 +108,7 @@ MonoBehaviour:
     _select_image: {fileID: -7827395209335436663, guid: e7e82f08eacb5454498f3caa00710af0, type: 3}
     _detail_image: {fileID: 8314858775564062062, guid: 85a384fa836994d49bd581d6e500be8b, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
-    _default_sprite_smallwindow: {fileID: -7058398485102911826, guid: 433332ed46fc8d3499d1e6506a6b7124, type: 3}
+    _default_sprite_smallwindow: {fileID: -890315151483682747, guid: 989d1f2de12d2be4d966020e21d22741, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -153,7 +153,7 @@ MonoBehaviour:
     _select_image: {fileID: 8651488872111958891, guid: 1f87728c4a4c9e94eb6d2bcc6a6dc12f, type: 3}
     _detail_image: {fileID: 1845130351903015196, guid: b7a806a2d2c5fb241ab7dddcdb99a51d, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
-    _default_sprite_smallwindow: {fileID: -3440073146113266091, guid: c5e116a2102b25a41a01c2d67e3ffd7a, type: 3}
+    _default_sprite_smallwindow: {fileID: 2742269720045207642, guid: 51f77a7edbbf4aa4bab7a3041c86d54c, type: 3}
     _default_hp: 100
     _default_move_cost: 3
     _attacks:
@@ -197,7 +197,7 @@ MonoBehaviour:
     _select_image: {fileID: 1695182302142793382, guid: 0fa23f44853b310459a8a38d70e9bf27, type: 3}
     _detail_image: {fileID: 21300000, guid: 989f56772644e4871ae17e8a2b6951a3, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
-    _default_sprite_smallwindow: {fileID: -6211510306040543583, guid: 046d4b18239ea524c9286f305eb25a33, type: 3}
+    _default_sprite_smallwindow: {fileID: -939691141459620176, guid: c99352fbd899cf74aac20452ec1333ce, type: 3}
     _default_hp: 250
     _default_move_cost: 10
     _attacks:
@@ -246,7 +246,7 @@ MonoBehaviour:
     _select_image: {fileID: 1336907021764206030, guid: f16ef121a9f24ca42b10a843ee747eb7, type: 3}
     _detail_image: {fileID: 21300000, guid: cf4697800d5b8e64397536040f6ed249, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 9dbeb0b5ba320454c9c0f4150d24f569, type: 3}
-    _default_sprite_smallwindow: {fileID: -6410503182584691398, guid: a77a4a3606866cb46acd66e871d1412a, type: 3}
+    _default_sprite_smallwindow: {fileID: 3211265273680694170, guid: b099fdb66256da94fa0b0a522a7b8cc5, type: 3}
     _default_hp: 250
     _default_move_cost: 10
     _attacks:
@@ -289,7 +289,7 @@ MonoBehaviour:
     _select_image: {fileID: -4509132481208037244, guid: 12db220d653655e4caa79651a86b7b34, type: 3}
     _detail_image: {fileID: 2274411440236338096, guid: c255e22d6d96c514085031acbedd305d, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 23e6cb9594be1e340a911bd0cf7fe4b3, type: 3}
-    _default_sprite_smallwindow: {fileID: 7906106173293405398, guid: cf63a44868380674b84a650484f9cd11, type: 3}
+    _default_sprite_smallwindow: {fileID: 3449938049999031603, guid: 9a3a1949544643a45aace8115a2270b0, type: 3}
     _default_hp: 200
     _default_move_cost: 10
     _attacks:
@@ -333,7 +333,7 @@ MonoBehaviour:
     _select_image: {fileID: 374504980988395012, guid: 2136e9af49b3c7c46b848e63c71a1050, type: 3}
     _detail_image: {fileID: 21300000, guid: 96dd63c2cbe6ad84b9229c5070b38a42, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: d485103fc44d7944fb4539e251e75839, type: 3}
-    _default_sprite_smallwindow: {fileID: -8580161024346603066, guid: 17be7c759d3dbf746a784dda23376615, type: 3}
+    _default_sprite_smallwindow: {fileID: -5940655069615762119, guid: 65de8337440ced9428e804420046d7c6, type: 3}
     _default_hp: 300
     _default_move_cost: 5
     _attacks:
@@ -372,10 +372,10 @@ MonoBehaviour:
     _default_name_japanese: "\u65B0\u8457"
     _default_id: 8
     _default_sprite: {fileID: 21300000, guid: 8c2e13a73c74fe24aab0e432edc1d441, type: 3}
-    _select_image: {fileID: 0}
+    _select_image: {fileID: -6703550929176943685, guid: 2b31b6038e4e1e3478aeafbe7379b250, type: 3}
     _detail_image: {fileID: 21300000, guid: 23d28333ff07e26449540cdd9507602a, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: f24e5669e4b6e124a8cd94511ed5e2f3, type: 3}
-    _default_sprite_smallwindow: {fileID: 7066386212557895141, guid: e0d04c1bb792ebc4f9a7e164924d76ab, type: 3}
+    _default_sprite_smallwindow: {fileID: -5174414632576743657, guid: 2feb9225be34d5b468e1ff7f37621537, type: 3}
     _default_hp: 100
     _default_move_cost: 10
     _attacks:
@@ -435,7 +435,7 @@ MonoBehaviour:
     _select_image: {fileID: -3138944076236679945, guid: a36032ebf2b782b49a4f19e1f3962b72, type: 3}
     _detail_image: {fileID: 21300000, guid: 1a83532e305104e5e9250849fde44ece, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: a960522c0846b80429b90f7345017071, type: 3}
-    _default_sprite_smallwindow: {fileID: -7856074508265993089, guid: 1759bfd25abfbfa409a46344829d5d2f, type: 3}
+    _default_sprite_smallwindow: {fileID: 1311975781419735490, guid: dbb31748fdf81dc47b547307361739dd, type: 3}
     _default_hp: 200
     _default_move_cost: 5
     _attacks:
@@ -472,10 +472,10 @@ MonoBehaviour:
     _default_name_japanese: "\u30C0\u30FC\u30CA"
     _default_id: 10
     _default_sprite: {fileID: 21300000, guid: 10fc4211d774c494782e4c137bf8c834, type: 3}
-    _select_image: {fileID: -3138944076236679945, guid: a36032ebf2b782b49a4f19e1f3962b72, type: 3}
+    _select_image: {fileID: -5747921354103223500, guid: 1ee9db9d37333964cb980c9e16fe015d, type: 3}
     _detail_image: {fileID: -3784651827349605482, guid: 3193505ad64469a438fd6830d560a7a7, type: 3}
     _default_sprite_mini: {fileID: -6521769860374610411, guid: 1a5991fa3757a0e47a64daae291ec858, type: 3}
-    _default_sprite_smallwindow: {fileID: -7856074508265993089, guid: 1759bfd25abfbfa409a46344829d5d2f, type: 3}
+    _default_sprite_smallwindow: {fileID: -4782330237536793092, guid: 81541d13d9a7e004987f063d10e221c1, type: 3}
     _default_hp: 200
     _default_move_cost: 10
     _attacks:
