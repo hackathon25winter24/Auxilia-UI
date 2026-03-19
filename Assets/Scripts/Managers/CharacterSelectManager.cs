@@ -14,6 +14,8 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("通常画面")]
     public Button randomFormation;
     public Button backToTitle;
+    public TMP_Text partyHPText;
+    public TMP_Text partyMovText;
 
     [Header("パネル")]
     public GameObject characterSelectPanel;
@@ -30,6 +32,11 @@ public class CharacterSelectManager : MonoBehaviour
     public Button closeDetailButton;
     public TMP_Text hpText;
     public TMP_Text moveCostText;
+    public TMP_Text characterName;
+    public AttackData[] attacks;
+    public TMP_Text passiveName;
+    public TMP_Text passiveExplanation;
+    public Image passiveRange;
 
     [Header("キャラクターデータ (ScriptableObject)")]
     public CharacterData characterDataAsset;
@@ -40,9 +47,19 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("プレイヤーデータ（ScriptableObject）")]
     public PlayerData playerData;
 
-    [Header("hedda-")]
+    [Header("シーンデータ（ScriptableObject）")]
     public SceneData sceneData;
 
+
+    [System.Serializable]
+    public class AttackData
+    {
+        public TMP_Text attackName;
+        public TMP_Text attackDamage;
+        public TMP_Text attackCost;
+        // public TMP_Text attackSpecial;
+        public Image attackRange;
+    }
     void Start()
     {
         characterSelectPanel.SetActive(false);
@@ -114,6 +131,8 @@ public class CharacterSelectManager : MonoBehaviour
                 teamSlotImages[i].gameObject.SetActive(true);
             }
         }
+
+        PartyHPandMOV();
     }
 
     // スロット番号に応じた PlayerData の変数を読み込むヘルパーメソッド
@@ -175,6 +194,15 @@ public class CharacterSelectManager : MonoBehaviour
         int moveCost = characterDataAsset.characters[charIndex].default_move_cost;
         hpText.text = hp.ToString();
         moveCostText.text = moveCost.ToString();
+        characterName.text = characterDataAsset.characters[charIndex].default_name_japanese;
+
+        for(int i = 0; i < 3; i++)
+        {
+            attacks[i].attackName.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_name;
+            attacks[i].attackDamage.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_power.ToString();
+            attacks[i].attackCost.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_cost.ToString();
+            attacks[i].attackRange.sprite = characterDataAsset.characters[charIndex].attacks[i].attack_range_image;
+        }
 
         characterDetailPanel.SetActive(true);
     }
@@ -200,6 +228,8 @@ public class CharacterSelectManager : MonoBehaviour
 
         characterDetailPanel.SetActive(false);
         characterSelectPanel.SetActive(false);
+
+        PartyHPandMOV();
     }
 
     void RandomFormation()
@@ -231,11 +261,25 @@ public class CharacterSelectManager : MonoBehaviour
                 teamSlotImages[i].sprite = defaultImage;
                 teamSlotImages[i].gameObject.SetActive(true);
             }
+
+            PartyHPandMOV();
         }
     }
 
     void BackToTitle()
     {
         sceneData.next_scene_number = 1;
+    }
+
+    void PartyHPandMOV()
+    {
+        int partyHP = characterDataAsset.characters[playerData.character_formation_one].default_hp
+            + characterDataAsset.characters[playerData.character_formation_two].default_hp
+            + characterDataAsset.characters[playerData.character_formation_three].default_hp;
+        int partyMov = characterDataAsset.characters[playerData.character_formation_one].default_move_cost
+            + characterDataAsset.characters[playerData.character_formation_two].default_move_cost
+            + characterDataAsset.characters[playerData.character_formation_three].default_move_cost;
+        partyHPText.text = partyHP.ToString();
+        partyMovText.text = partyMov.ToString();
     }
 }

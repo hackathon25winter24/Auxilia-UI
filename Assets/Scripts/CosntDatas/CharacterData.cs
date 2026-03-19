@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CharacterData", menuName = "Scriptable Objects/CharacterData")]
@@ -17,6 +18,7 @@ public class CharacterData : ScriptableObject
 public class CharactersData
 {
     [SerializeField] string _default_name;
+    [SerializeField] string _default_name_japanese;
     [SerializeField] int _default_id;
     [SerializeField] Sprite _default_sprite;
     [SerializeField] Sprite _select_image;
@@ -32,6 +34,11 @@ public class CharactersData
     public string default_name
     {
         get{return _default_name;}
+    }
+
+    public string default_name_japanese
+    {
+        get { return _default_name_japanese; }
     }
 
     public int default_id
@@ -96,6 +103,7 @@ public class Attacks
     public int[] debuffs = new int[8];
     [SerializeField] Sprite _attack_button;
     [SerializeField] Vector2Int[] _default_attack_range;
+    [SerializeField] Sprite _attack_range_image;
 
     public string default_attack_name
     {
@@ -126,6 +134,11 @@ public class Attacks
     {
         get{return _default_attack_range;}
     }
+
+    public Sprite attack_range_image
+    {
+        get { return _attack_range_image; }
+    }
 }
 
 [System.Serializable]
@@ -134,6 +147,8 @@ public class Passive
     [SerializeField] int _passive_power;
     [SerializeField] int _passive_target;
     [SerializeField] Vector2Int[] _passive_range;
+    [SerializeField] Sprite _passive_range_image;
+    [SerializeField] string _passive_explanation;
 
     public int passive_power
     {
@@ -146,5 +161,15 @@ public class Passive
     public Vector2Int[] passive_range
     {
         get{return _passive_range;}
+    }
+
+    public Sprite passove_range_image
+    {
+        get { return _passive_range_image; }
+    }
+
+    public string passive_explanation
+    {
+        get { return _passive_explanation; }
     }
 }
