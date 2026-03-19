@@ -22,6 +22,17 @@ public class RoomUIManager : MonoBehaviour
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         UpDateRoom();
+
+        // 開発環境でシーン上のOnClick未設定によるボタン無反応を防ぐため、動的にイベントを付与
+        var reloadButtonObj = GameObject.Find("ReRoadButton");
+        if (reloadButtonObj != null)
+        {
+            var btn = reloadButtonObj.GetComponent<Button>();
+            if (btn != null)
+            {
+                btn.onClick.AddListener(() => OnButtonClick("ReRoad"));
+            }
+        }
     }
     
     public async void OnButtonClick(string buttonName)
@@ -61,6 +72,9 @@ public class RoomUIManager : MonoBehaviour
         //バックエンドから部屋の情報を取得してください
         var joiner_list = await gameConnector.ListRoom(roomData.room_id);
         var rooms = await gameConnector.GetAllRoomMatch();
+        
+        if (joiner_list == null || rooms == null || joiner_list.Count == 0) return;
+
         var owner = new Game.Network.UserResponse();
         for (int i = 0; i < rooms.Count; i++)
         {
