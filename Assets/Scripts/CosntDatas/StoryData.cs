@@ -19,6 +19,8 @@ public class SerifData
     public int characterID;
     public int character_face;
     public int character_move;
+    public float character_size;
+    public bool is_shadowed;
     public string name;
     [TextArea(3, 10)]
     public string serif;

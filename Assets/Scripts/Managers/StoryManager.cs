@@ -11,11 +11,12 @@ public class StoryManager : MonoBehaviour
     public PlayerData playerData;
     public StoryData storyData;
     public StoryManagerData storyManagerData;
+    public StoryCharacterData storyCharacterData;
 
     public Image backImage;
     public Sprite back_image;
     public Image CharacterImage;
-    public Sprite sophie_story;
+    public RectTransform character;
     public Image DownArrow;
     public TextMeshProUGUI TellingCharacterName;
     public TextMeshProUGUI Tell;
@@ -23,12 +24,11 @@ public class StoryManager : MonoBehaviour
     public float typingSpeed = 0.05f;
     public TextMeshProUGUI autoText;
     public GameObject RightDownUI;
+    public GameObject Shadow;
 
     void Awake()
     {
         storyManagerData.serif_number = 0;
-        backImage.sprite = back_image;
-        CharacterImage.sprite = sophie_story;
         storyManagerData.is_auto = false;
         storyManagerData.is_wating = false;
         RightDownUI.SetActive(true);
@@ -142,6 +142,14 @@ public class StoryManager : MonoBehaviour
     IEnumerator ShowText(string fullText)
     {
         storyManagerData.serif_loading = true;
+
+        backImage.sprite = back_image;
+        CharacterImage.sprite = storyCharacterData.charactersData[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].characterID]
+        .character_face[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_face];
+        float size = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_size;
+        character.localScale = new Vector3(size, size, size);
+        Shadow.SetActive(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_shadowed);
+
         Tell.text = ""; // まず空にする
 
         foreach (char letter in fullText.ToCharArray())
