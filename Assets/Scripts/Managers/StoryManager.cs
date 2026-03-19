@@ -189,7 +189,27 @@ public class StoryManager : MonoBehaviour
             int index = i;
             newButton.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(index));
         }
+
+        if (storyManagerData.is_auto && current.num_selection > 0)
+        {
+        // 少し待ってから選ぶ演出を入れたい場合はコルーチンを呼ぶ
+        StartCoroutine(AutoSelectFirstChoice());
+        }
     }
+
+    // オート時に一番上を勝手に選ぶコルーチン
+IEnumerator AutoSelectFirstChoice()
+{
+    // 即座に選ぶとプレイヤーが何が起きたか分からないので、1秒ほど待機
+    yield return new WaitForSeconds(1.0f);
+
+    // まだオートモードが継続中であれば、0番目（一番上）を選択実行
+    if (storyManagerData.is_auto)
+    {
+        Debug.Log("オートモード：一番上の選択肢を自動選択しました");
+        OnChoiceSelected(0);
+    }
+}
 
     void OnChoiceSelected(int index)
     {
