@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine.UI;
 
 public class SelectUIManager : MonoBehaviour
@@ -10,6 +12,7 @@ public class SelectUIManager : MonoBehaviour
     public PlayerData playerData;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
+    public RoomData roomData;
 
     public TextMeshProUGUI party_move_cost;
     public TextMeshProUGUI start_game_text;
@@ -29,6 +32,8 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI nameText2;
     public TextMeshProUGUI timertext2;
+
+    public GameConnector gameConnector;
     
     public int selectedUI;
     public int selectedCharacterId;
@@ -37,8 +42,12 @@ public class SelectUIManager : MonoBehaviour
     private float currentTime;
     private bool isTimerRunning = false;
 
-    void Awake()
+    Game.Network.UserResponse p1 = new Game.Network.UserResponse();
+    Game.Network.UserResponse p2 = new Game.Network.UserResponse();
+
+    async void Awake()
     {
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         if (battleDataforOnline.isPlayer)
         {
             playerUI.SetActive(true);
@@ -53,6 +62,25 @@ public class SelectUIManager : MonoBehaviour
         {
             //ここに試合をする人の名前を受け取る関数を書いてください
             //データはそれぞれbattleDataforOnlineのpalyer1_nameとplayer2_nameに格納してください
+            var battle_player = await gameConnector.GetBattlePlayer(roomData.room_id);
+            if (battle_player[0] == null)
+            {
+                Debug.Log("1Pがいません");
+            }
+            else
+            {
+                p1 = await gameConnector.GetUser(battle_player[0].UserId);
+                battleDataforOnline.palyer1_name = p1.Name;
+            }
+            if (battle_player[1] == null)
+            {
+                Debug.Log("2Pがいません");
+            }
+            else
+            {
+                p2 = await gameConnector.GetUser(battle_player[1].UserId);
+                battleDataforOnline.player2_name = p2.Name;
+            }        
             playerUI.SetActive(false);
             SpectatorUI.SetActive(true);
             ready.SetActive(false); 
@@ -104,7 +132,7 @@ public class SelectUIManager : MonoBehaviour
     public void CharacterLongClick(int LongButtonNum)
     {}
 
-    void Update()
+    async void Update()
     {
         if (isTimerRunning)
         {
@@ -128,10 +156,24 @@ public class SelectUIManager : MonoBehaviour
         if (battleDataforOnline.isPlayer)
         {
             SendDatas();
-            GetOpponentDatas();
+            var opponent_characters = GetOpponentDatas();
+            Debug.Log($"相手のキャラID: {opponent_characters}");
         }else
         {
-            GetDatas();
+            // 毎フレーム動かすことができなかったので大体1秒に1回動かしてます
+            float time = Mathf.CeilToInt(currentTime);
+            float predicted_time = Mathf.CeilToInt(currentTime-Time.deltaTime);
+            if (time != predicted_time)
+            {
+                var all_game_data = await GetDatas();
+                // 説明できないくらい大量のデータが入ってるので必要なものだけを使ってください。以下取得例
+                // all_game_data.BaseHp1,    all_game_data.BaseHp2,   all_game_data.Characters, 
+                // all_game_data.FinishedAt, all_game_data.Id,        all_game_data.Is1PTurn, 
+                // all_game_data.IsFinished, all_game_data.Player1Id, all_game_data.Player2Id, 
+                // all_game_data.RoomId,     all_game_data.Turn,      all_game_data.TurnStartAt, 
+                // all_game_data.WinnerPlayerId
+                Debug.Log($"1P拠点のHP: {all_game_data.BaseHp1}, 対戦キャラリスト: {all_game_data.Characters}, 1Pのターンか: {all_game_data.Is1PTurn}");
+            }
         }
     }
 
@@ -182,18 +224,57 @@ public class SelectUIManager : MonoBehaviour
         }
     }
 
-    public void SendDatas()
+    public async void SendDatas()
     {
         //ここに自分の編成とコストを送る関数を書いてください
+
+        // 自分の編成は1P2Pに関係なくBattleDataforOmlineの0, 1, 2に入っている想定で書いてます。
+        int chara1 = battleDataforOnline.selected_character[0];
+        int chara2 = battleDataforOnline.selected_character[1];
+        int chara3 = battleDataforOnline.selected_character[2];
+        int[] charas = {chara1, chara2, chara3};
+        bool is1p = false;
+
+        var room = await gameConnector.ListRoom(roomData.room_id);
+        for (int i = 0; i < room.Count; i++)
+        {
+            if (room[i].UserId == playerData.user_id && room[i].State == 1)
+            {
+                is1p = true;
+            }
+        }
+        await gameConnector.RegisterCharacters(roomData.room_id, is1p, charas);
     }
 
-    public void GetOpponentDatas()
+    public async Task<List<int>> GetOpponentDatas()
     {
         //ここに相手の編成とコストを受け取る関数を書いてください
+        var data = await gameConnector.GetGameData(roomData.room_id);
+        var room = await gameConnector.ListRoom(roomData.room_id);
+        bool is1p = false;
+        var opponent_characters = new List<int>(3);
+        for (int i = 0; i < room.Count; i++)
+        {
+            if (room[i].UserId == playerData.user_id && room[i].State == 1)
+            {
+                is1p = true;
+            }
+        }
+        for (int i = 0; i < data.Characters.Count; i++)
+        {
+            if(data.Characters[i].Is1P != is1p)// 相手のキャラを抜き出す
+            {
+                opponent_characters.Add((int)data.Characters[i].CharacterId);
+            }
+        }
+        // 相手の編成のキャラIDを返せばコストはこっちで計算できるので、IDだけ返します
+        return opponent_characters;
     }
 
-    public void GetDatas()
+    public async Task<Game.Network.GameDataResponse> GetDatas()
     {
         //ここに試合中の全体の編成とコストを受け取る関数を書いてください
+        var data = await gameConnector.GetGameData(roomData.room_id);
+        return data;
     }
 }

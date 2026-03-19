@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
@@ -339,6 +340,65 @@ public class GameConnector : MonoBehaviour
         catch (RpcException e)
         {
             ShowErrorMessage($"参加者リストの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<List<Room.Room>> GetBattlePlayer(int roomId)
+    {
+        try
+        {
+            var request = new ListRoomRequest{RoomId = roomId};
+            var response = await _roomClient.ListRoomAsync(request);
+            var battlePlayer = new List<Room.Room>(new Room.Room[2]);
+            for (int i = 0; i < response.Rooms.Count; i++)
+            {
+                if (response.Rooms[i].State == 1)
+                {
+                    battlePlayer[0] = response.Rooms[i];
+                }
+                if (response.Rooms[i].State == 2)
+                {
+                    battlePlayer[1] = response.Rooms[i];
+                }
+            }
+            return battlePlayer;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"1P2Pの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<List<UniqueCharacter>> RegisterCharacters(int roomId, bool is1p, int[] characterIds)
+    {
+        try
+        {
+            var request = new RegisterCharactersRequest{RoomId = (uint)roomId, Is1P = is1p};
+            request.CharacterIds.Add(characterIds.Select(x => (uint)x).ToArray());
+            Debug.Log($"CharacterIds: {request.CharacterIds}");
+            var response = await _battleClient.RegisterCharactersAsync(request);
+            return new List<UniqueCharacter>(response.RegisteredCharacters);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"キャラの登録に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<GameDataResponse> GetGameData(int roomId)
+    {
+        try
+        {
+            var request = new GetGameDataRequest{RoomId = (uint)roomId};
+            var reponse = await _battleClient.GetGameDataAsync(request);
+            return reponse;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ゲームデータの取得に失敗しました: {e.Status.Detail}");
             return null;
         }
     }
