@@ -17,6 +17,7 @@ public class RoomUIManager : MonoBehaviour
     public GameConnector gameConnector;
 
     public string room_name;
+    private TextMeshProUGUI startBattleButtonText;
 
     void Awake()
     {
@@ -33,6 +34,22 @@ public class RoomUIManager : MonoBehaviour
                 btn.onClick.AddListener(() => OnButtonClick("ReRoad"));
             }
         }
+
+        var startBtnObj = GameObject.Find("StartBattleButton") ?? GameObject.Find("StartButton") ?? GameObject.Find("StartBattle");
+        if (startBtnObj != null) 
+        {
+            startBattleButtonText = startBtnObj.GetComponentInChildren<TextMeshProUGUI>();
+        }
+        else 
+        {
+            var buttons = Resources.FindObjectsOfTypeAll<Button>();
+            foreach(var b in buttons) {
+                if(b.name.Contains("Start")) {
+                    startBattleButtonText = b.GetComponentInChildren<TextMeshProUGUI>();
+                    if (startBattleButtonText != null) break;
+                }
+            }
+        }
     }
     
     public async void OnButtonClick(string buttonName)
@@ -43,8 +60,42 @@ public class RoomUIManager : MonoBehaviour
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
-                await gameConnector.StartMatch(roomData.room_id);
-                sceneData.next_scene_number = 10;
+                if (roomData.usersData[roomData.room_my_number].is_host)
+                {
+                    bool allReady = true;
+                    int activeCount = 0;
+                    for (int i = 0; i <= 7; i++)
+                    {
+                        // ホスト以外のプレイ中のユーザー（観戦者以外）が全員readyかどうか判定
+                        if (roomData.usersData[i].user_state != -1 && !roomData.usersData[i].is_host && roomData.usersData[i].user_state != 0)
+                        {
+                            activeCount++;
+                            if (!roomData.usersData[i].is_ready) allReady = false;
+                        }
+                    }
+
+                    if (allReady && activeCount > 0)
+                    {
+                        await gameConnector.StartMatch(roomData.room_id);
+                        sceneData.next_scene_number = 10;
+                    }
+                    else
+                    {
+                        Debug.Log("全員が準備完了していないか、対戦相手がいません。");
+                    }
+                }
+                else
+                {
+                    // ゲスト（親以外）は自分のready状態を切り替える
+                    bool newReady = !roomData.usersData[roomData.room_my_number].is_ready;
+                    await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, roomData.usersData[roomData.room_my_number].user_state, newReady);
+                    
+                    if (startBattleButtonText != null)
+                    {
+                        startBattleButtonText.text = newReady ? "対戦開始を待っています..." : "準備完了";
+                    }
+                    UpDateRoom();
+                }
                 break;
             case "ReRoad":
                 UpDateRoom();
@@ -89,15 +140,51 @@ public class RoomUIManager : MonoBehaviour
         for (int i = 0; i < joiner_list.Count; i++)
         {
             var user = await gameConnector.GetUser(joiner_list[i].UserId);
+            if (user.Id == playerData.user_id) roomData.room_my_number = i;
+
             roomData.usersData[i].user_name = user.Name;
             roomData.usersData[i].user_rate = user.Rate;
             roomData.usersData[i].is_host = (owner.Id == user.Id) ? true : false;
             roomData.usersData[i].user_state = joiner_list[i].State;
+            roomData.usersData[i].is_ready = joiner_list[i].IsReady;
         }
 
         for (int i = 0; i <= 7; i++)
         {
-        joinnersUI[i].sprite = joinnersUIImage[roomData.usersData[i].user_state + 1];
+            joinnersUI[i].sprite = joinnersUIImage[roomData.usersData[i].user_state + 1];
+
+            // readyがtrueのユーザーを白く囲む
+            var outline = joinnersUI[i].gameObject.GetComponent<Outline>();
+            if (outline == null) 
+            {
+                outline = joinnersUI[i].gameObject.AddComponent<Outline>();
+                outline.effectDistance = new Vector2(3, -3);
+            }
+            
+            if (roomData.usersData[i].user_state != -1 && roomData.usersData[i].is_ready)
+            {
+                outline.enabled = true;
+                outline.effectColor = Color.white;
+            }
+            else
+            {
+                outline.enabled = false;
+            }
+        }
+
+        if (startBattleButtonText != null)
+        {
+            bool amIHost = roomData.usersData[roomData.room_my_number].is_host;
+            bool amIReady = roomData.usersData[roomData.room_my_number].is_ready;
+            
+            if (amIHost)
+            {
+                startBattleButtonText.text = "対戦開始";
+            }
+            else
+            {
+                startBattleButtonText.text = amIReady ? "対戦開始を待っています..." : "準備完了";
+            }
         }
     }
 }
