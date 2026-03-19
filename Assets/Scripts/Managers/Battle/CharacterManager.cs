@@ -13,9 +13,6 @@ public class CharacterManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
-    public int[] on_grid_number;
-    public int[] on_grid_number_x;
-    public int[] on_grid_number_y;
     public int selected_character_id;
     public RectTransform AttackButton;
     public Image AttackButtonBackImage;
@@ -113,9 +110,7 @@ public class CharacterManager : MonoBehaviour
         characters[id].anchoredPosition = pos;
         character_image[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_mini;
         CharacterSmallwindow[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_smallwindow;
-        on_grid_number_x[id] = gridX;
-        on_grid_number_y[id] = gridY;
-        on_grid_number[id] = gridY * 8 + gridX; // 1次元番号も一応同期
+        battleDataforOnline.charactersBattleDatas[id].now_character_position = new Vector2Int(gridX, gridY);
     }
 
     public void OnButtonClick(string buttonName)
@@ -254,16 +249,8 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    for (int i = 0; i <= 5; i++)
-    {
-    battleDataforOnline.charactersBattleDatas[i].now_character_position
-     = new Vector2Int(on_grid_number_x[i],on_grid_number_y[i]);
-    }
-
-    if (battleDataforLocal.is_myturn == false)
-    {
-        UpdateCharacterPosition();
-    }
+    // 毎フレーム、BattleDataforOnline の座標に基づいてUI画像を同期する（自分のターン・相手ターン問わず）
+    UpdateCharacterPosition();
 
     // 死亡判定
     for(int i = 0; i <= 5; i++)
@@ -287,7 +274,7 @@ public class CharacterManager : MonoBehaviour
 
     public void UpdateCharacterPosition()
     {
-    for (int i = 3; i <= 5; i++)
+    for (int i = 0; i <= 5; i++)
         {
         int worldPosX = battleDataforOnline.charactersBattleDatas[i].now_character_position.x * 50 - 175;
         int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 30;
@@ -311,8 +298,10 @@ public class CharacterManager : MonoBehaviour
 
     void TryMove(int moveX, int moveY, Vector2 posDelta)
     {
-    int nextX = on_grid_number_x[selected_character_id] + moveX;
-    int nextY = on_grid_number_y[selected_character_id] + moveY;
+    int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
+    int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
+    int nextX = currentX + moveX;
+    int nextY = currentY + moveY;
 
     if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;
 
@@ -323,12 +312,10 @@ public class CharacterManager : MonoBehaviour
     if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
     {
         // A. 現在の場所（移動元）を元の地形に戻す
-        UpdateGridState(on_grid_number_x[selected_character_id], on_grid_number_y[selected_character_id], 0);
+        UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        on_grid_number_x[selected_character_id] = nextX;
-        on_grid_number_y[selected_character_id] = nextY;
-        on_grid_number[selected_character_id] = nextY * 8 + nextX;
+        battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position = new Vector2Int(nextX, nextY);
 
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
@@ -389,8 +376,8 @@ public class CharacterManager : MonoBehaviour
 
     public void Attack()
     {
-    int currentX = on_grid_number_x[selected_character_id];
-    int currentY = on_grid_number_y[selected_character_id];
+    int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
+    int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
     var ranges = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_range;
 
     // マウスの方向を取得 (Vector2Int.up, down, left, right のいずれかが返る)
@@ -461,7 +448,9 @@ public class CharacterManager : MonoBehaviour
     for (int i = 0; i <= 3; i++)
     {
         // 味方がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+        int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+        if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
             ApplyDamage(i, power);
             hit_character++;
@@ -476,7 +465,9 @@ public class CharacterManager : MonoBehaviour
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+        int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+        if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
             ApplyDamage(i, power);
             hit_character++;
@@ -609,7 +600,9 @@ public class CharacterManager : MonoBehaviour
     // オブジェクトを非表示にする、または墓標にするなどの演出
     characters[targetId].gameObject.SetActive(false);
     // グリッド上の存在情報を消す
-    UpdateGridState(on_grid_number_x[targetId], on_grid_number_y[targetId], 0);
+    int cx = battleDataforOnline.charactersBattleDatas[targetId].now_character_position.x;
+    int cy = battleDataforOnline.charactersBattleDatas[targetId].now_character_position.y;
+    UpdateGridState(cx, cy, 0);
     }
 
     private void DeselectAll()
@@ -671,11 +664,13 @@ public class CharacterManager : MonoBehaviour
         // 移動したキャラだけ位置を送信（毎フレーム送らないよう差分チェック）
         for (int i = 0; i <= 2; i++)
         {
-            if (on_grid_number_x[i] != _lastSentX[i] || on_grid_number_y[i] != _lastSentY[i])
+            int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+            int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+            if (cx != _lastSentX[i] || cy != _lastSentY[i])
             {
-                _ = gameConnector.SendMove(rid, pid, i, on_grid_number_x[i], on_grid_number_y[i]);
-                _lastSentX[i] = on_grid_number_x[i];
-                _lastSentY[i] = on_grid_number_y[i];
+                _ = gameConnector.SendMove(rid, pid, i, cx, cy);
+                _lastSentX[i] = cx;
+                _lastSentY[i] = cy;
             }
         }
     }
@@ -722,18 +717,21 @@ public class CharacterManager : MonoBehaviour
             }
         }
 
-        // 相手キャラクター位置を反映（インデックス3〜5が相手側）
-        int opponentOffset = 0;
+        // 全キャラクター位置とHPを反映（インデックス0〜2が自分、3〜5が相手）
+        int myIdx = 0, opIdx = 3;
         foreach (var c in data.Characters)
         {
             bool charIs1p = c.Is1P;
             bool charIsMine = (is1p == charIs1p);
-            if (!charIsMine && opponentOffset < 3)
+            
+            int idx = -1;
+            if (charIsMine && myIdx < 3) idx = myIdx++;
+            else if (!charIsMine && opIdx < 6) idx = opIdx++;
+            
+            if (idx != -1)
             {
-                int idx = 3 + opponentOffset;
-                // 相手キャラのHPを更新
                 battleDataforOnline.charactersBattleDatas[idx].now_character_hp = (int)c.Hp;
-                opponentOffset++;
+                battleDataforOnline.charactersBattleDatas[idx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
             }
         }
 
