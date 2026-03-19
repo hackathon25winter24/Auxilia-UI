@@ -73,6 +73,7 @@ public class CharacterManager : MonoBehaviour
 
         for (int i = 0; i <= 5; i++)
         {
+        battleDataforOnline.charactersBattleDatas[i].unique_id = 0; // Reset for new match mapping
         battleDataforOnline.character_isSelected[i] = false;
         battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
         battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
@@ -489,10 +490,26 @@ public class CharacterManager : MonoBehaviour
 
     if (hit_character > 0)
     {
-        // 攻撃データを送信（サーバー側のアクション同期のみ。HP計算自体はサーバーで再計算されるはずだが
-        // 現時点での演出のために、攻撃したという事実自体を飛ばす）
         uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
-        // 本来は攻撃対象キャラのIDなども含める必要があるが、まずは攻撃者のIDを正しく送る
+        
+        // ヒットしたキャラクターの中から最初の1人をターゲットとして送信（サーバー側の仕様に合わせる）
+        // ※ 本来は範囲攻撃なら全対象をサーバーで計算すべきだが、フロント計算結果を優先反映させる
+        int firstHitIdx = -1;
+        for(int i=0; i<=5; i++) {
+            // 自分以外への当たり判定
+            if (i != selected_character_id) {
+                int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+                int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+                if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1) {
+                    firstHitIdx = i;
+                    break;
+                }
+            }
+        }
+
+        uint targetUid = (firstHitIdx != -1) ? battleDataforOnline.charactersBattleDatas[firstHitIdx].unique_id : 0;
+        uint targetNewHp = (firstHitIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[firstHitIdx].now_character_hp : 0;
+
         _ = gameConnector.SendAttack(
             roomData.room_id, 
             playerData.user_id, 
@@ -501,8 +518,8 @@ public class CharacterManager : MonoBehaviour
             true, 
             battleDataforOnline.base_hp, 
             battleDataforOnline.opponent_base_hp, 
-            0, // とりあえず0をセット（必要なら拡張）
-            0  // とりあえず0をセット
+            (int)targetUid, 
+            (int)targetNewHp
         );
     }
 
@@ -737,22 +754,46 @@ public class CharacterManager : MonoBehaviour
             }
         }
 
-        // 全キャラクター位置とHPを反映（インデックス0〜2が自分、3〜5が相手）
-        int myIdx = 0, opIdx = 3;
+        // キャラクター位置とHPを反映（UniqueIdによるマッチング）
         foreach (var c in data.Characters)
         {
-            bool charIs1p = c.Is1P;
-            bool charIsMine = (is1p == charIs1p);
-            
-            int idx = -1;
-            if (charIsMine && myIdx < 3) idx = myIdx++;
-            else if (!charIsMine && opIdx < 6) idx = opIdx++;
-            
-            if (idx != -1)
+            int targetIdx = -1;
+            // 既に UniqueId を知っている場合はそれでマッチング
+            for (int i = 0; i <= 5; i++)
             {
-                battleDataforOnline.charactersBattleDatas[idx].unique_id = c.Id;
-                battleDataforOnline.charactersBattleDatas[idx].now_character_hp = (int)c.Hp;
-                battleDataforOnline.charactersBattleDatas[idx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
+                if (battleDataforOnline.charactersBattleDatas[i].unique_id == c.Id)
+                {
+                    targetIdx = i;
+                    break;
+                }
+            }
+
+            // 初回で見つからない場合は、初期位置や masterID で推測する
+            if (targetIdx == -1)
+            {
+                bool charIs1p = c.Is1P;
+                bool charIsMine = (is1p == charIs1p);
+                int start = charIsMine ? 0 : 3;
+                int end = charIsMine ? 2 : 5;
+
+                for (int i = start; i <= end; i++)
+                {
+                    // まだ Id が未設定のスロットを探す、かつ masterID が一致するもの
+                    if (battleDataforOnline.charactersBattleDatas[i].unique_id == 0)
+                    {
+                        // 複数同キャラがいる場合は位置で特定するなどの高度な判定が必要だが、
+                        // まずはリスト順が安定していることを期待して空きスロットに入れる
+                        targetIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            if (targetIdx != -1)
+            {
+                battleDataforOnline.charactersBattleDatas[targetIdx].unique_id = c.Id;
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp = (int)c.Hp;
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
             }
         }
 

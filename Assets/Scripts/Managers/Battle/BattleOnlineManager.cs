@@ -117,12 +117,20 @@ public class BattleOnlineManager : MonoBehaviour
         gametext.text = "battle start!";
         StartCoroutine(MoveRoutine());
     }
-
+    private float _turnTransitionTime = 0f; // ターン切り替え時の猶予時間
+    
     void Update()
     {
         if (is_text_moving) return;
+
+        if (_turnTransitionTime > 0)
+        {
+            _turnTransitionTime -= Time.deltaTime;
+        }
         if (battleDataforOnline.now_moving_player == battleDataforOnline.my_player_id)
         {
+            // ターン終了直後（猶予時間中）であれば、サーバーからの自ターン継続情報を無視する
+            if (_turnTransitionTime > 0) return;
             if (battleDataforLocal.is_myturn != true)
             {
             battleDataforLocal.is_myturn = true;
@@ -177,8 +185,9 @@ public class BattleOnlineManager : MonoBehaviour
     public void StartMyTurn()
     {
         gametext.text = "your turn";
+        // ターン開始時にコストを50にリセット
+        battleDataforOnline.now_my_cost = 50;
         StartCoroutine(MoveRoutine());
-        // コストはサーバーから GetBattleData 経由で設定されるためここでは上書きしない
         TimerStart();
     }
 
@@ -206,6 +215,9 @@ public class BattleOnlineManager : MonoBehaviour
 
         // サーバーにターン終了を通知する
         if (characterManager != null) characterManager.NotifyTurnEnd();
+
+        // ターン終了直後にサーバーからの古い「自ターンのまま」のデータで上書きされないよう猶予を作る
+        _turnTransitionTime = 2.0f;
 
         // ターン終了時にコストを50まで回復
         battleDataforOnline.now_my_cost = 50;
