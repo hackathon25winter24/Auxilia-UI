@@ -62,13 +62,13 @@ MonoBehaviour:
       _passive_range_image: {fileID: 0}
       _passive_explanation: 
   - _default_name: Jude
-    _default_name_japanese: 
+    _default_name_japanese: "\u30B8\u30E5\u30FC\u30C9"
     _default_id: 1
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _select_image: {fileID: 6018669768705036611, guid: c6466b20ef3f826478bf77da6b9ac9d0, type: 3}
-    _detail_image: {fileID: 1819965903137606800, guid: 9764a0c6c095f7f4a81dc15535d8e5fe, type: 3}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _detail_image: {fileID: 21300000, guid: 4bd2e609981c961448e98e0d7dd7707a, type: 3}
+    _default_sprite_mini: {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
+    _default_sprite_smallwindow: {fileID: 7971827419028771467, guid: c7b4330329114c04bbeb7737cd196093, type: 3}
     _default_hp: 300
     _default_move_cost: 10
     _attacks:
@@ -80,7 +80,7 @@ MonoBehaviour:
       _attack_button: {fileID: -1708768211389677097, guid: 1783dcb18cdc74c1da9fe8efab8ae528, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: 8433748012727994270, guid: 7c604183f07c8104a86329794768cbbc, type: 3}
     - _default_attack_name: "\u5207\u308A\u88C2\u304D"
       _default_attack_cost: 20
       _default_attack_power: 40
@@ -89,7 +89,7 @@ MonoBehaviour:
       _attack_button: {fileID: 2326456274582334177, guid: ac3810202edbf46fb857953b182a82fe, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: 2933827962546925429, guid: 81f863647d0be484d93227da661d726a, type: 3}
     - _default_attack_name: "\u5FDC\u6025\u624B\u5F53"
       _default_attack_cost: 30
       _default_attack_power: -20
@@ -98,7 +98,7 @@ MonoBehaviour:
       _attack_button: {fileID: -1020282823678200800, guid: 697e230460ca347f8868f4369710be6e, type: 3}
       _default_attack_range:
       - {x: 0, y: 0}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: -687154958140006363, guid: 8ad113fd96f8a8a49a3dcedb25b74665, type: 3}
     _attack_button_backimage: {fileID: 8082451066370681969, guid: 590838ee42ca1444eb2fec4ae3834e53, type: 3}
     passive: []
   - _default_name: Nadia
