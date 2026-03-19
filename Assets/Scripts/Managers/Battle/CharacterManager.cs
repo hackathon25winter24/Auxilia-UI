@@ -711,12 +711,12 @@ public class CharacterManager : MonoBehaviour
                 if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
                 {
                     // Update fixed terrain layer
-                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.Type;
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
                     
                     // If no character is currently stepping on it (-1), visually update the active layer too
                     if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] != -1)
                     {
-                        gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = (int)g.Type;
+                        gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = (int)g.GridType;
                     }
                 }
             }
