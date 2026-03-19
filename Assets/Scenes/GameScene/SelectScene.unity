@@ -153,6 +153,7 @@ MonoBehaviour:
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
   party_move_cost: {fileID: 1756608400}
   start_game_text: {fileID: 2046071760}
   timertext: {fileID: 167233743}
@@ -173,6 +174,7 @@ MonoBehaviour:
   nameText: {fileID: 914225192}
   nameText2: {fileID: 1561983189}
   timertext2: {fileID: 607152488}
+  gameConnector: {fileID: 0}
   selectedUI: 0
   selectedCharacterId: 0
   maxTime: 100
