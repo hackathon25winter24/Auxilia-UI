@@ -23,7 +23,7 @@ public class RoomUIManager : MonoBehaviour
     public string room_name;
     private TextMeshProUGUI startBattleButtonText;
 
-    private AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> _roomStream;
+    private AsyncServerStreamingCall<ListRoomResponse> _roomStream;
     private bool _isStreaming;
     private bool _pendingRoomUpdate;
     private CancellationTokenSource _cts;
@@ -49,7 +49,6 @@ public class RoomUIManager : MonoBehaviour
 
         if (_roomStream != null)
         {
-            _roomStream.RequestStream.CompleteAsync();
             _roomStream.Dispose();
             _roomStream = null;
         }
@@ -68,8 +67,7 @@ public class RoomUIManager : MonoBehaviour
             {
                 try 
                 {
-                    _roomStream = gameConnector.StreamRoom();
-                    await _roomStream.RequestStream.WriteAsync(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id }, _cts.Token);
+                    _roomStream = gameConnector.StreamRoom(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id });
                     Debug.Log($"<color=cyan>[StreamRoom] サーバーのリアルタイム同期に接続しました！ (RoomID: {roomData.room_id})</color>");
 
                     while (_isStreaming && !_cts.IsCancellationRequested && await _roomStream.ResponseStream.MoveNext(_cts.Token))

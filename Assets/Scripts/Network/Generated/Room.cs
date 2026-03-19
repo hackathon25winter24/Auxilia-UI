@@ -46,7 +46,7 @@ namespace Room {
             "YWR5GAQgASgIIjQKF1VwZGF0ZVJvb21TdGF0ZVJlc3BvbnNlEhkKBXJvb21z",
             "GAEgAygLMgoucm9vbS5Sb29tIiQKEVN0YXJ0TWF0Y2hSZXF1ZXN0Eg8KB3Jv",
             "b21faWQYASABKAUiQAoSU3RhcnRNYXRjaFJlc3BvbnNlEhkKBXJvb21zGAEg",
-            "AygLMgoucm9vbS5Sb29tEg8KB3N0YXJ0ZWQYAiABKAgyzAQKC1Jvb21TZXJ2",
+            "AygLMgoucm9vbS5Sb29tEg8KB3N0YXJ0ZWQYAiABKAgyygQKC1Jvb21TZXJ2",
             "aWNlEjkKCEpvaW5Sb29tEhUucm9vbS5Kb2luUm9vbVJlcXVlc3QaFi5yb29t",
             "LkpvaW5Sb29tUmVzcG9uc2USPAoJTGVhdmVSb29tEhYucm9vbS5MZWF2ZVJv",
             "b21SZXF1ZXN0Ghcucm9vbS5MZWF2ZVJvb21SZXNwb25zZRI5CghMaXN0Um9v",
@@ -58,9 +58,9 @@ namespace Room {
             "c3BvbnNlEk4KD1VwZGF0ZVJvb21TdGF0ZRIcLnJvb20uVXBkYXRlUm9vbVN0",
             "YXRlUmVxdWVzdBodLnJvb20uVXBkYXRlUm9vbVN0YXRlUmVzcG9uc2USPwoK",
             "U3RhcnRNYXRjaBIXLnJvb20uU3RhcnRNYXRjaFJlcXVlc3QaGC5yb29tLlN0",
-            "YXJ0TWF0Y2hSZXNwb25zZRJBCgpTdHJlYW1Sb29tEhcucm9vbS5Sb29tU3Ry",
-            "ZWFtUmVxdWVzdBoWLnJvb20uTGlzdFJvb21SZXNwb25zZSgBMAFCDFoKYXV4",
-            "aWxpYS9wYmIGcHJvdG8z"));
+            "YXJ0TWF0Y2hSZXNwb25zZRI/CgpTdHJlYW1Sb29tEhcucm9vbS5Sb29tU3Ry",
+            "ZWFtUmVxdWVzdBoWLnJvb20uTGlzdFJvb21SZXNwb25zZTABQgxaCmF1eGls",
+            "aWEvcGJiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {

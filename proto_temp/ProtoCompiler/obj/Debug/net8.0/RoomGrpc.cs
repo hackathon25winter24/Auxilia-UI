@@ -146,7 +146,7 @@ namespace Room {
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Room.RoomStreamRequest, global::Room.ListRoomResponse> __Method_StreamRoom = new grpc::Method<global::Room.RoomStreamRequest, global::Room.ListRoomResponse>(
-        grpc::MethodType.DuplexStreaming,
+        grpc::MethodType.ServerStreaming,
         __ServiceName,
         "StreamRoom",
         __Marshaller_room_RoomStreamRequest,
@@ -348,24 +348,26 @@ namespace Room {
       /// <summary>
       /// ルーム内のリアルタイム同期（入室時のStream接続用）
       /// </summary>
+      /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
       /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Room.RoomStreamRequest, global::Room.ListRoomResponse> StreamRoom(grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Room.ListRoomResponse> StreamRoom(global::Room.RoomStreamRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return StreamRoom(new grpc::CallOptions(headers, deadline, cancellationToken));
+        return StreamRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
       /// ルーム内のリアルタイム同期（入室時のStream接続用）
       /// </summary>
+      /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Room.RoomStreamRequest, global::Room.ListRoomResponse> StreamRoom(grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Room.ListRoomResponse> StreamRoom(global::Room.RoomStreamRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncDuplexStreamingCall(__Method_StreamRoom, null, options);
+        return CallInvoker.AsyncServerStreamingCall(__Method_StreamRoom, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
