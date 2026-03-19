@@ -86,10 +86,13 @@ public class BattleOnlineManager : MonoBehaviour
 
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
-    }
 
-    void Start()
-    {
+        // すべてのデータが揃ったので、UIを初期化する
+        characterManager.InitCharacterUI();
+        var battleUI = FindFirstObjectByType<BattleUIManager>();
+        if (battleUI != null) battleUI.InitUI();
+
+        // バトル開始演出を開始
         gametext.text = "battle start!";
         StartCoroutine(MoveRoutine());
     }

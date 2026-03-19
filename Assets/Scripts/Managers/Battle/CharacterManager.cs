@@ -55,7 +55,7 @@ public class CharacterManager : MonoBehaviour
         if (this == null) return; // シーン移動中に破棄された場合
         GetBattleData(data);
     }
-    void Start()
+    public void InitCharacterUI()
     {
         BackButton.gameObject.SetActive(false);
         // 配列が空、または要素が足りない場合の安全策

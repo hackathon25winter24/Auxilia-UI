@@ -462,7 +462,7 @@ public class GameConnector : MonoBehaviour
             while (await _call.ResponseStream.MoveNext(_cts.Token))
             {
                 var response = _call.ResponseStream.Current;
-
+                Debug.Log($"<color=orange>[StartReceiveLoop] Received stream response! Update logic starting...</color>");
                 // ゲーム状態更新
                 HandleGameData(response);
             }
@@ -477,6 +477,7 @@ public class GameConnector : MonoBehaviour
         }
         catch (RpcException e)
         {
+            Debug.LogError($"<color=red>[Stream Error] RpcException: {e.Status.StatusCode} - {e.Status.Detail}</color>");
             ShowErrorMessage($"ゲーム状態の受け取りに失敗しました: {e.Status.Detail}");
         }
     }
