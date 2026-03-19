@@ -91,7 +91,7 @@ public class SelectUIManager : MonoBehaviour
         TimerStart();
     }
 
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
@@ -111,6 +111,7 @@ public class SelectUIManager : MonoBehaviour
                 CharacterButtons();
                 break;
             case "Decided":
+                await SendDatas();
                 sceneData.next_scene_number = 5;
                 break;
             case "BackShadow":
@@ -155,9 +156,8 @@ public class SelectUIManager : MonoBehaviour
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
         if (battleDataforOnline.isPlayer)
         {
-            SendDatas();
-            var opponent_characters = GetOpponentDatas();
-            Debug.Log($"相手のキャラID: {opponent_characters}");
+            // サーバーへの無駄な通信を防ぐため、キャラ選択情報の送信は決定ボタンを押した時のみ実行します
+            // 相手のキャラ取得（GetOpponentDatas）も、相手の選択完了をチェックするなどの別処理で行う必要があります
         }else
         {
             // 毎フレーム動かすことができなかったので大体1秒に1回動かしてます
@@ -224,7 +224,7 @@ public class SelectUIManager : MonoBehaviour
         }
     }
 
-    public async void SendDatas()
+    public async Task SendDatas()
     {
         //ここに自分の編成とコストを送る関数を書いてください
 

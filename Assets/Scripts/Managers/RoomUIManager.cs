@@ -24,7 +24,7 @@ public class RoomUIManager : MonoBehaviour
         UpDateRoom();
     }
     
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
@@ -32,6 +32,7 @@ public class RoomUIManager : MonoBehaviour
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
+                await gameConnector.StartMatch(roomData.room_id);
                 sceneData.next_scene_number = 10;
                 break;
             case "ReRoad":

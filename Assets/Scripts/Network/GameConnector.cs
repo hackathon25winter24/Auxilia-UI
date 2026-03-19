@@ -256,6 +256,22 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<StartMatchResponse> StartMatch(int roomId)
+    {
+        try
+        {
+            var request = new StartMatchRequest { RoomId = roomId };
+            var response = await _roomClient.StartMatchAsync(request);
+            Debug.Log($"<color=green>試合開始成功:</color> RoomID={roomId}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"試合開始に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
     public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
     {
         try
