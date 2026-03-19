@@ -65,10 +65,13 @@ public class GameConnector : MonoBehaviour
                     errorMessage = "そのユーザー名は既に使用されています。";
                     break;
                 case StatusCode.InvalidArgument:
-                    errorMessage = "入力内容（名前またはパスワード）が正しくありません。";
+                    errorMessage = "ユーザー名を入力してください";
                     break;
-                case StatusCode.Unavailable:
-                    errorMessage = "サーバーに接続できません。";
+                case StatusCode.OutOfRange:
+                    errorMessage = "ユーザー名は16字以内で入力してください";
+                    break;
+                case StatusCode.FailedPrecondition:
+                    errorMessage = "パスワードは6文字以上で入力してください";
                     break;
                 default:
                     errorMessage = $"登録に失敗しました: {e.Status.Detail}";
