@@ -10,6 +10,7 @@ public class StoryData : ScriptableObject
 public class StoriesData
 {
     public int story_number;
+    public int next_scene;
     public SerifData[] serifs;
 }
 

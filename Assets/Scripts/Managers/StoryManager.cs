@@ -122,7 +122,7 @@ public class StoryManager : MonoBehaviour
         {
             if (storyManagerData.is_tutorial)
             {
-                sceneData.next_scene_number = 1;
+                sceneData.next_scene_number = storyData.stories[0].next_scene;
             }else
             {
                 sceneData.next_scene_number = 11;
