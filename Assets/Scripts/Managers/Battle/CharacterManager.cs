@@ -26,13 +26,13 @@ public class CharacterManager : MonoBehaviour
     public bool is_attacking;
     public int now_damage;
     public GameConnector gameConnector;
-    private RoomData roomData;
-    private PlayerData playerData;
+    public RoomData roomData;
+    public PlayerData playerData;
 
     // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
     private int[] _lastSentX = new int[6];
     private int[] _lastSentY = new int[6];
-    private bool _turnEndSent = false;
+
 
     void Awake()
     {
@@ -40,11 +40,20 @@ public class CharacterManager : MonoBehaviour
         roomData = FindFirstObjectByType<RoomData>();
         playerData = FindFirstObjectByType<PlayerData>();
         gameConnector.characterManager = this.GetComponent<CharacterManager>();
-        gameConnector.StartStream();// 自動更新が始まるはず？
+        gameConnector.StartStream((uint)roomData.room_id, playerData.user_id); // ルームIDとユーザーIDを渡して開始
     }
     void OnDestroy()
     {
         _ = gameConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
+    }
+
+    // キャラ選択・攻撃選択・移動後に䘯び出せるよう async void ヘルパー
+    private async void RefreshGameData()
+    {
+        if (gameConnector == null || roomData == null) return;
+        var data = await gameConnector.GetGameData(roomData.room_id);
+        if (this == null) return; // シーン移動中に破棄された場合
+        GetBattleData(data);
     }
     void Start()
     {
@@ -134,6 +143,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            RefreshGameData(); // 攻撃選択時
         }
         if(buttonName == "Attack2") 
         {
@@ -141,6 +151,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            RefreshGameData(); // 攻撃選択時
         }
         if(buttonName == "Attack3") 
         {
@@ -148,6 +159,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            RefreshGameData(); // 攻撃選択時
         }
         
         }
@@ -175,6 +187,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            RefreshGameData(); // キャラ選択時
                 break;
             case "2":
             selected_character_id = 1;
@@ -187,6 +200,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            RefreshGameData(); // キャラ選択時
                 break;
             case "3":
             selected_character_id = 2;
@@ -199,6 +213,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            RefreshGameData(); // キャラ選択時
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -344,6 +359,8 @@ public class CharacterManager : MonoBehaviour
     {
         battleDataforOnline.now_my_cost -= cost;
     }
+
+        RefreshGameData(); // 移動後
     }
     }
 
@@ -555,6 +572,11 @@ public class CharacterManager : MonoBehaviour
     BackButton.gameObject.SetActive(false);
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
+    // 【デバッグ】攻撃データをコンソールに出力（UIには反映しない）
+    int attackCost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
+    int attackPow  = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
+    Debug.Log($"<color=orange>[SendAttack] 攻撃送信: roomId={roomData?.room_id}, playerId={playerData?.user_id}, attackerCharaId={selected_character_id}, attackType={attack_number}, power={attackPow}, cost={attackCost}, baseHP1={battleDataforOnline.base_hp}, baseHP2={battleDataforOnline.opponent_base_hp}</color>");
+
     Debug.Log("攻撃完了");
     }
     }
@@ -671,6 +693,10 @@ public class CharacterManager : MonoBehaviour
         bool isMyTurn = is1p ? data.Is1PTurn : !data.Is1PTurn;
         battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
 
+        // コストをサーバーから反映
+        battleDataforOnline.now_my_cost    = is1p ? (int)data.Cost1P : (int)data.Cost2P;
+        battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
+
         // 相手キャラクター位置を反映（インデックス3〜5が相手側）
         int opponentOffset = 0;
         foreach (var c in data.Characters)
@@ -692,6 +718,16 @@ public class CharacterManager : MonoBehaviour
             battleDataforOnline.game_end = true;
             battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
         }
+
+        // 【デバッグ】受信データをコンソールに出力（UIには反映しない）
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"<color=cyan>[GetBattleData] サーバーからゲームデータ受信</color>");
+        sb.AppendLine($"  1PTurn={data.Is1PTurn}  BaseHp1={data.BaseHp1}  BaseHp2={data.BaseHp2}  IsFinished={data.IsFinished}  Winner={data.WinnerPlayerId}");
+        foreach (var c in data.Characters)
+        {
+            sb.AppendLine($"  Chara: Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
+        }
+        Debug.Log(sb.ToString());
     }
 
     // BattleOnlineManagerのEndMyTurnから呼び出す用の機能

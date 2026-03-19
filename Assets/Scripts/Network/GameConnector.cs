@@ -19,7 +19,7 @@ public class GameConnector : MonoBehaviour
     private RoomService.RoomServiceClient _roomClient;
     private BattleService.BattleServiceClient _battleClient;
 
-    private AsyncDuplexStreamingCall<PlayerAction, GameDataResponse> _call;
+    private AsyncServerStreamingCall<GameDataResponse> _call;
     private CancellationTokenSource _cts;
 
     public CharacterManager characterManager;
@@ -448,10 +448,11 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public void StartStream()
+    public void StartStream(uint roomId, string playerId)
     {
         _cts = new CancellationTokenSource();
-        _call = _battleClient.StreamGame(cancellationToken: _cts.Token);
+        var request = new StreamGameRequest { RoomId = roomId, PlayerId = playerId };
+        _call = _battleClient.StreamGame(request, cancellationToken: _cts.Token);
         StartReceiveLoop();
     }
     private async void StartReceiveLoop()
@@ -489,41 +490,47 @@ public class GameConnector : MonoBehaviour
     // おそらくこれを呼び出せばDBのApplyMoveが動くはずです
     public async Task SendMove(int roomId, string playerId, int charaId, int x, int y)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         var move = new MoveAction{CharacterUniqueId = (uint)charaId, ToX = (uint)x, ToY = (uint)y};
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.ApplyMoveAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"移動の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
     public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.ApplyAttackAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"攻撃の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
     public async Task SendTurnEnd(int roomId, string playerId)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         bool endTurn = true;
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, EndTurn = endTurn};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.EndTurnAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ターン終了の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
 
@@ -531,12 +538,22 @@ public class GameConnector : MonoBehaviour
     {
         try
         {
-            await _call.RequestStream.CompleteAsync();
-            _cts.Cancel();
+            if (_cts != null)
+            {
+                _cts.Cancel();
+                _cts.Dispose();
+                _cts = null;
+            }
+            if (_call != null)
+            {
+                _call.Dispose();
+                _call = null;
+            }
+            await Task.CompletedTask;
         }
-        catch (RpcException e)
+        catch (Exception e)
         {
-            ShowErrorMessage($"ストリーム終了に失敗しました: {e.Status.Detail}");
+            Debug.LogWarning($"StopStream Error: {e.Message}");
         }
     }
 }

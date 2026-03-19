@@ -150,7 +150,7 @@ public class BattleOnlineManager : MonoBehaviour
     {
         gametext.text = "your turn";
         StartCoroutine(MoveRoutine());
-        battleDataforOnline.now_my_cost = 50;
+        // コストはサーバーから GetBattleData 経由で設定されるためここでは上書きしない
         TimerStart();
     }
 

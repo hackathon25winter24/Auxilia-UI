@@ -181,12 +181,7 @@ public class RoomUIManager : MonoBehaviour
                         }
                         if (!string.IsNullOrEmpty(p1Id) && !string.IsNullOrEmpty(p2Id))
                         {
-                            // 既にGameDataが存在する場合は重複エラーになるため、なければ作成する
-                            var existingGame = await gameConnector.GetGameData(roomData.room_id);
-                            if (existingGame == null || string.IsNullOrEmpty(existingGame.Player1Id))
-                            {
-                                await gameConnector.CreateGameData((uint)roomData.room_id, p1Id, p2Id);
-                            }
+                            await gameConnector.CreateGameData((uint)roomData.room_id, p1Id, p2Id);
                         }
 
                         // サーバー上でホストもready状態にしておく
