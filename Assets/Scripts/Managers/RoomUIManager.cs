@@ -63,7 +63,10 @@ public class RoomUIManager : MonoBehaviour
         }
         catch (RpcException e)
         {
-            Debug.LogError($"StreamRoom Error: {e.Status.Detail}");
+            if (_isStreaming)
+            {
+                Debug.LogError($"StreamRoom Error: {e.Status.Detail}");
+            }
         }
     }
 
@@ -125,6 +128,8 @@ public class RoomUIManager : MonoBehaviour
 
                     if (allReady && activeCount > 0)
                     {
+                        // サーバー上でホストもready状態にしておく
+                        await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, roomData.usersData[roomData.room_my_number].user_state, true);
                         await gameConnector.StartMatch(roomData.room_id);
                         sceneData.next_scene_number = 10;
                     }
@@ -179,11 +184,21 @@ public class RoomUIManager : MonoBehaviour
         var owner = new Game.Network.UserResponse();
         for (int i = 0; i < rooms.Count; i++)
         {
-            if (rooms[i].RoomId == joiner_list[0].RoomId)
+            if (rooms[i].RoomId == roomData.room_id)
             {
                 owner = await gameConnector.GetUser(rooms[i].OwnerId);
-                Debug.Log($"owner: {owner}");
+                // Debug.Log($"owner: {owner}");
                 roomData.room_name = owner.Name + "の部屋";
+
+                if (rooms[i].IsGaming)
+                {
+                    // ゲームが開始されたら親以外も戦闘画面（Scene 10）へ移行する
+                    if (!roomData.usersData[roomData.room_my_number].is_host)
+                    {
+                        sceneData.next_scene_number = 10;
+                        return;
+                    }
+                }
             }
         }
         for (int i = 0; i < joiner_list.Count; i++)
