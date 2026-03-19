@@ -4,6 +4,8 @@ using System.Collections;
 using UnityEngine.UI;
 using Grpc.Core;
 using Room;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class RoomUIManager : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class RoomUIManager : MonoBehaviour
     private AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> _roomStream;
     private bool _isStreaming;
     private bool _pendingRoomUpdate;
+    private CancellationTokenSource _cts;
 
     void Update()
     {
@@ -37,6 +40,13 @@ public class RoomUIManager : MonoBehaviour
     private void OnDestroy()
     {
         _isStreaming = false;
+        
+        if (_cts != null)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+        }
+
         if (_roomStream != null)
         {
             _roomStream.RequestStream.CompleteAsync();
@@ -45,29 +55,59 @@ public class RoomUIManager : MonoBehaviour
         }
     }
 
-    public async void StartRealtimeSync()
+    public void StartRealtimeSync()
     {
         if (_isStreaming) return;
         _isStreaming = true;
+        _cts = new CancellationTokenSource();
 
-        try 
+        // 別スレッドで受信を継続する
+        _ = Task.Run(async () =>
         {
-            _roomStream = gameConnector.StreamRoom();
-            await _roomStream.RequestStream.WriteAsync(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id });
+            while (_isStreaming && !_cts.IsCancellationRequested)
+            {
+                try 
+                {
+                    _roomStream = gameConnector.StreamRoom();
+                    await _roomStream.RequestStream.WriteAsync(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id }, _cts.Token);
+                    Debug.Log($"<color=cyan>[StreamRoom] サーバーのリアルタイム同期に接続しました！ (RoomID: {roomData.room_id})</color>");
 
-            while (_isStreaming && await _roomStream.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
-            {
-                var response = _roomStream.ResponseStream.Current;
-                _pendingRoomUpdate = true;
+                    while (_isStreaming && !_cts.IsCancellationRequested && await _roomStream.ResponseStream.MoveNext(_cts.Token))
+                    {
+                        var response = _roomStream.ResponseStream.Current;
+                        Debug.Log($"<color=yellow>[StreamRoom] サーバーから更新がプッシュされました！UIを再描画します。</color>");
+                        _pendingRoomUpdate = true;
+                    }
+
+                    if (_isStreaming && !_cts.IsCancellationRequested)
+                    {
+                        Debug.Log("<color=red>[StreamRoom] サーバーからストリームが切断されました。再接続します...</color>");
+                        await Task.Delay(1000, _cts.Token);
+                    }
+                }
+                catch (RpcException e)
+                {
+                    if (_isStreaming && !_cts.IsCancellationRequested)
+                    {
+                        Debug.LogError($"StreamRoom Error: {e.Status.Detail}");
+                        await Task.Delay(1000, _cts.Token);
+                    }
+                }
+                catch (System.OperationCanceledException)
+                {
+                    // 画面切り替え等による正常な切断
+                    break;
+                }
+                catch (System.Exception ex)
+                {
+                    if (_isStreaming && !_cts.IsCancellationRequested)
+                    {
+                        Debug.LogError(ex);
+                        await Task.Delay(1000, _cts.Token);
+                    }
+                }
             }
-        }
-        catch (RpcException e)
-        {
-            if (_isStreaming)
-            {
-                Debug.LogError($"StreamRoom Error: {e.Status.Detail}");
-            }
-        }
+        }, _cts.Token);
     }
 
     void Awake()
