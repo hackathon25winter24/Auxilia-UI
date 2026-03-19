@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
+using Grpc.Core;
+using Room;
 
 public class RoomUIManager : MonoBehaviour
 {
@@ -19,10 +21,57 @@ public class RoomUIManager : MonoBehaviour
     public string room_name;
     private TextMeshProUGUI startBattleButtonText;
 
+    private AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> _roomStream;
+    private bool _isStreaming;
+    private bool _pendingRoomUpdate;
+
+    void Update()
+    {
+        if (_pendingRoomUpdate)
+        {
+            _pendingRoomUpdate = false;
+            UpDateRoom();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _isStreaming = false;
+        if (_roomStream != null)
+        {
+            _roomStream.RequestStream.CompleteAsync();
+            _roomStream.Dispose();
+            _roomStream = null;
+        }
+    }
+
+    public async void StartRealtimeSync()
+    {
+        if (_isStreaming) return;
+        _isStreaming = true;
+
+        try 
+        {
+            _roomStream = gameConnector.StreamRoom();
+            await _roomStream.RequestStream.WriteAsync(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id });
+
+            while (_isStreaming && await _roomStream.ResponseStream.MoveNext(System.Threading.CancellationToken.None))
+            {
+                var response = _roomStream.ResponseStream.Current;
+                _pendingRoomUpdate = true;
+            }
+        }
+        catch (RpcException e)
+        {
+            Debug.LogError($"StreamRoom Error: {e.Status.Detail}");
+        }
+    }
+
     void Awake()
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         UpDateRoom();
+        StartRealtimeSync();
 
         // 開発環境でシーン上のOnClick未設定によるボタン無反応を防ぐため、動的にイベントを付与
         var reloadButtonObj = GameObject.Find("ReRoadButton");

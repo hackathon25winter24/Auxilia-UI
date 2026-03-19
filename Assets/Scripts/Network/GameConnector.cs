@@ -272,6 +272,11 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> StreamRoom()
+    {
+        return _roomClient.StreamRoom();
+    }
+
     public async Task<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
     {
         try
