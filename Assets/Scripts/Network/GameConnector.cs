@@ -272,6 +272,22 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
+    {
+        try
+        {
+            var request = new UpdateRoomStateRequest { RoomId = roomId, UserId = userId, State = state, IsReady = isReady };
+            var response = await _roomClient.UpdateRoomStateAsync(request);
+            Debug.Log($"<color=green>状態更新成功:</color> User={userId}, State={state}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"状態の更新に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
     public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
     {
         try

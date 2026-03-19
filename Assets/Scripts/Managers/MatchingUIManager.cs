@@ -150,16 +150,34 @@ public class MatchingUIManager : MonoBehaviour
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
             var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, playerData.user_id);
-            roomData.room_id = response.Rooms[0].RoomId;
-            for (int i = 0; i < matchingData.num_room; i++)
+            if (response != null && response.Rooms.Count > 0)
             {
-                if (matchingData.rooms[i].room_id == roomData.room_id)
+                bool has1p = false, has2p = false;
+                foreach (var r in response.Rooms)
                 {
-                    roomData.room_name = matchingData.rooms[i].room_name;
+                    if (r.UserId != playerData.user_id)
+                    {
+                        if (r.State == 1) has1p = true;
+                        if (r.State == 2) has2p = true;
+                    }
                 }
-            }
+                int newState = 0; // default Spectator
+                if (!has1p) newState = 1;
+                else if (!has2p) newState = 2;
+                
+                await gameConnector.UpdateRoomState(matchingData.rooms[index].room_id, playerData.user_id, newState, false);
 
-            sceneData.next_scene_number = 9;
+                roomData.room_id = response.Rooms[0].RoomId;
+                for (int i = 0; i < matchingData.num_room; i++)
+                {
+                    if (matchingData.rooms[i].room_id == roomData.room_id)
+                    {
+                        roomData.room_name = matchingData.rooms[i].room_name;
+                    }
+                }
+
+                sceneData.next_scene_number = 9;
+            }
         }else
         {
             for (int i = 0; i < matchingData.num_room; i++)
@@ -232,12 +250,17 @@ public class MatchingUIManager : MonoBehaviour
             return;
         }
         var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
-        await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
-        // 新たにRoomDataにIDを追加
-        roomData.room_id = response.RoomId;
-        roomData.room_name = room_name;
+        if (response != null)
+        {
+            await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+            await gameConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
-        sceneData.next_scene_number = 9;
+            // 新たにRoomDataにIDを追加
+            roomData.room_id = response.RoomId;
+            roomData.room_name = room_name;
+
+            sceneData.next_scene_number = 9;
+        }
     }
 
     // 1. UpdateSearchメソッドの修正

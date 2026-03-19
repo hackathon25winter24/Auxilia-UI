@@ -50,7 +50,8 @@ public class RoomUIManager : MonoBehaviour
                 UpDateRoom();
                 break;
             case "Spectator":
-                roomData.usersData[roomData.room_my_number].user_state = 0;
+                await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, 0, false);
+                UpDateRoom();
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
