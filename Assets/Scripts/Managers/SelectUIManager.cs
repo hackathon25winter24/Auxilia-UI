@@ -38,6 +38,11 @@ public class SelectUIManager : MonoBehaviour
     public int selectedUI;
     public int selectedCharacterId;
 
+    // 「決定」ボタンを押した後、相手の準備完了を待っている状態かどうか
+    private bool _waitingForOpponent = false;
+    // 「決定」ボタン上のテキスト（相手待機中メッセージの表示に使う）
+    public TextMeshProUGUI decidedButtonText;
+
     public float maxTime = 100f; 
     private float currentTime;
     private bool isTimerRunning = false;
@@ -48,6 +53,12 @@ public class SelectUIManager : MonoBehaviour
     async void Awake()
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+
+        // roomDataの自分のstate（1P=1, 2P=2, 観戦者=0）を見て isPlayer を自動設定する
+        // ルームロビーで確定した自分の state を引き継ぐ
+        int myState = roomData.usersData[roomData.room_my_number].user_state;
+        battleDataforOnline.isPlayer = (myState == 1 || myState == 2);
+
         if (battleDataforOnline.isPlayer)
         {
             playerUI.SetActive(true);
@@ -111,8 +122,15 @@ public class SelectUIManager : MonoBehaviour
                 CharacterButtons();
                 break;
             case "Decided":
-                await SendDatas();
-                sceneData.next_scene_number = 5;
+                if (!_waitingForOpponent)
+                {
+                    await SendDatas();
+                    _waitingForOpponent = true;
+                    if (decidedButtonText != null)
+                        decidedButtonText.text = "相手の準備を待っています...";
+                    // 両者が準備できるまでポーリングで待機し、完了次第バトルシーンへ自動遷移
+                    StartCoroutine(WaitForBothPlayersReady());
+                }
                 break;
             case "BackShadow":
                 characterTub.SetActive(false);
@@ -181,6 +199,38 @@ public class SelectUIManager : MonoBehaviour
     {
         currentTime = maxTime;
         isTimerRunning = true;
+    }
+
+    private IEnumerator WaitForBothPlayersReady()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1.0f);
+
+            // GetGameData は async なので Task として実行して待機
+            var task = gameConnector.GetGameData(roomData.room_id);
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            if (this == null) yield break; // シーン移動で破棄されていたら中断
+
+            var data = task.Result;
+            if (data == null) continue;
+
+            // 両プレイヤーのキャラが3体以上登録されていれば準備완了とみなす
+            int p1count = 0, p2count = 0;
+            foreach (var c in data.Characters)
+            {
+                if (c.Is1P) p1count++;
+                else p2count++;
+            }
+
+            if (p1count >= 3 && p2count >= 3)
+            {
+                // 両方の準備が完了したのでバトルシーンへ遷移
+                sceneData.next_scene_number = 5;
+                yield break;
+            }
+        }
     }
 
     void UpDateCharacterUI()

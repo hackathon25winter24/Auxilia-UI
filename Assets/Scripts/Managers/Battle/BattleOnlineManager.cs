@@ -34,6 +34,7 @@ public class BattleOnlineManager : MonoBehaviour
     async void Awake()
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        characterManager = FindFirstObjectByType<CharacterManager>();
         battleDataforLocal.is_myturn = false;
         //ここに先行プレイヤーかどうかを受け取る関数を書いてください
         is_move_player = await GetFirstMovePlayer();// 自身が行動できるターンの時にtrueを返すはず。動作未検証
@@ -105,6 +106,8 @@ public class BattleOnlineManager : MonoBehaviour
         TimerStart();
     }
 
+    private CharacterManager characterManager;
+
     public void EndMyTurn()
     {
         gametext.text = "turn end";
@@ -124,6 +127,10 @@ public class BattleOnlineManager : MonoBehaviour
             battleDataforOnline.charactersBattleDatas[i].now_character_hp -= 20;
         }
         }
+
+        // サーバーにターン終了を通知する
+        if (characterManager != null) characterManager.NotifyTurnEnd();
+
         StartOpponentTurn();
     }
 

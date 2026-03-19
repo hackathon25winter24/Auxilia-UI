@@ -26,10 +26,19 @@ public class CharacterManager : MonoBehaviour
     public bool is_attacking;
     public int now_damage;
     public GameConnector gameConnector;
+    private RoomData roomData;
+    private PlayerData playerData;
+
+    // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
+    private int[] _lastSentX = new int[6];
+    private int[] _lastSentY = new int[6];
+    private bool _turnEndSent = false;
 
     void Awake()
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        roomData = FindFirstObjectByType<RoomData>();
+        playerData = FindFirstObjectByType<PlayerData>();
         gameConnector.characterManager = this.GetComponent<CharacterManager>();
         gameConnector.StartStream();// 自動更新が始まるはず？
     }
@@ -632,20 +641,63 @@ public class CharacterManager : MonoBehaviour
 
     void SendBattleData()
     {
-        //ここにバックエンドにデータを送るための関数を書いてください
-        // SendMoveとかをいい感じに呼び出せば良さそう
-        // 例。roomIdなどは　(uint)roomData.roomId　とかいい感じに書き換える必要あり。バックではuintで扱う変数が多いです
-        // gameConnector.SendMove(roomId, playerId, charaId, x, y);// x,yは移動先の絶対座標
-        // gameConnector.SendAttack(roomId, playerId, attackerCharaId, attackType, isStarted, baseHP1, baseHP2, attackedCharaId, newHP);
-        // gameConnector.SendTurnEnd(roomId, playerId);
-        // 状態異常を更新する関数がバックにないかも。僕が発見できてないだけかもしれない
+        if (playerData == null || roomData == null) return;
+        string pid = playerData.user_id;
+        int rid = roomData.room_id;
+
+        // 移動したキャラだけ位置を送信（毎フレーム送らないよう差分チェック）
+        for (int i = 0; i <= 2; i++)
+        {
+            if (on_grid_number_x[i] != _lastSentX[i] || on_grid_number_y[i] != _lastSentY[i])
+            {
+                _ = gameConnector.SendMove(rid, pid, i, on_grid_number_x[i], on_grid_number_y[i]);
+                _lastSentX[i] = on_grid_number_x[i];
+                _lastSentY[i] = on_grid_number_y[i];
+            }
+        }
     }
 
     public void GetBattleData(GameDataResponse data)
     {
-        //ここにバックエンドにデータを受け取るための関数を書いてください
-        // ここに書き込んだ内容はGameConnectorで呼び出されて全員分の情報を自動更新してくれるらしい。つまり、試合中にこの関数をいちいち呼び出す必要はないってことだと思う
-        // ScriptableObjectに受け取ったデータを入れれば良さそう
-        // battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;// 自分が1PだったらBaseHp1を、そうでなかったらBaseHp2を受け取る。バックではuintで扱う変数が多いのでuint->int変換を挟んでます
+        if (data == null) return;
+
+        bool is1p = (playerData.user_id == data.Player1Id);
+
+        // 自分原方・HP
+        battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;
+        battleDataforOnline.opponent_base_hp = is1p ? (int)data.BaseHp2 : (int)data.BaseHp1;
+
+        // ターン情報
+        bool isMyTurn = is1p ? data.Is1PTurn : !data.Is1PTurn;
+        battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
+
+        // 相手キャラクター位置を反映（インデックス3〜5が相手側）
+        int opponentOffset = 0;
+        foreach (var c in data.Characters)
+        {
+            bool charIs1p = c.Is1P;
+            bool charIsMine = (is1p == charIs1p);
+            if (!charIsMine && opponentOffset < 3)
+            {
+                int idx = 3 + opponentOffset;
+                // 相手キャラのHPを更新
+                battleDataforOnline.charactersBattleDatas[idx].now_character_hp = (int)c.Hp;
+                opponentOffset++;
+            }
+        }
+
+        // ゲーム終了判定
+        if (data.IsFinished)
+        {
+            battleDataforOnline.game_end = true;
+            battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
+        }
+    }
+
+    // BattleOnlineManagerのEndMyTurnから呼び出す用の機能
+    public void NotifyTurnEnd()
+    {
+        if (playerData == null || roomData == null) return;
+        _ = gameConnector.SendTurnEnd(roomData.room_id, playerData.user_id);
     }
 }

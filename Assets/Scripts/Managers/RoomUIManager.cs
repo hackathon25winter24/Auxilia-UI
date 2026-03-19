@@ -166,6 +166,24 @@ public class RoomUIManager : MonoBehaviour
 
                     if (allReady && activeCount > 0)
                     {
+                        // 1Pと2Pのユーザーを特定してGameDataを作成する
+                        // joiner_list は別メソッドのローカル変数のため roomData.usersData を使用
+                        string p1Id = "";
+                        string p2Id = "";
+                        var roomList = await gameConnector.ListRoom(roomData.room_id);
+                        if (roomList != null)
+                        {
+                            foreach (var r in roomList)
+                            {
+                                if (r.State == 1) p1Id = r.UserId;
+                                if (r.State == 2) p2Id = r.UserId;
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(p1Id) && !string.IsNullOrEmpty(p2Id))
+                        {
+                            await gameConnector.CreateGameData((uint)roomData.room_id, p1Id, p2Id);
+                        }
+
                         // サーバー上でホストもready状態にしておく
                         await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, roomData.usersData[roomData.room_my_number].user_state, true);
                         await gameConnector.StartMatch(roomData.room_id);
@@ -284,16 +302,15 @@ public class RoomUIManager : MonoBehaviour
             }
         }
 
-        // 全てのステータス更新後にゲーム中か判定してゲストを遷移
+        // 全てのステータス更新後にゲーム中か判定してゲスト・ホスト全員を遷移
         for (int i = 0; i < rooms.Count; i++)
         {
             if (rooms[i].RoomId == roomData.room_id && rooms[i].IsGaming)
             {
-                if (!roomData.usersData[roomData.room_my_number].is_host)
-                {
-                    sceneData.next_scene_number = 10;
-                    return;
-                }
+                // 自分のstate（1P,2P,観戦者）に応じてisPlayerを設定してから遷移
+                int myState = roomData.usersData[roomData.room_my_number].user_state;
+                sceneData.next_scene_number = 10;
+                return;
             }
         }
     }
