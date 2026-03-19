@@ -71,6 +71,10 @@ public class BattleOnlineManager : MonoBehaviour
         battleDataforOnline.base_hp          = is1p ? (int)gameData.BaseHp1 : (int)gameData.BaseHp2;
         battleDataforOnline.opponent_base_hp = is1p ? (int)gameData.BaseHp2 : (int)gameData.BaseHp1;
 
+        // スタート時はどちらもコスト50に初期化
+        battleDataforOnline.now_my_cost = 50;
+        battleDataforOnline.now_enemy_cost = 50;
+
         // 相手の名前を取得してScriptableObjectに保存
         string opponentId = is1p ? gameData.Player2Id : gameData.Player1Id;
         var opponentUser = await gameConnector.GetUser(opponentId);
@@ -128,7 +132,9 @@ public class BattleOnlineManager : MonoBehaviour
         {
             if(battleDataforLocal.is_myturn != false)
             {
-            battleDataforLocal.is_myturn = false;
+                battleDataforLocal.is_myturn = false;
+                // 自分のターンではないので、相手のターンを勝手に終わらせないようローカルタイマーを停止する
+                isTimerRunning = false;
             }
         }
 
@@ -199,17 +205,8 @@ public class BattleOnlineManager : MonoBehaviour
         // サーバーにターン終了を通知する
         if (characterManager != null) characterManager.NotifyTurnEnd();
 
-        StartOpponentTurn();
-    }
-
-    public void StartOpponentTurn()
-    {
-        TimerStart();
-    }
-
-    public void EntOpponentTurn()
-    {
-        StartMyTurn();
+        // ターン終了時にコストを50まで回復
+        battleDataforOnline.now_my_cost = 50;
     }
 
     void TimerStart()
@@ -225,9 +222,6 @@ public class BattleOnlineManager : MonoBehaviour
         if (battleDataforLocal.is_myturn)
         {
             EndMyTurn();
-        }else
-        {
-            EntOpponentTurn();
         }
     }
 

@@ -695,8 +695,32 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
 
         // コストをサーバーから反映
-        battleDataforOnline.now_my_cost    = is1p ? (int)data.Cost1P : (int)data.Cost2P;
+        // ※ サーバー側のコスト同期よりローカルのコスト計算ルール（毎ターン50回復等）を優先するため無効化
+        // battleDataforOnline.now_my_cost    = is1p ? (int)data.Cost1P : (int)data.Cost2P;
+        
+        // 相手のコストはサーバーからの同期を許可する
         battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
+
+        // グリッドデータ（地形情報）の同期
+        if (data.Grids != null)
+        {
+            foreach (var g in data.Grids)
+            {
+                int gx = (int)g.PositionX;
+                int gy = (int)g.PositionY;
+                if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
+                {
+                    // Update fixed terrain layer
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.Type;
+                    
+                    // If no character is currently stepping on it (-1), visually update the active layer too
+                    if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] != -1)
+                    {
+                        gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = (int)g.Type;
+                    }
+                }
+            }
+        }
 
         // 相手キャラクター位置を反映（インデックス3〜5が相手側）
         int opponentOffset = 0;
