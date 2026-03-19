@@ -54,9 +54,21 @@ public class SelectUIManager : MonoBehaviour
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
 
-        // roomDataの自分のstate（1P=1, 2P=2, 観戦者=0）を見て isPlayer を自動設定する
-        // ルームロビーで確定した自分の state を引き継ぐ
-        int myState = roomData.usersData[roomData.room_my_number].user_state;
+        // 画面遷移直後のため roomData.usersData は古い可能性があるので
+        // サーバーから最新の自分の state を取得して isPlayer を確定する
+        var roomList = await gameConnector.ListRoom(roomData.room_id);
+        int myState = 0;
+        if (roomList != null)
+        {
+            foreach (var r in roomList)
+            {
+                if (r.UserId == playerData.user_id)
+                {
+                    myState = r.State;
+                    break;
+                }
+            }
+        }
         battleDataforOnline.isPlayer = (myState == 1 || myState == 2);
 
         if (battleDataforOnline.isPlayer)

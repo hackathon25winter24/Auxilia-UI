@@ -1,0 +1,245 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using EventBridge.Listeners;
+using SuperAnkars.Connections;
+using UnityEngine;
+
+namespace EventBridge
+{
+    public class EventBridge : MonoBehaviour
+    {
+        [SerializeField] private List<MonoBehaviour> eventListeners = new();
+
+        private List<IGameEventListener> GameEventListeners =>
+            eventListeners.OfType<IGameEventListener>().ToList();
+
+        private List<IGameStateEventListener> GameStateEventListeners =>
+            eventListeners.OfType<IGameStateEventListener>().ToList();
+
+        private List<IRoomEventListener> RoomEventListeners =>
+            eventListeners.OfType<IRoomEventListener>().ToList();
+
+        private List<ITimerEventListener> TimerEventListeners =>
+            eventListeners.OfType<ITimerEventListener>().ToList();
+
+        private string playerName = "Alice"; // TODO: プレイヤー名を適切に設定する
+        private string roomName = "";
+        private ServerService.ServerServiceClient client;
+
+        private void OnValidate()
+        {
+            List<MonoBehaviour> filteredListeners = new();
+            if (eventListeners == null) return;
+            foreach (var listener in eventListeners)
+            {
+                if (listener == null)
+                {
+                    filteredListeners.Add(null);
+                    continue;
+                }
+
+                foreach (var component in listener.GetComponents(typeof(MonoBehaviour)))
+                {
+                    if (component == null) continue;
+                    if (component is not IGameEventListener
+                        && component is not IGameStateEventListener
+                        && component is not IRoomEventListener
+                        && component is not ITimerEventListener) continue;
+                    filteredListeners.Add((MonoBehaviour)component);
+                }
+            }
+
+            eventListeners = filteredListeners;
+        }
+
+        private async void Awake()
+        {
+            // TODO: clientはAwakeでinitするべきではない気がする
+            client = ServerConnector.Connect();
+            // TODO: これもタイミングはここではない
+            var stream = client.JoinRoom(new JoinRoomRequest
+            {
+                PlayerName = playerName // TODO: プレイヤー名を適切に設定する
+            }).ResponseStream;
+
+            while (await stream.MoveNext(CancellationToken.None))
+            {
+                Debug.Log("Received event from stream: " + stream.Current);
+                var e = stream.Current;
+                if (e.EventCase == StreamEvent.EventOneofCase.RoomInfo)
+                {
+                    var ev = e.RoomInfo;
+                    roomName = ev.RoomId;
+                    Debug.Log(ev);
+                    RoomEventListeners.ForEach(l => l.OnRoomJoined(ev));
+                }
+                else if (e.EventCase == StreamEvent.EventOneofCase.RoomEvent)
+                {
+                    var ev = e.RoomEvent;
+                    if (ev.EventCase == RoomEvent.EventOneofCase.PlayerUpdate)
+                    {
+                        var eve = ev.PlayerUpdate;
+                        if (eve.UpdateType == RoomPlayerUpdate.Types.UpdateType.Joined)
+                        {
+                            RoomEventListeners.ForEach(l => l.OnPlayerJoined(eve.PlayerName));
+                        }
+                        else
+                        {
+                            RoomEventListeners.ForEach(l => l.OnPlayerLeft(eve.PlayerName));
+                        }
+                    }
+                    else if (e.RoomEvent.EventCase == RoomEvent.EventOneofCase.RoleSet)
+                    {
+                        var eve = ev.RoleSet;
+                        RoomEventListeners.ForEach(l => l.OnPlayerRoleSet(eve.Players.ToList()));
+                    }
+                    else if (e.RoomEvent.EventCase == RoomEvent.EventOneofCase.SkillSelected)
+                    {
+                        var eve = ev.SkillSelected;
+                        RoomEventListeners.ForEach(l => l.OnPlayerSkillSelected(eve.PlayerName));
+                    }
+                }
+                else if (e.EventCase == StreamEvent.EventOneofCase.GameStateEvent)
+                {
+                    var ev = e.GameStateEvent;
+                    if (ev.EventCase == GameStateEvent.EventOneofCase.GameStarted)
+                    {
+                        GameStateEventListeners.ForEach(l => l.OnGameStarted());
+                    }
+                    else if (ev.EventCase == GameStateEvent.EventOneofCase.GameEnded)
+                    {
+                        var eve = ev.GameEnded;
+                        GameStateEventListeners.ForEach(l => l.OnGameEnded(eve.PlayerResults.ToList()));
+                    }
+                }
+                else if (e.EventCase == StreamEvent.EventOneofCase.TimerEvent)
+                {
+                    var ev = e.TimerEvent;
+                    if (ev.Operation == TimerEvent.Types.TimerOperation.Start)
+                    {
+                        TimerEventListeners.ForEach(l => l.OnTimerStarted(ev.Current));
+                    }
+                    else if (ev.Operation == TimerEvent.Types.TimerOperation.Stop)
+                    {
+                        TimerEventListeners.ForEach(l => l.OnTimerPaused(ev.Current));
+                    }
+                }
+                else if (e.EventCase == StreamEvent.EventOneofCase.GameEvent)
+                {
+                    var ev = e.GameEvent;
+                    if (ev.EventCase == GameEvent.EventOneofCase.UpdateRound)
+                    {
+                        var eve = ev.UpdateRound;
+                        GameEventListeners.ForEach(l => l.OnRoundUpdated(eve.RoundNumber));
+                    }
+                    else if (ev.EventCase == GameEvent.EventOneofCase.UpdateWords)
+                    {
+                        var eve = ev.UpdateWords;
+                        GameEventListeners.ForEach(l => l.OnWordsUpdated(eve.Words.ToList()));
+                    }
+                    else if (ev.EventCase == GameEvent.EventOneofCase.UpdateMessage)
+                    {
+                        var eve = ev.UpdateMessage;
+                        if (eve.OwnerCase == TimelineMessage.OwnerOneofCase.Player)
+                        {
+                            if (eve.IsDummy) Debug.Log("Player message cannot be dummy");
+                            GameEventListeners.ForEach(l =>
+                                l.OnPlayerMessageReceived(eve.Player, eve.Timestamp, eve.Content, eve.Awarded)
+                            );
+                        }
+                        else if (eve.OwnerCase == TimelineMessage.OwnerOneofCase.Bot)
+                        {
+                            GameEventListeners.ForEach(l =>
+                                l.OnBotMessageReceived(eve.Bot, eve.Timestamp, eve.Content, eve.Awarded, eve.IsDummy)
+                            );
+                        }
+                    }
+                    else if (ev.EventCase == GameEvent.EventOneofCase.UpdateIstyping)
+                    {
+                        var eve = ev.UpdateIstyping;
+                        GameEventListeners.ForEach(l => l.OnUpdateIsTyping(eve.Player, eve.IsTyping));
+                    }
+                    else if (ev.EventCase == GameEvent.EventOneofCase.UpdateScore)
+                    {
+                        var eve = ev.UpdateScore;
+                        GameEventListeners.ForEach(l => l.OnScoreUpdated(eve.Player, eve.Score));
+                    }
+                    else if (ev.EventCase == GameEvent.EventOneofCase.SkillUsed)
+                    {
+                        var eve = ev.SkillUsed;
+                        GameEventListeners.ForEach(l => l.OnSkillUsed(eve.Owner, eve.SkillId));
+                    }
+                }
+            }
+        }
+
+        public void AddSkill(string skillId)
+        {
+            client.AddSkill(new SkillRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                SkillId = skillId
+            });
+        }
+
+        public void RemoveSkill(string skillId)
+        {
+            client.RemoveSkill(new SkillRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                SkillId = skillId
+            });
+        }
+
+        public void UseSkill(string skillId)
+        {
+            client.UseSkill(new SkillRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                SkillId = skillId
+            });
+        }
+
+        public void SkillReady(string skillId)
+        {
+            client.SkillReady(new SkillRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                SkillId = skillId
+            });
+        }
+
+        public new void SendMessage(string content)
+        {
+            client.SendMessage(new MessageRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                Content = content
+            });
+        }
+
+        public void SendIsTyping(bool isTyping)
+        {
+            client.SendIsTyping(new IsTypingRequest
+            {
+                RoomId = roomName,
+                PlayerName = playerName,
+                IsTyping = isTyping
+            });
+        }
+
+        public void FreezePlayers()
+        {
+            client.FreezePlayers(new FreezePlayersRequest
+            {
+                RoomId = roomName
+            });
+        }
+    }
+}
