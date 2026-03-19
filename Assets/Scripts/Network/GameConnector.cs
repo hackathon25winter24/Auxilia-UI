@@ -466,6 +466,14 @@ public class GameConnector : MonoBehaviour
                 HandleGameData(response);
             }
         }
+        catch (OperationCanceledException)
+        {
+            // シーン移動やStopStream()による正常なキャンセル なのでエラー表示しない
+        }
+        catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.Cancelled)
+        {
+            // gRPCレベルのキャンセルも正常終了扱いにする
+        }
         catch (RpcException e)
         {
             ShowErrorMessage($"ゲーム状態の受け取りに失敗しました: {e.Status.Detail}");

@@ -36,8 +36,56 @@ public class BattleOnlineManager : MonoBehaviour
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         characterManager = FindFirstObjectByType<CharacterManager>();
         battleDataforLocal.is_myturn = false;
-        //ここに先行プレイヤーかどうかを受け取る関数を書いてください
-        is_move_player = await GetFirstMovePlayer();// 自身が行動できるターンの時にtrueを返すはず。動作未検証
+
+        // サーバーからゲームデータを取得して初期化する
+        var gameData = await gameConnector.GetGameData(roomData.room_id);
+        if (gameData == null)
+        {
+            Debug.LogError("[BattleOnlineManager] ゲームデータの取得に失敗しました。");
+            return;
+        }
+
+        bool is1p = (playerData.user_id == gameData.Player1Id);
+
+        // 自分のプレイヤーIDをScriptableObjectに保存
+        battleDataforOnline.my_player_id = is1p ? 0 : 1;
+
+        // ターン順：1Pターンなら now_moving_player=0(1P), 2Pターンなら1
+        battleDataforOnline.now_moving_player = gameData.Is1PTurn ? 0 : 1;
+
+        // 拠点HP
+        battleDataforOnline.base_hp          = is1p ? (int)gameData.BaseHp1 : (int)gameData.BaseHp2;
+        battleDataforOnline.opponent_base_hp = is1p ? (int)gameData.BaseHp2 : (int)gameData.BaseHp1;
+
+        // 相手の名前を取得してScriptableObjectに保存
+        string opponentId = is1p ? gameData.Player2Id : gameData.Player1Id;
+        var opponentUser = await gameConnector.GetUser(opponentId);
+        if (opponentUser != null)
+        {
+            battleDataforLocal.enemy_name         = opponentUser.Name;
+            battleDataforOnline.opponent_name     = opponentUser.Name;
+        }
+
+        // キャラクターデータを振り分ける
+        // character_id[0..2] = 自分、[3..5] = 相手
+        int myIdx = 0, opIdx = 3;
+        foreach (var c in gameData.Characters)
+        {
+            bool charIsMine = (is1p == c.Is1P);
+            if (charIsMine && myIdx < 3)
+            {
+                battleDataforLocal.character_id[myIdx] = (int)c.CharacterId;
+                myIdx++;
+            }
+            else if (!charIsMine && opIdx < 6)
+            {
+                battleDataforLocal.character_id[opIdx] = (int)c.CharacterId;
+                opIdx++;
+            }
+        }
+
+        // 先行判定（ローカルフラグ）
+        is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
     }
 
     void Start()
