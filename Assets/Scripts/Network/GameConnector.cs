@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Grpc.Core;
@@ -18,6 +19,10 @@ public class GameConnector : MonoBehaviour
     private RoomService.RoomServiceClient _roomClient;
     private BattleService.BattleServiceClient _battleClient;
 
+    private AsyncDuplexStreamingCall<PlayerAction, GameDataResponse> _call;
+    private CancellationTokenSource _cts;
+
+    public CharacterManager characterManager;
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
     public event Action<string> OnErrorMessage;
@@ -403,6 +408,90 @@ public class GameConnector : MonoBehaviour
         {
             ShowErrorMessage($"ゲームデータの取得に失敗しました: {e.Status.Detail}");
             return null;
+        }
+    }
+
+    public void StartStream()
+    {
+        _cts = new CancellationTokenSource();
+        _call = _battleClient.StreamGame(cancellationToken: _cts.Token);
+        StartReceiveLoop();
+    }
+    private async void StartReceiveLoop()
+    {
+        try
+        {
+            while (await _call.ResponseStream.MoveNext(_cts.Token))
+            {
+                var response = _call.ResponseStream.Current;
+
+                // ゲーム状態更新
+                HandleGameData(response);
+            }
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ゲーム状態の受け取りに失敗しました: {e.Status.Detail}");
+        }
+    }
+    private void HandleGameData(GameDataResponse data)
+    {
+        // Unity側で保持している変数をサーバーから受け取ったデータに更新
+        characterManager.GetBattleData(data);
+        Debug.Log($"Update received: {data}");
+    }
+
+    // おそらくこれを呼び出せばDBのApplyMoveが動くはずです
+    public async Task SendMove(int roomId, string playerId, int charaId, int x, int y)
+    {
+        if (_call == null)
+        {
+            Debug.LogError("Stream not started");
+            return;
+        }
+
+        var move = new MoveAction{CharacterUniqueId = (uint)charaId, ToX = (uint)x, ToY = (uint)y};
+        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move};
+        await _call.RequestStream.WriteAsync(action);
+    }
+
+    public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP)
+    {
+        if (_call == null)
+        {
+            Debug.LogError("Stream not started");
+            return;
+        }
+
+        var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
+        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack};
+        await _call.RequestStream.WriteAsync(action);
+    }
+
+    public async Task SendTurnEnd(int roomId, string playerId)
+    {
+        if (_call == null)
+        {
+            Debug.LogError("Stream not started");
+            return;
+        }
+
+        bool endTurn = true;
+        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, EndTurn = endTurn};
+        await _call.RequestStream.WriteAsync(action);
+    }
+
+
+    public async Task StopStream()
+    {
+        try
+        {
+            await _call.RequestStream.CompleteAsync();
+            _cts.Cancel();
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ストリーム終了に失敗しました: {e.Status.Detail}");
         }
     }
 }

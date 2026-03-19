@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using Game.Network;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -24,10 +25,17 @@ public class CharacterManager : MonoBehaviour
     public int attack_number;
     public bool is_attacking;
     public int now_damage;
+    public GameConnector gameConnector;
 
     void Awake()
     {
-        GetBattleData();
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        gameConnector.characterManager = this.GetComponent<CharacterManager>();
+        gameConnector.StartStream();// 自動更新が始まるはず？
+    }
+    void OnDestroy()
+    {
+        _ = gameConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
     }
     void Start()
     {
@@ -245,7 +253,8 @@ public class CharacterManager : MonoBehaviour
         SendBattleData();
     }else
     {
-        GetBattleData();
+        //GetBattleData();
+        // データは自動で送られてくるらしいです
     }
     }
 
@@ -624,10 +633,19 @@ public class CharacterManager : MonoBehaviour
     void SendBattleData()
     {
         //ここにバックエンドにデータを送るための関数を書いてください
+        // SendMoveとかをいい感じに呼び出せば良さそう
+        // 例。roomIdなどは　(uint)roomData.roomId　とかいい感じに書き換える必要あり。バックではuintで扱う変数が多いです
+        // gameConnector.SendMove(roomId, playerId, charaId, x, y);// x,yは移動先の絶対座標
+        // gameConnector.SendAttack(roomId, playerId, attackerCharaId, attackType, isStarted, baseHP1, baseHP2, attackedCharaId, newHP);
+        // gameConnector.SendTurnEnd(roomId, playerId);
+        // 状態異常を更新する関数がバックにないかも。僕が発見できてないだけかもしれない
     }
 
-    void GetBattleData()
+    public void GetBattleData(GameDataResponse data)
     {
         //ここにバックエンドにデータを受け取るための関数を書いてください
+        // ここに書き込んだ内容はGameConnectorで呼び出されて全員分の情報を自動更新してくれるらしい。つまり、試合中にこの関数をいちいち呼び出す必要はないってことだと思う
+        // ScriptableObjectに受け取ったデータを入れれば良さそう
+        // battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;// 自分が1PだったらBaseHp1を、そうでなかったらBaseHp2を受け取る。バックではuintで扱う変数が多いのでuint->int変換を挟んでます
     }
 }
