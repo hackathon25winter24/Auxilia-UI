@@ -16,7 +16,7 @@ MonoBehaviour:
   - _default_name: Sophie
     _default_name_japanese: "\u30BD\u30D5\u30A3\u30FC"
     _default_id: 0
-    _default_sprite: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
+    _default_sprite: {fileID: 21300000, guid: e7191a992edfa1b4f8e2b3d4fa10b425, type: 3}
     _select_image: {fileID: -4612181463540714612, guid: 3ef91d4f2681e3649b217fb243f97250, type: 3}
     _detail_image: {fileID: 21300000, guid: ce1780b6a49ea524ea5cb6a377e398f8, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
@@ -64,7 +64,7 @@ MonoBehaviour:
   - _default_name: Jude
     _default_name_japanese: "\u30B8\u30E5\u30FC\u30C9"
     _default_id: 1
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 20f7019905f9c8f438849b3a46818885, type: 3}
     _select_image: {fileID: 6018669768705036611, guid: c6466b20ef3f826478bf77da6b9ac9d0, type: 3}
     _detail_image: {fileID: 21300000, guid: 4bd2e609981c961448e98e0d7dd7707a, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
@@ -104,7 +104,7 @@ MonoBehaviour:
   - _default_name: Nadia
     _default_name_japanese: "\u30CA\u30C7\u30A3\u30A2"
     _default_id: 2
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 56d8bbabda7abe742bfa1bfe68113e1b, type: 3}
     _select_image: {fileID: -7827395209335436663, guid: e7e82f08eacb5454498f3caa00710af0, type: 3}
     _detail_image: {fileID: 8314858775564062062, guid: 85a384fa836994d49bd581d6e500be8b, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
@@ -149,7 +149,7 @@ MonoBehaviour:
   - _default_name: Tsukiha
     _default_name_japanese: "\u6708\u8449"
     _default_id: 3
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 32fd8ffc9e56f964fb3c7da76d81e6e2, type: 3}
     _select_image: {fileID: 8651488872111958891, guid: 1f87728c4a4c9e94eb6d2bcc6a6dc12f, type: 3}
     _detail_image: {fileID: 1845130351903015196, guid: b7a806a2d2c5fb241ab7dddcdb99a51d, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
@@ -193,7 +193,7 @@ MonoBehaviour:
   - _default_name: Aoi
     _default_name_japanese: "\u6247\u8863"
     _default_id: 4
-    _default_sprite: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
+    _default_sprite: {fileID: 21300000, guid: cea0a661ec406e14185d2d2a39788041, type: 3}
     _select_image: {fileID: 1695182302142793382, guid: 0fa23f44853b310459a8a38d70e9bf27, type: 3}
     _detail_image: {fileID: 21300000, guid: 989f56772644e4871ae17e8a2b6951a3, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
@@ -242,7 +242,7 @@ MonoBehaviour:
   - _default_name: Sena
     _default_name_japanese: "\u661F\u51EA"
     _default_id: 5
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 8bf312f33c9d66b43acd679d73b901e7, type: 3}
     _select_image: {fileID: 1336907021764206030, guid: f16ef121a9f24ca42b10a843ee747eb7, type: 3}
     _detail_image: {fileID: 21300000, guid: cf4697800d5b8e64397536040f6ed249, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 9dbeb0b5ba320454c9c0f4150d24f569, type: 3}
@@ -285,7 +285,7 @@ MonoBehaviour:
   - _default_name: Berenice
     _default_name_japanese: "\u30D9\u30EC\u30CB\u30B9"
     _default_id: 6
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 5bf0d7b9d22fc744194e08dc50857ce5, type: 3}
     _select_image: {fileID: -4509132481208037244, guid: 12db220d653655e4caa79651a86b7b34, type: 3}
     _detail_image: {fileID: 2274411440236338096, guid: c255e22d6d96c514085031acbedd305d, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: 23e6cb9594be1e340a911bd0cf7fe4b3, type: 3}
@@ -329,7 +329,7 @@ MonoBehaviour:
   - _default_name: Chiyo
     _default_name_japanese: "\u5343\u4EE3"
     _default_id: 7
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 9324b25e7b561004e8d845090a3aeca6, type: 3}
     _select_image: {fileID: 374504980988395012, guid: 2136e9af49b3c7c46b848e63c71a1050, type: 3}
     _detail_image: {fileID: 21300000, guid: 96dd63c2cbe6ad84b9229c5070b38a42, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: d485103fc44d7944fb4539e251e75839, type: 3}
@@ -371,7 +371,7 @@ MonoBehaviour:
   - _default_name: Shincho
     _default_name_japanese: "\u65B0\u8457"
     _default_id: 8
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: 8c2e13a73c74fe24aab0e432edc1d441, type: 3}
     _select_image: {fileID: 0}
     _detail_image: {fileID: 21300000, guid: 23d28333ff07e26449540cdd9507602a, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: f24e5669e4b6e124a8cd94511ed5e2f3, type: 3}
@@ -431,13 +431,53 @@ MonoBehaviour:
   - _default_name: Zina
     _default_name_japanese: "\u30B8\u30FC\u30CA"
     _default_id: 9
-    _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite: {fileID: 21300000, guid: a960522c0846b80429b90f7345017071, type: 3}
     _select_image: {fileID: -3138944076236679945, guid: a36032ebf2b782b49a4f19e1f3962b72, type: 3}
     _detail_image: {fileID: 21300000, guid: 1a83532e305104e5e9250849fde44ece, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: a960522c0846b80429b90f7345017071, type: 3}
     _default_sprite_smallwindow: {fileID: -7856074508265993089, guid: 1759bfd25abfbfa409a46344829d5d2f, type: 3}
     _default_hp: 200
     _default_move_cost: 5
+    _attacks:
+    - _default_attack_name: "\u9060\u8DDD\u96E2\u5236\u5727"
+      _default_attack_cost: 20
+      _default_attack_power: 20
+      _default_attack_target: 0
+      debuffs: 0000000000000000000000000000000032000000000000000000000000000000
+      _attack_button: {fileID: -6211113914983606917, guid: a74b1396b68dbef4f97430424c2cfba7, type: 3}
+      _default_attack_range:
+      - {x: 3, y: 0}
+      _attack_range_image: {fileID: 8991306831301477543, guid: dc9a12b53fa0d144d9a7c8b0b0ffec30, type: 3}
+    - _default_attack_name: "\u4E2D\u8DDD\u96E2\u5236\u5727"
+      _default_attack_cost: 20
+      _default_attack_power: 20
+      _default_attack_target: 0
+      debuffs: 0000000000000000000000000000000050000000000000000000000000000000
+      _attack_button: {fileID: 8582767294075729541, guid: 49063b5439a99da4b9f519e3077c99cd, type: 3}
+      _default_attack_range:
+      - {x: 2, y: 0}
+      _attack_range_image: {fileID: 3892192920739480270, guid: 7d326e3590bda8b43aaf670a2cac85d8, type: 3}
+    - _default_attack_name: "\u8ECD\u968A\u5F0F\u8FD1\u63A5\u683C\u95D8\u8853"
+      _default_attack_cost: 30
+      _default_attack_power: 60
+      _default_attack_target: 0
+      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
+      _attack_button: {fileID: -1658104835833474974, guid: b7e73311e341be74d93ab65c848fe5e0, type: 3}
+      _default_attack_range:
+      - {x: 1, y: 0}
+      _attack_range_image: {fileID: 5544735913679204495, guid: b5ee6a718b1be344aa9664623217f605, type: 3}
+    _attack_button_backimage: {fileID: 6180249872933938067, guid: f72a476b79c470b4bb9ba9edf2363854, type: 3}
+    passive: []
+  - _default_name: Dana
+    _default_name_japanese: "\u30C0\u30FC\u30CA"
+    _default_id: 10
+    _default_sprite: {fileID: 21300000, guid: 10fc4211d774c494782e4c137bf8c834, type: 3}
+    _select_image: {fileID: -3138944076236679945, guid: a36032ebf2b782b49a4f19e1f3962b72, type: 3}
+    _detail_image: {fileID: -3784651827349605482, guid: 3193505ad64469a438fd6830d560a7a7, type: 3}
+    _default_sprite_mini: {fileID: -6521769860374610411, guid: 1a5991fa3757a0e47a64daae291ec858, type: 3}
+    _default_sprite_smallwindow: {fileID: -7856074508265993089, guid: 1759bfd25abfbfa409a46344829d5d2f, type: 3}
+    _default_hp: 200
+    _default_move_cost: 10
     _attacks:
     - _default_attack_name: "\u9060\u8DDD\u96E2\u5236\u5727"
       _default_attack_cost: 20
