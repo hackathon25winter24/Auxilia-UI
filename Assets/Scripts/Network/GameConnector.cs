@@ -18,9 +18,11 @@ public class GameConnector : MonoBehaviour
     private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
     private RoomService.RoomServiceClient _roomClient;
     private BattleService.BattleServiceClient _battleClient;
+    private BattleService.BattleServiceClient _battleStreamClient;
 
-    private AsyncDuplexStreamingCall<PlayerAction, GameDataResponse> _call;
+    private AsyncServerStreamingCall<GameDataResponse> _call;
     private CancellationTokenSource _cts;
+    private bool _isStreamActive;
 
     public CharacterManager characterManager;
 
@@ -47,6 +49,14 @@ public class GameConnector : MonoBehaviour
         _roomMatchClient = new RoomMatchService.RoomMatchServiceClient(channel);
         _roomClient = new RoomService.RoomServiceClient(channel);
         _battleClient = new BattleService.BattleServiceClient(channel);
+
+        // ストリーム専用の独立チャンネルを作成（並行する単発リクエストで切断されるのを防ぐ）
+        var streamHandler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
+        var streamChannel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
+        {
+            HttpHandler = streamHandler
+        });
+        _battleStreamClient = new BattleService.BattleServiceClient(streamChannel);
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -256,6 +266,43 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<StartMatchResponse> StartMatch(int roomId)
+    {
+        try
+        {
+            var request = new StartMatchRequest { RoomId = roomId };
+            var response = await _roomClient.StartMatchAsync(request);
+            Debug.Log($"<color=green>試合開始成功:</color> RoomID={roomId}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"試合開始に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public AsyncServerStreamingCall<ListRoomResponse> StreamRoom(RoomStreamRequest request)
+    {
+        return _roomClient.StreamRoom(request);
+    }
+
+    public async Task<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
+    {
+        try
+        {
+            var request = new UpdateRoomStateRequest { RoomId = roomId, UserId = userId, State = state, IsReady = isReady };
+            var response = await _roomClient.UpdateRoomStateAsync(request);
+            Debug.Log($"<color=green>状態更新成功:</color> User={userId}, State={state}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"状態の更新に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
     public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
     {
         try
@@ -314,6 +361,21 @@ public class GameConnector : MonoBehaviour
             ShowErrorMessage($"ゲームデータの作成に失敗しました: {e.Status.Detail}");
             return null;
 
+        }
+    }
+
+    public async Task<LeaveRoomResponse> LeaveRoom(int roomId, string userId)
+    {
+        try
+        {
+            var request = new LeaveRoomRequest { RoomId = roomId, UserId = userId };
+            var response = await _roomClient.LeaveRoomAsync(request);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"部屋の退出に失敗しました: {e.Status.Detail}");
+            return null;
         }
     }
 
@@ -411,27 +473,45 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public void StartStream()
+    public void StartStream(uint roomId, string playerId)
     {
         _cts = new CancellationTokenSource();
-        _call = _battleClient.StreamGame(cancellationToken: _cts.Token);
-        StartReceiveLoop();
+        _isStreamActive = true;
+        _ = ConnectAndReceiveLoop(roomId, playerId);
     }
-    private async void StartReceiveLoop()
-    {
-        try
-        {
-            while (await _call.ResponseStream.MoveNext(_cts.Token))
-            {
-                var response = _call.ResponseStream.Current;
 
-                // ゲーム状態更新
-                HandleGameData(response);
-            }
-        }
-        catch (RpcException e)
+    private async Task ConnectAndReceiveLoop(uint roomId, string playerId)
+    {
+        while (_isStreamActive)
         {
-            ShowErrorMessage($"ゲーム状態の受け取りに失敗しました: {e.Status.Detail}");
+            try
+            {
+                var request = new StreamGameRequest { RoomId = roomId, PlayerId = playerId };
+                _call = _battleStreamClient.StreamGame(request, cancellationToken: _cts.Token);
+                
+                while (await _call.ResponseStream.MoveNext(_cts.Token))
+                {
+                    var response = _call.ResponseStream.Current;
+                    Debug.Log($"<color=orange>[StreamGame] Server Push received.</color>");
+                    HandleGameData(response);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // 正常終了
+                break;
+            }
+            catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.Cancelled)
+            {
+                // 正常終了
+                break;
+            }
+            catch (Exception e)
+            {
+                if (!_isStreamActive) break;
+                Debug.LogError($"<color=red>[Stream Error] connection lost: {e.Message}. Reconnecting in 3s...</color>");
+                await Task.Delay(3000, _cts.Token);
+            }
         }
     }
     private void HandleGameData(GameDataResponse data)
@@ -444,54 +524,71 @@ public class GameConnector : MonoBehaviour
     // おそらくこれを呼び出せばDBのApplyMoveが動くはずです
     public async Task SendMove(int roomId, string playerId, int charaId, int x, int y)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         var move = new MoveAction{CharacterUniqueId = (uint)charaId, ToX = (uint)x, ToY = (uint)y};
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.ApplyMoveAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"移動の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
     public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.ApplyAttackAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"攻撃の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
     public async Task SendTurnEnd(int roomId, string playerId)
     {
-        if (_call == null)
-        {
-            Debug.LogError("Stream not started");
-            return;
-        }
-
         bool endTurn = true;
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, EndTurn = endTurn};
-        await _call.RequestStream.WriteAsync(action);
+        
+        try 
+        {
+            await _battleClient.EndTurnAsync(action);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ターン終了の送信に失敗しました: {e.Status.Detail}");
+        }
     }
 
 
     public async Task StopStream()
     {
+        _isStreamActive = false;
         try
         {
-            await _call.RequestStream.CompleteAsync();
-            _cts.Cancel();
+            if (_cts != null)
+            {
+                _cts.Cancel();
+                _cts.Dispose();
+                _cts = null;
+            }
+            if (_call != null)
+            {
+                _call.Dispose();
+                _call = null;
+            }
+            await Task.CompletedTask;
         }
-        catch (RpcException e)
+        catch (Exception e)
         {
-            ShowErrorMessage($"ストリーム終了に失敗しました: {e.Status.Detail}");
+            Debug.LogWarning($"StopStream Error: {e.Message}");
         }
     }
 }

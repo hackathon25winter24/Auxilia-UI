@@ -18,7 +18,7 @@ public class BattleUIManager : MonoBehaviour
     public RectTransform backfromStates;
     public Sprite[] characterStatesImage;
     
-    void Awake()
+    public void InitUI()
     {
         // 初期化処理
         for (int i = 0; i <= 5; i++)
