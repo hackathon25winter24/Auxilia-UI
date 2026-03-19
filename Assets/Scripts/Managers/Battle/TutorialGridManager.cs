@@ -1,0 +1,123 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TutorialGridManager : MonoBehaviour
+{
+    public GridDataforOnline gridDataforOnline;
+    public BattleDataforOmline battleDataforOnline;
+    public Image[] grids; 
+    public Sprite NormalGrid;
+    public Sprite ProhibitGrid;
+    public Sprite BaseGrid;
+    public Sprite CharacterGrid;
+    public Sprite AttackGrid;
+    public Sprite MakibishiGrid;
+    public Sprite LandmineGrid;
+
+    void Awake()
+    {
+        // 全グリッドの初期化
+        for (int y = 0; y < 5; y++)
+        {
+            if (gridDataforOnline.grid_state_y[y] == null)
+            gridDataforOnline.grid_state_y[y] = new Grid_state_y();
+
+            if (gridDataforOnline.sub_grid_state_y[y] == null)
+            gridDataforOnline.sub_grid_state_y[y] = new Sub_grid_state_y();
+
+            if (gridDataforOnline.grid_attack_position_y[y] == null)
+            gridDataforOnline.grid_attack_position_y[y] = new Grid_attack_position_y();
+
+            for (int x = 0; x < 8; x++)
+            {
+                gridDataforOnline.grid_state_y[y].grid_state_x[x] = 0;
+                gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 0;
+                gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+            }
+        }
+        
+        // 特殊なグリッドの設定
+        SetInitialGridState(1, 1, -2);
+        SetInitialGridState(5, 1, -2);
+        SetInitialGridState(0, 2, 1);
+        SetInitialGridState(7, 2, 1);
+        SetInitialGridState(2, 3, -2);
+        SetInitialGridState(6, 3, -2);
+        SetInitialGridState(1, 2, -1);
+    }
+
+    // コードをスッキリさせるための補助関数
+    void SetInitialGridState(int x, int y, int state) {
+        gridDataforOnline.grid_state_y[y].grid_state_x[x] = state;
+    }
+
+    void Start()
+    {
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                SetGridVisual(x, y);
+                if (gridDataforOnline.grid_state_y[y].grid_state_x[x] != -1)
+                {
+                    gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] =
+                    gridDataforOnline.grid_state_y[y].grid_state_x[x];
+                }
+            }
+        }
+    }
+
+    public void SetGridVisual(int x, int y)
+    {
+        // ガード句：範囲外アクセス防止
+        if (x < 0 || x >= 8 || y < 0 || y >= 5) return;
+
+        // 1次元配列用のインデックス計算 (重要！)
+        int grid_index = y * 8 + x; 
+
+        // 1. 基本地形の反映
+        switch (gridDataforOnline.grid_state_y[y].grid_state_x[x])
+        {
+            case 1:  grids[grid_index].sprite = BaseGrid; break;
+            case -2: grids[grid_index].sprite = ProhibitGrid; break;
+            case -1: grids[grid_index].sprite = NormalGrid; break;
+            case 3: grids[grid_index].sprite = MakibishiGrid; break;
+            case 4: grids[grid_index].sprite = LandmineGrid; break;
+            default: grids[grid_index].sprite = NormalGrid; break;
+        }
+
+        // 2. キャラクター位置の反映 (上書き)
+        for(int i = 0; i <= 5; i++)
+        {
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataforOnline.character_isSelected[i])
+        {
+            grids[battleDataforOnline.charactersBattleDatas[i].now_character_position.x + battleDataforOnline.charactersBattleDatas[i].now_character_position.y * 8].sprite = CharacterGrid;
+        }
+        }
+
+        // 3. 攻撃範囲の反映
+        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+        {
+            // 地形が 0 (通常) の時だけ攻撃色にする
+            if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == 0)
+            {
+                grids[grid_index].sprite = AttackGrid;
+            }
+            if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1)
+            {
+                grids[grid_index].sprite = AttackGrid;
+            }
+        }
+    }
+    
+    void Update()
+    {
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                SetGridVisual(x, y);
+            }
+        }
+    }
+}

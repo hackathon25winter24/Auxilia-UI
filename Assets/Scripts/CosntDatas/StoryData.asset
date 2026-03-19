@@ -269,7 +269,7 @@ MonoBehaviour:
       name: 
       serif: "\u3042\u306A\u305F\u306F\u3086\u3063\u304F\u308A\u76EE\u3092\u958B\u304F"
     - characterID: 0
-      character_face: 0
+      character_face: 1
       character_move: 0
       character_size: 1
       is_shadowed: 0
@@ -362,7 +362,7 @@ MonoBehaviour:
       name: "\u30E1\u30FC\u30EB"
       serif: 
     - characterID: 0
-      character_face: 0
+      character_face: 2
       character_move: 0
       character_size: 1
       is_shadowed: 0
