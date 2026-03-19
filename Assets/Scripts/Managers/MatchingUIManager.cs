@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class MatchingUIManager : MonoBehaviour
 {
@@ -20,14 +21,21 @@ public class MatchingUIManager : MonoBehaviour
     public GameConnector gameConnector;
     public string ownerName;
     public string ownerId;
+    public bool is_roading;
+    public GameObject nowLoadingText;
 
     public string kensaku_room_name;
 
-    void Awake()
+    async void Awake()
     {
+        nowLoadingText.SetActive(false);
         kensakuButton.SetActive(false);
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
-        UpDateRoomInformation();
+        is_roading = true;
+        nowLoadingText.SetActive(true);
+        await UpDateRoomInformation();
+        nowLoadingText.SetActive(false);
+        is_roading = false;
     }
 
     void Start()
@@ -36,7 +44,7 @@ public class MatchingUIManager : MonoBehaviour
         ownerName = playerData.username;
     }
 
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
@@ -48,7 +56,12 @@ public class MatchingUIManager : MonoBehaviour
                 OnClick_CreateRoomMatch();
                 break;
             case "ReRoad":
-                UpDateRoomInformation();
+                if (is_roading)break;
+                is_roading = true;
+                nowLoadingText.SetActive(true);
+                await UpDateRoomInformation();
+                nowLoadingText.SetActive(false);
+                is_roading = false;
                 break;
             case "kensaku":
                 kensakuButton.SetActive(true);
@@ -126,7 +139,7 @@ public class MatchingUIManager : MonoBehaviour
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
-            var response = await gameConnector.JoinRoom(index, playerData.user_id);
+            var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, playerData.user_id);
             roomData.room_id = response.Rooms[0].RoomId;
             for (int i = 0; i < matchingData.num_room; i++)
             {
@@ -144,12 +157,12 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.rooms[i].room_is_selected = false;
             }
             matchingData.rooms[index].room_is_selected = true;
-            CreateJoinnerNames(matchingData.rooms[index].num_room_joiner);
+            CreateJoinnerNames(index);
         }
     }
 
     //部屋の情報を更新したいときはこのメソッドをたたいてください
-    public async void UpDateRoomInformation()
+    public async Task UpDateRoomInformation()
     {
         //ここに部屋の数を取得する関数を書いてください
         // List<RoomMatch> room_list に全部屋の情報が入ってます
@@ -163,7 +176,7 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.rooms[i].room_name = room_list[i].RoomName;
             matchingData.rooms[i].room_host = room_list[i].OwnerId;
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
-            var joiner_list = await gameConnector.ListRoom(i);
+            var joiner_list = await gameConnector.ListRoom(room_list[i].RoomId);
             matchingData.rooms[i].num_room_joiner = joiner_list.Count;
             // 移動しました
             SetupJoinners(i);
