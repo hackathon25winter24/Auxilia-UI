@@ -16,8 +16,8 @@ MonoBehaviour:
   - character_name: sophie
     character_face:
     - {fileID: 21300000, guid: ec43f7934cb0e534d83d441cf1abb9fd, type: 3}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: -3321809193948071849, guid: 5547efcd1c9bea043966c8bd41bfff9a, type: 3}
+    - {fileID: 33407113262028933, guid: e2b54cf8f3f540c4391a553c69fb4a7a, type: 3}
   - character_name: 
     character_face: []
   - character_name: 
