@@ -189,16 +189,6 @@ public class RoomUIManager : MonoBehaviour
                 owner = await gameConnector.GetUser(rooms[i].OwnerId);
                 // Debug.Log($"owner: {owner}");
                 roomData.room_name = owner.Name + "の部屋";
-
-                if (rooms[i].IsGaming)
-                {
-                    // ゲームが開始されたら親以外も戦闘画面（Scene 10）へ移行する
-                    if (!roomData.usersData[roomData.room_my_number].is_host)
-                    {
-                        sceneData.next_scene_number = 10;
-                        return;
-                    }
-                }
             }
         }
         for (int i = 0; i < joiner_list.Count; i++)
@@ -248,6 +238,19 @@ public class RoomUIManager : MonoBehaviour
             else
             {
                 startBattleButtonText.text = amIReady ? "対戦開始を待っています..." : "準備完了";
+            }
+        }
+
+        // 全てのステータス更新後にゲーム中か判定してゲストを遷移
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            if (rooms[i].RoomId == roomData.room_id && rooms[i].IsGaming)
+            {
+                if (!roomData.usersData[roomData.room_my_number].is_host)
+                {
+                    sceneData.next_scene_number = 10;
+                    return;
+                }
             }
         }
     }
