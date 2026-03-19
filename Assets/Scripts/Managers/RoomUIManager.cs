@@ -217,6 +217,7 @@ public class RoomUIManager : MonoBehaviour
         var joiner_list = await gameConnector.ListRoom(roomData.room_id);
         var rooms = await gameConnector.GetAllRoomMatch();
         
+        if (this == null) return; // シーン移動で破棄されていた場合の安全策
         if (joiner_list == null || rooms == null || joiner_list.Count == 0) return;
 
         var owner = new Game.Network.UserResponse();
@@ -232,6 +233,10 @@ public class RoomUIManager : MonoBehaviour
         for (int i = 0; i < joiner_list.Count; i++)
         {
             var user = await gameConnector.GetUser(joiner_list[i].UserId);
+            
+            // 通信待ちの間にシーン移動などでオブジェクトが破棄されていた場合は即時中断する
+            if (this == null) return;
+
             if (user.Id == playerData.user_id) roomData.room_my_number = i;
 
             roomData.usersData[i].user_name = user.Name;

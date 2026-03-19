@@ -22,7 +22,7 @@ service RoomService {
     rpc StartMatch (StartMatchRequest) returns (StartMatchResponse);
 
     // ルーム内のリアルタイム同期（入室時のStream接続用）
-    rpc StreamRoom (stream RoomStreamRequest) returns (stream ListRoomResponse);
+    rpc StreamRoom (RoomStreamRequest) returns (stream ListRoomResponse);
 }
 
 message RoomStreamRequest {
