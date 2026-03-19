@@ -32,6 +32,11 @@ public class CharacterSelectManager : MonoBehaviour
     public Button closeDetailButton;
     public TMP_Text hpText;
     public TMP_Text moveCostText;
+    public TMP_Text characterName;
+    public AttackData[] attacks;
+    public TMP_Text passiveName;
+    public TMP_Text passiveExplanation;
+    public Image passiveRange;
 
     [Header("キャラクターデータ (ScriptableObject)")]
     public CharacterData characterDataAsset;
@@ -42,9 +47,19 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("プレイヤーデータ（ScriptableObject）")]
     public PlayerData playerData;
 
-    [Header("hedda-")]
+    [Header("シーンデータ（ScriptableObject）")]
     public SceneData sceneData;
 
+
+    [System.Serializable]
+    public class AttackData
+    {
+        public TMP_Text attackName;
+        public TMP_Text attackDamage;
+        public TMP_Text attackCost;
+        // public TMP_Text attackSpecial;
+        public Image attackRange;
+    }
     void Start()
     {
         characterSelectPanel.SetActive(false);
@@ -179,6 +194,15 @@ public class CharacterSelectManager : MonoBehaviour
         int moveCost = characterDataAsset.characters[charIndex].default_move_cost;
         hpText.text = hp.ToString();
         moveCostText.text = moveCost.ToString();
+        characterName.text = characterDataAsset.characters[charIndex].default_name_japanese;
+
+        for(int i = 0; i < 3; i++)
+        {
+            attacks[i].attackName.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_name;
+            attacks[i].attackDamage.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_power.ToString();
+            attacks[i].attackCost.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_cost.ToString();
+            attacks[i].attackRange.sprite = characterDataAsset.characters[charIndex].attacks[i].attack_range_image;
+        }
 
         characterDetailPanel.SetActive(true);
     }
@@ -247,7 +271,6 @@ public class CharacterSelectManager : MonoBehaviour
         sceneData.next_scene_number = 1;
     }
 
-    // カスの関数でごめん
     void PartyHPandMOV()
     {
         int partyHP = characterDataAsset.characters[playerData.character_formation_one].default_hp
