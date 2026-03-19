@@ -10,6 +10,7 @@ public class StoryData : ScriptableObject
 public class StoriesData
 {
     public int story_number;
+    public int next_scene;
     public SerifData[] serifs;
 }
 
@@ -19,6 +20,8 @@ public class SerifData
     public int characterID;
     public int character_face;
     public int character_move;
+    public float character_size;
+    public bool is_shadowed;
     public string name;
     [TextArea(3, 10)]
     public string serif;
