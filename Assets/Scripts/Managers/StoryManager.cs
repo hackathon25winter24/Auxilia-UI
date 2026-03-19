@@ -25,6 +25,9 @@ public class StoryManager : MonoBehaviour
     public TextMeshProUGUI autoText;
     public GameObject RightDownUI;
     public GameObject Shadow;
+    public GameObject Texts;
+    public GameObject selectionPrefab; 
+    public Transform selections;
 
     void Awake()
     {
@@ -143,7 +146,18 @@ public class StoryManager : MonoBehaviour
     {
         storyManagerData.serif_loading = true;
 
+        if(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_selection)
+        {
+            CreateSelectionButtons();
+            selections.gameObject.SetActive(true);
+            Texts.SetActive(false);
+            CharacterImage.gameObject.SetActive(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_character_exist);
+        }else
+        {
+        selections.gameObject.SetActive(false);
+        Texts.SetActive(true);
         backImage.sprite = back_image;
+        CharacterImage.gameObject.SetActive(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_character_exist);
         CharacterImage.sprite = storyCharacterData.charactersData[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].characterID]
         .character_face[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_face];
         float size = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_size;
@@ -157,6 +171,8 @@ public class StoryManager : MonoBehaviour
             Tell.text += letter; // 一文字追加
             yield return new WaitForSeconds(typingSpeed); // 設定した時間待機
         }
+        }
+
         storyManagerData.serif_loading = false;
     }
 
@@ -184,5 +200,44 @@ public class StoryManager : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    void Start()
+    {
+        CreateSelectionButtons();
+    }
+
+    public void CreateSelectionButtons()
+    {
+        // 1. 既存の古いボタンをすべて削除（念のため）
+        foreach (Transform child in selections)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 2. 選択肢の数だけループして生成
+        for (int i = 0; i < storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].num_selection; i++)
+        {
+            // ボタンを生成して親(Panel)に入れる
+            GameObject newButton = Instantiate(selectionPrefab, selections);
+
+            // 3. テキストを書き換える
+            TextMeshProUGUI btnText = newButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (btnText != null)
+            {
+                btnText.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].selection_text[i];
+            }
+
+            // 4. クリック時の処理を登録（インデックスを渡す）
+            int index = i;
+            newButton.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(index));
+        }
+    }
+
+    void OnChoiceSelected(int index)
+    {
+        storyManagerData.serif_number ++;
+        TellingCharacterName.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].name;
+        StartCoroutine(ShowText(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif));
     }
 }
