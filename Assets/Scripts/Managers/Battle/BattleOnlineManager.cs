@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
+using System.Threading.Tasks;
 
 public class BattleOnlineManager : MonoBehaviour
 {
@@ -11,8 +12,12 @@ public class BattleOnlineManager : MonoBehaviour
     public PlayerData playerData;
     public BattleDataforOmline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
+    public RoomData roomData;
+
     public TextMeshProUGUI gametext;
     public RectTransform gameTextObject;
+
+    public GameConnector gameConnector;
 
     public Slider timerSlider; 
     public float maxTime = 60f; 
@@ -24,11 +29,14 @@ public class BattleOnlineManager : MonoBehaviour
     public float duration = 2.0f;
     public float elapsed = 0f;
     public bool is_text_moving;
+    public bool is_move_player;
 
-    void Awake()
+    async void Awake()
     {
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         battleDataforLocal.is_myturn = false;
         //ここに先行プレイヤーかどうかを受け取る関数を書いてください
+        is_move_player = await GetFirstMovePlayer();// 自身が行動できるターンの時にtrueを返すはず。動作未検証
     }
 
     void Start()
@@ -177,4 +185,20 @@ public class BattleOnlineManager : MonoBehaviour
 
     is_text_moving = false;
 }
+
+    public async Task<bool> GetFirstMovePlayer()
+    {
+        var game_data = await gameConnector.GetGameData(roomData.room_id);
+        string p1 = game_data.Player1Id;
+        string p2 = game_data.Player2Id;
+        bool is_1p_turn = game_data.Is1PTurn;
+        if (playerData.user_id == p1 && is_1p_turn || playerData.user_id == p2 && !is_1p_turn)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

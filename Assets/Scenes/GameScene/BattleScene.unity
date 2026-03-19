@@ -983,13 +983,16 @@ MonoBehaviour:
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
+  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
   gametext: {fileID: 649590194}
   gameTextObject: {fileID: 649590193}
+  gameConnector: {fileID: 0}
   timerSlider: {fileID: 222250393}
   maxTime: 60
   duration: 2
   elapsed: 0
   is_text_moving: 0
+  is_move_player: 0
 --- !u!4 &260079060
 Transform:
   m_ObjectHideFlags: 0
