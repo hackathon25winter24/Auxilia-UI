@@ -34,27 +34,36 @@ public class CharacterManager : MonoBehaviour
     private int[] _lastSentY = new int[6];
 
 
+    private T GetSo<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        var targets = Resources.FindObjectsOfTypeAll<T>();
+        if (targets.Length > 0) return targets[0];
+        return null;
+    }
+
     void Awake()
     {
+        roomData = GetSo(roomData);
+        playerData = GetSo(playerData);
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
-        roomData = FindFirstObjectByType<RoomData>();
-        playerData = FindFirstObjectByType<PlayerData>();
         gameConnector.characterManager = this.GetComponent<CharacterManager>();
-        gameConnector.StartStream((uint)roomData.room_id, playerData.user_id); // ルームIDとユーザーIDを渡して開始
+        
+        if (roomData != null && playerData != null)
+        {
+            gameConnector.StartStream((uint)roomData.room_id, playerData.user_id);
+        }
+        else
+        {
+            Debug.LogError("CharacterManager: roomDataまたはplayerDataが見つからないためStartStreamをスキップしました。");
+        }
     }
     void OnDestroy()
     {
         _ = gameConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
     }
 
-    // キャラ選択・攻撃選択・移動後に䘯び出せるよう async void ヘルパー
-    private async void RefreshGameData()
-    {
-        if (gameConnector == null || roomData == null) return;
-        var data = await gameConnector.GetGameData(roomData.room_id);
-        if (this == null) return; // シーン移動中に破棄された場合
-        GetBattleData(data);
-    }
+
     public void InitCharacterUI()
     {
         BackButton.gameObject.SetActive(false);
@@ -143,7 +152,6 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
-            RefreshGameData(); // 攻撃選択時
         }
         if(buttonName == "Attack2") 
         {
@@ -151,7 +159,6 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
-            RefreshGameData(); // 攻撃選択時
         }
         if(buttonName == "Attack3") 
         {
@@ -159,7 +166,6 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
-            RefreshGameData(); // 攻撃選択時
         }
         
         }
@@ -187,7 +193,6 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            RefreshGameData(); // キャラ選択時
                 break;
             case "2":
             selected_character_id = 1;
@@ -200,7 +205,6 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            RefreshGameData(); // キャラ選択時
                 break;
             case "3":
             selected_character_id = 2;
@@ -213,7 +217,6 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
-            RefreshGameData(); // キャラ選択時
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -359,8 +362,6 @@ public class CharacterManager : MonoBehaviour
     {
         battleDataforOnline.now_my_cost -= cost;
     }
-
-        RefreshGameData(); // 移動後
     }
     }
 

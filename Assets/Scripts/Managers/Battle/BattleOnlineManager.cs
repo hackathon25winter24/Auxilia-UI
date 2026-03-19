@@ -31,13 +31,27 @@ public class BattleOnlineManager : MonoBehaviour
     public bool is_text_moving;
     public bool is_move_player;
 
+    private T GetSo<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        var targets = Resources.FindObjectsOfTypeAll<T>();
+        if (targets.Length > 0) return targets[0];
+        return null;
+    }
+
     async void Awake()
     {
+        roomData = GetSo(roomData);
+        playerData = GetSo(playerData);
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         characterManager = FindFirstObjectByType<CharacterManager>();
         battleDataforLocal.is_myturn = false;
 
         // サーバーからゲームデータを取得して初期化する
+        if (roomData == null) {
+            Debug.LogError("[BattleOnlineManager] roomDataが見つかりません。");
+            return;
+        }
         var gameData = await gameConnector.GetGameData(roomData.room_id);
         if (gameData == null)
         {
@@ -86,6 +100,9 @@ public class BattleOnlineManager : MonoBehaviour
 
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
+
+        // 全体のコストやHPなどを CharacterManager を通して更新・ログ表示
+        characterManager.GetBattleData(gameData);
 
         // すべてのデータが揃ったので、UIを初期化する
         characterManager.InitCharacterUI();

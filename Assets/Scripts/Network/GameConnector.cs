@@ -18,9 +18,11 @@ public class GameConnector : MonoBehaviour
     private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
     private RoomService.RoomServiceClient _roomClient;
     private BattleService.BattleServiceClient _battleClient;
+    private BattleService.BattleServiceClient _battleStreamClient;
 
     private AsyncServerStreamingCall<GameDataResponse> _call;
     private CancellationTokenSource _cts;
+    private bool _isStreamActive;
 
     public CharacterManager characterManager;
 
@@ -47,6 +49,14 @@ public class GameConnector : MonoBehaviour
         _roomMatchClient = new RoomMatchService.RoomMatchServiceClient(channel);
         _roomClient = new RoomService.RoomServiceClient(channel);
         _battleClient = new BattleService.BattleServiceClient(channel);
+
+        // ストリーム専用の独立チャンネルを作成（並行する単発リクエストで切断されるのを防ぐ）
+        var streamHandler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
+        var streamChannel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
+        {
+            HttpHandler = streamHandler
+        });
+        _battleStreamClient = new BattleService.BattleServiceClient(streamChannel);
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -451,34 +461,42 @@ public class GameConnector : MonoBehaviour
     public void StartStream(uint roomId, string playerId)
     {
         _cts = new CancellationTokenSource();
-        var request = new StreamGameRequest { RoomId = roomId, PlayerId = playerId };
-        _call = _battleClient.StreamGame(request, cancellationToken: _cts.Token);
-        StartReceiveLoop();
+        _isStreamActive = true;
+        _ = ConnectAndReceiveLoop(roomId, playerId);
     }
-    private async void StartReceiveLoop()
+
+    private async Task ConnectAndReceiveLoop(uint roomId, string playerId)
     {
-        try
+        while (_isStreamActive)
         {
-            while (await _call.ResponseStream.MoveNext(_cts.Token))
+            try
             {
-                var response = _call.ResponseStream.Current;
-                Debug.Log($"<color=orange>[StartReceiveLoop] Received stream response! Update logic starting...</color>");
-                // ゲーム状態更新
-                HandleGameData(response);
+                var request = new StreamGameRequest { RoomId = roomId, PlayerId = playerId };
+                _call = _battleStreamClient.StreamGame(request, cancellationToken: _cts.Token);
+                
+                while (await _call.ResponseStream.MoveNext(_cts.Token))
+                {
+                    var response = _call.ResponseStream.Current;
+                    Debug.Log($"<color=orange>[StreamGame] Server Push received.</color>");
+                    HandleGameData(response);
+                }
             }
-        }
-        catch (OperationCanceledException)
-        {
-            // シーン移動やStopStream()による正常なキャンセル なのでエラー表示しない
-        }
-        catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.Cancelled)
-        {
-            // gRPCレベルのキャンセルも正常終了扱いにする
-        }
-        catch (RpcException e)
-        {
-            Debug.LogError($"<color=red>[Stream Error] RpcException: {e.Status.StatusCode} - {e.Status.Detail}</color>");
-            ShowErrorMessage($"ゲーム状態の受け取りに失敗しました: {e.Status.Detail}");
+            catch (OperationCanceledException)
+            {
+                // 正常終了
+                break;
+            }
+            catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.Cancelled)
+            {
+                // 正常終了
+                break;
+            }
+            catch (Exception e)
+            {
+                if (!_isStreamActive) break;
+                Debug.LogError($"<color=red>[Stream Error] connection lost: {e.Message}. Reconnecting in 3s...</color>");
+                await Task.Delay(3000, _cts.Token);
+            }
         }
     }
     private void HandleGameData(GameDataResponse data)
@@ -537,6 +555,7 @@ public class GameConnector : MonoBehaviour
 
     public async Task StopStream()
     {
+        _isStreamActive = false;
         try
         {
             if (_cts != null)
