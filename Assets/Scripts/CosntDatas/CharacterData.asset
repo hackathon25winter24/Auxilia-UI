@@ -154,8 +154,8 @@ MonoBehaviour:
     _detail_image: {fileID: 1845130351903015196, guid: b7a806a2d2c5fb241ab7dddcdb99a51d, type: 3}
     _default_sprite_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
     _default_sprite_smallwindow: {fileID: -3440073146113266091, guid: c5e116a2102b25a41a01c2d67e3ffd7a, type: 3}
-    _default_hp: 150
-    _default_move_cost: 7
+    _default_hp: 100
+    _default_move_cost: 3
     _attacks:
     - _default_attack_name: "\u5FCD\u6CD5\uFF1A\u624B\u88CF\u5263\u6295\u3052\u306E\u8853\u30FB\u8FD1"
       _default_attack_cost: 5
@@ -191,13 +191,13 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 9155553054322782886, guid: ebb4c634ea9400b4aae9efc121b07f20, type: 3}
     passive: []
   - _default_name: Aoi
-    _default_name_japanese: 
+    _default_name_japanese: "\u6247\u8863"
     _default_id: 4
     _default_sprite: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
     _select_image: {fileID: 1695182302142793382, guid: 0fa23f44853b310459a8a38d70e9bf27, type: 3}
-    _detail_image: {fileID: 0}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _detail_image: {fileID: 21300000, guid: 989f56772644e4871ae17e8a2b6951a3, type: 3}
+    _default_sprite_mini: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
+    _default_sprite_smallwindow: {fileID: -6211510306040543583, guid: 046d4b18239ea524c9286f305eb25a33, type: 3}
     _default_hp: 250
     _default_move_cost: 10
     _attacks:
@@ -206,29 +206,29 @@ MonoBehaviour:
       _default_attack_power: 20
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      _attack_button: {fileID: 7581000488185979415, guid: c4483d8755c9543119234b4231a820d6, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
       - {x: 0, y: 1}
       - {x: 0, y: -1}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: 191120351026223997, guid: 46de5b6d7bab4e241ac854976601aaf3, type: 3}
     - _default_attack_name: "\u5973\u4F0A\u9054\uFF5E\u304A\u3093\u306A\u3060\u3066\uFF5E"
       _default_attack_cost: 20
       _default_attack_power: 40
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      _attack_button: {fileID: -8686762380342336505, guid: 5636ec1c48f514a7b872772a54c07a9e, type: 3}
       _default_attack_range:
       - {x: 1, y: 1}
       - {x: 1, y: 0}
       - {x: 1, y: -1}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: -6560424760855316595, guid: 22f2dc5a7e2c4f146a568765076d5e21, type: 3}
     - _default_attack_name: "\u9DFA\u5A18\uFF5E\u3055\u304E\u3080\u3059\u3081\uFF5E"
       _default_attack_cost: 30
       _default_attack_power: 60
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      _attack_button: {fileID: -8977149696960409367, guid: f0dee4cf5e2364655bdb0989e94e7811, type: 3}
       _default_attack_range:
       - {x: 1, y: 1}
       - {x: 0, y: 1}
@@ -236,8 +236,8 @@ MonoBehaviour:
       - {x: 1, y: -1}
       - {x: 0, y: -1}
       - {x: -1, y: -1}
-      _attack_range_image: {fileID: 0}
-    _attack_button_backimage: {fileID: 0}
+      _attack_range_image: {fileID: -6464090276019409389, guid: d666744b1be07d84bbc8dea5586fe1a9, type: 3}
+    _attack_button_backimage: {fileID: -4378084478997334759, guid: 29581c65fe1a94fd69fff67e99b9b28f, type: 3}
     passive: []
   - _default_name: Sena
     _default_name_japanese: 
