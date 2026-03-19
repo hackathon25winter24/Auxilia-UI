@@ -445,7 +445,7 @@ public class CharacterManager : MonoBehaviour
     int hit_character = 0;
     if (target == 1 || target == 2)
     {
-    for (int i = 0; i <= 3; i++)
+    for (int i = 0; i <= 2; i++)
     {
         // 味方がいるマスの攻撃フラグが 1 ならヒット！
         int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
@@ -485,6 +485,25 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.game_end = true;
     }
     }
+    }
+
+    if (hit_character > 0)
+    {
+        // 攻撃データを送信（サーバー側のアクション同期のみ。HP計算自体はサーバーで再計算されるはずだが
+        // 現時点での演出のために、攻撃したという事実自体を飛ばす）
+        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
+        // 本来は攻撃対象キャラのIDなども含める必要があるが、まずは攻撃者のIDを正しく送る
+        _ = gameConnector.SendAttack(
+            roomData.room_id, 
+            playerData.user_id, 
+            (int)attackerUid, 
+            attack_number, 
+            true, 
+            battleDataforOnline.base_hp, 
+            battleDataforOnline.opponent_base_hp, 
+            0, // とりあえず0をセット（必要なら拡張）
+            0  // とりあえず0をセット
+        );
     }
 
     if (hit_character == 0)
@@ -668,7 +687,8 @@ public class CharacterManager : MonoBehaviour
             int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
             if (cx != _lastSentX[i] || cy != _lastSentY[i])
             {
-                _ = gameConnector.SendMove(rid, pid, i, cx, cy);
+                uint uid = battleDataforOnline.charactersBattleDatas[i].unique_id;
+                _ = gameConnector.SendMove(rid, pid, (int)uid, cx, cy);
                 _lastSentX[i] = cx;
                 _lastSentY[i] = cy;
             }
@@ -730,6 +750,7 @@ public class CharacterManager : MonoBehaviour
             
             if (idx != -1)
             {
+                battleDataforOnline.charactersBattleDatas[idx].unique_id = c.Id;
                 battleDataforOnline.charactersBattleDatas[idx].now_character_hp = (int)c.Hp;
                 battleDataforOnline.charactersBattleDatas[idx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
             }

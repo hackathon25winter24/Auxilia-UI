@@ -33,6 +33,7 @@ public class BattleDataforOmline : ScriptableObject
 [System.Serializable]
 public class CharactersBattleData
 {
+    public uint unique_id;
     public bool[] debuffs = new bool[8];
     public int now_character_hp;
     public int now_character_maxhp;

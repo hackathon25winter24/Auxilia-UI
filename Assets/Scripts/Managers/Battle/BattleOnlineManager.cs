@@ -135,6 +135,8 @@ public class BattleOnlineManager : MonoBehaviour
                 battleDataforLocal.is_myturn = false;
                 // 自分のターンではないので、相手のターンを勝手に終わらせないようローカルタイマーを停止する
                 isTimerRunning = false;
+                // テキスト表示も相手の番であることを示す
+                gametext.text = "opponent turn";
             }
         }
 
@@ -207,6 +209,9 @@ public class BattleOnlineManager : MonoBehaviour
 
         // ターン終了時にコストを50まで回復
         battleDataforOnline.now_my_cost = 50;
+
+        // タイマーを念のため止める
+        isTimerRunning = false;
     }
 
     void TimerStart()
