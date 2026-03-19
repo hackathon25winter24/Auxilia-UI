@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530a9ca458415b846904b084776a28ab, type: 3}
   m_Name: StoryManagerData
   m_EditorClassIdentifier: 
-  serif_number: 0
+  serif_number: 23
   serif_loading: 0
   is_auto: 0
   is_wating: 0
-  is_tutorial: 0
   now_story_number: 0

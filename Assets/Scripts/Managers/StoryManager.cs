@@ -2,10 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public class StoryManager : MonoBehaviour
 {
+    [Header("Data References")]
     public InputData inputData;
     public SceneData sceneData;
     public PlayerData playerData;
@@ -13,6 +14,7 @@ public class StoryManager : MonoBehaviour
     public StoryManagerData storyManagerData;
     public StoryCharacterData storyCharacterData;
 
+    [Header("UI Elements")]
     public Image backImage;
     public Sprite back_image;
     public Image CharacterImage;
@@ -20,169 +22,240 @@ public class StoryManager : MonoBehaviour
     public Image DownArrow;
     public TextMeshProUGUI TellingCharacterName;
     public TextMeshProUGUI Tell;
-    public float speed = 5.0f;
-    public float typingSpeed = 0.05f;
     public TextMeshProUGUI autoText;
     public GameObject RightDownUI;
     public GameObject Shadow;
+    public GameObject Texts;
+    public GameObject selectionPrefab;
+    public Transform selections;
+
+    [Header("Settings")]
+    public float speed = 5.0f; // 点滅速度
+    public float typingSpeed = 0.05f;
+    public float autoWaitTime = 2.0f;
+
+    private Coroutine activeRoutine; // 現在実行中のコルーチンを保持
 
     void Awake()
     {
+        // データの初期化
         storyManagerData.serif_number = 0;
         storyManagerData.is_auto = false;
-        storyManagerData.is_wating = false;
+        storyManagerData.serif_loading = false;
+        
         RightDownUI.SetActive(true);
         autoText.gameObject.SetActive(false);
-        TellingCharacterName.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].name;
-        StopAllCoroutines();
-        StartCoroutine(ShowText(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif));
+        selections.gameObject.SetActive(false);
+
+        // 最初のセリフを開始
+        StartNewSerif();
     }
 
-    // Update is called once per frame
-    async void Update()
+    void Update()
     {
+        // 1. UIの点滅処理（DownArrowとAutoText）
         float alpha = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
-        Color c = DownArrow.color;
-        c.a = alpha;
-        DownArrow.color = c;
+        SetUIAlpha(DownArrow, alpha);
+        if (storyManagerData.is_auto) SetUIAlpha(autoText, alpha);
 
-        if(inputData.space_key_ispressed == true ||inputData.left_mouse_button_ispressed == true)
+        // 2. 入力判定（Spaceキー、左クリック、Aキー、Sキー）
+        // ※ inputData の変数が「押した瞬間」だけ true になると想定しています
+        if (inputData.space_key_ispressed || inputData.left_mouse_button_ispressed)
         {
-            if (storyData.stories[storyManagerData.now_story_number].serifs.Length -1 <= storyManagerData.serif_number)
-            {
-                if(storyManagerData.serif_loading)
-                {
-                StopAllCoroutines();
-                Tell.text = "";
-                Tell.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif;
-                storyManagerData.serif_loading = false;
-                }else
-                {
-                    if (storyManagerData.is_tutorial)
-                    {
-                    sceneData.next_scene_number = 1;
-                    }else
-                    {
-                    sceneData.next_scene_number = 11;
-                    }
-                }
-            }else 
-            {
-            if(storyManagerData.serif_loading == true)
-            {
-                StopAllCoroutines();
-                Tell.text = "";
-                Tell.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif;
-                storyManagerData.serif_loading = false;
-            }else if(storyManagerData.serif_loading == false)
-            {
-            storyManagerData.serif_number ++;
-            TellingCharacterName.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].name;
-            StartCoroutine(ShowText(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif));
-            }
-            }
-        }
-
-        if (storyManagerData.serif_loading == false && storyManagerData.is_auto && storyManagerData.is_wating == false)
-        {
-            if (storyData.stories[storyManagerData.now_story_number].serifs.Length -1 <= storyManagerData.serif_number)
-            {
-                if (storyManagerData.is_tutorial)
-                {
-                    sceneData.next_scene_number = 1;
-                }else
-                {
-                    sceneData.next_scene_number = 11;
-                }
-            }
-            storyManagerData.is_wating = true;
-            await Task.Delay(2000);
-            storyManagerData.serif_number ++;
-            TellingCharacterName.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].name;
-            StartCoroutine(ShowText(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif));
-            storyManagerData.is_wating = false;
+            OnPlayerClick();
         }
 
         if (inputData.a_key_ispressed)
         {
-            storyManagerData.is_auto = !storyManagerData.is_auto;
-            if(storyManagerData.is_auto == true)
-            {
-                autoText.gameObject.SetActive(true);
-                RightDownUI.SetActive(false);
-            }
-            if(storyManagerData.is_auto == false)
-            {
-                storyManagerData.is_wating = false;
-                autoText.gameObject.SetActive(false);
-                RightDownUI.SetActive(true);
-            }
+            ToggleAutoMode();
         }
+
         if (inputData.s_key_ispressed)
         {
-            if (storyManagerData.is_tutorial)
-            {
-                sceneData.next_scene_number = storyData.stories[0].next_scene;
-            }else
-            {
-                sceneData.next_scene_number = 11;
-            }
+            SkipStory();
         }
-
-        // サイン波を使用して 0.0 〜 1.0 の値を作成
-        // 公式: alpha = (sin(時間 * 速度) + 1) / 2
-        float alpha2 = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
-
-        // 色を取得してアルファ値を更新し、再代入
-        Color co = autoText.color;
-        co.a = alpha2;
-        autoText.color = co;
     }
 
-    IEnumerator ShowText(string fullText)
+    // 次のセリフに進む準備
+    void StartNewSerif()
     {
-        storyManagerData.serif_loading = true;
+        if (activeRoutine != null) StopCoroutine(activeRoutine);
+        activeRoutine = StartCoroutine(StoryFlowRoutine());
+    }
 
-        backImage.sprite = back_image;
-        CharacterImage.sprite = storyCharacterData.charactersData[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].characterID]
-        .character_face[storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_face];
-        float size = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].character_size;
-        character.localScale = new Vector3(size, size, size);
-        Shadow.SetActive(storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_shadowed);
+    // 文字表示からオート待機までの一連の流れを管理
+    IEnumerator StoryFlowRoutine()
+    {
+        var currentSerif = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number];
+        
+        // 名前の更新
+        TellingCharacterName.text = currentSerif.name;
 
-        Tell.text = ""; // まず空にする
-
-        foreach (char letter in fullText.ToCharArray())
+        // 選択肢がある場合
+        if (currentSerif.is_selection)
         {
-            Tell.text += letter; // 一文字追加
-            yield return new WaitForSeconds(typingSpeed); // 設定した時間待機
+            Texts.SetActive(false);
+            selections.gameObject.SetActive(true);
+            CreateSelectionButtons();
+            yield break; // 選択されるまでここで終了
+        }
+
+        // 通常のセリフ表示
+        Texts.SetActive(true);
+        selections.gameObject.SetActive(false);
+        
+        // キャラクター表示設定
+        UpdateCharacterUI(currentSerif);
+
+        // タイピング演出
+        storyManagerData.serif_loading = true;
+        Tell.text = "";
+        foreach (char letter in currentSerif.serif.ToCharArray())
+        {
+            Tell.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
         }
         storyManagerData.serif_loading = false;
+
+        // オートモードなら一定時間待って次へ
+        if (storyManagerData.is_auto)
+        {
+            yield return new WaitForSeconds(autoWaitTime);
+            AdvanceToNextSerif();
+        }
     }
 
-    public void OnButtonClick(string buttonName)
+    // プレイヤーが画面をクリックした時の処理
+    void OnPlayerClick()
     {
-        switch (buttonName)
+        // 選択肢が出ている時はクリックを無効化
+        if (storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].is_selection) return;
+
+        if (storyManagerData.serif_loading)
         {
-            case "Auto":
-                storyManagerData.is_auto = !storyManagerData.is_auto;
-                if(storyManagerData.is_auto == true)
-                {
-                    autoText.gameObject.SetActive(true);
-                    RightDownUI.SetActive(false);
-                }
-                if(storyManagerData.is_auto == false)
-                {
-                    storyManagerData.is_wating = false;
-                    autoText.gameObject.SetActive(false);
-                    RightDownUI.SetActive(true);
-                }
-                break;
-            case "Skip":
-            sceneData.next_scene_number = 1;
-                break;
-            default:
-                break;
+            // 文字送り中なら強制終了して全表示
+            StopCoroutine(activeRoutine);
+            Tell.text = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number].serif;
+            storyManagerData.serif_loading = false;
+            
+            // オート中ならここでも待機コルーチンを開始
+            if (storyManagerData.is_auto) activeRoutine = StartCoroutine(AutoWaitOnly());
         }
+        else
+        {
+            // 読み終わっていれば次へ
+            AdvanceToNextSerif();
+        }
+    }
+
+    // セリフ番号を1進めて次を表示
+    void AdvanceToNextSerif()
+    {
+        if (storyManagerData.serif_number < storyData.stories[storyManagerData.now_story_number].serifs.Length - 1)
+        {
+            storyManagerData.serif_number++;
+            StartNewSerif();
+        }
+        else
+        {
+            // ストーリー終了
+            EndStory();
+        }
+    }
+
+    // キャラクター画像の表示更新
+    void UpdateCharacterUI(SerifData current)
+    {
+        backImage.sprite = back_image;
+        CharacterImage.gameObject.SetActive(current.is_character_exist);
+        if (current.is_character_exist)
+        {
+            var charData = storyCharacterData.charactersData[current.characterID];
+            CharacterImage.sprite = charData.character_face[current.character_face];
+            character.localScale = Vector3.one * current.character_size;
+        }
+        Shadow.SetActive(current.is_shadowed);
+    }
+
+    public void CreateSelectionButtons()
+    {
+        foreach (Transform child in selections) Destroy(child.gameObject);
+
+        var current = storyData.stories[storyManagerData.now_story_number].serifs[storyManagerData.serif_number];
+        for (int i = 0; i < current.num_selection; i++)
+        {
+            GameObject newButton = Instantiate(selectionPrefab, selections);
+            newButton.GetComponentInChildren<TextMeshProUGUI>().text = current.selection_text[i];
+            int index = i;
+            newButton.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(index));
+        }
+
+        if (storyManagerData.is_auto && current.num_selection > 0)
+        {
+        // 少し待ってから選ぶ演出を入れたい場合はコルーチンを呼ぶ
+        StartCoroutine(AutoSelectFirstChoice());
+        }
+    }
+
+    // オート時に一番上を勝手に選ぶコルーチン
+IEnumerator AutoSelectFirstChoice()
+{
+    // 即座に選ぶとプレイヤーが何が起きたか分からないので、1秒ほど待機
+    yield return new WaitForSeconds(1.0f);
+
+    // まだオートモードが継続中であれば、0番目（一番上）を選択実行
+    if (storyManagerData.is_auto)
+    {
+        Debug.Log("オートモード：一番上の選択肢を自動選択しました");
+        OnChoiceSelected(0);
+    }
+}
+
+    void OnChoiceSelected(int index)
+    {
+        // 選択後の処理（必要に応じて index に基づく分岐を追加）
+        AdvanceToNextSerif();
+    }
+
+    public void ToggleAutoMode()
+    {
+        storyManagerData.is_auto = !storyManagerData.is_auto;
+        autoText.gameObject.SetActive(storyManagerData.is_auto);
+        RightDownUI.SetActive(!storyManagerData.is_auto);
+
+        // オートONにした時に文字を読み終えていたら、即座に待機開始
+        if (storyManagerData.is_auto && !storyManagerData.serif_loading)
+        {
+            activeRoutine = StartCoroutine(AutoWaitOnly());
+        }
+    }
+
+    IEnumerator AutoWaitOnly()
+    {
+        yield return new WaitForSeconds(autoWaitTime);
+        AdvanceToNextSerif();
+    }
+
+    void EndStory()
+    {
+        if(storyManagerData.now_story_number == 0)
+        {
+            sceneData.next_scene_number = 12;
+        }else
+        {
+            sceneData.next_scene_number = 11;
+        }
+    }
+
+    public void SkipStory()
+    {
+        EndStory();
+    }
+
+    void SetUIAlpha(Graphic ui, float alpha)
+    {
+        Color c = ui.color;
+        c.a = alpha;
+        ui.color = c;
     }
 }

@@ -22,6 +22,11 @@ public class SerifData
     public int character_move;
     public float character_size;
     public bool is_shadowed;
+    public bool is_character_exist;
+    public Vector2 character_position;
+    public bool is_selection;
+    public int num_selection;
+    public string[] selection_text;
     public string name;
     [TextArea(3, 10)]
     public string serif;
