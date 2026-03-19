@@ -93,7 +93,7 @@ MonoBehaviour:
     - _default_attack_name: "\u5FDC\u6025\u624B\u5F53"
       _default_attack_cost: 30
       _default_attack_power: -20
-      _default_attack_target: 0
+      _default_attack_target: 1
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
       _attack_button: {fileID: -1020282823678200800, guid: 697e230460ca347f8868f4369710be6e, type: 3}
       _default_attack_range:
@@ -147,49 +147,48 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 66574983153512604, guid: cea1e58653a670549a3e83f993dd151e, type: 3}
     passive: []
   - _default_name: Tsukiha
-    _default_name_japanese: 
+    _default_name_japanese: "\u6708\u8449"
     _default_id: 3
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _select_image: {fileID: 8651488872111958891, guid: 1f87728c4a4c9e94eb6d2bcc6a6dc12f, type: 3}
-    _detail_image: {fileID: 0}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _detail_image: {fileID: 1845130351903015196, guid: b7a806a2d2c5fb241ab7dddcdb99a51d, type: 3}
+    _default_sprite_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
+    _default_sprite_smallwindow: {fileID: -3440073146113266091, guid: c5e116a2102b25a41a01c2d67e3ffd7a, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F705\uFF1A\u5BFE\u5305\u56F2\u6226\u8853"
-      _default_attack_cost: 10
-      _default_attack_power: 20
+    - _default_attack_name: "\u5FCD\u6CD5\uFF1A\u624B\u88CF\u5263\u6295\u3052\u306E\u8853\u30FB\u8FD1"
+      _default_attack_cost: 5
+      _default_attack_power: 10
       _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
-      _default_attack_range:
-      - {x: 1, y: 0}
-      - {x: 0, y: 1}
-      - {x: -1, y: 0}
-      - {x: 0, y: -1}
-      _attack_range_image: {fileID: 0}
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
-      _default_attack_cost: 20
-      _default_attack_power: 40
-      _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      debuffs: 0000000000000000000000000000000000000000000000000000000005000000
+      _attack_button: {fileID: 7581000488185979415, guid: 430b15018e71e804ea3b9c17f2584fa4, type: 3}
       _default_attack_range:
       - {x: 1, y: 1}
-      - {x: 1, y: 0}
       - {x: 1, y: -1}
-      _attack_range_image: {fileID: 0}
-    - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
-      _default_attack_cost: 30
-      _default_attack_power: 60
+      - {x: 2, y: 0}
+      _attack_range_image: {fileID: 7240867303997388393, guid: 099291f82cf7e954fb5a35e3f25268da, type: 3}
+    - _default_attack_name: "\u5FCD\u6CD5\uFF1A\u624B\u88CF\u5263\u6295\u3052\u306E\u8853\u30FB\u9060"
+      _default_attack_cost: 5
+      _default_attack_power: 10
+      _default_attack_target: 0
+      debuffs: 0000000000000000000000000000000000000000000000000000000005000000
+      _attack_button: {fileID: -8686762380342336505, guid: a523f1998a133bf4da5ce50c0c3bca35, type: 3}
+      _default_attack_range:
+      - {x: 2, y: 1}
+      - {x: 3, y: 0}
+      - {x: 2, y: -1}
+      _attack_range_image: {fileID: -5824177290431112417, guid: 1313f830ab7a7404db9cd58091b5ad0d, type: 3}
+    - _default_attack_name: "\u5FCD\u6CD5\uFF1A\u307E\u304D\u3073\u3057\u6295\u3052\u306E\u8853"
+      _default_attack_cost: 10
+      _default_attack_power: 0
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      _attack_button: {fileID: -8977149696960409367, guid: e5cde9e79367fa84ab84e109194ad67d, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 0}
-    _attack_button_backimage: {fileID: 0}
+      _attack_range_image: {fileID: -5824177290431112417, guid: 1313f830ab7a7404db9cd58091b5ad0d, type: 3}
+    _attack_button_backimage: {fileID: 9155553054322782886, guid: ebb4c634ea9400b4aae9efc121b07f20, type: 3}
     passive: []
   - _default_name: Aoi
     _default_name_japanese: 
