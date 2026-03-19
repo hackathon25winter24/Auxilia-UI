@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public class MatchingUIManager : MonoBehaviour
 {
@@ -42,6 +43,11 @@ public class MatchingUIManager : MonoBehaviour
     {
         ownerId = playerData.user_id;
         ownerName = playerData.username;
+        // 追加：InputFieldに文字が入るたびにUpdateSearchが走るようにする
+        if (kensakuInput != null)
+        {
+            kensakuInput.onValueChanged.AddListener(delegate { UpdateSearch(); });
+        }
     }
 
     public async void OnButtonClick(string buttonName)
@@ -68,6 +74,10 @@ public class MatchingUIManager : MonoBehaviour
                 break;
             case "kensakuEnter":
                 kensaku_room_name = kensakuInput.text;
+    
+                // 【修正】現在の入力内容で即座に検索を実行する
+                UpdateSearch();
+                kensakuButton.SetActive(false);
                 break;
             case "Backfromkensaku":
                 kensakuButton.SetActive(false);
@@ -229,4 +239,62 @@ public class MatchingUIManager : MonoBehaviour
 
         sceneData.next_scene_number = 9;
     }
+
+    // 1. UpdateSearchメソッドの修正
+public void UpdateSearch()
+{
+    string input = kensakuInput.text;
+
+    // 入力が空なら全ルームを表示
+    if (string.IsNullOrEmpty(input))
+    {
+        CreateRoomButtons(matchingData.num_room);
+    }
+    else
+    {
+        // ルーム名にキーワードが含まれる要素の「インデックス（番号）」を抽出
+        List<int> filteredIndices = new List<int>();
+        for (int i = 0; i < matchingData.rooms.Count; i++)
+        {
+            // 大文字小文字を区別せずに日本語含め検索
+            if (matchingData.rooms[i].room_name.ToLower().Contains(input.ToLower()))
+            {
+                filteredIndices.Add(i);
+            }
+        }
+
+        // 絞り込んだ結果でボタンを再生成
+        UpdateDisplayFiltered(filteredIndices);
+    }
+}
+
+// 2. 絞り込み専用の表示更新メソッドを追加
+private void UpdateDisplayFiltered(List<int> indices)
+{
+    // 既存のボタンを削除
+    foreach (Transform child in contentParent)
+    {
+        Destroy(child.gameObject);
+    }
+
+    // フィルタリングされたインデックスのみでボタンを作成
+    foreach (int index in indices)
+    {
+        GameObject newButton = Instantiate(roomButton, contentParent);
+        newButton.GetComponentInChildren<TextMeshProUGUI>().text = matchingData.rooms[index].room_name;
+
+        ShowRoom entity = newButton.GetComponent<ShowRoom>();
+        if (entity != null)
+        {
+            entity.SetRoomData(
+                matchingData.rooms[index].room_name,
+                matchingData.rooms[index].room_host,
+                matchingData.rooms[index].room_is_gamestarted,
+                matchingData.rooms[index].num_room_joiner);
+        }
+
+        // ボタンクリック時のイベント登録（元のindexを保持）
+        newButton.GetComponent<Button>().onClick.AddListener(() => OnRoomSelected(index));
+    }
+}
 }
