@@ -4,7 +4,9 @@ using UnityEngine;
 public class RoomData : ScriptableObject
 {
     public UsersData[] usersData;
+    public int room_id;
     public string room_name;
+    public int room_my_number;
 }
 
 [System.Serializable]

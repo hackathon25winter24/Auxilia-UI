@@ -39,7 +39,7 @@ public class TestConnection : MonoBehaviour
 
                 foreach (var u in roomMatches)
                 {
-                    Debug.Log($"RoomID:{u.RoomId} ,\nName: {u.RoomName} ,\nID: {u.OwnerId},\nIsPrivate: {u.IsPrivate}\n");
+                    Debug.Log($"RoomID:{u.RoomId} ,\nName: {u.RoomName} ,\nID: {u.OwnerId},\nIsPrivate: {u.IsGaming}\n");
                 }
             }
         }

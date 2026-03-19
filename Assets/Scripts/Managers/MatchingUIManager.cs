@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class MatchingUIManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MatchingUIManager : MonoBehaviour
     public SceneData sceneData;
     public PlayerData playerData;
     public MatchingData matchingData;
+    public RoomData roomData;
 
     public GameObject roomButton;
     public Transform contentParent;
@@ -16,21 +18,33 @@ public class MatchingUIManager : MonoBehaviour
     public Transform contentParentJoinner;
     public GameObject kensakuButton;
     public TMP_InputField kensakuInput;
+    public GameConnector gameConnector;
+    public string ownerName;
+    public string ownerId;
+    public bool is_roading;
+    public GameObject nowLoadingText;
 
     public string kensaku_room_name;
 
-    void Awake()
+    async void Awake()
     {
+        nowLoadingText.SetActive(false);
         kensakuButton.SetActive(false);
-        UpDateRoomInformation();
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        is_roading = true;
+        nowLoadingText.SetActive(true);
+        await UpDateRoomInformation();
+        nowLoadingText.SetActive(false);
+        is_roading = false;
     }
 
     void Start()
     {
-        CreateRoomButtons(matchingData.num_room);
+        ownerId = playerData.user_id;
+        ownerName = playerData.username;
     }
 
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
@@ -39,10 +53,15 @@ public class MatchingUIManager : MonoBehaviour
                 break;
             case "newmake":
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
-                sceneData.next_scene_number = 9;
+                OnClick_CreateRoomMatch();
                 break;
             case "ReRoad":
-                UpDateRoomInformation();
+                if (is_roading)break;
+                is_roading = true;
+                nowLoadingText.SetActive(true);
+                await UpDateRoomInformation();
+                nowLoadingText.SetActive(false);
+                is_roading = false;
                 break;
             case "kensaku":
                 kensakuButton.SetActive(true);
@@ -114,12 +133,22 @@ public class MatchingUIManager : MonoBehaviour
         }
     }
 
-    void OnRoomSelected(int index)
+    async void OnRoomSelected(int index)
     {
         if (matchingData.rooms[index].room_is_selected)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
+            var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, playerData.user_id);
+            roomData.room_id = response.Rooms[0].RoomId;
+            for (int i = 0; i < matchingData.num_room; i++)
+            {
+                if (matchingData.rooms[i].room_id == roomData.room_id)
+                {
+                    roomData.room_name = matchingData.rooms[i].room_name;
+                }
+            }
+
             sceneData.next_scene_number = 9;
         }else
         {
@@ -128,22 +157,40 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.rooms[i].room_is_selected = false;
             }
             matchingData.rooms[index].room_is_selected = true;
-            CreateJoinnerNames(matchingData.rooms[index].num_room_joiner);
+            CreateJoinnerNames(index);
         }
     }
 
     //部屋の情報を更新したいときはこのメソッドをたたいてください
-    void UpDateRoomInformation()
+    public async Task UpDateRoomInformation()
     {
         //ここに部屋の数を取得する関数を書いてください
+        // List<RoomMatch> room_list に全部屋の情報が入ってます
+        var room_list = await gameConnector.GetAllRoomMatch();
         //データはmatchingData.num_roomに格納してください
+        matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
-        //ここに部屋の情報を取得する関数を書いてください
-        for (int i = 0; i < matchingData.num_room; i++)
+        for (int i = 0; i < room_list.Count; i++)
         {
-        SetupJoinners(matchingData.rooms[i].num_room_joiner);
+            matchingData.rooms[i].room_id = room_list[i].RoomId;
+            matchingData.rooms[i].room_name = room_list[i].RoomName;
+            matchingData.rooms[i].room_host = room_list[i].OwnerId;
+            matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
+            var joiner_list = await gameConnector.ListRoom(room_list[i].RoomId);
+            matchingData.rooms[i].num_room_joiner = joiner_list.Count;
+            // 移動しました
+            SetupJoinners(i);
+            for (int j = 0; j < joiner_list.Count; j++)
+            {
+                var user = await gameConnector.GetUser(joiner_list[j].UserId);
+                Debug.Log($"{i}番目の部屋{j}番目のusername: {user.Name}");
+                matchingData.rooms[i].joinners[j].name = user.Name;
+                matchingData.rooms[i].joinners[j].state = joiner_list[j].State;
+            }
+            //Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
         }
-        //ここに部屋の参加者の情報を取得する関数を書いてください
+
+        CreateRoomButtons(matchingData.num_room);
     }
 
     public void SetupJoinners(int roomNumber)
@@ -164,5 +211,22 @@ public class MatchingUIManager : MonoBehaviour
     {
         matchingData.rooms.Add(new RoomsData()); 
     }
+    }
+
+    public async void OnClick_CreateRoomMatch()
+    {
+        string room_name = ownerName + "の部屋"; // ここを書き換えれば最初の部屋名が変わります
+        if (string.IsNullOrEmpty(room_name) || string.IsNullOrEmpty(ownerId))
+        {
+            Debug.Log("部屋名が入力されていないかユーザーIDが登録されていません");
+            return;
+        }
+        var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
+        await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+        // 新たにRoomDataにIDを追加
+        roomData.room_id = response.RoomId;
+        roomData.room_name = room_name;
+
+        sceneData.next_scene_number = 9;
     }
 }

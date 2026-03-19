@@ -12,4 +12,6 @@ public class InputData : ScriptableObject
     public bool right_key_ispressed;
     public bool left_key_ispressed;
     public bool space_key_ispressed;
+    public bool a_key_ispressed;
+    public bool s_key_ispressed;
 }

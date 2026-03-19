@@ -24,24 +24,24 @@ namespace Roommatch {
     static RoomMatchReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChByb29tX21hdGNoLnByb3RvEglyb29tbWF0Y2giVQoJUm9vbU1hdGNoEg8K",
+            "ChByb29tX21hdGNoLnByb3RvEglyb29tbWF0Y2giVAoJUm9vbU1hdGNoEg8K",
             "B3Jvb21faWQYASABKAUSEQoJcm9vbV9uYW1lGAIgASgJEhAKCG93bmVyX2lk",
-            "GAMgASgJEhIKCmlzX3ByaXZhdGUYBCABKAgiUQoWQ3JlYXRlUm9vbU1hdGNo",
-            "UmVxdWVzdBIRCglyb29tX25hbWUYASABKAkSEAoIb3duZXJfaWQYAiABKAkS",
-            "EgoKaXNfcHJpdmF0ZRgDIAEoCCI3ChFSb29tTWF0Y2hSZXNwb25zZRIiCgRy",
-            "b29tGAEgASgLMhQucm9vbW1hdGNoLlJvb21NYXRjaCIWChRMaXN0Um9vbU1h",
-            "dGNoUmVxdWVzdCI8ChVMaXN0Um9vbU1hdGNoUmVzcG9uc2USIwoFcm9vbXMY",
-            "ASADKAsyFC5yb29tbWF0Y2guUm9vbU1hdGNoMroBChBSb29tTWF0Y2hTZXJ2",
-            "aWNlElIKD0NyZWF0ZVJvb21NYXRjaBIhLnJvb21tYXRjaC5DcmVhdGVSb29t",
-            "TWF0Y2hSZXF1ZXN0Ghwucm9vbW1hdGNoLlJvb21NYXRjaFJlc3BvbnNlElIK",
-            "DUxpc3RSb29tTWF0Y2gSHy5yb29tbWF0Y2guTGlzdFJvb21NYXRjaFJlcXVl",
-            "c3QaIC5yb29tbWF0Y2guTGlzdFJvb21NYXRjaFJlc3BvbnNlQgxaCmF1eGls",
-            "aWEvcGJiBnByb3RvMw=="));
+            "GAMgASgJEhEKCWlzX2dhbWluZxgEIAEoCCJQChZDcmVhdGVSb29tTWF0Y2hS",
+            "ZXF1ZXN0EhEKCXJvb21fbmFtZRgBIAEoCRIQCghvd25lcl9pZBgCIAEoCRIR",
+            "Cglpc19nYW1pbmcYAyABKAgiNwoRUm9vbU1hdGNoUmVzcG9uc2USIgoEcm9v",
+            "bRgBIAEoCzIULnJvb21tYXRjaC5Sb29tTWF0Y2giFgoUTGlzdFJvb21NYXRj",
+            "aFJlcXVlc3QiPAoVTGlzdFJvb21NYXRjaFJlc3BvbnNlEiMKBXJvb21zGAEg",
+            "AygLMhQucm9vbW1hdGNoLlJvb21NYXRjaDK6AQoQUm9vbU1hdGNoU2Vydmlj",
+            "ZRJSCg9DcmVhdGVSb29tTWF0Y2gSIS5yb29tbWF0Y2guQ3JlYXRlUm9vbU1h",
+            "dGNoUmVxdWVzdBocLnJvb21tYXRjaC5Sb29tTWF0Y2hSZXNwb25zZRJSCg1M",
+            "aXN0Um9vbU1hdGNoEh8ucm9vbW1hdGNoLkxpc3RSb29tTWF0Y2hSZXF1ZXN0",
+            "GiAucm9vbW1hdGNoLkxpc3RSb29tTWF0Y2hSZXNwb25zZUIMWgphdXhpbGlh",
+            "L3BiYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.RoomMatch), global::Roommatch.RoomMatch.Parser, new[]{ "RoomId", "RoomName", "OwnerId", "IsPrivate" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.CreateRoomMatchRequest), global::Roommatch.CreateRoomMatchRequest.Parser, new[]{ "RoomName", "OwnerId", "IsPrivate" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.RoomMatch), global::Roommatch.RoomMatch.Parser, new[]{ "RoomId", "RoomName", "OwnerId", "IsGaming" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.CreateRoomMatchRequest), global::Roommatch.CreateRoomMatchRequest.Parser, new[]{ "RoomName", "OwnerId", "IsGaming" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.RoomMatchResponse), global::Roommatch.RoomMatchResponse.Parser, new[]{ "Room" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.ListRoomMatchRequest), global::Roommatch.ListRoomMatchRequest.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Roommatch.ListRoomMatchResponse), global::Roommatch.ListRoomMatchResponse.Parser, new[]{ "Rooms" }, null, null, null, null)
@@ -89,7 +89,7 @@ namespace Roommatch {
       roomId_ = other.roomId_;
       roomName_ = other.roomName_;
       ownerId_ = other.ownerId_;
-      isPrivate_ = other.isPrivate_;
+      isGaming_ = other.isGaming_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -135,15 +135,15 @@ namespace Roommatch {
       }
     }
 
-    /// <summary>Field number for the "is_private" field.</summary>
-    public const int IsPrivateFieldNumber = 4;
-    private bool isPrivate_;
+    /// <summary>Field number for the "is_gaming" field.</summary>
+    public const int IsGamingFieldNumber = 4;
+    private bool isGaming_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsPrivate {
-      get { return isPrivate_; }
+    public bool IsGaming {
+      get { return isGaming_; }
       set {
-        isPrivate_ = value;
+        isGaming_ = value;
       }
     }
 
@@ -165,7 +165,7 @@ namespace Roommatch {
       if (RoomId != other.RoomId) return false;
       if (RoomName != other.RoomName) return false;
       if (OwnerId != other.OwnerId) return false;
-      if (IsPrivate != other.IsPrivate) return false;
+      if (IsGaming != other.IsGaming) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -176,7 +176,7 @@ namespace Roommatch {
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
       if (RoomName.Length != 0) hash ^= RoomName.GetHashCode();
       if (OwnerId.Length != 0) hash ^= OwnerId.GetHashCode();
-      if (IsPrivate != false) hash ^= IsPrivate.GetHashCode();
+      if (IsGaming != false) hash ^= IsGaming.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -207,9 +207,9 @@ namespace Roommatch {
         output.WriteRawTag(26);
         output.WriteString(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         output.WriteRawTag(32);
-        output.WriteBool(IsPrivate);
+        output.WriteBool(IsGaming);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -233,9 +233,9 @@ namespace Roommatch {
         output.WriteRawTag(26);
         output.WriteString(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         output.WriteRawTag(32);
-        output.WriteBool(IsPrivate);
+        output.WriteBool(IsGaming);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -256,7 +256,7 @@ namespace Roommatch {
       if (OwnerId.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         size += 1 + 1;
       }
       if (_unknownFields != null) {
@@ -280,8 +280,8 @@ namespace Roommatch {
       if (other.OwnerId.Length != 0) {
         OwnerId = other.OwnerId;
       }
-      if (other.IsPrivate != false) {
-        IsPrivate = other.IsPrivate;
+      if (other.IsGaming != false) {
+        IsGaming = other.IsGaming;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -315,7 +315,7 @@ namespace Roommatch {
             break;
           }
           case 32: {
-            IsPrivate = input.ReadBool();
+            IsGaming = input.ReadBool();
             break;
           }
         }
@@ -350,7 +350,7 @@ namespace Roommatch {
             break;
           }
           case 32: {
-            IsPrivate = input.ReadBool();
+            IsGaming = input.ReadBool();
             break;
           }
         }
@@ -397,7 +397,7 @@ namespace Roommatch {
     public CreateRoomMatchRequest(CreateRoomMatchRequest other) : this() {
       roomName_ = other.roomName_;
       ownerId_ = other.ownerId_;
-      isPrivate_ = other.isPrivate_;
+      isGaming_ = other.isGaming_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -431,15 +431,15 @@ namespace Roommatch {
       }
     }
 
-    /// <summary>Field number for the "is_private" field.</summary>
-    public const int IsPrivateFieldNumber = 3;
-    private bool isPrivate_;
+    /// <summary>Field number for the "is_gaming" field.</summary>
+    public const int IsGamingFieldNumber = 3;
+    private bool isGaming_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsPrivate {
-      get { return isPrivate_; }
+    public bool IsGaming {
+      get { return isGaming_; }
       set {
-        isPrivate_ = value;
+        isGaming_ = value;
       }
     }
 
@@ -460,7 +460,7 @@ namespace Roommatch {
       }
       if (RoomName != other.RoomName) return false;
       if (OwnerId != other.OwnerId) return false;
-      if (IsPrivate != other.IsPrivate) return false;
+      if (IsGaming != other.IsGaming) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -470,7 +470,7 @@ namespace Roommatch {
       int hash = 1;
       if (RoomName.Length != 0) hash ^= RoomName.GetHashCode();
       if (OwnerId.Length != 0) hash ^= OwnerId.GetHashCode();
-      if (IsPrivate != false) hash ^= IsPrivate.GetHashCode();
+      if (IsGaming != false) hash ^= IsGaming.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -497,9 +497,9 @@ namespace Roommatch {
         output.WriteRawTag(18);
         output.WriteString(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         output.WriteRawTag(24);
-        output.WriteBool(IsPrivate);
+        output.WriteBool(IsGaming);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -519,9 +519,9 @@ namespace Roommatch {
         output.WriteRawTag(18);
         output.WriteString(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         output.WriteRawTag(24);
-        output.WriteBool(IsPrivate);
+        output.WriteBool(IsGaming);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -539,7 +539,7 @@ namespace Roommatch {
       if (OwnerId.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(OwnerId);
       }
-      if (IsPrivate != false) {
+      if (IsGaming != false) {
         size += 1 + 1;
       }
       if (_unknownFields != null) {
@@ -560,8 +560,8 @@ namespace Roommatch {
       if (other.OwnerId.Length != 0) {
         OwnerId = other.OwnerId;
       }
-      if (other.IsPrivate != false) {
-        IsPrivate = other.IsPrivate;
+      if (other.IsGaming != false) {
+        IsGaming = other.IsGaming;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -591,7 +591,7 @@ namespace Roommatch {
             break;
           }
           case 24: {
-            IsPrivate = input.ReadBool();
+            IsGaming = input.ReadBool();
             break;
           }
         }
@@ -622,7 +622,7 @@ namespace Roommatch {
             break;
           }
           case 24: {
-            IsPrivate = input.ReadBool();
+            IsGaming = input.ReadBool();
             break;
           }
         }

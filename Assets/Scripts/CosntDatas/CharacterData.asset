@@ -388,7 +388,7 @@ MonoBehaviour:
     _default_id: 6
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _select_image: {fileID: -4509132481208037244, guid: 12db220d653655e4caa79651a86b7b34, type: 3}
-    _detail_image: {fileID: 9102110983713650579, guid: 92fc223afeaa31946a7cd85c59eb8c50, type: 3}
+    _detail_image: {fileID: 0}
     _default_sprite_mini: {fileID: 0}
     _default_sprite_smallwindow: {fileID: 0}
     _default_hp: 150

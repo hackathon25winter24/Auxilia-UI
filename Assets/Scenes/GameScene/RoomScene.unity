@@ -2928,6 +2928,39 @@ MonoBehaviour:
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
+  joinnersUI:
+  - {fileID: 354600079}
+  - {fileID: 1901493315}
+  - {fileID: 1385046911}
+  - {fileID: 592998515}
+  - {fileID: 428088853}
+  - {fileID: 972105075}
+  - {fileID: 1956949809}
+  - {fileID: 941538088}
+  joinnersUIImage:
+  - {fileID: 9165093740876156722, guid: 62ab6f2503d074848a76abec1187a7f3, type: 3}
+  - {fileID: 5528519345054028811, guid: 87527f16cf8235c46b2d6ea685a59fad, type: 3}
+  - {fileID: -1219376372583385905, guid: 20544de2f5f3d8d4b99d4f2bbbf161ed, type: 3}
+  - {fileID: -5244950451863284941, guid: 1a5f5e8a06bb86a42bda2879bd14608d, type: 3}
+  userName:
+  - {fileID: 1222272080}
+  - {fileID: 73581516}
+  - {fileID: 1077325546}
+  - {fileID: 672618415}
+  - {fileID: 641056299}
+  - {fileID: 2065208025}
+  - {fileID: 1341242185}
+  - {fileID: 360043366}
+  userRate:
+  - {fileID: 1382036695}
+  - {fileID: 850727599}
+  - {fileID: 437620361}
+  - {fileID: 703488761}
+  - {fileID: 1761419457}
+  - {fileID: 959374606}
+  - {fileID: 1481852140}
+  - {fileID: 1681809784}
 --- !u!4 &1053060124
 Transform:
   m_ObjectHideFlags: 0
@@ -3188,7 +3221,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 170, y: 25}
+  m_AnchoredPosition: {x: 170, y: 175}
   m_SizeDelta: {x: 35, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1169466343

@@ -23,8 +23,13 @@ public class CharacterManager : MonoBehaviour
     public RectTransform BackButton;
     public int attack_number;
     public bool is_attacking;
+    public int now_damage;
 
     void Awake()
+    {
+        GetBattleData();
+    }
+    void Start()
     {
         BackButton.gameObject.SetActive(false);
         // 配列が空、または要素が足りない場合の安全策
@@ -37,6 +42,14 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i <= 5; i++)
         {
         battleDataforOnline.character_isSelected[i] = false;
+        battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
+        battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
+
+        for(int j = 0; j <= 7; j++)
+        {
+            battleDataforOnline.charactersBattleDatas[i].debuffs[j] = false;
+        }
         }
 
         AttackButton.gameObject.SetActive(false);
@@ -49,12 +62,6 @@ public class CharacterManager : MonoBehaviour
         SetupCharacter(4, new Vector2(125, -70), 6, 2); // 5人目: (6,2) ※22付近
         SetupCharacter(5, new Vector2(175, -170), 7, 4); // 6人目: (7,4) ※39付近
 
-        for (int i = 0; i <= 5; i++)
-        {
-        battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
-        battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
-        battleDataforOnline.charactersBattleDatas[i].now_character_move_cost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
-        }
         battleDataforOnline.now_my_cost = 50;
 
         for (int i = 0; i <= 2; i++)
@@ -106,23 +113,23 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
+            attack_number = 0;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 0;
             is_attacking = true;
         }
         if(buttonName == "Attack2") 
         {
+            attack_number = 1;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 1;
             is_attacking = true;
         }
         if(buttonName == "Attack3") 
         {
+            attack_number = 2;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
-            attack_number = 2;
             is_attacking = true;
         }
         
@@ -199,11 +206,17 @@ public class CharacterManager : MonoBehaviour
     }
     else 
     {
+        if(battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[4])
+        {
+
+        }else
+        {
         // 移動処理
         if (inputData.up_key_ispressed)    TryMove(0, -1, new Vector2(0, 50));
         else if (inputData.down_key_ispressed)  TryMove(0, 1, new Vector2(0, -50));
         else if (inputData.right_key_ispressed) TryMove(1, 0, new Vector2(50, 0));
         else if (inputData.left_key_ispressed)  TryMove(-1, 0, new Vector2(-50, 0));
+        }
     }
 
     for (int i = 0; i <= 5; i++)
@@ -215,6 +228,24 @@ public class CharacterManager : MonoBehaviour
     if (battleDataforLocal.is_myturn == false)
     {
         UpdateCharacterPosition();
+    }
+
+    // 死亡判定
+    for(int i = 0; i <= 5; i++)
+    {
+    if (battleDataforOnline.charactersBattleDatas[i].now_character_hp <= 0)
+    {
+        battleDataforOnline.charactersBattleDatas[i].now_character_hp = 0;
+        ProcessDeath(i);
+    }
+    }
+
+    if(battleDataforLocal.is_myturn)
+    {
+        SendBattleData();
+    }else
+    {
+        GetBattleData();
     }
     }
 
@@ -263,14 +294,38 @@ public class CharacterManager : MonoBehaviour
         on_grid_number_y[selected_character_id] = nextY;
         on_grid_number[selected_character_id] = nextY * 8 + nextX;
 
-        // B. 新しい場所（移動先）を「キャラあり」状態にする
-        UpdateGridState(nextX, nextY, -1);
-
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
 
+        //デバフマスの処理をする
+        if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 3)
+        {
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_hp -= 10;
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_move_cost += 2;
+        }
+        if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 4)
+        {
+            battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_hp = 50;
+            gridDataforOnline.sub_grid_state_y[nextY].sub_grid_state_x[nextX] = 0;
+        }
+
+        // B. 新しい場所（移動先）を「キャラあり」状態にする
+        UpdateGridState(nextX, nextY, -1);
+
         int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
+        if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1])
+    {
+        battleDataforOnline.now_my_cost -= cost -2;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
+        battleDataforOnline.now_my_cost -= cost +2;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
         battleDataforOnline.now_my_cost -= cost;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+    {
+        battleDataforOnline.now_my_cost -= cost;
+    }
     }
     }
 
@@ -357,19 +412,121 @@ public class CharacterManager : MonoBehaviour
     public void ConfirmAttack()
     {
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
-    battleDataforOnline.now_my_cost -= cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
-    // 2. 敵キャラクター（ID: 3, 4, 5）が攻撃範囲内にいるかチェック
+    int target = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_target;
+
+    // 2. キャラクターが攻撃範囲内にいるかチェック
     // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
+    int hit_character = 0;
+    if (target == 1 || target == 2)
+    {
+    for (int i = 0; i <= 3; i++)
+    {
+        // 味方がいるマスの攻撃フラグが 1 ならヒット！
+        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        {
+            ApplyDamage(i, power);
+            hit_character++;
+
+            BuffDebuff(i);
+        }
+    }
+    }
+
+    if (target == 0 || target == 2)
+    {
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
         if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
         {
             ApplyDamage(i, power);
+            hit_character++;
+
+            BuffDebuff(i);
         }
+    }
+    if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
+    {
+        hit_character++;
+        battleDataforOnline.opponent_base_hp -= power;
+        if (battleDataforOnline.opponent_base_hp <= 0)
+    {
+        battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
+        battleDataforOnline.game_end = true;
+    }
+    }
+    }
+
+    if (hit_character == 0)
+    {
+
+        if (battleDataforOnline.selected_character[selected_character_id] == 3 && attack_number == 2)
+        {
+            for (int y = 0; y <= 4; y++)
+            {
+                for (int x = 0; x <= 7; x++)
+                {
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    {
+                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                    {
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                    }
+                    }else
+                    {
+                        //当たったキャラクターがいないときの処理を書く
+                    }
+                }
+            }
+        }else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
+        {
+            for (int y = 0; y <= 4; y++)
+            {
+                for (int x = 0; x <= 7; x++)
+                {
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    {
+                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                    {
+                        gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
+                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
+                    }
+                    }else
+                    {
+                        //当たったキャラクターがいないときの処理を書く
+                    }
+                }
+            }
+        }else
+        {
+            //当たったキャラクターがいないときの処理を書く
+        }
+
+        // 3. 攻撃状態の解除
+    is_attacking = false;
+    ClearAttackRange();
+    
+    // UIの非表示設定など（必要に応じて）
+    BackButton.gameObject.SetActive(false);
+    for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
+    }else
+    {
+    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2])
+    {
+        battleDataforOnline.now_my_cost -= cost -5;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost +5;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+    {
+        battleDataforOnline.now_my_cost -= cost;
     }
 
     // 3. 攻撃状態の解除
@@ -382,20 +539,27 @@ public class CharacterManager : MonoBehaviour
 
     Debug.Log("攻撃完了");
     }
+    }
 
     private void ApplyDamage(int targetId, int damage)
     {
     // HPを減らす
-    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= damage;
+    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = (int)(damage * 0.75);
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0])
+    {
+        now_damage = (int)(damage * 1.25);
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = damage;
+    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
+    {
+        now_damage = damage;
+    }
+    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= now_damage;
 
     Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
-
-    // 死亡判定
-    if (battleDataforOnline.charactersBattleDatas[targetId].now_character_hp <= 0)
-    {
-        battleDataforOnline.charactersBattleDatas[targetId].now_character_hp = 0;
-        ProcessDeath(targetId);
-    }
     }
 
     private void ProcessDeath(int targetId)
@@ -417,5 +581,53 @@ public class CharacterManager : MonoBehaviour
     is_attacking = false;
     ClearAttackRange();
     AttackButton.gameObject.SetActive(false);
+    }
+
+    public void BuffDebuff(int index)
+    {
+        for(int i = 0; i <= 7; i++)
+        {
+            int dice = Random.Range(1, 101);
+        if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] > 0)
+        {
+            if (battleDataforOnline.charactersBattleDatas[index].debuffs[i] == false)
+            {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].debuffs[i] = true;
+                switch(i)
+                {
+                    case 1:
+                    battleDataforOnline.charactersBattleDatas[index].now_character_move_cost -= 2;
+                    break;
+                    case 5:
+                    battleDataforOnline.charactersBattleDatas[index].now_character_move_cost += 2;
+                    break;
+                    default:
+                    break;
+                }
+            }
+            }
+        }else
+        {
+            if (battleDataforOnline.charactersBattleDatas[index].debuffs[i] == true)
+            {
+            if (characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].debuffs[i] * -1 <= dice)
+            {
+                battleDataforOnline.charactersBattleDatas[index].debuffs[i] = false;
+            }
+            }
+        }
+        }
+    }
+
+    void SendBattleData()
+    {
+        //ここにバックエンドにデータを送るための関数を書いてください
+    }
+
+    void GetBattleData()
+    {
+        //ここにバックエンドにデータを受け取るための関数を書いてください
     }
 }

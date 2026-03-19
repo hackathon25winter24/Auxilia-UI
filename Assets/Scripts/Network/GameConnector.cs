@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
@@ -65,10 +66,13 @@ public class GameConnector : MonoBehaviour
                     errorMessage = "そのユーザー名は既に使用されています。";
                     break;
                 case StatusCode.InvalidArgument:
-                    errorMessage = "入力内容（名前またはパスワード）が正しくありません。";
+                    errorMessage = "ユーザー名を入力してください";
                     break;
-                case StatusCode.Unavailable:
-                    errorMessage = "サーバーに接続できません。";
+                case StatusCode.OutOfRange:
+                    errorMessage = "ユーザー名は16字以内で入力してください";
+                    break;
+                case StatusCode.FailedPrecondition:
+                    errorMessage = "パスワードは6文字以上で入力してください";
                     break;
                 default:
                     errorMessage = $"登録に失敗しました: {e.Status.Detail}";
@@ -138,6 +142,21 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<UserResponse> GetUser(string userId)
+    {
+        try
+        {
+            var request = new GetUserRequest{Id = userId};
+            var response = await _userClient.GetUserAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"GetUser Error: {e.Message}");
+            return null;
+        }
+    }
+
     // --- 4. ユーザー削除 (DeleteUser) ---
     /// <param name="userId">削除したいユーザーのUUID（未指定の場合は保存されている自分のIDを削除）</param>
     public async Task<bool> DeleteUser(string userId = "")
@@ -181,7 +200,7 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isPrivate)
+    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
     {
         try
         {
@@ -189,7 +208,7 @@ public class GameConnector : MonoBehaviour
             { 
                 RoomName = roomName, 
                 OwnerId = ownerId, 
-                IsPrivate = isPrivate 
+                IsGaming = isGaming 
             };
 
             // サーバーへ送信
@@ -303,6 +322,86 @@ public class GameConnector : MonoBehaviour
         catch (RpcException e)
         {
             ShowErrorMessage($"リング参加に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<List<Room.Room>> ListRoom(int roomId)
+    {
+        try
+        {
+            var request = new ListRoomRequest{RoomId = roomId};
+            var response = await _roomClient.ListRoomAsync(request);
+
+            Debug.Log($"<color=green>参加者一覧取得成功:</color> {response.Rooms.Count}件");
+            // Debug.Log($"response: {response}, Room.Room: {response.Rooms[0]}");
+            
+            // repeated フィールドは Google.Protobuf.Collections.RepeatedField として返るため
+            // List に変換して返すと扱いやすいです
+            return new List<Room.Room>(response.Rooms);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"参加者リストの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<List<Room.Room>> GetBattlePlayer(int roomId)
+    {
+        try
+        {
+            var request = new ListRoomRequest{RoomId = roomId};
+            var response = await _roomClient.ListRoomAsync(request);
+            var battlePlayer = new List<Room.Room>(new Room.Room[2]);
+            for (int i = 0; i < response.Rooms.Count; i++)
+            {
+                if (response.Rooms[i].State == 1)
+                {
+                    battlePlayer[0] = response.Rooms[i];
+                }
+                if (response.Rooms[i].State == 2)
+                {
+                    battlePlayer[1] = response.Rooms[i];
+                }
+            }
+            return battlePlayer;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"1P2Pの取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<List<UniqueCharacter>> RegisterCharacters(int roomId, bool is1p, int[] characterIds)
+    {
+        try
+        {
+            var request = new RegisterCharactersRequest{RoomId = (uint)roomId, Is1P = is1p};
+            request.CharacterIds.Add(characterIds.Select(x => (uint)x).ToArray());
+            Debug.Log($"CharacterIds: {request.CharacterIds}");
+            var response = await _battleClient.RegisterCharactersAsync(request);
+            return new List<UniqueCharacter>(response.RegisteredCharacters);
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"キャラの登録に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
+    public async Task<GameDataResponse> GetGameData(int roomId)
+    {
+        try
+        {
+            var request = new GetGameDataRequest{RoomId = (uint)roomId};
+            var reponse = await _battleClient.GetGameDataAsync(request);
+            return reponse;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"ゲームデータの取得に失敗しました: {e.Status.Detail}");
             return null;
         }
     }

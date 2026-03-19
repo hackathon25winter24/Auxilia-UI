@@ -12,29 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87ca7e9ce5e76b0488f4c2b71228a97e, type: 3}
   m_Name: StoryData
   m_EditorClassIdentifier: 
-  now_story_number: 0
   stories:
   - story_number: 0
+    next_scene: 12
     serifs:
     - characterID: 0
       character_face: 0
       character_move: 0
+      character_size: 1
+      is_shadowed: 1
       name: ...?
       serif: "\u3053\u3093\u306B\u3061\u306F"
     - characterID: 0
       character_face: 0
       character_move: 0
+      character_size: 1
+      is_shadowed: 0
       name: ...?
       serif: "\u3042\u3001\u7533\u3057\u9045\u308C\u307E\u3057\u305F\u3002"
     - characterID: 0
       character_face: 0
       character_move: 0
+      character_size: 1
+      is_shadowed: 0
       name: "\u30BD\u30D5\u30A3\u30FC"
       serif: "\u308F\u305F\u304F\u3057\u3001\u30BD\u30D5\u30A3\u30FC\u30FB\u30DE\u30E4\u30FB\u30D5\u30ED\u30FC\u30EC\u30B9\u3068\u7533\u3057\u307E\u3059\u3002\n\u30BD\u30D5\u30A3\u30FC\u3068\u304A\u547C\u3073\u304F\u3060\u3055\u3044"
     - characterID: 0
       character_face: 0
       character_move: 0
+      character_size: 1
+      is_shadowed: 0
       name: "\u30BD\u30D5\u30A3\u30FC"
       serif: "\u4EE5\u5F8C\u304A\u898B\u77E5\u308A\u304A\u304D\u3092\u3002"
   - story_number: 0
+    next_scene: 0
     serifs: []
