@@ -102,13 +102,13 @@ MonoBehaviour:
     _attack_button_backimage: {fileID: 8082451066370681969, guid: 590838ee42ca1444eb2fec4ae3834e53, type: 3}
     passive: []
   - _default_name: Nadia
-    _default_name_japanese: 
+    _default_name_japanese: "\u30CA\u30C7\u30A3\u30A2"
     _default_id: 2
     _default_sprite: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _select_image: {fileID: -7827395209335436663, guid: e7e82f08eacb5454498f3caa00710af0, type: 3}
-    _detail_image: {fileID: 0}
-    _default_sprite_mini: {fileID: 0}
-    _default_sprite_smallwindow: {fileID: 0}
+    _detail_image: {fileID: 8314858775564062062, guid: 85a384fa836994d49bd581d6e500be8b, type: 3}
+    _default_sprite_mini: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _default_sprite_smallwindow: {fileID: -7058398485102911826, guid: 433332ed46fc8d3499d1e6506a6b7124, type: 3}
     _default_hp: 150
     _default_move_cost: 7
     _attacks:
@@ -116,35 +116,35 @@ MonoBehaviour:
       _default_attack_cost: 10
       _default_attack_power: 20
       _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      debuffs: 0000000000000000000000001400000000000000000000000000000000000000
+      _attack_button: {fileID: -7753384238618468022, guid: afcb6ef6acfcd174fad8bca465df9181, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
       - {x: 0, y: 1}
       - {x: -1, y: 0}
       - {x: 0, y: -1}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: 5506076506969557437, guid: 56d6ff15d329e1e4e8958f487e34db4d, type: 3}
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F703\uFF1A\u524D\u65B9\u7BC4\u56F2\u6BB2\u6EC5"
       _default_attack_cost: 20
       _default_attack_power: 40
       _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      debuffs: 0000000000000000000000002800000000000000000000000000000000000000
+      _attack_button: {fileID: 610908720128868772, guid: 8c329a0d42815054bb5e5f6acde4072f, type: 3}
       _default_attack_range:
       - {x: 1, y: 1}
       - {x: 1, y: 0}
       - {x: 1, y: -1}
-      _attack_range_image: {fileID: 0}
+      _attack_range_image: {fileID: 4098474065381668126, guid: a17e9b184d739f044acd63418a91c7b6, type: 3}
     - _default_attack_name: "\u5BFE\u51E6\u756A\u53F702\uFF1A\u524D\u65B9\u6BB2\u6EC5\u30FB\u6539"
       _default_attack_cost: 30
       _default_attack_power: 60
       _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: 0}
+      debuffs: 0000000000000000000000003c00000000000000000000000000000000000000
+      _attack_button: {fileID: -7275747150402431968, guid: 009dfa5026d8e25408b44454be156a6e, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 0}
-    _attack_button_backimage: {fileID: 0}
+      _attack_range_image: {fileID: -5129395840419783555, guid: 3ad02a77f89f5354089d6137466197a8, type: 3}
+    _attack_button_backimage: {fileID: 66574983153512604, guid: cea1e58653a670549a3e83f993dd151e, type: 3}
     passive: []
   - _default_name: Tsukiha
     _default_name_japanese: 

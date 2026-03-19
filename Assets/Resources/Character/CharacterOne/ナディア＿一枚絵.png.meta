@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 89707ffaf6981a9459368cfe69090184
+guid: 85a384fa836994d49bd581d6e500be8b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4674294191346308819
-    second: Sophie_smallwindow_0
+      213: 8314858775564062062
+    second: "\u30CA\u30C7\u30A3\u30A2\uFF3F\u4E00\u679A\u7D75_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,43 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sophie_smallwindow_0
+      name: "\u30CA\u30C7\u30A3\u30A2\uFF3F\u4E00\u679A\u7D75_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 301
-        height: 400
+        width: 2560
+        height: 1440
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3d65ed23dcd6ed040800000000000000
-      internalID: 4674294191346308819
+      spriteID: e6d090b9000546370800000000000000
+      internalID: 8314858775564062062
       vertices: []
       indices: 
       edges: []
@@ -160,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Sophie_smallwindow_0: 4674294191346308819
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
