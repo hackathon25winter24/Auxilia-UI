@@ -93,14 +93,17 @@ public class BattleOnlineManager : MonoBehaviour
             if (charIsMine && myIdx < 3)
             {
                 battleDataforLocal.character_id[myIdx] = (int)c.CharacterId;
+                battleDataforOnline.selected_character[myIdx] = (int)c.CharacterId;
                 myIdx++;
             }
             else if (!charIsMine && opIdx < 6)
             {
                 battleDataforLocal.character_id[opIdx] = (int)c.CharacterId;
+                battleDataforOnline.selected_character[opIdx] = (int)c.CharacterId;
                 opIdx++;
             }
         }
+        Debug.Log($"[BattleOnlineManager] Character mapping finished. MyIdx={myIdx}, OpIdx={opIdx}");
 
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;

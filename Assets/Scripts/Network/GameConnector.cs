@@ -602,12 +602,15 @@ public class GameConnector : MonoBehaviour
         var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack};
         
+        Debug.Log($"<color=orange>[SendAttack] 通信開始: attacker={attackerCharaId}, target={attackedCharaId}, newHp={newHP}, bhp1={baseHP1}, bhp2={baseHP2}</color>");
         try 
         {
             await _battleClient.ApplyAttackAsync(action);
+            Debug.Log($"<color=orange>[SendAttack] 通信成功</color>");
         }
         catch (RpcException e)
         {
+            Debug.LogError($"[SendAttack] 通信失敗: {e.Status.Detail}");
             ShowErrorMessage($"攻撃の送信に失敗しました: {e.Status.Detail}");
         }
     }
@@ -665,10 +668,11 @@ public class GameConnector : MonoBehaviour
         try
         {
             await _battleClient.ApplyGridUpdateAsync(action);
-            Debug.Log($"<color=lime>[GridUpdate] サーバーに全グリッドデータを送信しました (Room:{roomId})</color>");
+            Debug.Log($"<color=lime>[GridUpdate] サーバーへの送信成功 (Room:{roomId})</color>");
         }
         catch (RpcException e)
         {
+            Debug.LogError($"[GridUpdate] サーバーへの送信失敗: {e.Status.Detail}");
             ShowErrorMessage($"グリッド情報の送信に失敗しました: {e.Status.Detail}");
         }
     }
