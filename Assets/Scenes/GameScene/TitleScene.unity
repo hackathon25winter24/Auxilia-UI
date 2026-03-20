@@ -1989,7 +1989,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   audioSource: {fileID: 691032188}
-  clickSE: {fileID: 8300000, guid: 00e465389a2e54349b6b80d8020d3959, type: 3}
+  inputSE: {fileID: 8300000, guid: 357d6111902b54fa0a47b8ad3fc4715a, type: 3}
+  clickSE: {fileID: 8300000, guid: f6c2f9a069fc0465ba711ba88f601de0, type: 3}
+  backSE: {fileID: 8300000, guid: 3c552301339d3440aaf0588dabc924c6, type: 3}
+  toNextSE: {fileID: 8300000, guid: 565c46a60c5bc41a5a60e745ad31fe47, type: 3}
 --- !u!4 &691032190
 Transform:
   m_ObjectHideFlags: 0
