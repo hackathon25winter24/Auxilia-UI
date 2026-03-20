@@ -25,6 +25,7 @@ public class GameConnector : MonoBehaviour
     private bool _isStreamActive;
 
     public CharacterManager characterManager;
+    public PlayerData playerData;
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
     public event Action<string> OnErrorMessage;
@@ -215,6 +216,65 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<UserResponse> UpdateUser()
+    {
+        try
+        {
+            var request = new UpdateUserRequest
+            {
+                Id = playerData.user_id,
+                Name = playerData.player_name,
+                Password = playerData.password,
+                Story = playerData.story_progress,
+                NumWins = playerData.win_number,
+                NumBattles = playerData.battle_number,
+                Rate = playerData.player_rate,
+                HomeCharacterId = playerData.home_character_ID,
+                Deck1 = playerData.character_formation_one,
+                Deck2 = playerData.character_formation_two,
+                Deck3 = playerData.character_formation_three,
+            };
+            var response = await _userClient.UpdateUserAsync(request);
+            return response;
+
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"UpdateUser Error: {e.Message}");
+            return null;
+        }
+    }
+
+    public async Task<bool> UpdateStory()
+    {
+        playerData.story_progress += 1;
+
+        try
+        {
+            var request = new UpdateUserRequest
+            {
+                Id = playerData.user_id,
+                Name = playerData.player_name,
+                Password = playerData.password,
+                Story = playerData.story_progress,
+                NumWins = playerData.win_number,
+                NumBattles = playerData.battle_number,
+                Rate = playerData.player_rate,
+                HomeCharacterId = playerData.home_character_ID,
+                Deck1 = playerData.character_formation_one,
+                Deck2 = playerData.character_formation_two,
+                Deck3 = playerData.character_formation_three,
+            };
+            var response = await _userClient.UpdateUserAsync(request);
+            if(response != null) return true;
+            return false;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"UpdateStory Error: {e.Message}");
+            return false;
+        }
+    }
     public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
     {
         try
