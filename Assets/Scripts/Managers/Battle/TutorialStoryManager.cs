@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Threading.Tasks;
 
 public class TutorialStoryManager : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class TutorialStoryManager : MonoBehaviour
     public GameObject Texts;
     public GameObject Back;
 
+    [Header("Network")]
+    public GameConnector gameConnector;
+
 
     [Header("Settings")]
     public float speed = 5.0f; // 点滅速度
@@ -38,6 +42,8 @@ public class TutorialStoryManager : MonoBehaviour
         storyManagerData.is_auto = false;
         storyManagerData.serif_loading = false;
         
+        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+
         autoText.gameObject.SetActive(false);
         Texts.SetActive(true);
         Back.SetActive(true);
@@ -179,15 +185,16 @@ public class TutorialStoryManager : MonoBehaviour
         AdvanceToNextSerif();
     }
 
-    void EndStory()
+    async void EndStory()
     {
         if(playerData.story_progress == 1)
         {
-            playerData.story_progress ++;
+            playerData.story_progress = 2;
+            if (gameConnector != null) await gameConnector.UpdateUser();
             sceneData.next_scene_number = 1;
         }else
         {
-            sceneData.next_scene_number = 11;
+            sceneData.next_scene_number = 1;
         }
     }
 
