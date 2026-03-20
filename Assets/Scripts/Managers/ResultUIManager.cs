@@ -26,6 +26,8 @@ public class ResultUIManager : MonoBehaviour
 
     void Awake()
     {
+        InitializeFields();
+
         // 相手の名前を表示
         if (playerName != null) playerName.text = battleDataforOnline.opponent_name;
         
@@ -81,9 +83,9 @@ public class ResultUIManager : MonoBehaviour
 
     void Start()
     {
-        // もしインスペクターで未指定なら、実行時に探す
-        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
-        if (roomData == null) roomData = FindFirstObjectByType<RoomData>();
+        InitializeFields();
+
+        if (battleDataforOnline == null) return;
 
         if (battleDataforOnline.my_rate_updown > 0)
         {
@@ -168,7 +170,7 @@ public class ResultUIManager : MonoBehaviour
                 break;
 
             case "BackToMatching":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 sceneData.next_scene_number = 3;
                 break;
 
@@ -176,5 +178,26 @@ public class ResultUIManager : MonoBehaviour
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
         }
+    }
+
+    private void InitializeFields()
+    {
+        sceneData = GetSO(sceneData);
+        playerData = GetSO(playerData);
+        battleDataforOnline = GetSO(battleDataforOnline);
+        roomData = GetSO(roomData);
+
+        if (gameConnector == null)
+        {
+            gameConnector = FindFirstObjectByType<GameConnector>();
+        }
+    }
+
+    private T GetSO<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        T[] assets = Resources.FindObjectsOfTypeAll<T>();
+        if (assets.Length > 0) return assets[0];
+        return null;
     }
 }

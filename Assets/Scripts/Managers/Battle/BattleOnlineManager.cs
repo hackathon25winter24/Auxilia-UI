@@ -114,7 +114,11 @@ public class BattleOnlineManager : MonoBehaviour
         // すべてのデータが揃ったので、UIを初期化する
         characterManager.InitCharacterUI();
         var battleUI = FindFirstObjectByType<BattleUIManager>();
-        if (battleUI != null) battleUI.InitUI();
+        if (battleUI != null) 
+        {
+            battleUI.characterManager = characterManager;
+            battleUI.InitUI();
+        }
 
         // バトル開始演出を開始
         gametext.text = "battle start!";
