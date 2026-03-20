@@ -228,9 +228,10 @@ public class CharacterManager : MonoBehaviour
 
     private void SendGridData()
     {
-        if (gameConnector != null && roomData != null && playerData != null)
+        if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
         {
-            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline);
+            bool is1p = (battleDataforOnline.my_player_id == 0);
+            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, is1p);
         }
     }
 
