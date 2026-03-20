@@ -575,7 +575,7 @@ public class GameConnector : MonoBehaviour
             for (int x = 0; x < 8; x++)
             {
                 int sendX = is1p ? x : 7 - x;
-                int sendY = is1p ? y : 4 - y;
+                int sendY = y;
 
                 gridUpdate.Grids.Add(new GridInfo
                 {

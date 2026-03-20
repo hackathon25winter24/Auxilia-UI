@@ -694,7 +694,7 @@ public class CharacterManager : MonoBehaviour
     private Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)
     {
         if (is1p) return new Vector2Int(x, y);
-        return new Vector2Int(7 - x, 4 - y);
+        return new Vector2Int(7 - x, y);
     }
 
     void SendBattleData()
@@ -852,8 +852,7 @@ public class CharacterManager : MonoBehaviour
         // まずフルリセット
         for (int gy = 0; gy < 5; gy++)
             for (int gx = 0; gx < 8; gx++)
-                if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] < 0)
-                    gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
 
         // 各キャラクターの現在位置を -1 (occupied) にセット
         for (int i = 0; i <= 5; i++)
@@ -863,6 +862,10 @@ public class CharacterManager : MonoBehaviour
             if (px >= 0 && px < 8 && py >= 0 && py < 5)
                 gridDataforOnline.grid_state_y[py].grid_state_x[px] = -1;
         }
+
+        // 受信したデータによるグリッド変化が無限ループで送信されないよう前フレーム状態を同期
+        GridManager gm = Object.FindFirstObjectByType<GridManager>();
+        if (gm != null) gm.SyncPrevGridState();
     }
 
     // BattleOnlineManagerのEndMyTurnから呼び出す用の機能
