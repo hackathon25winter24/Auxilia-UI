@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SEandBGMManager : MonoBehaviour
+public class SEManager : MonoBehaviour
 {
     public InputData inputData;
     public AudioSource audioSource;
@@ -11,10 +11,11 @@ public class SEandBGMManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void UpDate()
+    public void Update()
     {
         if (inputData.left_mouse_button_ispressed || inputData.right_mouse_button_ispressed)
         {
+            Debug.Log("ClickSound");
             PlaySE();
         }
     }
