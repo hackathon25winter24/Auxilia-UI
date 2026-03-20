@@ -14,6 +14,9 @@ public class GridManager : MonoBehaviour
     public Sprite MakibishiGrid;
     public Sprite LandmineGrid;
 
+    // デバッグ用：前フレームのグリッド状態キャッシュ（変化検知用）
+    private int[,] _prevGridState = new int[5, 8];
+
     void Awake()
     {
         // 全グリッドの初期化
@@ -117,12 +120,39 @@ public class GridManager : MonoBehaviour
     
     void Update()
     {
+        bool changed = false;
+        var logSb = new System.Text.StringBuilder();
+
         for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
             {
+                int current = gridDataforOnline.grid_state_y[y].grid_state_x[x];
+
+                // 前フレームから変化があったマスだけログ記録
+                if (current != _prevGridState[y, x])
+                {
+                    changed = true;
+                    string spriteName = current switch
+                    {
+                        1    => "BaseGrid",
+                        -2   => "ProhibitGrid",
+                        -1   => "NormalGrid(Char)",
+                        3    => "MakibishiGrid",
+                        4    => "LandmineGrid",
+                        _    => "NormalGrid"
+                    };
+                    logSb.AppendLine($"  [{x},{y}] {_prevGridState[y, x]} -> {current} ({spriteName})");
+                    _prevGridState[y, x] = current;
+                }
+
                 SetGridVisual(x, y);
             }
+        }
+
+        if (changed)
+        {
+            Debug.Log($"<color=lime>[GridManager] グリッド変化検知:\n{logSb}</color>");
         }
     }
 }

@@ -734,25 +734,42 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
 
         // グリッドデータ（地形情報）の同期
-        if (data.Grids != null)
+        // サーバーは全マス（40マス）を GridType 付きで送ってくる
+        // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
+        //
+        // ① まず sub_grid_state を全部 0 にリセット（サーバーが全マス送ってくるので毎回上書きでOK）
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = 0;
+
+        if (data.Grids != null && data.Grids.Count > 0)
         {
+            // デバッグ：サーバーから受け取った GridType 値を確認
+            var gridSb = new System.Text.StringBuilder();
+            gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {data.Grids.Count} 個のGridInfoを受信</color>");
             foreach (var g in data.Grids)
             {
                 int gx = (int)g.PositionX;
                 int gy = (int)g.PositionY;
                 if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
                 {
-                    // Update fixed terrain layer
                     gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
-                    
-                    // If no character is currently stepping on it (-1), visually update the active layer too
-                    if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] != -1)
-                    {
-                        gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = (int)g.GridType;
-                    }
+                    if (g.GridType != 0)  // 通常マス以外だけログ出力（ノイズ削減）
+                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType}");
                 }
             }
+            Debug.Log(gridSb.ToString());
         }
+        else
+        {
+            Debug.Log("<color=yellow>[GridSync] data.Grids が null または空</color>");
+        }
+
+        // ② grid_state を sub_grid_state ベースで再構築（キャラクター占有フラグは後で上書き）
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] =
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
 
         // キャラクター位置とHPを反映（UniqueIdによるマッチング）
         foreach (var c in data.Characters)
@@ -813,6 +830,28 @@ public class CharacterManager : MonoBehaviour
             sb.AppendLine($"  Chara: Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
         }
         Debug.Log(sb.ToString());
+
+        // --- サーバーデータを即座にUIに反映 ---
+        // キャラクタースプライトの位置を now_character_position に合わせる
+        // (BattleUIManager.Update が HP/コストを毎フレーム自動更新するのに対し、
+        //  スプライト位置はこのタイミングで一度明示的に更新する必要がある)
+        UpdateCharacterPosition();
+
+        // グリッド上のキャラクター占有フラグを再構築
+        // まずフルリセット
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] < 0)
+                    gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
+
+        // 各キャラクターの現在位置を -1 (occupied) にセット
+        for (int i = 0; i <= 5; i++)
+        {
+            int px = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+            int py = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+            if (px >= 0 && px < 8 && py >= 0 && py < 5)
+                gridDataforOnline.grid_state_y[py].grid_state_x[px] = -1;
+        }
     }
 
     // BattleOnlineManagerのEndMyTurnから呼び出す用の機能
