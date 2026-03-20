@@ -54,8 +54,10 @@ public class SelectUIManager : MonoBehaviour
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
 
-        // 画面遷移直後のため roomData.usersData は古い可能性があるので
-        // サーバーから最新の自分の state を取得して isPlayer を確定する
+        // 1P/2Pの名前を取得
+        await UpdatePlayerNames();
+
+        // 自分の状態を確認してプレイヤーかどうか判定
         var roomList = await gameConnector.ListRoom(roomData.room_id);
         int myState = 0;
         if (roomList != null)
@@ -81,37 +83,44 @@ public class SelectUIManager : MonoBehaviour
             characterTub.SetActive(false);
             start_game_text.gameObject.SetActive(false);
             UpDateCharacterUI();
-        }else
+            
+            // 決定ボタンの初期化
+            if (decidedButtonText != null) decidedButtonText.text = "決定";
+
+            // プレイヤーも準備完了監視を開始（自分が決定した後のため。または自動遷移のため）
+            StartCoroutine(WaitForBothPlayersReady());
+        }
+        else
         {
-            //ここに試合をする人の名前を受け取る関数を書いてください
-            //データはそれぞれbattleDataforOnlineのpalyer1_nameとplayer2_nameに格納してください
-            var battle_player = await gameConnector.GetBattlePlayer(roomData.room_id);
-            if (battle_player[0] == null)
-            {
-                Debug.Log("1Pがいません");
-            }
-            else
-            {
-                p1 = await gameConnector.GetUser(battle_player[0].UserId);
-                battleDataforOnline.palyer1_name = p1.Name;
-            }
-            if (battle_player[1] == null)
-            {
-                Debug.Log("2Pがいません");
-            }
-            else
-            {
-                p2 = await gameConnector.GetUser(battle_player[1].UserId);
-                battleDataforOnline.player2_name = p2.Name;
-            }        
             playerUI.SetActive(false);
             SpectatorUI.SetActive(true);
             ready.SetActive(false); 
             ready2.SetActive(false);
             nameText.text = battleDataforOnline.palyer1_name;
             nameText2.text = battleDataforOnline.player2_name;
+            
+            // 観戦者もバトル開始を待つ
+            StartCoroutine(WaitForBothPlayersReady());
         }
         TimerStart();
+    }
+
+    private async Task UpdatePlayerNames()
+    {
+        var battle_player = await gameConnector.GetBattlePlayer(roomData.room_id);
+        if (battle_player != null && battle_player.Count >= 2)
+        {
+            if (battle_player[0] != null)
+            {
+                p1 = await gameConnector.GetUser(battle_player[0].UserId);
+                if (p1 != null) battleDataforOnline.palyer1_name = p1.Name;
+            }
+            if (battle_player[1] != null)
+            {
+                p2 = await gameConnector.GetUser(battle_player[1].UserId);
+                if (p2 != null) battleDataforOnline.player2_name = p2.Name;
+            }
+        }
     }
 
     public async void OnButtonClick(string buttonName)
@@ -163,6 +172,7 @@ public class SelectUIManager : MonoBehaviour
     public void CharacterLongClick(int LongButtonNum)
     {}
 
+    private float _pollTimer = 0f;
     async void Update()
     {
         if (isTimerRunning)
@@ -182,28 +192,60 @@ public class SelectUIManager : MonoBehaviour
             }
         }
 
+        // 定期的にサーバーから状態を取得してUIに反映
+        _pollTimer -= Time.deltaTime;
+        if (_pollTimer <= 0)
+        {
+            _pollTimer = 1.0f; // 1秒おきに更新
+            await SyncRoomStatus();
+        }
+
         costText.text = "cost：" + battleDataforOnline.palyer1_cost;
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
-        if (battleDataforOnline.isPlayer)
+    }
+
+    private async Task SyncRoomStatus()
+    {
+        var data = await GetDatas();
+        if (data == null) return;
+
+        int p1Count = 0;
+        int p2Count = 0;
+        int p1Cost = 0;
+        int p2Cost = 0;
+
+        foreach (var c in data.Characters)
         {
-            // サーバーへの無駄な通信を防ぐため、キャラ選択情報の送信は決定ボタンを押した時のみ実行します
-            // 相手のキャラ取得（GetOpponentDatas）も、相手の選択完了をチェックするなどの別処理で行う必要があります
-        }else
-        {
-            // 毎フレーム動かすことができなかったので大体1秒に1回動かしてます
-            float time = Mathf.CeilToInt(currentTime);
-            float predicted_time = Mathf.CeilToInt(currentTime-Time.deltaTime);
-            if (time != predicted_time)
+            int cost = 0;
+            if (c.CharacterId < characterData.characters.Length)
             {
-                var all_game_data = await GetDatas();
-                // 説明できないくらい大量のデータが入ってるので必要なものだけを使ってください。以下取得例
-                // all_game_data.BaseHp1,    all_game_data.BaseHp2,   all_game_data.Characters, 
-                // all_game_data.FinishedAt, all_game_data.Id,        all_game_data.Is1PTurn, 
-                // all_game_data.IsFinished, all_game_data.Player1Id, all_game_data.Player2Id, 
-                // all_game_data.RoomId,     all_game_data.Turn,      all_game_data.TurnStartAt, 
-                // all_game_data.WinnerPlayerId
-                Debug.Log($"1P拠点のHP: {all_game_data.BaseHp1}, 対戦キャラリスト: {all_game_data.Characters}, 1Pのターンか: {all_game_data.Is1PTurn}");
+                cost = characterData.characters[c.CharacterId].default_move_cost;
             }
+
+            if (c.Is1P)
+            {
+                p1Count++;
+                p1Cost += cost;
+            }
+            else
+            {
+                p2Count++;
+                p2Cost += cost;
+            }
+        }
+
+        battleDataforOnline.palyer1_cost = p1Cost;
+        battleDataforOnline.palyer2_cost = p2Cost;
+
+        // 準備完了インジケータ（3体登録されていたら表示）
+        if (ready != null) ready.SetActive(p1Count >= 3);
+        if (ready2 != null) ready2.SetActive(p2Count >= 3);
+
+        if (!battleDataforOnline.isPlayer)
+        {
+            // 観戦者用：名前を更新
+            nameText.text = battleDataforOnline.palyer1_name;
+            nameText2.text = battleDataforOnline.player2_name;
         }
     }
 
