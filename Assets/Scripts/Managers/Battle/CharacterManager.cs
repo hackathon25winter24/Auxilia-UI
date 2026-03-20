@@ -432,23 +432,28 @@ public class CharacterManager : MonoBehaviour
     // 2. マウスがキャラから見てどの方向にいるか判定する関数
     private Vector2Int GetMouseDirection()
     {
-    // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
-    Vector2 charPos = characters[selected_character_id].anchoredPosition;
-    Vector2 mousePos = inputData.mouse_position;
-    Vector2 diff = mousePos - charPos;
+        // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
+        Vector2 charPos = characters[selected_character_id].anchoredPosition;
+        Vector2 mousePos = inputData.mouse_position; 
+        
+        // 【注意】mousePosがスクリーン座標系の場合、正規化や調整が必要になる可能性があります
+        // 一旦、相対ベクトルを計算してログに出力します
+        Vector2 diff = mousePos - charPos;
 
-    // XとYの絶対値を比較して、どちらの方向に大きく動いているか判定
-    if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
-    {
-        // 左右方向
-        return diff.x > 0 ? Vector2Int.right : Vector2Int.left;
-    }
-    else
-    {
-        // 上下方向
-        // UIの座標系に合わせる（上がプラスならup、下がマイナスならdown）
-        return diff.y > 0 ? Vector2Int.up : Vector2Int.down;
-    }
+        Vector2Int result;
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+        {
+            result = diff.x > 0 ? Vector2Int.right : Vector2Int.left;
+        }
+        else
+        {
+            result = diff.y > 0 ? Vector2Int.up : Vector2Int.down;
+        }
+
+        // 変化があった時だけログを出す等しても良いが、デバッグのため一旦そのまま出す
+        // Debug.Log($"[GetMouseDirection] charPos={charPos}, mousePos={mousePos}, diff={diff}, result={result}");
+
+        return result;
     }
 
     public void ClearAttackRange()
@@ -522,66 +527,54 @@ public class CharacterManager : MonoBehaviour
 
     if (hit_character > 0)
     {
-        // 全体の攻撃完了後の処理（ログ等）
         Debug.Log("キャラクターまたは拠点に攻撃がヒットしました");
     }
-
-    if (hit_character == 0)
+    else
     {
-
+        // ヒットしなかった場合、特定のスキルによる設置物（トラップ等）の処理
         if (battleDataforOnline.selected_character[selected_character_id] == 3 && attack_number == 2)
         {
             for (int y = 0; y <= 4; y++)
             {
                 for (int x = 0; x <= 7; x++)
                 {
-                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] == 0)
                     {
-                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
-                    {
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
-                    }
-                    }else
-                    {
-                        //当たったキャラクターがいないときの処理を書く
+                        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                        {
+                            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                        }
                     }
                 }
             }
-        }else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
+        }
+        else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
         {
             for (int y = 0; y <= 4; y++)
             {
                 for (int x = 0; x <= 7; x++)
                 {
-                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] == 0)
                     {
-                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
-                    {
-                        gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
-                    }
-                    }else
-                    {
-                        //当たったキャラクターがいないときの処理を書く
+                        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                        {
+                            gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
+                            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
+                        }
                     }
                 }
             }
-        }else
-        {
-            //当たったキャラクターがいないときの処理を書く
         }
+    }
 
-        // 3. 攻撃状態の解除
+    // 3. 攻撃状態の解除とクリーンアップ（ヒットの有無に関わらず実行）
     is_attacking = false;
     ClearAttackRange();
     
-    // UIの非表示設定など（必要に応じて）
-    BackButton.gameObject.SetActive(false);
+    if (BackButton != null) BackButton.gameObject.SetActive(false);
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
-    // ヒットの有無に関わらずコストを消費する
-    cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
+    // コスト消費
     if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2])
     {
         battleDataforOnline.now_my_cost -= (cost - 5);
@@ -594,15 +587,10 @@ public class CharacterManager : MonoBehaviour
     {
         battleDataforOnline.now_my_cost -= cost;
     }
-    Debug.Log($"<color=orange>[ConfirmAttack] コスト消費後の残り: {battleDataforOnline.now_my_cost}</color>");
 
-    // 【デバッグ】攻撃データをコンソールに出力（UIには反映しない）
-    int attackPow  = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
-    Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
-    }
+    Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 残りコスト={battleDataforOnline.now_my_cost}, 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
 
-    // 攻撃確定時にグリッドデータも送信
-    // すべての攻撃送信が終わるのを待ってから同期
+    // すべての攻撃送信（awaitしたもの）が終わってからグリッド同期
     await SendGridData();
     }
 
