@@ -173,6 +173,10 @@ public class GridManager : MonoBehaviour
             // サーバーに全グリッドデータを送信
             if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
             {
+                // 自分のターンでない場合は送信しない（不意な上書き防止）
+                bool isMyTurn = (battleDataforOnline.now_moving_player == battleDataforOnline.my_player_id);
+                if (!isMyTurn) return;
+
                 bool is1p = (battleDataforOnline.my_player_id == 0);
                 _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
             }

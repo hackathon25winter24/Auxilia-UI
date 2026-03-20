@@ -133,6 +133,7 @@ public class BattleOnlineManager : MonoBehaviour
             if (_turnTransitionTime > 0) return;
             if (battleDataforLocal.is_myturn != true)
             {
+            Debug.Log($"<color=cyan>[BattleOnlineManager] 自分のターン開始 (now_moving_player={battleDataforOnline.now_moving_player})</color>");
             battleDataforLocal.is_myturn = true;
             StartMyTurn();
             }
@@ -140,6 +141,7 @@ public class BattleOnlineManager : MonoBehaviour
         {
             if(battleDataforLocal.is_myturn != false)
             {
+                Debug.Log($"<color=silver>[BattleOnlineManager] 相手のターン開始 (now_moving_player={battleDataforOnline.now_moving_player})</color>");
                 battleDataforLocal.is_myturn = false;
                 // 自分のターンではないので、相手のターンを勝手に終わらせないようローカルタイマーを停止する
                 isTimerRunning = false;
@@ -195,6 +197,7 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void EndMyTurn()
     {
+        Debug.Log("<color=silver>[BattleOnlineManager] EndMyTurn 実行</color>");
         gametext.text = "turn end";
         if(battleDataforOnline.now_moving_player == 0)
         {
