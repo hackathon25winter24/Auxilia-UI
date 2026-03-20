@@ -288,22 +288,45 @@ public class BattleOnlineManager : MonoBehaviour
 
     private int CalculateNextTurn()
     {
-        // バックエンドの determineNextActor と同じロジックを実装
-        // 1Pと2Pの生存キャラクターの中で、最も基本コストが低い値を探す
-        int p1Min = GetMinAliveMoveCost(true);
-        int p2Min = GetMinAliveMoveCost(false);
+        // ユーザー要望：偶数回のターン（１サイクル）が終了したとき、次とその次のプレイヤーをきめる。両方同じはダメ。
+        // ロジック：
+        // 奇数ターン終了時（今がTurn 1, 3...）：必ず相手に回す（これで次とその次が異なることを保証）
+        // 偶数ターン終了時（今がTurn 2, 4...）：コスト計算で次のサイクルのリーダーを決める
 
-        Debug.Log($"[CalculateNextTurn] P1Min={p1Min}, P2Min={p2Min}, current={battleDataforOnline.my_player_id}");
+        bool isOddTurn = (battleDataforOnline.now_turn % 2 != 0);
+        int currentPlayer = battleDataforOnline.now_moving_player;
 
-        if (p1Min < p2Min) return 0;
-        if (p2Min < p1Min) return 1;
+        if (isOddTurn)
+        {
+            // 奇数ターンの次は必ず交代
+            int next = (currentPlayer == 0) ? 1 : 0;
+            Debug.Log($"[CalculateNextTurn] 奇数ターン({battleDataforOnline.now_turn})終了 -> 強制交代: {next}");
+            return next;
+        }
+        else
+        {
+            // 偶数ターン終了時：コストが低い方を次のターンのリーダーにする
+            int p1Min = GetMinAliveMoveCost(true);
+            int p2Min = GetMinAliveMoveCost(false);
 
-        // 同値の場合は反転させる (強制交代)
-        return (battleDataforOnline.now_moving_player == 0) ? 1 : 0;
+            Debug.Log($"[CalculateNextTurn] 偶数ターン({battleDataforOnline.now_turn})終了 -> コスト判定 P1={p1Min}, P2={p2Min}");
+
+            if (p1Min < p2Min) return 0;
+            if (p2Min < p1Min) return 1;
+
+            // コスト同値なら強制交代
+            return (currentPlayer == 0) ? 1 : 0;
+        }
     }
 
     private int GetMinAliveMoveCost(bool is1P)
     {
+        if (characterData == null || battleDataforLocal == null || battleDataforOnline == null)
+        {
+            Debug.LogError("[GetMinAliveMoveCost] Required data (characterData/local/online) is null!");
+            return 999;
+        }
+
         int minCost = 999;
         bool found = false;
         int start = is1P ? 0 : 3;
@@ -311,11 +334,15 @@ public class BattleOnlineManager : MonoBehaviour
 
         for (int i = start; i <= end; i++)
         {
+            // インデックス範囲チェック
+            if (i >= battleDataforOnline.charactersBattleDatas.Length) continue;
+
             if (battleDataforOnline.charactersBattleDatas[i].now_character_hp > 0)
             {
-                int cost = characterData.characters[battleDataforLocal.character_id[i]].attacks[0].default_attack_cost; // FIXME: use move cost if available
-                // 実際は characterData.characters[id].default_move_cost を使うべき
-                int moveCost = characterData.characters[battleDataforLocal.character_id[i]].default_move_cost;
+                int charIdx = battleDataforLocal.character_id[i];
+                if (charIdx < 0 || charIdx >= characterData.characters.Length) continue;
+
+                int moveCost = characterData.characters[charIdx].default_move_cost;
                 if (!found || moveCost < minCost)
                 {
                     minCost = moveCost;

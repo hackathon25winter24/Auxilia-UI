@@ -755,6 +755,7 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.opponent_base_hp = is1p ? (int)data.BaseHp2 : (int)data.BaseHp1;
 
         // ターン情報
+        battleDataforOnline.now_turn = (int)data.Turn;
         bool isMyTurn = is1p ? data.Is1PTurn : !data.Is1PTurn;
         battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
 

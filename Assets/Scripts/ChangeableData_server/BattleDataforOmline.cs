@@ -28,6 +28,7 @@ public class BattleDataforOmline : ScriptableObject
     public int opponent_base_hp;
     public Vector2Int base_position;
     public Vector2Int opponent_base_position;
+    public int now_turn;
 }
 
 [System.Serializable]
