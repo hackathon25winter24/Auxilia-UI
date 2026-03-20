@@ -6,9 +6,9 @@ public class BGMManager : MonoBehaviour
     public static BGMManager instance;
     public AudioSource audioSource;
     public AudioClip titleBGM;
-    public AudioClip HomeBGM;
-    public AudioClip SelectBGM;
-    public AudioClip WinSE;
+    public AudioClip homeBGM;
+    public AudioClip selectBGM;
+    public AudioClip battleBGM;
 
     void Awake()
     {
@@ -33,23 +33,27 @@ public class BGMManager : MonoBehaviour
         // 全てのシーンに対応するBGMができたらここに入れた方が良さそう
         if(scene.name == "TitleScene")
         {
-            //StopBGM();
+            StopBGM();// なくてもいけるけど念の為
             PlayTitleBGM();
         }
         else if(scene.name == "HomeScene")
         {
-            //StopBGM();
+            StopBGM();
             PlayHomeBGM();
         }
         else if(scene.name == "CharacterSelectScene" || scene.name == "MatchingScene")
         {
-            //StopBGM();
+            StopBGM();
             PlaySelectBGM();
+        }
+        else if(scene.name == "TutorialBattleScene" || scene.name == "BattleScene")
+        {
+            StopBGM();
+            PlayBattleBGM();
         }
         else if(scene.name == "ResultScene")
         {
-            //StopBGM();
-            PlayWinSE();
+            StopBGM();// ResultSceneではWinSEかDefeatSE（未定）をSEとして流す
         }
     }
 
@@ -61,20 +65,20 @@ public class BGMManager : MonoBehaviour
     }
     public void PlayHomeBGM()
     {
-        if (audioSource.clip == HomeBGM) return;
-        audioSource.clip = HomeBGM;
+        if (audioSource.clip == homeBGM) return;
+        audioSource.clip = homeBGM;
         audioSource.Play();
     }
     public void PlaySelectBGM()
     {
-        if (audioSource.clip == SelectBGM) return;
-        audioSource.clip = SelectBGM;
+        if (audioSource.clip == selectBGM) return;
+        audioSource.clip = selectBGM;
         audioSource.Play();
     }
-    public void PlayWinSE()
+    public void PlayBattleBGM()
     {
-        if (audioSource.clip == WinSE) return;
-        audioSource.clip = WinSE;
+        if (audioSource.clip == battleBGM) return;
+        audioSource.clip = battleBGM;
         audioSource.Play();
     }
     public void StopBGM()

@@ -8,6 +8,7 @@ public class ImageClick : MonoBehaviour, IPointerClickHandler
     // クリックされた時に自動で呼ばれる
     public void OnPointerClick(PointerEventData eventData)
     {
+        SEManager.instance.PlaySelectSE();
         playerData.home_character_ID = CharacuerID;
     }
 }

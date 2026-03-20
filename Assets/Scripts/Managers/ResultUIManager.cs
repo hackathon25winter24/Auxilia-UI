@@ -67,11 +67,13 @@ public class ResultUIManager : MonoBehaviour
         if (battleDataforOnline.my_player_id == battleDataforOnline.win_player_id)
         {
             // 勝利
+            SEManager.instance.PlayWinSE();
             if (resultImage.Length > 0) result.sprite = resultImage[0];
             if (resultText != null) resultText.text = "VICTORY";
         }else
         {
             // 敗北
+            SEManager.instance.PlayDefeatSE();
             if (resultImage.Length > 1) result.sprite = resultImage[1];
             if (resultText != null) resultText.text = "DEFEAT";
         }
@@ -141,6 +143,7 @@ public class ResultUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "BackToHome":
+                SEManager.instance.PlayToNextSE();
                 if (gameConnector != null && roomData != null)
                 {
                     await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
@@ -149,6 +152,7 @@ public class ResultUIManager : MonoBehaviour
                 break;
 
             case "BackToMatchingRoom": // 退出して部屋一覧へ
+                SEManager.instance.PlayToNextSE();
                 if (gameConnector != null && roomData != null)
                 {
                     await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
@@ -157,6 +161,7 @@ public class ResultUIManager : MonoBehaviour
                 break;
 
             case "Rematch": // 新設ボタン名: 再戦
+                SEManager.instance.PlayToNextSE();
                 if (gameConnector != null && roomData != null)
                 {
                     // 部屋に留まったまま Ready を false に更新
@@ -166,6 +171,7 @@ public class ResultUIManager : MonoBehaviour
                 break;
 
             case "BackToMatching":
+                SEManager.instance.PlayToNextSE();
                 sceneData.next_scene_number = 3;
                 break;
 
