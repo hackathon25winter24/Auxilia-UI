@@ -14,8 +14,27 @@ public class GridManager : MonoBehaviour
     public Sprite MakibishiGrid;
     public Sprite LandmineGrid;
 
+    public GameConnector gameConnector;
+    public RoomData roomData;
+    public PlayerData playerData;
+
+    // デバッグ用：前フレームのグリッド状態キャッシュ（変化検知用）
+    private int[,] _prevGridState = new int[5, 8];
+
+    private T GetSo<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        var targets = Resources.FindObjectsOfTypeAll<T>();
+        if (targets.Length > 0) return targets[0];
+        return null;
+    }
+
     void Awake()
     {
+        roomData = GetSo(roomData);
+        playerData = GetSo(playerData);
+        gameConnector = FindFirstObjectByType<GameConnector>();
+
         // 全グリッドの初期化
         for (int y = 0; y < 5; y++)
         {
@@ -117,11 +136,56 @@ public class GridManager : MonoBehaviour
     
     void Update()
     {
+        bool changed = false;
+        var logSb = new System.Text.StringBuilder();
+
         for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
             {
+                int current = gridDataforOnline.grid_state_y[y].grid_state_x[x];
+
+                // 前フレームから変化があったマスだけログ記録
+                if (current != _prevGridState[y, x])
+                {
+                    changed = true;
+                    string spriteName = current switch
+                    {
+                        1    => "BaseGrid",
+                        -2   => "ProhibitGrid",
+                        -1   => "NormalGrid(Char)",
+                        3    => "MakibishiGrid",
+                        4    => "LandmineGrid",
+                        _    => "NormalGrid"
+                    };
+                    logSb.AppendLine($"  [{x},{y}] {_prevGridState[y, x]} -> {current} ({spriteName})");
+                    _prevGridState[y, x] = current;
+                }
+
                 SetGridVisual(x, y);
+            }
+        }
+
+        if (changed)
+        {
+            Debug.Log($"<color=lime>[GridManager] グリッド変化検知:\n{logSb}</color>");
+            
+            // サーバーに全グリッドデータを送信
+            if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
+            {
+                bool is1p = (battleDataforOnline.my_player_id == 0);
+                _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
+            }
+        }
+    }
+
+    public void SyncPrevGridState()
+    {
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                _prevGridState[y, x] = gridDataforOnline.grid_state_y[y].grid_state_x[x];
             }
         }
     }

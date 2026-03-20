@@ -29,6 +29,7 @@ public class CharacterManager : MonoBehaviour
     // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
     private int[] _lastSentX = new int[6];
     private int[] _lastSentY = new int[6];
+    private Vector2Int _lastAttackDirection;
 
 
     private T GetSo<T>(T existing) where T : ScriptableObject
@@ -148,6 +149,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         if(buttonName == "Attack2") 
         {
@@ -155,6 +157,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         if(buttonName == "Attack3") 
         {
@@ -162,6 +165,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         
         }
@@ -189,6 +193,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             case "2":
             selected_character_id = 1;
@@ -201,6 +206,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             case "3":
             selected_character_id = 2;
@@ -213,10 +219,20 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
+        }
+    }
+
+    private void SendGridData()
+    {
+        if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
+        {
+            bool is1p = (battleDataforOnline.my_player_id == 0);
+            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
         }
     }
 
@@ -228,6 +244,14 @@ public class CharacterManager : MonoBehaviour
     {
         ClearAttackRange(); 
         Attack(); 
+
+        // 攻撃方向が変わった場合、または初めて攻撃モードに入った場合にグリッド同期
+        Vector2Int currentDir = GetMouseDirection();
+        if (currentDir != _lastAttackDirection)
+        {
+            _lastAttackDirection = currentDir;
+            SendGridData();
+        }
 
         // 左クリックで攻撃を確定させる
         if (inputData.left_mouse_button_ispressed)
@@ -350,6 +374,9 @@ public class CharacterManager : MonoBehaviour
     {
         battleDataforOnline.now_my_cost -= cost;
     }
+    
+    // 移動した際にグリッドデータを送信
+    SendGridData();
     }
     }
 
@@ -457,6 +484,7 @@ public class CharacterManager : MonoBehaviour
             hit_character++;
 
             BuffDebuff(i);
+            SendAttackInfo(i);
         }
     }
     }
@@ -474,12 +502,14 @@ public class CharacterManager : MonoBehaviour
             hit_character++;
 
             BuffDebuff(i);
+            SendAttackInfo(i);
         }
     }
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
     {
         hit_character++;
         battleDataforOnline.opponent_base_hp -= power;
+        SendAttackInfo(-1);
         if (battleDataforOnline.opponent_base_hp <= 0)
     {
         battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
@@ -490,37 +520,8 @@ public class CharacterManager : MonoBehaviour
 
     if (hit_character > 0)
     {
-        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
-        
-        // ヒットしたキャラクターの中から最初の1人をターゲットとして送信（サーバー側の仕様に合わせる）
-        // ※ 本来は範囲攻撃なら全対象をサーバーで計算すべきだが、フロント計算結果を優先反映させる
-        int firstHitIdx = -1;
-        for(int i=0; i<=5; i++) {
-            // 自分以外への当たり判定
-            if (i != selected_character_id) {
-                int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
-                int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
-                if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1) {
-                    firstHitIdx = i;
-                    break;
-                }
-            }
-        }
-
-        uint targetUid = (firstHitIdx != -1) ? battleDataforOnline.charactersBattleDatas[firstHitIdx].unique_id : 0;
-        uint targetNewHp = (firstHitIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[firstHitIdx].now_character_hp : 0;
-
-        _ = gameConnector.SendAttack(
-            roomData.room_id, 
-            playerData.user_id, 
-            (int)attackerUid, 
-            attack_number, 
-            true, 
-            battleDataforOnline.base_hp, 
-            battleDataforOnline.opponent_base_hp, 
-            (int)targetUid, 
-            (int)targetNewHp
-        );
+        // 全体の攻撃完了後の処理（ログ等）
+        Debug.Log("キャラクターまたは拠点に攻撃がヒットしました");
     }
 
     if (hit_character == 0)
@@ -603,10 +604,30 @@ public class CharacterManager : MonoBehaviour
     // 【デバッグ】攻撃データをコンソールに出力（UIには反映しない）
     int attackCost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     int attackPow  = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
-    Debug.Log($"<color=orange>[SendAttack] 攻撃送信: roomId={roomData?.room_id}, playerId={playerData?.user_id}, attackerCharaId={selected_character_id}, attackType={attack_number}, power={attackPow}, cost={attackCost}, baseHP1={battleDataforOnline.base_hp}, baseHP2={battleDataforOnline.opponent_base_hp}</color>");
-
-    Debug.Log("攻撃完了");
+    Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
     }
+
+    // 攻撃確定時にグリッドデータも送信
+    SendGridData();
+    }
+
+    private void SendAttackInfo(int targetIdx)
+    {
+        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
+        uint targetUid = (targetIdx != -1) ? battleDataforOnline.charactersBattleDatas[targetIdx].unique_id : 0;
+        uint targetNewHp = (targetIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp : 0;
+
+        _ = gameConnector.SendAttack(
+            roomData.room_id, 
+            playerData.user_id, 
+            (int)attackerUid, 
+            attack_number, 
+            true, 
+            battleDataforOnline.base_hp, 
+            battleDataforOnline.opponent_base_hp, 
+            (int)targetUid, 
+            (int)targetNewHp
+        );
     }
 
     private void ApplyDamage(int targetId, int damage)
@@ -691,6 +712,12 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    private Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)
+    {
+        if (is1p) return new Vector2Int(x, y);
+        return new Vector2Int(7 - x, y);
+    }
+
     void SendBattleData()
     {
         if (playerData == null || roomData == null) return;
@@ -705,7 +732,10 @@ public class CharacterManager : MonoBehaviour
             if (cx != _lastSentX[i] || cy != _lastSentY[i])
             {
                 uint uid = battleDataforOnline.charactersBattleDatas[i].unique_id;
-                _ = gameConnector.SendMove(rid, pid, (int)uid, cx, cy);
+                bool is1p = (battleDataforOnline.my_player_id == 0);
+                Vector2Int converted = ConvertCoordinateForServer(cx, cy, is1p);
+                Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y})</color>");
+                _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y);
                 _lastSentX[i] = cx;
                 _lastSentY[i] = cy;
             }
@@ -734,25 +764,71 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
 
         // グリッドデータ（地形情報）の同期
-        if (data.Grids != null)
+        // サーバーは全マス（40マス）を GridType 付きで送ってくる
+        // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
+        //
+        // ① まず sub_grid_state と highlights をリセット（サーバーが全マス送ってくるので毎回上書きでOK）
+        for (int gy = 0; gy < 5; gy++)
         {
-            foreach (var g in data.Grids)
+            for (int gx = 0; gx < 8; gx++)
             {
-                int gx = (int)g.PositionX;
-                int gy = (int)g.PositionY;
-                if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
-                {
-                    // Update fixed terrain layer
-                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
-                    
-                    // If no character is currently stepping on it (-1), visually update the active layer too
-                    if (gridDataforOnline.grid_state_y[gy].grid_state_x[gx] != -1)
-                    {
-                        gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = (int)g.GridType;
-                    }
-                }
+                gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = 0;
+                gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 0;
             }
         }
+        for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
+
+        if (data.Grids != null && data.Grids.Count > 0)
+        {
+            // デバッグ：サーバーから受け取った GridInfo を確認
+            var gridSb = new System.Text.StringBuilder();
+            gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {data.Grids.Count} 個のGridInfoを受信</color>");
+            foreach (var g in data.Grids)
+            {
+                Vector2Int converted = ConvertCoordinateForServer((int)g.PositionX, (int)g.PositionY, is1p);
+                int gx = converted.x;
+                int gy = converted.y;
+                if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
+                {
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
+                    
+                    // 攻撃範囲ハイライトの同期
+                    if (g.IsAttackRange)
+                    {
+                        gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 1;
+                    }
+
+                    // 選択状態の同期
+                    if (g.IsSelected)
+                    {
+                        // その位置にいるキャラクターを「選択中」にする
+                        for (int i = 0; i <= 5; i++)
+                        {
+                            if (battleDataforOnline.charactersBattleDatas[i].now_character_position.x == gx &&
+                                battleDataforOnline.charactersBattleDatas[i].now_character_position.y == gy)
+                            {
+                                battleDataforOnline.character_isSelected[i] = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (g.GridType != 0)
+                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType} Sel={g.IsSelected} Ark={g.IsAttackRange}");
+                }
+            }
+            Debug.Log(gridSb.ToString());
+        }
+        else
+        {
+            Debug.Log("<color=yellow>[GridSync] data.Grids が null または空</color>");
+        }
+
+        // ② grid_state を sub_grid_state ベースで再構築（キャラクター占有フラグは後で上書き）
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] =
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
 
         // キャラクター位置とHPを反映（UniqueIdによるマッチング）
         foreach (var c in data.Characters)
@@ -793,7 +869,8 @@ public class CharacterManager : MonoBehaviour
             {
                 battleDataforOnline.charactersBattleDatas[targetIdx].unique_id = c.Id;
                 battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp = (int)c.Hp;
-                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
+                Vector2Int converted = ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is1p);
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = converted;
             }
         }
 
@@ -810,9 +887,34 @@ public class CharacterManager : MonoBehaviour
         sb.AppendLine($"  1PTurn={data.Is1PTurn}  BaseHp1={data.BaseHp1}  BaseHp2={data.BaseHp2}  IsFinished={data.IsFinished}  Winner={data.WinnerPlayerId}");
         foreach (var c in data.Characters)
         {
-            sb.AppendLine($"  Chara: Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
+            sb.AppendLine($"  Chara: UniqueId={c.Id}  Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
         }
         Debug.Log(sb.ToString());
+
+        // --- サーバーデータを即座にUIに反映 ---
+        // キャラクタースプライトの位置を now_character_position に合わせる
+        // (BattleUIManager.Update が HP/コストを毎フレーム自動更新するのに対し、
+        //  スプライト位置はこのタイミングで一度明示的に更新する必要がある)
+        UpdateCharacterPosition();
+
+        // グリッド上のキャラクター占有フラグを再構築
+        // まずフルリセット
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
+
+        // 各キャラクターの現在位置を -1 (occupied) にセット
+        for (int i = 0; i <= 5; i++)
+        {
+            int px = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+            int py = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+            if (px >= 0 && px < 8 && py >= 0 && py < 5)
+                gridDataforOnline.grid_state_y[py].grid_state_x[px] = -1;
+        }
+
+        // 受信したデータによるグリッド変化が無限ループで送信されないよう前フレーム状態を同期
+        GridManager gm = Object.FindFirstObjectByType<GridManager>();
+        if (gm != null) gm.SyncPrevGridState();
     }
 
     // BattleOnlineManagerのEndMyTurnから呼び出す用の機能
