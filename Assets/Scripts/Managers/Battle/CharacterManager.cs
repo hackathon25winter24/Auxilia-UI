@@ -265,6 +265,7 @@ public class CharacterManager : MonoBehaviour
 
     if(battleDataforLocal.is_myturn)
     {
+        //これデータを毎フレームおっくてるけど大丈夫そう？
         SendBattleData();
     }else
     {
@@ -351,6 +352,14 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.now_my_cost -= cost;
     }
     }
+
+    if (!battleDataforLocal.is_myturn) return; // 受信側なら無視
+
+    // 1. ローカルで計算して仮反映
+    UpdateLocalData(nextX, nextY); 
+
+    // 2. サーバーへ「確定事項」として送る
+    _ = gameConnector.SendMove(roomData.room_id, playerData.user_id, myUid, nextX, nextY);
     }
 
     // グリッド情報の更新を一括で行う
