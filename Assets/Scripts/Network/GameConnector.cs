@@ -567,7 +567,7 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, bool is1p)
+    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataforOmline battleData, bool is1p)
     {
         var gridUpdate = new GridUpdateAction();
         for (int y = 0; y < 5; y++)
@@ -577,11 +577,25 @@ public class GameConnector : MonoBehaviour
                 int sendX = is1p ? x : 7 - x;
                 int sendY = y;
 
+                bool isSelected = false;
+                for (int i = 0; i < battleData.charactersBattleDatas.Length; i++)
+                {
+                    if (battleData.charactersBattleDatas[i].now_character_position.x == x &&
+                        battleData.charactersBattleDatas[i].now_character_position.y == y &&
+                        battleData.character_isSelected[i])
+                    {
+                        isSelected = true;
+                        break;
+                    }
+                }
+
                 gridUpdate.Grids.Add(new GridInfo
                 {
                     PositionX = (uint)sendX,
                     PositionY = (uint)sendY,
-                    GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x]
+                    GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x],
+                    IsSelected = isSelected,
+                    IsAttackRange = gridData.grid_attack_position_y[y].grid_attack_position_x[x] == 1
                 });
             }
         }

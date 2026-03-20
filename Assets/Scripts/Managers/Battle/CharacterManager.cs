@@ -29,6 +29,7 @@ public class CharacterManager : MonoBehaviour
     // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
     private int[] _lastSentX = new int[6];
     private int[] _lastSentY = new int[6];
+    private Vector2Int _lastAttackDirection;
 
 
     private T GetSo<T>(T existing) where T : ScriptableObject
@@ -231,7 +232,7 @@ public class CharacterManager : MonoBehaviour
         if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
         {
             bool is1p = (battleDataforOnline.my_player_id == 0);
-            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, is1p);
+            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
         }
     }
 
@@ -243,6 +244,14 @@ public class CharacterManager : MonoBehaviour
     {
         ClearAttackRange(); 
         Attack(); 
+
+        // 攻撃方向が変わった場合、または初めて攻撃モードに入った場合にグリッド同期
+        Vector2Int currentDir = GetMouseDirection();
+        if (currentDir != _lastAttackDirection)
+        {
+            _lastAttackDirection = currentDir;
+            SendGridData();
+        }
 
         // 左クリックで攻撃を確定させる
         if (inputData.left_mouse_button_ispressed)
@@ -758,14 +767,20 @@ public class CharacterManager : MonoBehaviour
         // サーバーは全マス（40マス）を GridType 付きで送ってくる
         // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
         //
-        // ① まず sub_grid_state を全部 0 にリセット（サーバーが全マス送ってくるので毎回上書きでOK）
+        // ① まず sub_grid_state と highlights をリセット（サーバーが全マス送ってくるので毎回上書きでOK）
         for (int gy = 0; gy < 5; gy++)
+        {
             for (int gx = 0; gx < 8; gx++)
+            {
                 gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = 0;
+                gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 0;
+            }
+        }
+        for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
         if (data.Grids != null && data.Grids.Count > 0)
         {
-            // デバッグ：サーバーから受け取った GridType 値を確認
+            // デバッグ：サーバーから受け取った GridInfo を確認
             var gridSb = new System.Text.StringBuilder();
             gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {data.Grids.Count} 個のGridInfoを受信</color>");
             foreach (var g in data.Grids)
@@ -776,8 +791,30 @@ public class CharacterManager : MonoBehaviour
                 if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
                 {
                     gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
-                    if (g.GridType != 0)  // 通常マス以外だけログ出力（ノイズ削減）
-                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType}");
+                    
+                    // 攻撃範囲ハイライトの同期
+                    if (g.IsAttackRange)
+                    {
+                        gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 1;
+                    }
+
+                    // 選択状態の同期
+                    if (g.IsSelected)
+                    {
+                        // その位置にいるキャラクターを「選択中」にする
+                        for (int i = 0; i <= 5; i++)
+                        {
+                            if (battleDataforOnline.charactersBattleDatas[i].now_character_position.x == gx &&
+                                battleDataforOnline.charactersBattleDatas[i].now_character_position.y == gy)
+                            {
+                                battleDataforOnline.character_isSelected[i] = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (g.GridType != 0)
+                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType} Sel={g.IsSelected} Ark={g.IsAttackRange}");
                 }
             }
             Debug.Log(gridSb.ToString());

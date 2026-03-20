@@ -171,10 +171,10 @@ public class GridManager : MonoBehaviour
             Debug.Log($"<color=lime>[GridManager] グリッド変化検知:\n{logSb}</color>");
             
             // サーバーに全グリッドデータを送信
-            if (gameConnector != null && roomData != null && playerData != null)
+            if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
             {
                 bool is1p = (battleDataforOnline.my_player_id == 0);
-                _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, is1p);
+                _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
             }
         }
     }
