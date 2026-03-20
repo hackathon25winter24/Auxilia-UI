@@ -58,9 +58,9 @@ public class TitleUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Login":
-            playerData.username = user_name_for_login.text;
+            playerData.player_name = user_name_for_login.text;
             playerData.password = password_for_login.text;
-            var user = await gameConnector.Login(playerData.username, playerData.password);
+            var user = await gameConnector.Login(playerData.player_name, playerData.password);
             if(user == null)
             {
                 error_ui.SetActive(true);
@@ -68,12 +68,6 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            playerData.player_name = user.Name;
-            playerData.battle_number = user.NumBattles;
-            playerData.win_number = user.NumWins;
-            playerData.story_progress = user.Story;
-            playerData.user_id = user.Id;
-            playerData.player_rate = user.Rate;
             if(playerData.story_progress == 1)
             {
                 storyManagerData.now_story_number = 0;
@@ -84,9 +78,9 @@ public class TitleUIManager : MonoBehaviour
             }
                 break;
             case "Signup":
-            playerData.username = user_name_for_signup.text;
+            playerData.player_name = user_name_for_signup.text;
             playerData.password = password_for_signup.text;
-            var new_user = await gameConnector.SignUp(playerData.username, playerData.password);
+            var new_user = await gameConnector.SignUp(playerData.player_name, playerData.password);
             if(new_user == null)
             {
                 error_ui.SetActive(true);
@@ -94,12 +88,6 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            playerData.player_name = new_user.Name;
-            playerData.battle_number = new_user.NumBattles;
-            playerData.win_number = new_user.NumWins;
-            playerData.story_progress = new_user.Story;
-            playerData.user_id = new_user.Id;
-            playerData.player_rate = new_user.Rate;
             sceneData.next_scene_number = 1;
                 break;
             case "GotoSignup":

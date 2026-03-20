@@ -42,7 +42,7 @@ public class MatchingUIManager : MonoBehaviour
     void Start()
     {
         ownerId = playerData.user_id;
-        ownerName = playerData.username;
+        ownerName = playerData.player_name;
         // 追加：InputFieldに文字が入るたびにUpdateSearchが走るようにする
         if (kensakuInput != null)
         {

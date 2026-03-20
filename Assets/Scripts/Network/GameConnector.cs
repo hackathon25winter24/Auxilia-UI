@@ -67,10 +67,16 @@ public class GameConnector : MonoBehaviour
             var request = new CreateUserRequest { Name = userName, Password = password };
             var response = await _userClient.CreateUserAsync(request);
 
-            PlayerPrefs.SetString("USER_ID", response.Id);
-            PlayerPrefs.Save();
-
             Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
+
+            playerData.player_name = response.Name;
+            playerData.battle_number = response.NumBattles;
+            playerData.win_number = response.NumWins;
+            playerData.story_progress = response.Story;
+            playerData.user_id = response.Id;
+            playerData.player_rate = response.Rate;
+            playerData.password = password;
+
             return response;
         }
         catch (RpcException e)
@@ -106,8 +112,12 @@ public class GameConnector : MonoBehaviour
             var response = await _userClient.LoginAsync(request);
 
             // 成功時の処理
-            PlayerPrefs.SetString("USER_ID", response.Id);
-            PlayerPrefs.Save();
+            playerData.player_name = response.Name;
+            playerData.battle_number = response.NumBattles;
+            playerData.win_number = response.NumWins;
+            playerData.story_progress = response.Story;
+            playerData.user_id = response.Id;
+            playerData.player_rate = response.Rate;
             return response;
         }
         catch (RpcException e)
