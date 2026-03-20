@@ -13,6 +13,9 @@ public class ImageClick : MonoBehaviour, IPointerClickHandler
             Debug.LogError($"ImageClick: playerData is null on GameObject {gameObject.name}!");
             return;
         }
+
+        SEManager.instance.PlaySelectSE();
+
         playerData.home_character_ID = CharacuerID;
     }
 }

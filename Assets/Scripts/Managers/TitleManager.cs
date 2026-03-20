@@ -25,8 +25,9 @@ public class TitleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true)
+        if ((inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true) && targetUI.activeSelf)
         {
+            SEManager.instance.PlayToNextSE();
             login_ui.SetActive(true);
             targetUI.SetActive(false);
         }
