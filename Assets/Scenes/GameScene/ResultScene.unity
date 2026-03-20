@@ -1171,8 +1171,9 @@ MonoBehaviour:
   - {fileID: 3211265273680694170, guid: b099fdb66256da94fa0b0a522a7b8cc5, type: 3}
   - {fileID: 3449938049999031603, guid: 9a3a1949544643a45aace8115a2270b0, type: 3}
   - {fileID: -5940655069615762119, guid: 65de8337440ced9428e804420046d7c6, type: 3}
-  - {fileID: 0}
+  - {fileID: -5174414632576743657, guid: 2feb9225be34d5b468e1ff7f37621537, type: 3}
   - {fileID: 1311975781419735490, guid: dbb31748fdf81dc47b547307361739dd, type: 3}
+  - {fileID: -4782330237536793092, guid: 81541d13d9a7e004987f063d10e221c1, type: 3}
   charactersResult:
   - {fileID: 5807676086723680668, guid: 909c834c4ce0ff841860b6061a192ee1, type: 3}
   - {fileID: -1342272539021165802, guid: ad2be7afe73d3d04996e93d03da1fe33, type: 3}
@@ -1182,8 +1183,9 @@ MonoBehaviour:
   - {fileID: -8838519798667859472, guid: 5bb37eba19095724cb3b9e0d8952f260, type: 3}
   - {fileID: -8365055415575978086, guid: 3b9199990642d70448cc82fb75637274, type: 3}
   - {fileID: 4224830571519028647, guid: 3b7fe1c3d29ef644ea25e4a68e6f11ff, type: 3}
-  - {fileID: 0}
+  - {fileID: -741111835700519744, guid: 8cdf89d567187384e9ddb19e1a8e8ccb, type: 3}
   - {fileID: 3211886287304430669, guid: 52a5714823738fb4099d3c7d1dbafa99, type: 3}
+  - {fileID: -5726474977138943670, guid: 95df294ceba66244e8e76a4f3d62e74d, type: 3}
   result: {fileID: 1648592932}
   resultImage:
   - {fileID: 3705254718774364906, guid: 2acaf526a709bfc4e9eb28482e814c45, type: 3}
@@ -1194,6 +1196,8 @@ MonoBehaviour:
   UpDownImage:
   - {fileID: 21300000, guid: 6a9f9bbace48b37469d0c9e15c28cad1, type: 3}
   - {fileID: 21300000, guid: 58949ceb4e15a43408620d2a835f767f, type: 3}
+  roomData: {fileID: 0}
+  gameConnector: {fileID: 0}
 --- !u!4 &783372742
 Transform:
   m_ObjectHideFlags: 0

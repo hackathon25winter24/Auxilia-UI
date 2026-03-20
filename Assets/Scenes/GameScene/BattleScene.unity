@@ -5308,8 +5308,8 @@ MonoBehaviour:
   MakibishiGrid: {fileID: -6893078568485714706, guid: 19e22a87479b3a5458f0e9787f2ce5cd, type: 3}
   LandmineGrid: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
   gameConnector: {fileID: 0}
-  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  roomData: {fileID: 0}
+  playerData: {fileID: 0}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0

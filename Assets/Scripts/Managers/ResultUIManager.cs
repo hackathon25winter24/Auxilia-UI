@@ -21,7 +21,6 @@ public class ResultUIManager : MonoBehaviour
     public Sprite[] charactersResult;
     public Image result;
     public Sprite[] resultImage;
-    public TextMeshProUGUI resultText; // 追加: 勝敗テキスト表示用
     public Image[] UpDown;
     public Sprite[] UpDownImage;
 
@@ -69,13 +68,11 @@ public class ResultUIManager : MonoBehaviour
             // 勝利
             SEManager.instance.PlayWinSE();
             if (resultImage.Length > 0) result.sprite = resultImage[0];
-            if (resultText != null) resultText.text = "VICTORY";
         }else
         {
             // 敗北
             SEManager.instance.PlayDefeatSE();
             if (resultImage.Length > 1) result.sprite = resultImage[1];
-            if (resultText != null) resultText.text = "DEFEAT";
         }
     }
 
