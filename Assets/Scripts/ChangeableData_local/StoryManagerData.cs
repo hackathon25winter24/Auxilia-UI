@@ -8,4 +8,5 @@ public class StoryManagerData : ScriptableObject
     public bool is_auto;
     public bool is_wating;
     public int now_story_number;
+    public int Tutorial_progress;
 }

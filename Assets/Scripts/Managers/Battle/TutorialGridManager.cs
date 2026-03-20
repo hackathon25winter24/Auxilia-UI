@@ -37,12 +37,16 @@ public class TutorialGridManager : MonoBehaviour
         }
         
         // 特殊なグリッドの設定
-        SetInitialGridState(1, 1, -2);
-        SetInitialGridState(5, 1, -2);
         SetInitialGridState(0, 2, 1);
         SetInitialGridState(7, 2, 1);
+        SetInitialGridState(0, 3, -2);
+        SetInitialGridState(1, 3, -2);
         SetInitialGridState(2, 3, -2);
+        SetInitialGridState(3, 3, -2);
+        SetInitialGridState(4, 3, -2);
+        SetInitialGridState(5, 3, -2);
         SetInitialGridState(6, 3, -2);
+        SetInitialGridState(7, 3, -2);
         SetInitialGridState(1, 2, -1);
     }
 

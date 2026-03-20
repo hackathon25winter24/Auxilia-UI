@@ -8,6 +8,7 @@ public class TitleUIManager : MonoBehaviour
     public PlayerData playerData;
     public SceneData sceneData;
     public GameConnector gameConnector;
+    public StoryManagerData storyManagerData;
     public GameObject login_ui;
     public GameObject signup_ui;
     public GameObject error_ui;
@@ -73,7 +74,14 @@ public class TitleUIManager : MonoBehaviour
             playerData.story_progress = user.Story;
             playerData.user_id = user.Id;
             playerData.player_rate = user.Rate;
-            sceneData.next_scene_number = 1;
+            if(playerData.story_progress == 1)
+            {
+                storyManagerData.now_story_number = 0;
+                sceneData.next_scene_number = 8;
+            }else
+            {
+                sceneData.next_scene_number = 1;
+            }
                 break;
             case "Signup":
             playerData.username = user_name_for_signup.text;

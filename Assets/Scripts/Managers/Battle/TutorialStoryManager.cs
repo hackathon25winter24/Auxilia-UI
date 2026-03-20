@@ -9,6 +9,9 @@ public class TutorialStoryManager : MonoBehaviour
     public InputData inputData;
     public SceneData sceneData;
     public StoryManagerData storyManagerData;
+    public PlayerData playerData;
+    public BattleDataforOmline battleDataforOnline;
+    public BattleDataforLocal battleDataforLocal;
     
     [Header("Tutorial Sentences")]
     public string[] serif_tutorial; // インスペクターでセリフを入力
@@ -41,6 +44,12 @@ public class TutorialStoryManager : MonoBehaviour
 
         // 最初のセリフを開始
         StartNewSerif();
+        storyManagerData.Tutorial_progress = 0;
+    }
+
+    void Start()
+    {
+        battleDataforOnline.opponent_base_hp = 100;
     }
 
     void Update()
@@ -53,17 +62,42 @@ public class TutorialStoryManager : MonoBehaviour
         // 2. 入力判定
         if (inputData.space_key_ispressed || inputData.left_mouse_button_ispressed)
         {
+            if(storyManagerData.serif_number == 2)
+            {
+                Back.SetActive(false);
+            }else if(storyManagerData.serif_number == 6)
+            {
+                storyManagerData.Tutorial_progress += 2;
+                Back.SetActive(false);
+            }else if(storyManagerData.serif_number == 9)
+            {
+                storyManagerData.Tutorial_progress += 1;
+                Back.SetActive(false);
+            }else if(storyManagerData.serif_number == 14)
+            {
+                storyManagerData.Tutorial_progress += 1;
+                Back.SetActive(false);
+            }else
+            {
+            OnPlayerClick();
+            }
+        }
+
+        if(storyManagerData.serif_number == 2 && battleDataforOnline.character_isSelected[1])
+        {
             OnPlayerClick();
         }
-
-        if (inputData.a_key_ispressed)
+        if(storyManagerData.serif_number == 6 && battleDataforLocal.now_my_cost == 0)
         {
-            ToggleAutoMode();
+            OnPlayerClick();
         }
-
-        if (inputData.s_key_ispressed)
+        if(storyManagerData.serif_number == 9 && battleDataforLocal.now_my_cost == 50)
         {
-            SkipStory();
+            OnPlayerClick();
+        }
+        if(storyManagerData.serif_number == 14 && battleDataforOnline.opponent_base_hp != 100)
+        {
+            OnPlayerClick();
         }
     }
 
@@ -98,6 +132,7 @@ public class TutorialStoryManager : MonoBehaviour
 
     void OnPlayerClick()
     {
+        Back.SetActive(true);
         if (storyManagerData.serif_loading)
         {
             // 文字送り中なら強制終了して全表示
@@ -146,8 +181,14 @@ public class TutorialStoryManager : MonoBehaviour
 
     void EndStory()
     {
-        // ストーリー番号に応じて遷移先を変更
-        sceneData.next_scene_number = (storyManagerData.now_story_number == 0) ? 12 : 11;
+        if(playerData.story_progress == 1)
+        {
+            playerData.story_progress ++;
+            sceneData.next_scene_number = 1;
+        }else
+        {
+            sceneData.next_scene_number = 11;
+        }
     }
 
     public void SkipStory()
