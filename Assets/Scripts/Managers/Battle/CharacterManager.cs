@@ -123,13 +123,14 @@ public class CharacterManager : MonoBehaviour
         if (battleDataforLocal.is_myturn == false)return;
         if (buttonName == "1" || buttonName == "2" || buttonName == "3" || buttonName == "BackButton")
         {
-        DeselectAll();
+        DeselectAll();// 何かの音を実装するかは動作を見てから決める。おそらく初期化用関数？ぼっちにはデバッグできないので分かりませんね
         }
 
         if (battleDataforOnline.character_isSelected[0] || battleDataforOnline.character_isSelected[1] || battleDataforOnline.character_isSelected[2])
         {
             if(buttonName == "BackButton")
             {
+            SEManager.instance.PlayBackSE();
             for (int i = 0; i <= 5; i++)
             {
             battleDataforOnline.character_isSelected[i] = false;
@@ -148,6 +149,7 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 0;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -157,6 +159,7 @@ public class CharacterManager : MonoBehaviour
         }
         if(buttonName == "Attack2") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 1;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -166,6 +169,7 @@ public class CharacterManager : MonoBehaviour
         }
         if(buttonName == "Attack3") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 2;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -178,6 +182,7 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "BackButton")
             {
+            Debug.Log("ここに音が欲しければ流してね");
             for (int i = 0; i <= 5; i++)
             {
             battleDataforOnline.character_isSelected[i] = false;
@@ -189,6 +194,7 @@ public class CharacterManager : MonoBehaviour
         switch (buttonName)
         {
             case "1":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 0;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -202,6 +208,7 @@ public class CharacterManager : MonoBehaviour
             _ = SendGridData();
                 break;
             case "2":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 1;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -215,6 +222,7 @@ public class CharacterManager : MonoBehaviour
             _ = SendGridData();
                 break;
             case "3":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 2;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -256,6 +264,7 @@ public class CharacterManager : MonoBehaviour
         Vector2Int currentDir = GetMouseDirection();
         if (currentDir != _lastAttackDirection)
         {
+            SEManager.instance.PlayClickSE();
             _lastAttackDirection = currentDir;
             _ = SendGridData();
         }
@@ -341,6 +350,7 @@ public class CharacterManager : MonoBehaviour
 
     void TryMove(int moveX, int moveY, Vector2 posDelta)
     {
+    SEManager.instance.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
     int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
     int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
     int nextX = currentX + moveX;
@@ -486,6 +496,7 @@ public class CharacterManager : MonoBehaviour
     public async void ConfirmAttack()
     {
     Debug.Log("<color=white><b>[ConfirmAttack] 処理開始</b></color>");
+    Debug.Log("攻撃時の音が欲しかったらこの辺につければ良さそう");
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
@@ -651,14 +662,22 @@ public class CharacterManager : MonoBehaviour
 
     private void ApplyDamage(int targetId, int damage)
     {
+        float multiplier = 1.0f;
+        if(damage >= 0)// 攻撃or回復を分岐
+        {
+        SEManager.instance.PlayDamageSE();
         // 攻撃側のデバフ/バフ状態を確認
         bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
         bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
-
-        float multiplier = 1.0f;
         if (hasDown && hasUp) multiplier = 1.0f;
         else if (hasDown)     multiplier = 0.75f;
         else if (hasUp)       multiplier = 1.25f;
+        }
+
+        else// 回復
+        {
+            SEManager.instance.PlayHealSE();
+        }
 
         // 計算後のダメージをローカル変数に格納
         int finalDamage = Mathf.RoundToInt(damage * multiplier);
@@ -673,6 +692,7 @@ public class CharacterManager : MonoBehaviour
     {
     Debug.Log($"キャラ {targetId} は倒れた！");
     // オブジェクトを非表示にする、または墓標にするなどの演出
+    // 死亡時の音もここに流してね
     characters[targetId].gameObject.SetActive(false);
     // グリッド上の存在情報を消す
     int cx = battleDataforOnline.charactersBattleDatas[targetId].now_character_position.x;

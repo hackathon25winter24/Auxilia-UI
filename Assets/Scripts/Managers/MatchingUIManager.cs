@@ -55,13 +55,16 @@ public class MatchingUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Back":
+                SEManager.instance.PlayBackSE();
                 sceneData.next_scene_number = 1;
                 break;
             case "newmake":
+                SEManager.instance.PlayToNextSE();
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
                 OnClick_CreateRoomMatch();
                 break;
             case "ReRoad":
+                SEManager.instance.PlaySelectSE();
                 if (is_roading)break;
                 is_roading = true;
                 nowLoadingText.SetActive(true);
@@ -70,9 +73,11 @@ public class MatchingUIManager : MonoBehaviour
                 is_roading = false;
                 break;
             case "kensaku":
+                SEManager.instance.PlaySelectSE();
                 kensakuButton.SetActive(true);
                 break;
             case "kensakuEnter":
+                SEManager.instance.PlaySelectSE();
                 kensaku_room_name = kensakuInput.text;
     
                 // 【修正】現在の入力内容で即座に検索を実行する
@@ -80,6 +85,7 @@ public class MatchingUIManager : MonoBehaviour
                 kensakuButton.SetActive(false);
                 break;
             case "Backfromkensaku":
+                SEManager.instance.PlayBackSE();
                 kensakuButton.SetActive(false);
                 break;
             default:
@@ -145,6 +151,7 @@ public class MatchingUIManager : MonoBehaviour
 
     async void OnRoomSelected(int index)
     {
+        SEManager.instance.PlayToNextSE();
         if (matchingData.rooms[index].room_is_selected)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
