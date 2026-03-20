@@ -20,6 +20,8 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform CharacterUI;
     public RectTransform BigBackButton;
     public RectTransform settingUI;
+    public Slider bgmSlider;
+    public Slider seSlider;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -43,6 +45,28 @@ public class HomeUIManager : MonoBehaviour
         BigBackButton.gameObject.SetActive(false);
         settingUI.gameObject.SetActive(false);
         messageText.gameObject.SetActive(false);
+
+        // スライダーの初期値を設定
+        if (bgmSlider != null)
+        {
+            bgmSlider.value = PlayerPrefs.GetFloat("BGMVolume", 1.0f);
+            bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        }
+        if (seSlider != null)
+        {
+            seSlider.value = PlayerPrefs.GetFloat("SEVolume", 1.0f);
+            seSlider.onValueChanged.AddListener(OnSEVolumeChanged);
+        }
+    }
+
+    public void OnBGMVolumeChanged(float value)
+    {
+        BGMManager.instance?.SetVolume(value);
+    }
+
+    public void OnSEVolumeChanged(float value)
+    {
+        SEManager.instance?.SetVolume(value);
     }
     IEnumerator AnimateExit(int nextScene)
     {

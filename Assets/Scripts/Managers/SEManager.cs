@@ -41,6 +41,15 @@ public class SEManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        audioSource.volume = PlayerPrefs.GetFloat("SEVolume", 1.0f);
+    }
+
+    public void SetVolume(float volume)
+    {
+        audioSource.volume = volume;
+        PlayerPrefs.SetFloat("SEVolume", volume);
+        PlayerPrefs.Save();
     }
 
     public void Update()
