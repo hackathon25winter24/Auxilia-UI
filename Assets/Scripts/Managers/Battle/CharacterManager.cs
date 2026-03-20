@@ -827,6 +827,9 @@ public class CharacterManager : MonoBehaviour
 
         bool is1p = (playerData.user_id == data.Player1Id);
 
+        battleDataforOnline.player1_name = data.Player1Id;
+        battleDataforOnline.player2_name = data.Player2Id;
+
         // 自分原方・HP
         battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;
         battleDataforOnline.opponent_base_hp = is1p ? (int)data.BaseHp2 : (int)data.BaseHp1;
