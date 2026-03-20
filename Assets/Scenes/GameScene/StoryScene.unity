@@ -1267,7 +1267,7 @@ MonoBehaviour:
   storyManagerData: {fileID: 11400000, guid: ee4517df9ad7e93439920f1d97ae78b6, type: 2}
   storyCharacterData: {fileID: 11400000, guid: 287de79b24179594298e7248cb72d3cd, type: 2}
   backImage: {fileID: 525473961}
-  back_image: {fileID: 8608827522239398513, guid: 31381e1d1a8e9134c8c73955b1069bfa, type: 3}
+  back_image: {fileID: 8215654195337753780, guid: df4d293e204556247bf076d8d7172c92, type: 3}
   CharacterImage: {fileID: 853208695}
   character: {fileID: 853208694}
   DownArrow: {fileID: 652196039}
