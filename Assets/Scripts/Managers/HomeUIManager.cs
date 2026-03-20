@@ -233,7 +233,7 @@ public class HomeUIManager : MonoBehaviour
             case "HomeCharacter":
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateExit(-1));
-                StartCoroutine(AnimateBackKeyEnter());
+                // StartCoroutine(AnimateBackKeyEnter()); // Removed as we use the modal's close button
                 HomeCharacterSetUI.gameObject.SetActive(true);
                 isHomeCharacterSelecting = true;
                 break;
@@ -310,26 +310,12 @@ public class HomeUIManager : MonoBehaviour
         }
     }
 
+    /* 
     public void Update()
     {
         if (isHomeCharacterSelecting) 
-    {
-        float scrollInput = inputData.mouse_wheel.y;
-
-        if (scrollInput != 0)
         {
-            // 時間経過(Time.deltaTime)を考慮して滑らかに動かす
-            float moveAmount = scrollInput * scrollSpeed * Time.deltaTime * -1;
-            HomeCharacterSetUI.anchoredPosition += new Vector2(0, moveAmount);
-            if (HomeCharacterSetUI.anchoredPosition.y < -250)
-            {
-                HomeCharacterSetUI.anchoredPosition = new Vector2(0, -250);
-            }
-            if (HomeCharacterSetUI.anchoredPosition.y > 0)
-            {
-                HomeCharacterSetUI.anchoredPosition = new Vector2(0, 0);
-            }
+            // Custom scroll logic replaced by ScrollRect
         }
     }
-    }
-}
+    */}

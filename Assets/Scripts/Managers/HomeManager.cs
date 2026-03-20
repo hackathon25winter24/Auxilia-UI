@@ -21,6 +21,7 @@ public class HomeManager : MonoBehaviour
     public Sprite Sena;
     public Sprite Tsukiha;
     public Sprite Zina;
+    public Sprite Dana;
     public Image Player_icon;
     public Image HomeCharacter_icon;
     public Sprite First_squad_user;
@@ -103,6 +104,14 @@ public class HomeManager : MonoBehaviour
             HomeCharacter_icon.sprite = Fourth_squad;
             Player_icon.sprite = Fourth_squad_user;
             HomeCharacterName.text = "ジナイダ・ヤカーヴナ・ストレリツォーヴァ";
+        }
+
+         if(playerData.home_character_ID == 10)
+        {
+            CharacterImage.sprite = Dana;
+            HomeCharacter_icon.sprite = Fourth_squad;
+            Player_icon.sprite = Fourth_squad_user;
+            HomeCharacterName.text = "ダニール・アトラーヴィチ・カラマーゾフ";
         }
     }
 
