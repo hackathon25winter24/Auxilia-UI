@@ -32,6 +32,7 @@ public class CharacterManager : MonoBehaviour
     private int[] _lastSentX = new int[6];
     private int[] _lastSentY = new int[6];
     private Vector2Int _lastAttackDirection;
+    private bool _isFirstAttackFrame; // 連続クリック防止用
 
 
     private T GetSo<T>(T existing) where T : ScriptableObject
@@ -148,25 +149,28 @@ public class CharacterManager : MonoBehaviour
         if(buttonName == "Attack1") 
         {
             attack_number = 0;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
             _ = SendGridData();
         }
         if(buttonName == "Attack2") 
         {
             attack_number = 1;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
             _ = SendGridData();
         }
         if(buttonName == "Attack3") 
         {
             attack_number = 2;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
             _ = SendGridData();
         }
         
@@ -234,6 +238,7 @@ public class CharacterManager : MonoBehaviour
         if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
         {
             bool is1p = (battleDataforOnline.my_player_id == 0);
+            Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={playerData.user_id}</color>");
             await gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
         }
     }
@@ -258,7 +263,18 @@ public class CharacterManager : MonoBehaviour
         // 左クリックで攻撃を確定させる
         if (inputData.left_mouse_button_ispressed)
         {
+            if (_isFirstAttackFrame)
+            {
+                // ボタンが押されたまま（UIクリックの継続）なら確定させない
+                return;
+            }
+            Debug.Log("<color=white><b>[Update] 攻撃確定入力を検知</b></color>");
             ConfirmAttack();
+        }
+        else
+        {
+            // ボタンが離されたらガード解除
+            _isFirstAttackFrame = false;
         }
     }
     else 
@@ -469,14 +485,16 @@ public class CharacterManager : MonoBehaviour
 
     public async void ConfirmAttack()
     {
+    Debug.Log("<color=white><b>[ConfirmAttack] 処理開始</b></color>");
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
     int target = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_target;
 
+    Debug.Log($"[ConfirmAttack] selected_char={selected_character_id}, attack_num={attack_number}, cost={cost}, power={power}, targetType={target}");
+
     // 2. キャラクターが攻撃範囲内にいるかチェック
-    // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
     int hit_character = 0;
     if (target == 1 || target == 2)
     {
@@ -515,13 +533,24 @@ public class CharacterManager : MonoBehaviour
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
     {
         hit_character++;
-        battleDataforOnline.opponent_base_hp -= power;
+        
+        // 拠点へのダメージにも倍率を適用
+        bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
+        bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
+        float multiplier = 1.0f;
+        if (hasDown && hasUp) multiplier = 1.0f;
+        else if (hasDown)     multiplier = 0.75f;
+        else if (hasUp)       multiplier = 1.25f;
+
+        int finalBaseDamage = Mathf.RoundToInt(power * multiplier);
+        battleDataforOnline.opponent_base_hp -= finalBaseDamage;
+        
         await SendAttackInfo(-1);
         if (battleDataforOnline.opponent_base_hp <= 0)
-    {
-        battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
-        battleDataforOnline.game_end = true;
-    }
+        {
+            battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
+            battleDataforOnline.game_end = true;
+        }
     }
     }
 
@@ -605,7 +634,7 @@ public class CharacterManager : MonoBehaviour
         int sendBaseHp1 = is1p ? battleDataforOnline.base_hp : battleDataforOnline.opponent_base_hp;
         int sendBaseHp2 = is1p ? battleDataforOnline.opponent_base_hp : battleDataforOnline.base_hp;
 
-        Debug.Log($"<color=orange>[SendAttackInfo] attackerUid={attackerUid}, targetUid={targetUid}, targetNewHp={targetNewHp}, currentTurn={battleDataforOnline.now_moving_player}</color>");
+        Debug.Log($"<color=orange><b>[SendAttackInfo] 攻撃送信</b>: Side={(is1p ? "1P" : "2P")} Attacker={attackerUid}, Target={targetUid}, NewHP={targetNewHp}</color>");
 
         await gameConnector.SendAttack(
             roomData.room_id, 
@@ -622,23 +651,22 @@ public class CharacterManager : MonoBehaviour
 
     private void ApplyDamage(int targetId, int damage)
     {
-    // HPを減らす
-    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = (int)(damage * 0.75);
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0])
-    {
-        now_damage = (int)(damage * 1.25);
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = damage;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = damage;
-    }
-    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= now_damage;
+        // 攻撃側のデバフ/バフ状態を確認
+        bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
+        bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
 
-    Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
+        float multiplier = 1.0f;
+        if (hasDown && hasUp) multiplier = 1.0f;
+        else if (hasDown)     multiplier = 0.75f;
+        else if (hasUp)       multiplier = 1.25f;
+
+        // 計算後のダメージをローカル変数に格納
+        int finalDamage = Mathf.RoundToInt(damage * multiplier);
+        
+        // HPを減らす
+        battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= finalDamage;
+
+        Debug.Log($"<color=orange><b>[ApplyDamage]</b> Target={targetId}, Base={damage}, Mult={multiplier}, Final={finalDamage}, RemainingHP={battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}</color>");
     }
 
     private void ProcessDeath(int targetId)
@@ -888,7 +916,7 @@ public class CharacterManager : MonoBehaviour
         {
             foreach (var ai in data.AttackInfos)
             {
-                Debug.Log($"<color=red>[GetBattleData] 攻撃情報を受信: RoomID={ai.RoomId}, Side={ai.AttackerSide}, CharaID={ai.AttackerCharacterId}, Type={ai.AttackType}</color>");
+                Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={ai.AttackerSide}, AttackerID={ai.AttackerCharacterId}, Type={ai.AttackType}</color>");
             }
         }
 
