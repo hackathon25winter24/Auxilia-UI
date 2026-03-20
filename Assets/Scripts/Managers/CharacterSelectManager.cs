@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic; // 辞書用に追加
 
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -38,11 +40,18 @@ public class CharacterSelectManager : MonoBehaviour
     public TMP_Text passiveExplanation;
     public Image passiveRange;
 
-    [Header("キャラクターデータ (ScriptableObject)")]
-    public CharacterData characterDataAsset;
+    [Header("演出用UI")]
+    public CanvasGroup faderCanvasGroup;
+    public RectTransform detailPanelRect;
+    public float fadeDuration = 0.4f;
+    public float scaleDuration = 0.1f;
 
     private int currentSelectingSlotIndex = -1;
     private int currentViewingCharIndex = -1;
+    private bool isAnimating = false;
+
+    [Header("キャラクターデータ (ScriptableObject)")]
+    public CharacterData characterDataAsset;
 
     [Header("プレイヤーデータ（ScriptableObject）")]
     public PlayerData playerData;
@@ -54,15 +63,16 @@ public class CharacterSelectManager : MonoBehaviour
     public GameConnector gameConnector;
 
 
+
     [System.Serializable]
     public class AttackData
     {
         public TMP_Text attackName;
         public TMP_Text attackDamage;
         public TMP_Text attackCost;
-        // public TMP_Text attackSpecial;
         public Image attackRange;
     }
+
     void Awake()
     {
         if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
@@ -73,77 +83,79 @@ public class CharacterSelectManager : MonoBehaviour
         characterSelectPanel.SetActive(false);
         characterDetailPanel.SetActive(false);
 
-        // 編成枠ボタンのイベント登録
+        if (faderCanvasGroup != null)
+        {
+            faderCanvasGroup.alpha = 0f;
+            faderCanvasGroup.gameObject.SetActive(false);
+        }
+
+        // イベント登録
         for (int i = 0; i < teamSlotButtons.Length; i++)
         {
             int slotIndex = i;
-            teamSlotButtons[i].onClick.AddListener(() => OpenSelectPanel(slotIndex));
+            teamSlotButtons[i].onClick.AddListener(() => OpenSelectPanelWithFade(slotIndex));
         }
 
-        // 通常画面操作ボタンのイベント登録
         randomFormation.onClick.AddListener(RandomFormation);
         backToTitle.onClick.AddListener(BackToTitle);
 
-        // パネル操作ボタンのイベント登録
-        closeSelectPanelButton.onClick.AddListener(CloseSelectPanel);
-        closeDetailButton.onClick.AddListener(CloseDetailPanel);
-        confirmButton.onClick.AddListener(ConfirmSelection);
+        closeSelectPanelButton.onClick.AddListener(CloseSelectPanelWithFade);
+        closeDetailButton.onClick.AddListener(CloseDetailPanelWithAnimation);
+        confirmButton.onClick.AddListener(ConfirmSelectionWithFade);
 
-        // リストを生成
-         GenerateCharacterList();
-
-        // シーン開始時に編成を読み込む
+        GenerateCharacterList();
         LoadFormation();
     }
 
     void GenerateCharacterList()
     {
-        // 既存データの characters 配列を取得
         CharactersData[] characters = characterDataAsset.characters;
 
         for (int i = 0; i < characters.Length; i++)
         {
             int charIndex = i;
-
             GameObject btnObj = Instantiate(characterButtonPrefab, scrollViewContent);
-            Image btnImage = btnObj.GetComponent<Image>();
 
-            // 既存データのプロパティ（default_sprite）から画像を取得して適用
-            btnImage.sprite = characters[i].select_image;
+            // TryGetComponentを使用して安全に取得
+            if (btnObj.TryGetComponent<Image>(out Image btnImage))
+            {
+                btnImage.sprite = characters[i].select_image;
+            }
 
-            Button btn = btnObj.GetComponent<Button>();
-            btn.onClick.AddListener(() => OnCharacterListButtonClicked(charIndex));
+            if (btnObj.TryGetComponent<Button>(out Button btn))
+            {
+                btn.onClick.AddListener(() => OpenDetailPanelWithAnimation(charIndex));
+            }
         }
     }
 
     // PlayerDataから編成を読み込む
     void LoadFormation()
     {
-        for(int i = 0; i < teamSlotButtons.Length; i++)
+        for (int i = 0; i < teamSlotButtons.Length; i++)
         {
-            // スロットのインデックス(0~2)に応じたIDを取得
-            int savedCharId = GetSavedCharacterId(i);
-
-            // 保存されているIDからキャラクターデータを検索
-            CharactersData savedChar = GetCharacterById(savedCharId);
-
-            if (savedChar != null)
-            {
-                teamSlotImages[i].sprite = savedChar.select_image;
-                teamSlotImages[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                // データがない場合は画像を非表示にする
-                teamSlotImages[i].sprite = defaultImage;
-                teamSlotImages[i].gameObject.SetActive(true);
-            }
+            UpdateSlotUI(i);
         }
-
         PartyHPandMOV();
     }
 
-    // スロット番号に応じた PlayerData の変数を読み込むヘルパーメソッド
+    // --- 新規追加: スロットのUI更新を共通化 ---
+    void UpdateSlotUI(int slotIndex)
+    {
+        int savedCharId = GetSavedCharacterId(slotIndex);
+        CharactersData savedChar = GetCharacterById(savedCharId);
+
+        if (savedChar != null)
+        {
+            teamSlotImages[slotIndex].sprite = savedChar.select_image;
+        }
+        else
+        {
+            teamSlotImages[slotIndex].sprite = defaultImage;
+        }
+        teamSlotImages[slotIndex].gameObject.SetActive(true);
+    }
+
     int GetSavedCharacterId(int slotIndex)
     {
         switch (slotIndex)
@@ -155,7 +167,6 @@ public class CharacterSelectManager : MonoBehaviour
         }
     }
 
-    // スロット番号に応じた PlayerData の変数に保存するヘルパーメソッド
     void SaveCharacterId(int slotIndex, int id)
     {
         switch (slotIndex)
@@ -166,50 +177,59 @@ public class CharacterSelectManager : MonoBehaviour
         }
     }
 
-    // IDからキャラクターデータを検索するヘルパーメソッド
     CharactersData GetCharacterById(int id)
     {
         foreach (var charData in characterDataAsset.characters)
         {
-            // キャラクターが見つかったらそのデータを返す
-            if (charData.default_id == id)
-            {
-                return charData;
-            }
+            if (charData.default_id == id) return charData;
         }
-        return null; // 見つからなかった場合
+        return null;
     }
 
-    async void OpenSelectPanel(int slotIndex)
+
+    void OpenSelectPanelWithFade(int slotIndex)
     {
-        SEManager.instance.PlaySelectSE();
+        if (isAnimating) return;
+        currentSelectingSlotIndex = slotIndex;
+         SEManager.instance.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
         characterSelectPanel.SetActive(true);
         if (gameConnector != null) await gameConnector.UpdateUser();
+         StartCoroutine(FadeSequence(true));
     }
 
-    async void CloseSelectPanel()
+    void CloseSelectPanelWithFade()
     {
-        SEManager.instance.PlayBackSE();
+        if (isAnimating) return;
+        StartCoroutine(FadeSequence(false));
+    }
+
+    void ConfirmSelectionWithFade()
+    {
+        if (isAnimating || currentViewingCharIndex < 0) return;
+              SEManager.instance.PlayBackSE();
         characterSelectPanel.SetActive(false);
         if (gameConnector != null) await gameConnector.UpdateUser();
+        StartCoroutine(ConfirmSequence());
+
     }
 
-    void OnCharacterListButtonClicked(int charIndex)
+    void OpenDetailPanelWithAnimation(int charIndex)
     {
+        if (isAnimating) return;
+
         currentViewingCharIndex = charIndex;
 
-        // 既存データのプロパティから詳細用画像を取得
-        detailCharacterImage.sprite = characterDataAsset.characters[charIndex].detail_image;
+        // 対象のキャラクターデータをキャッシュして可読性を向上
+        CharactersData character = characterDataAsset.characters[charIndex];
 
-        int hp = characterDataAsset.characters[charIndex].default_hp;
-        int moveCost = characterDataAsset.characters[charIndex].default_move_cost;
-        hpText.text = hp.ToString();
-        moveCostText.text = moveCost.ToString();
-        characterName.text = characterDataAsset.characters[charIndex].default_name_japanese;
-
-        var characterAttacks = characterDataAsset.characters[charIndex].attacks;
-        for(int i = 0; i < 3; i++)
+        detailCharacterImage.sprite = character.detail_image;
+        hpText.text = character.default_hp.ToString();
+        moveCostText.text = character.default_move_cost.ToString();
+        characterName.text = character.default_name_japanese;
+        // 設定されている攻撃データ数とUIの枠数の少ない方に合わせてループ（エラー防止）
+        int attackCount = Mathf.Min(attacks.Length, character.attacks.Length);
+        for (int i = 0; i < attackCount; i++)
         {
             // UI側のスロット自体のチェック
             if (attacks == null || i >= attacks.Length || attacks[i] == null)
@@ -232,13 +252,18 @@ public class CharacterSelectManager : MonoBehaviour
             if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = characterAttacks[i].default_attack_power.ToString();
             if (attacks[i].attackCost != null) attacks[i].attackCost.text = characterAttacks[i].default_attack_cost.ToString();
             if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = characterAttacks[i].attack_range_image;
+
         }
 
-        characterDetailPanel.SetActive(true);
+        StartCoroutine(ScaleAnimation(true));
     }
 
-    void CloseDetailPanel()
+    void CloseDetailPanelWithAnimation()
     {
+
+        if (isAnimating) return;
+        StartCoroutine(ScaleAnimation(false));
+
         SEManager.instance.PlayBackSE();
         characterDetailPanel.SetActive(false);
     }
@@ -270,35 +295,22 @@ public class CharacterSelectManager : MonoBehaviour
     {
         SEManager.instance.PlaySelectSE();
         CharactersData[] characters = characterDataAsset.characters;
-        System.Random random = new System.Random();
+        if (characters.Length == 0) return; // データが存在しない場合のエラー回避
 
-        playerData.character_formation_one = random.Next(0, characters.Length);
-        playerData.character_formation_two = random.Next(0, characters.Length);
-        playerData.character_formation_three = random.Next(0, characters.Length);
-        // Debug.Log("無作為な編成が作製されました");
+        // インデックスではなく、キャラクターのIDを保存するように修正
+        playerData.character_formation_one = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
+        playerData.character_formation_two = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
+        playerData.character_formation_three = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
 
+        // UIの更新処理（共通化したメソッドを使用）
         for (int i = 0; i < teamSlotButtons.Length; i++)
         {
-            // スロットのインデックス(0~2)に応じたIDを取得
-            int savedCharId = GetSavedCharacterId(i);
-
-            // 保存されているIDからキャラクターデータを検索
-            CharactersData savedChar = GetCharacterById(savedCharId);
-
-            if (savedChar != null)
-            {
-                teamSlotImages[i].sprite = savedChar.select_image;
-                teamSlotImages[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                // データがない場合は画像を非表示にする
-                teamSlotImages[i].sprite = defaultImage;
-                teamSlotImages[i].gameObject.SetActive(true);
-            }
-
-            PartyHPandMOV();
+            UpdateSlotUI(i);
         }
+
+
+        // ステータス更新は全スロットの書き換えが終わった後に1回だけ実行する
+        PartyHPandMOV();
 
         if (gameConnector != null) await gameConnector.UpdateUser();
     }
@@ -307,17 +319,99 @@ public class CharacterSelectManager : MonoBehaviour
     {
         SEManager.instance.PlayToNextSE();
         sceneData.next_scene_number = 1;
+        // 実際のシーン遷移処理が必要であれば、ここに記述します
+        // SceneManager.LoadScene(sceneData.next_scene_number);
     }
 
     void PartyHPandMOV()
     {
         int partyHP = characterDataAsset.characters[playerData.character_formation_one].default_hp
-            + characterDataAsset.characters[playerData.character_formation_two].default_hp
-            + characterDataAsset.characters[playerData.character_formation_three].default_hp;
+                    + characterDataAsset.characters[playerData.character_formation_two].default_hp
+                    + characterDataAsset.characters[playerData.character_formation_three].default_hp;
+
         int partyMov = characterDataAsset.characters[playerData.character_formation_one].default_move_cost
-            + characterDataAsset.characters[playerData.character_formation_two].default_move_cost
-            + characterDataAsset.characters[playerData.character_formation_three].default_move_cost;
+                     + characterDataAsset.characters[playerData.character_formation_two].default_move_cost
+                     + characterDataAsset.characters[playerData.character_formation_three].default_move_cost;
+
         partyHPText.text = partyHP.ToString();
         partyMovText.text = partyMov.ToString();
+    }
+
+    IEnumerator Fade(float targetAlpha, float duration)
+    {
+        float startAlpha = faderCanvasGroup.alpha;
+        float time = 0;
+
+        faderCanvasGroup.gameObject.SetActive(true);
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            faderCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
+            yield return null;
+        }
+
+        faderCanvasGroup.alpha = targetAlpha;
+        if (targetAlpha <= 0f)
+        {
+            faderCanvasGroup.gameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator FadeSequence(bool opening)
+    {
+        isAnimating = true;
+        yield return StartCoroutine(Fade(1f, fadeDuration));
+
+        characterSelectPanel.SetActive(opening);
+
+        yield return StartCoroutine(Fade(0f, fadeDuration));
+        isAnimating = false;
+    }
+
+    IEnumerator ConfirmSequence()
+    {
+        isAnimating = true;
+        yield return StartCoroutine(Fade(1f, fadeDuration));
+
+        CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
+
+        // データ保存とUI更新
+        SaveCharacterId(currentSelectingSlotIndex, selectedChar.default_id);
+        UpdateSlotUI(currentSelectingSlotIndex); // 共通化したメソッドを使用
+        PartyHPandMOV();
+
+        characterDetailPanel.SetActive(false);
+        characterSelectPanel.SetActive(false);
+
+        yield return StartCoroutine(Fade(0f, fadeDuration));
+        isAnimating = false;
+    }
+
+    IEnumerator ScaleAnimation(bool opening)
+    {
+        isAnimating = true;
+
+        Vector3 startScale = opening ? Vector3.zero : Vector3.one;
+        Vector3 targetScale = opening ? Vector3.one : Vector3.zero;
+
+        if (opening) characterDetailPanel.SetActive(true);
+
+        detailPanelRect.localScale = startScale;
+        float time = 0;
+
+        while (time < scaleDuration)
+        {
+            time += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, time / scaleDuration);
+            detailPanelRect.localScale = Vector3.Lerp(startScale, targetScale, t);
+            yield return null;
+        }
+
+        detailPanelRect.localScale = targetScale;
+
+        if (!opening) characterDetailPanel.SetActive(false);
+
+        isAnimating = false;
     }
 }

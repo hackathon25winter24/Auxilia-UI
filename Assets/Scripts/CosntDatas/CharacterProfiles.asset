@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf5ffeadd2018b46be211f474c1b804, type: 3}
+  m_Name: CharacterProfiles
+  m_EditorClassIdentifier: 
+  _char_profs:
+  - _image_mini: {fileID: 21300000, guid: 021195563e16b634b9c1007e53444b34, type: 3}
+    _image_big: {fileID: 21300000, guid: e7191a992edfa1b4f8e2b3d4fa10b425, type: 3}
+    _image_detail: {fileID: 21300000, guid: ce1780b6a49ea524ea5cb6a377e398f8, type: 3}
+    _name: "\u30BD\u30D5\u30A3\u30FC\u30FB\u30DE\u30E4\u30FB\u30D5\u30ED\u30FC\u30EC\u30B9"
+    _gender: "\u5973"
+    _age: "24\u6B73"
+    _birthday: 6/26
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E00\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001A\u81EA\u6CBB\u533A\u90CA\u5916"
+    _blood_type: A
+    _height: 168cm
+    _weight: 57kg
+    _hobby: "\u82B1\u898B\u3001\u30A2\u30D5\u30BF\u30CC\u30FC\u30F3\u30C6\u30A3\u30FC"
+  - _image_mini: {fileID: 21300000, guid: eb364d800dc08204bb0c3804cc093c0c, type: 3}
+    _image_big: {fileID: 21300000, guid: 20f7019905f9c8f438849b3a46818885, type: 3}
+    _image_detail: {fileID: 21300000, guid: 4bd2e609981c961448e98e0d7dd7707a, type: 3}
+    _name: "\u30B8\u30E5\u30FC\u30C9\u30FB\u30A2\u30FC\u30CE\u30EB\u30C9\u30FB\u30C0\u30AC\u30FC"
+    _gender: "\u7537"
+    _age: "27\u6B73"
+    _birthday: 8/10
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E00\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD"
+    _blood_type: A
+    _height: 178cm
+    _weight: 87kg
+    _hobby: "\u7B4B\u30C8\u30EC"
+  - _image_mini: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
+    _image_big: {fileID: 21300000, guid: 56d8bbabda7abe742bfa1bfe68113e1b, type: 3}
+    _image_detail: {fileID: 0}
+    _name: "\u30CA\u30C7\u30A3\u30A2\u30FB\u30DF\u30EC\u30FC\u30CC\u30FB\u30A8\u30A4\u30AE\u30FC\u30E6\u30FB\u30C9\u30A5\u30FB\u30E1\u30C7\u30A5\u30B7\u30FC\u30CC"
+    _gender: "\u5973"
+    _age: "19\u6B73"
+    _birthday: 10/9
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E8C\u90E8\u968A"
+    _birthplace: 
+    _blood_type: A
+    _height: 150cm
+    _weight: 45kg
+    _hobby: "\u72AC\u306E\u4E16\u8A71"
+  - _image_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
+    _image_big: {fileID: 21300000, guid: 32fd8ffc9e56f964fb3c7da76d81e6e2, type: 3}
+    _image_detail: {fileID: 0}
+    _name: "\u4E09\u96F2 \u6708\u8449(\u307F\u304F\u3082 \u3064\u304D\u306F)"
+    _gender: "\u5973"
+    _age: "16\u6B73"
+    _birthday: 1/13
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E09\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD"
+    _blood_type: AB
+    _height: 149cm
+    _weight: 45kg
+    _hobby: "\u663C\u5BDD"
+  - _image_mini: {fileID: 21300000, guid: 222d65468116a924cbbcb2670e6a6bf0, type: 3}
+    _image_big: {fileID: 21300000, guid: cea0a661ec406e14185d2d2a39788041, type: 3}
+    _image_detail: {fileID: 21300000, guid: 989f56772644e4871ae17e8a2b6951a3, type: 3}
+    _name: "\u85E4\u539F \u6247\u8863(\u3075\u3058\u308F\u3089 \u3042\u304A\u3044)"
+    _gender: "\u5973"
+    _age: "22\u6B73"
+    _birthday: 2/8
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E09\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001A\u81EA\u6CBB\u533A"
+    _blood_type: B
+    _height: 163cm
+    _weight: 53kg
+    _hobby: "\u65E5\u672C\u821E\u8E0A\u3001\u6599\u7406"
+  - _image_mini: {fileID: 21300000, guid: 9dbeb0b5ba320454c9c0f4150d24f569, type: 3}
+    _image_big: {fileID: 21300000, guid: 8bf312f33c9d66b43acd679d73b901e7, type: 3}
+    _image_detail: {fileID: 21300000, guid: cf4697800d5b8e64397536040f6ed249, type: 3}
+    _name: "\u4E00\u6761 \u661F\u51EA(\u3044\u3061\u3058\u3087\u3046 \u305B\u306A)"
+    _gender: "\u5973"
+    _age: "19\u6B73"
+    _birthday: 10/3
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E09\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD"
+    _blood_type: A
+    _height: 161cm
+    _weight: 49kg
+    _hobby: "\u304A\u3057\u3083\u3079\u308A\u3001\u83EF\u9053"
+  - _image_mini: {fileID: 21300000, guid: 23e6cb9594be1e340a911bd0cf7fe4b3, type: 3}
+    _image_big: {fileID: 21300000, guid: 5bf0d7b9d22fc744194e08dc50857ce5, type: 3}
+    _image_detail: {fileID: 0}
+    _name: "\u30D9\u30EC\u30CB\u30B9\u30FB\u30A4\u30CD\u30B9\u30FB\u30DE\u30EB\u30F4\u30A7\u30E9\u30F3\u30B9"
+    _gender: "\u5973"
+    _age: "18\u6B73"
+    _birthday: 11/27
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E8C\u90E8\u968A"
+    _birthplace: "\u4E16\u754C\u65B0\u79E9\u5E8F\u9023\u5408"
+    _blood_type: B
+    _height: 160cm
+    _weight: 53kg
+    _hobby: 
+  - _image_mini: {fileID: 21300000, guid: d485103fc44d7944fb4539e251e75839, type: 3}
+    _image_big: {fileID: 21300000, guid: 9324b25e7b561004e8d845090a3aeca6, type: 3}
+    _image_detail: {fileID: 21300000, guid: 96dd63c2cbe6ad84b9229c5070b38a42, type: 3}
+    _name: "\u671B\u6708 \u5343\u4EE3(\u3082\u3061\u3064\u304D \u3061\u3088)"
+    _gender: "\u5973"
+    _age: "22\u6B73"
+    _birthday: 10/4
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u4E09\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD"
+    _blood_type: A
+    _height: 165cm
+    _weight: 62kg
+    _hobby: "\u5200\u3092\u773A\u3081\u308B\u3053\u3068 "
+  - _image_mini: {fileID: 21300000, guid: f24e5669e4b6e124a8cd94511ed5e2f3, type: 3}
+    _image_big: {fileID: 21300000, guid: 8c2e13a73c74fe24aab0e432edc1d441, type: 3}
+    _image_detail: {fileID: 21300000, guid: 23d28333ff07e26449540cdd9507602a, type: 3}
+    _name: "\u65B0\u8457 \u4E45\u7121\u5B50(\u3057\u3093\u3061\u3087 \u304F\u306A\u3057)"
+    _gender: "\u5973"
+    _age: "19\u6B73"
+    _birthday: 8/24
+    _affiliation: traP
+    _birthplace: "\u5927\u5CA1\u5C71"
+    _blood_type: A
+    _height: 166cm
+    _weight: 56kg
+    _hobby: "\u30B2\u30FC\u30E0\u3001\u7D75\u3092\u63CF\u304F\u3053\u3068"
+  - _image_mini: {fileID: 21300000, guid: a960522c0846b80429b90f7345017071, type: 3}
+    _image_big: {fileID: 21300000, guid: 0febf08a02c0ff94b9b72c60e78b7d96, type: 3}
+    _image_detail: {fileID: 21300000, guid: 1a83532e305104e5e9250849fde44ece, type: 3}
+    _name: "\u30B8\u30CA\u30A4\u30C0\u30FB\u30E4\u30AB\u30FC\u30F4\u30CA\u30FB\u30B9\u30C8\u30EC\u30EA\u30C4\u30A9\u30FC\u30F4\u30A1"
+    _gender: "\u5973"
+    _age: "14\u6B73"
+    _birthday: 2/2
+    _affiliation: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD\u3001\u5E1D\u56FD\u56FD\u9632\u8ADC\u5831\u7279\u52D9\u6A5F\u95A2\u7B2C\u56DB\u90E8\u968A"
+    _birthplace: "\u6771\u65B9\u9023\u5408\u8AF8\u90A6\u5E1D\u56FD"
+    _blood_type: A
+    _height: 147cm
+    _weight: 41kg
+    _hobby: "\u5C0F\u9CE5\u306B\u990C\u3084\u308A"
