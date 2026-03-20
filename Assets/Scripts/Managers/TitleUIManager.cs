@@ -88,7 +88,14 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            sceneData.next_scene_number = 1;
+            if(playerData.story_progress == 1)
+            {
+                storyManagerData.now_story_number = 0;
+                sceneData.next_scene_number = 8;
+            }else
+            {
+                sceneData.next_scene_number = 1;
+            }
                 break;
             case "GotoSignup":
             login_ui.SetActive(false);
