@@ -330,6 +330,38 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<RoomMatch> UpdateRoomMatch(int roomId, string roomName, string ownerId, bool isGaming)
+    {
+        try
+        {
+            var request = new UpdateRoomMatchRequest 
+            { 
+                RoomId = roomId, 
+                RoomName = roomName, 
+                IsGaming = isGaming,
+                OwnerId = ownerId
+            };
+
+            // サーバーへ送信
+            var response = await _roomMatchClient.UpdateRoomMatchAsync(request);
+
+            // response.Room が実データを持っている構造
+            Debug.Log($"<color=cyan>Room Updated:</color> ID={response.Room.RoomId}, Name={response.Room.RoomName}");
+            return response.Room;
+        }
+        catch (RpcException e)
+        {
+            string errorMessage = e.StatusCode switch
+            {
+                StatusCode.InvalidArgument => "部屋名が正しくありません（10文字以内）。",
+                StatusCode.Internal => "サーバーエラーで部屋を更新できませんでした。",
+                _ => $"部屋更新エラー: {e.Status.Detail}"
+            };
+            ShowErrorMessage(errorMessage);
+            return null;
+        }
+    }
+
     public async Task<List<RoomMatch>> GetAllRoomMatch()
     {
         try
