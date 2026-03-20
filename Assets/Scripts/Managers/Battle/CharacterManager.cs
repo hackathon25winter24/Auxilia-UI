@@ -689,7 +689,6 @@ public class CharacterManager : MonoBehaviour
             }
         }
         }
-        }
     }
 
     private Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)
