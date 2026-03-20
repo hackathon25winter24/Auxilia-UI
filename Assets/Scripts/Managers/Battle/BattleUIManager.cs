@@ -17,6 +17,10 @@ public class BattleUIManager : MonoBehaviour
     public Image characterStates;
     public RectTransform backfromStates;
     public Sprite[] characterStatesImage;
+    public CharacterManager characterManager;
+    public TextMeshProUGUI logText;
+    private System.Collections.Generic.List<string> logs = new System.Collections.Generic.List<string>();
+    private const int MaxLogs = 10;
     
     public void InitUI()
     {
@@ -36,6 +40,19 @@ public class BattleUIManager : MonoBehaviour
         shadow.gameObject.SetActive(false);
         characterStates.gameObject.SetActive(false);
         backfromStates.gameObject.SetActive(false);
+
+        if (characterManager != null)
+        {
+            characterManager.OnAttackExecuted += HandleAttackExecuted;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (characterManager != null)
+        {
+            characterManager.OnAttackExecuted -= HandleAttackExecuted;
+        }
     }
 
     void Update()
@@ -114,6 +131,56 @@ public class BattleUIManager : MonoBehaviour
             characterStates.gameObject.SetActive(false);
             backfromStates.gameObject.SetActive(false);
                 break;
+        }
+    }
+
+    private void HandleAttackExecuted(CharacterManager.AttackEventData data)
+    {
+        string attackerName = GetCharacterName(data.attackerUniqueId);
+        string targetName = data.targetUniqueId == 0 ? "拠点" : GetCharacterName(data.targetUniqueId);
+
+        string logMessage = "";
+        if (data.isPlayerAttack)
+        {
+            logMessage = $"<color=#5fb3ff>[味方]</color> {attackerName}の攻撃！ {targetName}に {data.finalDamage} ダメージ！";
+        }
+        else
+        {
+            // 相手の攻撃
+            logMessage = $"<color=#ff5f5f>[敵]</color> {attackerName}の攻撃！";
+            if (data.targetUniqueId != 0 || data.finalDamage != 0)
+            {
+                logMessage += $" {targetName}に {data.finalDamage} ダメージ！";
+            }
+        }
+
+        AddLog(logMessage);
+    }
+
+    private string GetCharacterName(uint uniqueId)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (battleDataforOnline.charactersBattleDatas[i].unique_id == uniqueId)
+            {
+                int charId = battleDataforLocal.character_id[i];
+                if (charId >= 0 && charId < characterData.characters.Length)
+                {
+                    return characterData.characters[charId].default_name_japanese;
+                }
+            }
+        }
+        return "不明";
+    }
+
+    private void AddLog(string message)
+    {
+        logs.Add(message);
+        if (logs.Count > MaxLogs) logs.RemoveAt(0);
+
+        if (logText != null)
+        {
+            logText.text = string.Join("\n", logs);
         }
     }
 }
