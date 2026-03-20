@@ -689,6 +689,13 @@ public class CharacterManager : MonoBehaviour
             }
         }
         }
+        }
+    }
+
+    private Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)
+    {
+        if (is1p) return new Vector2Int(x, y);
+        return new Vector2Int(7 - x, 4 - y);
     }
 
     void SendBattleData()
@@ -705,7 +712,10 @@ public class CharacterManager : MonoBehaviour
             if (cx != _lastSentX[i] || cy != _lastSentY[i])
             {
                 uint uid = battleDataforOnline.charactersBattleDatas[i].unique_id;
-                _ = gameConnector.SendMove(rid, pid, (int)uid, cx, cy);
+                bool is1p = (battleDataforOnline.my_player_id == 0);
+                Vector2Int converted = ConvertCoordinateForServer(cx, cy, is1p);
+                Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y})</color>");
+                _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y);
                 _lastSentX[i] = cx;
                 _lastSentY[i] = cy;
             }
@@ -749,8 +759,9 @@ public class CharacterManager : MonoBehaviour
             gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {data.Grids.Count} 個のGridInfoを受信</color>");
             foreach (var g in data.Grids)
             {
-                int gx = (int)g.PositionX;
-                int gy = (int)g.PositionY;
+                Vector2Int converted = ConvertCoordinateForServer((int)g.PositionX, (int)g.PositionY, is1p);
+                int gx = converted.x;
+                int gy = converted.y;
                 if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
                 {
                     gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
@@ -810,7 +821,8 @@ public class CharacterManager : MonoBehaviour
             {
                 battleDataforOnline.charactersBattleDatas[targetIdx].unique_id = c.Id;
                 battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp = (int)c.Hp;
-                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = new Vector2Int((int)c.PositionX, (int)c.PositionY);
+                Vector2Int converted = ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is1p);
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = converted;
             }
         }
 
@@ -827,7 +839,7 @@ public class CharacterManager : MonoBehaviour
         sb.AppendLine($"  1PTurn={data.Is1PTurn}  BaseHp1={data.BaseHp1}  BaseHp2={data.BaseHp2}  IsFinished={data.IsFinished}  Winner={data.WinnerPlayerId}");
         foreach (var c in data.Characters)
         {
-            sb.AppendLine($"  Chara: Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
+            sb.AppendLine($"  Chara: UniqueId={c.Id}  Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
         }
         Debug.Log(sb.ToString());
 

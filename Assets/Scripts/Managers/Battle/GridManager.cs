@@ -14,11 +14,27 @@ public class GridManager : MonoBehaviour
     public Sprite MakibishiGrid;
     public Sprite LandmineGrid;
 
+    public GameConnector gameConnector;
+    public RoomData roomData;
+    public PlayerData playerData;
+
     // デバッグ用：前フレームのグリッド状態キャッシュ（変化検知用）
     private int[,] _prevGridState = new int[5, 8];
 
+    private T GetSo<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        var targets = Resources.FindObjectsOfTypeAll<T>();
+        if (targets.Length > 0) return targets[0];
+        return null;
+    }
+
     void Awake()
     {
+        roomData = GetSo(roomData);
+        playerData = GetSo(playerData);
+        gameConnector = FindFirstObjectByType<GameConnector>();
+
         // 全グリッドの初期化
         for (int y = 0; y < 5; y++)
         {
@@ -153,6 +169,13 @@ public class GridManager : MonoBehaviour
         if (changed)
         {
             Debug.Log($"<color=lime>[GridManager] グリッド変化検知:\n{logSb}</color>");
+            
+            // サーバーに全グリッドデータを送信
+            if (gameConnector != null && roomData != null && playerData != null)
+            {
+                bool is1p = (battleDataforOnline.my_player_id == 0);
+                _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, is1p);
+            }
         }
     }
 }

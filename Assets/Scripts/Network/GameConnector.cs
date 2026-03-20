@@ -567,6 +567,38 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, bool is1p)
+    {
+        var gridUpdate = new GridUpdateAction();
+        for (int y = 0; y < 5; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                int sendX = is1p ? x : 7 - x;
+                int sendY = is1p ? y : 4 - y;
+
+                gridUpdate.Grids.Add(new GridInfo
+                {
+                    PositionX = (uint)sendX,
+                    PositionY = (uint)sendY,
+                    GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x]
+                });
+            }
+        }
+
+        var action = new PlayerAction { RoomId = (uint)roomId, PlayerId = playerId, GridUpdate = gridUpdate };
+
+        try
+        {
+            await _battleClient.ApplyGridUpdateAsync(action);
+            Debug.Log($"<color=lime>[GridUpdate] サーバーに全グリッドデータを送信しました (Room:{roomId})</color>");
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"グリッド情報の送信に失敗しました: {e.Status.Detail}");
+        }
+    }
+
 
     public async Task StopStream()
     {
