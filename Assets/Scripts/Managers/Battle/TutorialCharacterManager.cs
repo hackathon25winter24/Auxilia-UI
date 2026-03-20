@@ -16,6 +16,7 @@ public class TutorialCharacter : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
+    public StoryManagerData storyManagerData;
 
     [Header("共有UI・共通参照")]
     public RectTransform AttackButton;
@@ -78,10 +79,13 @@ public class TutorialCharacter : MonoBehaviour
         }
         else
         {
+            if (storyManagerData.Tutorial_progress > 1)
+            {
             if (inputData.up_key_ispressed) TryMove(0, -1, new Vector2(0, 50));
             else if (inputData.down_key_ispressed) TryMove(0, 1, new Vector2(0, -50));
             else if (inputData.right_key_ispressed) TryMove(1, 0, new Vector2(50, 0));
             else if (inputData.left_key_ispressed) TryMove(-1, 0, new Vector2(-50, 0));
+            }
         }
     }
 
@@ -232,16 +236,19 @@ public class TutorialCharacter : MonoBehaviour
             battleDataforLocal.now_my_cost -= cost; 
             is_attacking = false;
             is_selected = false;
+            ClearAttackRange();
         }else
         {
             is_attacking = false;
             is_selected = false;
+            ClearAttackRange();
         }
         }
         if(inputData.right_mouse_button_ispressed)
         {
             is_attacking = false;
             is_selected = false;
+            ClearAttackRange();
         }
     }
 
@@ -266,6 +273,8 @@ public class TutorialCharacter : MonoBehaviour
             AttackButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
         }
+        if(storyManagerData.Tutorial_progress > 3)
+        {
         if(buttonName == 1) 
         {
             attack_number = 0;
@@ -286,6 +295,7 @@ public class TutorialCharacter : MonoBehaviour
             if (battleDataforLocal.now_my_cost - characterData.characters[0].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+        }
         }
     }
 }

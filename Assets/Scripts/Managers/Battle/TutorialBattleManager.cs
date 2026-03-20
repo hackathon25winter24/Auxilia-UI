@@ -11,6 +11,7 @@ public class TutorialBattleManager : MonoBehaviour
     public SceneData sceneData;
     public PlayerData playerData;
     public BattleDataforLocal battleDataforLocal;
+    public StoryManagerData storyManagerData;
     public TextMeshProUGUI gameText;
     public RectTransform gametext;
 
@@ -33,14 +34,12 @@ public class TutorialBattleManager : MonoBehaviour
 
     void Update()
     {
+        if(storyManagerData.Tutorial_progress > 2)
+        {
         if (inputData.space_key_ispressed)
         {
             EndMyTurn();
         }
-
-        if (battleDataforLocal.game_end)
-        {
-            sceneData.next_scene_number = 1;
         }
 
         if (isTimerRunning)
@@ -84,7 +83,7 @@ public class TutorialBattleManager : MonoBehaviour
         currentTime = maxTime;
         timerSlider.maxValue = maxTime;
         timerSlider.value = maxTime;
-        isTimerRunning = true;
+        isTimerRunning = false;
     }
 
     IEnumerator MoveRoutine()
