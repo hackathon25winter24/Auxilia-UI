@@ -418,14 +418,14 @@ MonoBehaviour:
       _default_attack_power: 0
       _default_attack_target: 1
       debuffs: 9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff
-      _attack_button: {fileID: 7284999941578535637, guid: df29f2d6e4cccc3459602d6dafbf7bf0, type: 3}
+      _attack_button: {fileID: -5237128889292448403, guid: 8fe3b9def7c17714280c6bf9d3dfef2c, type: 3}
       _default_attack_range:
       - {x: 0, y: 0}
       - {x: 1, y: 0}
       - {x: -1, y: 0}
       - {x: 0, y: 1}
       - {x: 0, y: -1}
-      _attack_range_image: {fileID: -946117012722978270, guid: 59c3a8d1e42451943a769fc762a5b4d0, type: 3}
+      _attack_range_image: {fileID: 7284999941578535637, guid: df29f2d6e4cccc3459602d6dafbf7bf0, type: 3}
     _attack_button_backimage: {fileID: -534791334636143934, guid: 13e10583fd75f0d41b695091e87f2809, type: 3}
     passive: []
   - _default_name: Zina

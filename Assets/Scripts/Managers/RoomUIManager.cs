@@ -19,8 +19,9 @@ public class RoomUIManager : MonoBehaviour
     public TextMeshProUGUI[] userName;
     public TextMeshProUGUI[] userRate;
     public GameConnector gameConnector;
+    public GameObject renameRoomUI;
+    public TMP_InputField renameRoomText;
 
-    public string room_name;
     private TextMeshProUGUI startBattleButtonText;
     private TextMeshProUGUI roomNameText; // 部屋名表示用
     private GameObject editButton;        // ホスト用編集ボタン
@@ -112,6 +113,7 @@ public class RoomUIManager : MonoBehaviour
 
     void Awake()
     {
+        renameRoomUI.SetActive(false);
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
         UpDateRoom();
         StartRealtimeSync();
@@ -226,6 +228,16 @@ public class RoomUIManager : MonoBehaviour
                 SEManager.instance?.PlaySelectSE();
                 await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, 0, false);
                 UpDateRoom();
+                break;
+            case "RenameRoom":
+                renameRoomUI.SetActive(true);
+                break;
+            case "AplyRenameRoom":
+                roomData.room_name = renameRoomText.text;
+                renameRoomUI.SetActive(false);
+                break;
+            case "RenameRoomBack":
+                renameRoomUI.SetActive(false);
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
