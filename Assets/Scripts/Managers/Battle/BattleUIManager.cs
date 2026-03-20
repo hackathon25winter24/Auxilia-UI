@@ -19,8 +19,6 @@ public class BattleUIManager : MonoBehaviour
     public Sprite[] characterStatesImage;
     public CharacterManager characterManager;
     public TextMeshProUGUI logText;
-    private System.Collections.Generic.List<string> logs = new System.Collections.Generic.List<string>();
-    private const int MaxLogs = 10;
     
     public void InitUI()
     {
@@ -175,12 +173,9 @@ public class BattleUIManager : MonoBehaviour
 
     private void AddLog(string message)
     {
-        logs.Add(message);
-        if (logs.Count > MaxLogs) logs.RemoveAt(0);
-
         if (logText != null)
         {
-            logText.text = string.Join("\n", logs);
+            logText.text = message;
         }
     }
 }
