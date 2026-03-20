@@ -905,11 +905,27 @@ public class CharacterManager : MonoBehaviour
             }
         }
 
-        // ゲーム終了判定
         if (data.IsFinished)
         {
             battleDataforOnline.game_end = true;
             battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
+            
+            // レート更新情報の反映
+            if (is1p)
+            {
+                battleDataforOnline.my_rate_updown = data.P1RateDelta;
+                battleDataforOnline.opponent_rate_updown = data.P2RateDelta;
+                battleDataforOnline.rate = data.P1Rate;
+                battleDataforOnline.opponent_rate = data.P2Rate;
+            }
+            else
+            {
+                battleDataforOnline.my_rate_updown = data.P2RateDelta;
+                battleDataforOnline.opponent_rate_updown = data.P1RateDelta;
+                battleDataforOnline.rate = data.P2Rate;
+                battleDataforOnline.opponent_rate = data.P1Rate;
+            }
+            Debug.Log($"<color=yellow>[GetBattleData] Game End: MyRate={battleDataforOnline.rate}({battleDataforOnline.my_rate_updown}) OppRate={battleDataforOnline.opponent_rate}({battleDataforOnline.opponent_rate_updown})</color>");
         }
 
         if (data.AttackInfos != null && data.AttackInfos.Count > 0)

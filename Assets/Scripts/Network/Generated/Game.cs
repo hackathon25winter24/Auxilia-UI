@@ -1990,7 +1990,12 @@ namespace Game.Network {
       attackInfos_ = other.attackInfos_.Clone();
       grids_ = other.grids_.Clone();
       cost1P_ = other.cost1P_;
+      cost1P_ = other.cost1P_;
       cost2P_ = other.cost2P_;
+      p1RateDelta_ = other.p1RateDelta_;
+      p2RateDelta_ = other.p2RateDelta_;
+      p1Rate_ = other.p1Rate_;
+      p2Rate_ = other.p2Rate_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1998,6 +2003,54 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public GameDataResponse Clone() {
       return new GameDataResponse(this);
+    }
+
+    /// <summary>Field number for the "p1_rate_delta" field.</summary>
+    public const int P1RateDeltaFieldNumber = 18;
+    private int p1RateDelta_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int P1RateDelta {
+      get { return p1RateDelta_; }
+      set {
+        p1RateDelta_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "p2_rate_delta" field.</summary>
+    public const int P2RateDeltaFieldNumber = 19;
+    private int p2RateDelta_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int P2RateDelta {
+      get { return p2RateDelta_; }
+      set {
+        p2RateDelta_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "p1_rate" field.</summary>
+    public const int P1RateFieldNumber = 20;
+    private int p1Rate_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int P1Rate {
+      get { return p1Rate_; }
+      set {
+        p1Rate_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "p2_rate" field.</summary>
+    public const int P2RateFieldNumber = 21;
+    private int p2Rate_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int P2Rate {
+      get { return p2Rate_; }
+      set {
+        p2Rate_ = value;
+      }
     }
 
     /// <summary>Field number for the "id" field.</summary>
@@ -2334,6 +2387,22 @@ namespace Game.Network {
         output.WriteRawTag(136, 1);
         output.WriteUInt32(Cost2P);
       }
+      if (P1RateDelta != 0) {
+        output.WriteRawTag(144, 1);
+        output.WriteInt32(P1RateDelta);
+      }
+      if (P2RateDelta != 0) {
+        output.WriteRawTag(152, 1);
+        output.WriteInt32(P2RateDelta);
+      }
+      if (P1Rate != 0) {
+        output.WriteRawTag(160, 1);
+        output.WriteInt32(P1Rate);
+      }
+      if (P2Rate != 0) {
+        output.WriteRawTag(168, 1);
+        output.WriteInt32(P2Rate);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2403,6 +2472,22 @@ namespace Game.Network {
         output.WriteRawTag(136, 1);
         output.WriteUInt32(Cost2P);
       }
+      if (P1RateDelta != 0) {
+        output.WriteRawTag(144, 1);
+        output.WriteInt32(P1RateDelta);
+      }
+      if (P2RateDelta != 0) {
+        output.WriteRawTag(152, 1);
+        output.WriteInt32(P2RateDelta);
+      }
+      if (P1Rate != 0) {
+        output.WriteRawTag(160, 1);
+        output.WriteInt32(P1Rate);
+      }
+      if (P2Rate != 0) {
+        output.WriteRawTag(168, 1);
+        output.WriteInt32(P2Rate);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2457,6 +2542,18 @@ namespace Game.Network {
       }
       if (Cost2P != 0) {
         size += 2 + pb::CodedOutputStream.ComputeUInt32Size(Cost2P);
+      }
+      if (P1RateDelta != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(P1RateDelta);
+      }
+      if (P2RateDelta != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(P2RateDelta);
+      }
+      if (P1Rate != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(P1Rate);
+      }
+      if (P2Rate != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(P2Rate);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2520,6 +2617,18 @@ namespace Game.Network {
       }
       if (other.Cost2P != 0) {
         Cost2P = other.Cost2P;
+      }
+      if (other.P1RateDelta != 0) {
+        P1RateDelta = other.P1RateDelta;
+      }
+      if (other.P2RateDelta != 0) {
+        P2RateDelta = other.P2RateDelta;
+      }
+      if (other.P1Rate != 0) {
+        P1Rate = other.P1Rate;
+      }
+      if (other.P2Rate != 0) {
+        P2Rate = other.P2Rate;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2608,6 +2717,22 @@ namespace Game.Network {
           }
           case 136: {
             Cost2P = input.ReadUInt32();
+            break;
+          }
+          case 144: {
+            P1RateDelta = input.ReadInt32();
+            break;
+          }
+          case 152: {
+            P2RateDelta = input.ReadInt32();
+            break;
+          }
+          case 160: {
+            P1Rate = input.ReadInt32();
+            break;
+          }
+          case 168: {
+            P2Rate = input.ReadInt32();
             break;
           }
         }
