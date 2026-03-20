@@ -27,6 +27,17 @@ public class CharacterManager : MonoBehaviour
     public GameConnector gameConnector;
     public RoomData roomData;
     public PlayerData playerData;
+    
+    // 攻撃情報を通知するための構造体
+    public struct AttackEventData
+    {
+        public uint attackerUniqueId;
+        public uint targetUniqueId;   // 0の場合は拠点
+        public int finalDamage;
+        public int attackType;        // 0-2 (自分) または サーバーからの種類
+        public bool isPlayerAttack;   // 自分が実行したか
+    }
+    public event System.Action<AttackEventData> OnAttackExecuted;
 
     // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
     private int[] _lastSentX = new int[6];
@@ -516,11 +527,20 @@ public class CharacterManager : MonoBehaviour
         int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
         if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
-            ApplyDamage(i, power);
+            int finalDamage = ApplyDamage(i, power);
             hit_character++;
 
             BuffDebuff(i);
             await SendAttackInfo(i);
+
+            // イベントの発火
+            OnAttackExecuted?.Invoke(new AttackEventData {
+                attackerUniqueId = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id,
+                targetUniqueId = battleDataforOnline.charactersBattleDatas[i].unique_id,
+                finalDamage = finalDamage,
+                attackType = attack_number,
+                isPlayerAttack = true
+            });
         }
     }
     }
@@ -534,11 +554,20 @@ public class CharacterManager : MonoBehaviour
         int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
         if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
-            ApplyDamage(i, power);
+            int finalDamage = ApplyDamage(i, power);
             hit_character++;
 
             BuffDebuff(i);
             await SendAttackInfo(i);
+
+            // イベントの発火
+            OnAttackExecuted?.Invoke(new AttackEventData {
+                attackerUniqueId = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id,
+                targetUniqueId = battleDataforOnline.charactersBattleDatas[i].unique_id,
+                finalDamage = finalDamage,
+                attackType = attack_number,
+                isPlayerAttack = true
+            });
         }
     }
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
@@ -557,6 +586,16 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.opponent_base_hp -= finalBaseDamage;
         
         await SendAttackInfo(-1);
+
+        // イベントの発火 (拠点への攻撃)
+        OnAttackExecuted?.Invoke(new AttackEventData {
+            attackerUniqueId = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id,
+            targetUniqueId = 0, // 拠点を0とする
+            finalDamage = finalBaseDamage,
+            attackType = attack_number,
+            isPlayerAttack = true
+        });
+
         if (battleDataforOnline.opponent_base_hp <= 0)
         {
             battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
@@ -660,7 +699,7 @@ public class CharacterManager : MonoBehaviour
         );
     }
 
-    private void ApplyDamage(int targetId, int damage)
+    private int ApplyDamage(int targetId, int damage)
     {
         float multiplier = 1.0f;
         if(damage >= 0)// 攻撃or回復を分岐
@@ -685,7 +724,9 @@ public class CharacterManager : MonoBehaviour
         // HPを減らす
         battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= finalDamage;
 
+
         Debug.Log($"<color=orange><b>[ApplyDamage]</b> Target={targetId}, Base={damage}, Mult={multiplier}, Final={finalDamage}, RemainingHP={battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}</color>");
+        return finalDamage;
     }
 
     private void ProcessDeath(int targetId)
@@ -953,6 +994,17 @@ public class CharacterManager : MonoBehaviour
             foreach (var ai in data.AttackInfos)
             {
                 Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={ai.AttackerSide}, AttackerID={ai.AttackerCharacterId}, Type={ai.AttackType}</color>");
+                
+                // イベントの発火 (相手からの攻撃)
+                // ※ サーバーからの AttackInfo にはターゲットやダメージが直接含まれていないため、
+                //    アタッカーと攻撃タイプのみを通知する。
+                OnAttackExecuted?.Invoke(new AttackEventData {
+                    attackerUniqueId = ai.AttackerCharacterId,
+                    targetUniqueId = 0, // 不明
+                    finalDamage = 0,    // 不明（HP同期側で検知可能）
+                    attackType = ai.AttackType,
+                    isPlayerAttack = false
+                });
             }
         }
 
