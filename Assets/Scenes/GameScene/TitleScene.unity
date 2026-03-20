@@ -3223,6 +3223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterManager: {fileID: 0}
+  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
 --- !u!4 &1194035286
 Transform:
   m_ObjectHideFlags: 0

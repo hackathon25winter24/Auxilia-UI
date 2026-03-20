@@ -50,6 +50,9 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("シーンデータ（ScriptableObject）")]
     public SceneData sceneData;
 
+    [Header("Network")]
+    public GameConnector gameConnector;
+
 
     [System.Serializable]
     public class AttackData
@@ -60,6 +63,11 @@ public class CharacterSelectManager : MonoBehaviour
         // public TMP_Text attackSpecial;
         public Image attackRange;
     }
+    void Awake()
+    {
+        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+    }
+
     void Start()
     {
         characterSelectPanel.SetActive(false);
@@ -172,15 +180,17 @@ public class CharacterSelectManager : MonoBehaviour
         return null; // 見つからなかった場合
     }
 
-    void OpenSelectPanel(int slotIndex)
+    async void OpenSelectPanel(int slotIndex)
     {
         currentSelectingSlotIndex = slotIndex;
         characterSelectPanel.SetActive(true);
+        if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
-    void CloseSelectPanel()
+    async void CloseSelectPanel()
     {
         characterSelectPanel.SetActive(false);
+        if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
     void OnCharacterListButtonClicked(int charIndex)
@@ -196,12 +206,30 @@ public class CharacterSelectManager : MonoBehaviour
         moveCostText.text = moveCost.ToString();
         characterName.text = characterDataAsset.characters[charIndex].default_name_japanese;
 
+        var characterAttacks = characterDataAsset.characters[charIndex].attacks;
         for(int i = 0; i < 3; i++)
         {
-            attacks[i].attackName.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_name;
-            attacks[i].attackDamage.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_power.ToString();
-            attacks[i].attackCost.text = characterDataAsset.characters[charIndex].attacks[i].default_attack_cost.ToString();
-            attacks[i].attackRange.sprite = characterDataAsset.characters[charIndex].attacks[i].attack_range_image;
+            // UI側のスロット自体のチェック
+            if (attacks == null || i >= attacks.Length || attacks[i] == null)
+            {
+                Debug.LogError($"CharacterSelectManager: UI 'attacks' array at index {i} is null or unassigned in inspector.");
+                continue;
+            }
+
+            // キャラクターデータ側のチェック
+            if (characterAttacks == null || i >= characterAttacks.Length || characterAttacks[i] == null)
+            {
+                if (attacks[i].attackName != null) attacks[i].attackName.text = "---";
+                if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = "0";
+                if (attacks[i].attackCost != null) attacks[i].attackCost.text = "0";
+                if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = null;
+                continue;
+            }
+
+            if (attacks[i].attackName != null) attacks[i].attackName.text = characterAttacks[i].default_attack_name;
+            if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = characterAttacks[i].default_attack_power.ToString();
+            if (attacks[i].attackCost != null) attacks[i].attackCost.text = characterAttacks[i].default_attack_cost.ToString();
+            if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = characterAttacks[i].attack_range_image;
         }
 
         characterDetailPanel.SetActive(true);
@@ -212,7 +240,7 @@ public class CharacterSelectManager : MonoBehaviour
         characterDetailPanel.SetActive(false);
     }
 
-    void ConfirmSelection()
+    async void ConfirmSelection()
     {
         if (currentSelectingSlotIndex >= 0 && currentViewingCharIndex >= 0)
         {
@@ -230,9 +258,11 @@ public class CharacterSelectManager : MonoBehaviour
         characterSelectPanel.SetActive(false);
 
         PartyHPandMOV();
+
+        if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
-    void RandomFormation()
+    async void RandomFormation()
     {
         CharactersData[] characters = characterDataAsset.characters;
         System.Random random = new System.Random();
@@ -264,6 +294,8 @@ public class CharacterSelectManager : MonoBehaviour
 
             PartyHPandMOV();
         }
+
+        if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
     void BackToTitle()

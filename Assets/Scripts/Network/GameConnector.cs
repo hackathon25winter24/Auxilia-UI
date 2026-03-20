@@ -69,13 +69,20 @@ public class GameConnector : MonoBehaviour
 
             Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
 
-            playerData.player_name = response.Name;
-            playerData.battle_number = response.NumBattles;
-            playerData.win_number = response.NumWins;
-            playerData.story_progress = response.Story;
-            playerData.user_id = response.Id;
-            playerData.player_rate = response.Rate;
-            playerData.password = password;
+            if (playerData != null)
+            {
+                playerData.player_name = response.Name;
+                playerData.battle_number = response.NumBattles;
+                playerData.win_number = response.NumWins;
+                playerData.story_progress = response.Story;
+                playerData.user_id = response.Id;
+                playerData.player_rate = response.Rate;
+                playerData.password = password;
+            }
+            else
+            {
+                Debug.LogWarning("GameConnector: playerData is null. Local persistence of user data will be skipped.");
+            }
 
             return response;
         }
@@ -112,12 +119,19 @@ public class GameConnector : MonoBehaviour
             var response = await _userClient.LoginAsync(request);
 
             // 成功時の処理
-            playerData.player_name = response.Name;
-            playerData.battle_number = response.NumBattles;
-            playerData.win_number = response.NumWins;
-            playerData.story_progress = response.Story;
-            playerData.user_id = response.Id;
-            playerData.player_rate = response.Rate;
+            if (playerData != null)
+            {
+                playerData.player_name = response.Name;
+                playerData.battle_number = response.NumBattles;
+                playerData.win_number = response.NumWins;
+                playerData.story_progress = response.Story;
+                playerData.user_id = response.Id;
+                playerData.player_rate = response.Rate;
+            }
+            else
+            {
+                Debug.LogWarning("GameConnector: playerData is null in Login. Local persistence skipped.");
+            }
             return response;
         }
         catch (RpcException e)
