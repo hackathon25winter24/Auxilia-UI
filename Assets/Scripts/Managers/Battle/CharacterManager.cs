@@ -577,16 +577,9 @@ public class CharacterManager : MonoBehaviour
     // UIの非表示設定など（必要に応じて）
     BackButton.gameObject.SetActive(false);
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
-    // 3. 攻撃状態の解除
-    is_attacking = false;
-    ClearAttackRange();
-    
-    // UIの非表示設定など（必要に応じて）
-    BackButton.gameObject.SetActive(false);
-    for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
 
     // ヒットの有無に関わらずコストを消費する
-    int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
+    cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2])
     {
         battleDataforOnline.now_my_cost -= (cost - 5);
@@ -602,7 +595,6 @@ public class CharacterManager : MonoBehaviour
     Debug.Log($"<color=orange>[ConfirmAttack] コスト消費後の残り: {battleDataforOnline.now_my_cost}</color>");
 
     // 【デバッグ】攻撃データをコンソールに出力（UIには反映しない）
-    int attackCost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     int attackPow  = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
     Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
     }
@@ -784,7 +776,7 @@ public class CharacterManager : MonoBehaviour
             }
         }
         // 自分のターンでない場合のみ選択状態をリセットする（自分のターン中に同期で選択が外れるのを防ぐ）
-        bool isMyTurn = is1p ? data.Is1PTurn : !data.Is1PTurn;
+        // isMyTurn は既に定義済み
         if (!isMyTurn)
         {
             for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
