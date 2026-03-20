@@ -148,6 +148,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         if(buttonName == "Attack2") 
         {
@@ -155,6 +156,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         if(buttonName == "Attack3") 
         {
@@ -162,6 +164,7 @@ public class CharacterManager : MonoBehaviour
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            SendGridData();
         }
         
         }
@@ -189,6 +192,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             case "2":
             selected_character_id = 1;
@@ -201,6 +205,7 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             case "3":
             selected_character_id = 2;
@@ -213,10 +218,19 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            SendGridData();
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
+        }
+    }
+
+    private void SendGridData()
+    {
+        if (gameConnector != null && roomData != null && playerData != null)
+        {
+            _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline);
         }
     }
 
@@ -350,6 +364,9 @@ public class CharacterManager : MonoBehaviour
     {
         battleDataforOnline.now_my_cost -= cost;
     }
+    
+    // 移動した際にグリッドデータを送信
+    SendGridData();
     }
     }
 
@@ -457,6 +474,7 @@ public class CharacterManager : MonoBehaviour
             hit_character++;
 
             BuffDebuff(i);
+            SendAttackInfo(i);
         }
     }
     }
@@ -474,12 +492,14 @@ public class CharacterManager : MonoBehaviour
             hit_character++;
 
             BuffDebuff(i);
+            SendAttackInfo(i);
         }
     }
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
     {
         hit_character++;
         battleDataforOnline.opponent_base_hp -= power;
+        SendAttackInfo(-1);
         if (battleDataforOnline.opponent_base_hp <= 0)
     {
         battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
@@ -490,37 +510,8 @@ public class CharacterManager : MonoBehaviour
 
     if (hit_character > 0)
     {
-        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
-        
-        // ヒットしたキャラクターの中から最初の1人をターゲットとして送信（サーバー側の仕様に合わせる）
-        // ※ 本来は範囲攻撃なら全対象をサーバーで計算すべきだが、フロント計算結果を優先反映させる
-        int firstHitIdx = -1;
-        for(int i=0; i<=5; i++) {
-            // 自分以外への当たり判定
-            if (i != selected_character_id) {
-                int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
-                int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
-                if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1) {
-                    firstHitIdx = i;
-                    break;
-                }
-            }
-        }
-
-        uint targetUid = (firstHitIdx != -1) ? battleDataforOnline.charactersBattleDatas[firstHitIdx].unique_id : 0;
-        uint targetNewHp = (firstHitIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[firstHitIdx].now_character_hp : 0;
-
-        _ = gameConnector.SendAttack(
-            roomData.room_id, 
-            playerData.user_id, 
-            (int)attackerUid, 
-            attack_number, 
-            true, 
-            battleDataforOnline.base_hp, 
-            battleDataforOnline.opponent_base_hp, 
-            (int)targetUid, 
-            (int)targetNewHp
-        );
+        // 全体の攻撃完了後の処理（ログ等）
+        Debug.Log("キャラクターまたは拠点に攻撃がヒットしました");
     }
 
     if (hit_character == 0)
@@ -603,10 +594,30 @@ public class CharacterManager : MonoBehaviour
     // 【デバッグ】攻撃データをコンソールに出力（UIには反映しない）
     int attackCost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     int attackPow  = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
-    Debug.Log($"<color=orange>[SendAttack] 攻撃送信: roomId={roomData?.room_id}, playerId={playerData?.user_id}, attackerCharaId={selected_character_id}, attackType={attack_number}, power={attackPow}, cost={attackCost}, baseHP1={battleDataforOnline.base_hp}, baseHP2={battleDataforOnline.opponent_base_hp}</color>");
-
-    Debug.Log("攻撃完了");
+    Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
     }
+
+    // 攻撃確定時にグリッドデータも送信
+    SendGridData();
+    }
+
+    private void SendAttackInfo(int targetIdx)
+    {
+        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
+        uint targetUid = (targetIdx != -1) ? battleDataforOnline.charactersBattleDatas[targetIdx].unique_id : 0;
+        uint targetNewHp = (targetIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp : 0;
+
+        _ = gameConnector.SendAttack(
+            roomData.room_id, 
+            playerData.user_id, 
+            (int)attackerUid, 
+            attack_number, 
+            true, 
+            battleDataforOnline.base_hp, 
+            battleDataforOnline.opponent_base_hp, 
+            (int)targetUid, 
+            (int)targetNewHp
+        );
     }
 
     private void ApplyDamage(int targetId, int damage)
