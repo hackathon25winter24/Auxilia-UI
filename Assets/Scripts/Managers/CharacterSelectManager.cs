@@ -187,11 +187,11 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
 
-    void OpenSelectPanelWithFade(int slotIndex)
+    async void OpenSelectPanelWithFade(int slotIndex)
     {
         if (isAnimating) return;
         currentSelectingSlotIndex = slotIndex;
-         SEManager.instance.PlaySelectSE();
+         SEManager.instance?.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
         characterSelectPanel.SetActive(true);
         if (gameConnector != null) await gameConnector.UpdateUser();
@@ -204,10 +204,10 @@ public class CharacterSelectManager : MonoBehaviour
         StartCoroutine(FadeSequence(false));
     }
 
-    void ConfirmSelectionWithFade()
+    async void ConfirmSelectionWithFade()
     {
         if (isAnimating || currentViewingCharIndex < 0) return;
-              SEManager.instance.PlayBackSE();
+              SEManager.instance?.PlayBackSE();
         characterSelectPanel.SetActive(false);
         if (gameConnector != null) await gameConnector.UpdateUser();
         StartCoroutine(ConfirmSequence());
@@ -239,7 +239,7 @@ public class CharacterSelectManager : MonoBehaviour
             }
 
             // キャラクターデータ側のチェック
-            if (characterAttacks == null || i >= characterAttacks.Length || characterAttacks[i] == null)
+            if (character.attacks == null || i >= character.attacks.Length || character.attacks[i] == null)
             {
                 if (attacks[i].attackName != null) attacks[i].attackName.text = "---";
                 if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = "0";
@@ -248,10 +248,10 @@ public class CharacterSelectManager : MonoBehaviour
                 continue;
             }
 
-            if (attacks[i].attackName != null) attacks[i].attackName.text = characterAttacks[i].default_attack_name;
-            if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = characterAttacks[i].default_attack_power.ToString();
-            if (attacks[i].attackCost != null) attacks[i].attackCost.text = characterAttacks[i].default_attack_cost.ToString();
-            if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = characterAttacks[i].attack_range_image;
+            if (attacks[i].attackName != null) attacks[i].attackName.text = character.attacks[i].default_attack_name;
+            if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = character.attacks[i].default_attack_power.ToString();
+            if (attacks[i].attackCost != null) attacks[i].attackCost.text = character.attacks[i].default_attack_cost.ToString();
+            if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = character.attacks[i].attack_range_image;
 
         }
 
@@ -264,13 +264,13 @@ public class CharacterSelectManager : MonoBehaviour
         if (isAnimating) return;
         StartCoroutine(ScaleAnimation(false));
 
-        SEManager.instance.PlayBackSE();
+        SEManager.instance?.PlayBackSE();
         characterDetailPanel.SetActive(false);
     }
 
     async void ConfirmSelection()
     {
-        SEManager.instance.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
         if (currentSelectingSlotIndex >= 0 && currentViewingCharIndex >= 0)
         {
             CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
@@ -293,7 +293,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     async void RandomFormation()
     {
-        SEManager.instance.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
         CharactersData[] characters = characterDataAsset.characters;
         if (characters.Length == 0) return; // データが存在しない場合のエラー回避
 
@@ -317,7 +317,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     void BackToTitle()
     {
-        SEManager.instance.PlayToNextSE();
+        SEManager.instance?.PlayToNextSE();
         sceneData.next_scene_number = 1;
         // 実際のシーン遷移処理が必要であれば、ここに記述します
         // SceneManager.LoadScene(sceneData.next_scene_number);

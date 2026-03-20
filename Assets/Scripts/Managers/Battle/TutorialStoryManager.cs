@@ -156,7 +156,7 @@ public class TutorialStoryManager : MonoBehaviour
 
     void AdvanceToNextSerif()
     {
-        SEManager.instance.PlayClickSE();
+        SEManager.instance?.PlayClickSE();
         // 配列の要素数を超えないようにチェック
         if (storyManagerData.serif_number < serif_tutorial.Length - 1)
         {
@@ -171,7 +171,7 @@ public class TutorialStoryManager : MonoBehaviour
 
     public void ToggleAutoMode()
     {
-        SEManager.instance.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
         storyManagerData.is_auto = !storyManagerData.is_auto;
         autoText.gameObject.SetActive(storyManagerData.is_auto);
 
@@ -202,7 +202,7 @@ public class TutorialStoryManager : MonoBehaviour
 
     public void SkipStory()
     {
-        SEManager.instance.PlayToNextSE();
+        SEManager.instance?.PlayToNextSE();
         EndStory();
     }
 

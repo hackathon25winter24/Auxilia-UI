@@ -58,7 +58,7 @@ public class TitleUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Login":
-            SEManager.instance.PlayToNextSE();
+            SEManager.instance?.PlayToNextSE();
             playerData.player_name = user_name_for_login.text;
             playerData.password = password_for_login.text;
             var user = await gameConnector.Login(playerData.player_name, playerData.password);
@@ -79,7 +79,7 @@ public class TitleUIManager : MonoBehaviour
             }
                 break;
             case "Signup":
-            SEManager.instance.PlayToNextSE();
+            SEManager.instance?.PlayToNextSE();
             playerData.player_name = user_name_for_signup.text;
             playerData.password = password_for_signup.text;
             var new_user = await gameConnector.SignUp(playerData.player_name, playerData.password);
@@ -100,17 +100,17 @@ public class TitleUIManager : MonoBehaviour
             }
                 break;
             case "GotoSignup":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             login_ui.SetActive(false);
             signup_ui.SetActive(true);
                 break;
             case "GotoLogin":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             login_ui.SetActive(true);
             signup_ui.SetActive(false);
                 break;
             case "Back":
-            SEManager.instance.PlayBackSE();
+            SEManager.instance?.PlayBackSE();
             login_ui.SetActive(false);
             signup_ui.SetActive(false);
             targetUI.SetActive(true);

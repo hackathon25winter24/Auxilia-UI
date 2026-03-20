@@ -218,23 +218,23 @@ public class HomeUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Battle":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 isPlayerNameRemain = true;
                 StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateBattleUIEnter());
                 break;
             case "Story":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 StartCoroutine(AnimateExit(11));
                 break;
             case "Character":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 isPlayerNameRemain = true;
                 StartCoroutine(AnimateExit(-1));
                 StartCoroutine(AnimateCharacterUIEnter());
                 break;
             case "HomeCharacter":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateExit(-1));
                 // StartCoroutine(AnimateBackKeyEnter()); // Removed as we use the modal's close button
@@ -242,19 +242,19 @@ public class HomeUIManager : MonoBehaviour
                 isHomeCharacterSelecting = true;
                 break;
             case "Back":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 StartCoroutine(AnimateEnter());
                 StartCoroutine(AnimateBackKeyExit());
                 HomeCharacterSetUI.gameObject.SetActive(false);
                 isHomeCharacterSelecting = false;
                 break;
             case "BackfromBattleUI":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 StartCoroutine(AnimateEnter());
                 StartCoroutine(AnimateBattleUIExit(-1));
                 break;
             case "RandomMatch":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 messageText.text = "開発中...";
                 messageText.gameObject.SetActive(true);
                 await Task.Delay(1000);
@@ -262,7 +262,7 @@ public class HomeUIManager : MonoBehaviour
                 isExiting = false;
                 break;
             case "RateMatch":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 messageText.text = "開発中...";
                 messageText.gameObject.SetActive(true);
                 await Task.Delay(1000);
@@ -270,44 +270,44 @@ public class HomeUIManager : MonoBehaviour
                 isExiting = false;
                 break;
             case "BackFromCharacter":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 StartCoroutine(AnimateEnter());
                 StartCoroutine(AnimateCharacterUIExit(-1));
                 break;
             case "RoomMatch":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateBattleUIExit(3));
                 break;
             case "ToAllImage":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateExit(-1));
                 BigBackButton.gameObject.SetActive(true);
                 isExiting = false;
                 break;
             case "BackButton":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 StartCoroutine(AnimateEnter());
                 BigBackButton.gameObject.SetActive(false);
                 break;
             case "CharacterStates":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateCharacterUIExit(7));
                 break;
             case "CharacterFormation":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 isPlayerNameRemain = false;
                 StartCoroutine(AnimateCharacterUIExit(4));
                 break;
             case "Setting":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 isExiting = false;
                 settingUI.gameObject.SetActive(true);
                 break;
             case "BackFromSetting":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 isExiting = false;
                 settingUI.gameObject.SetActive(false);
                 break;
@@ -318,7 +318,7 @@ public class HomeUIManager : MonoBehaviour
             #endif
             break;
             case "GotoTitle":
-            SEManager.instance.PlayToNextSE();
+            SEManager.instance?.PlayToNextSE();
             sceneData.next_scene_number = 0;
             break;
             default:

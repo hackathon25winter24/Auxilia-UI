@@ -14,7 +14,7 @@ public class ImageClick : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        SEManager.instance.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
 
         playerData.home_character_ID = CharacuerID;
     }

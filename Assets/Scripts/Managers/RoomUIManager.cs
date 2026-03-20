@@ -155,12 +155,12 @@ public class RoomUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Back":
-                SEManager.instance.PlayBackSE();
+                SEManager.instance?.PlayBackSE();
                 await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
-                SEManager.instance.PlayToNextSE();
+                SEManager.instance?.PlayToNextSE();
                 if (roomData.usersData[roomData.room_my_number].is_host)
                 {
                     bool allReady = true;
@@ -219,11 +219,11 @@ public class RoomUIManager : MonoBehaviour
                 }
                 break;
             case "ReRoad":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 UpDateRoom();
                 break;
             case "Spectator":
-                SEManager.instance.PlaySelectSE();
+                SEManager.instance?.PlaySelectSE();
                 await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, 0, false);
                 UpDateRoom();
                 break;

@@ -151,7 +151,7 @@ public class StoryManager : MonoBehaviour
     // セリフ番号を1進めて次を表示
     void AdvanceToNextSerif()
     {
-        SEManager.instance.PlayClickSE();
+        SEManager.instance?.PlayClickSE();
         if (storyManagerData.serif_number < storyData.stories[storyManagerData.now_story_number].serifs.Length - 1)
         {
             storyManagerData.serif_number++;
@@ -220,7 +220,7 @@ IEnumerator AutoSelectFirstChoice()
 
     public void ToggleAutoMode()
     {
-        SEManager.instance.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
         storyManagerData.is_auto = !storyManagerData.is_auto;
         autoText.gameObject.SetActive(storyManagerData.is_auto);
         RightDownUI.SetActive(!storyManagerData.is_auto);
@@ -251,7 +251,7 @@ IEnumerator AutoSelectFirstChoice()
 
     public void SkipStory()
     {
-        SEManager.instance.PlayToNextSE();
+        SEManager.instance?.PlayToNextSE();
         EndStory();
     }
 

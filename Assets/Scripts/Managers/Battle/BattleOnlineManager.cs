@@ -247,7 +247,7 @@ public class BattleOnlineManager : MonoBehaviour
 
     IEnumerator MoveRoutine()
 {
-    SEManager.instance.PlayStartTurnSE();
+    SEManager.instance?.PlayStartTurnSE();
     is_text_moving = true;
 
     float elapsed = 0f;
