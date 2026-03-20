@@ -18,6 +18,7 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI start_game_text;
     public TextMeshProUGUI timertext;
 
+    public GameObject SelectedTub;
     public GameObject playerUI;
     public GameObject SpectatorUI;
     public Image[] SelecuUI;
@@ -54,6 +55,7 @@ public class SelectUIManager : MonoBehaviour
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
 
+        SelectedTub.SetActive(false);
         // 1P/2Pの名前を取得
         await UpdatePlayerNames();
 
@@ -146,6 +148,7 @@ public class SelectUIManager : MonoBehaviour
                 if (!_waitingForOpponent)
                 {
                     await SendDatas();
+                    SelectedTub.SetActive(true);
                     _waitingForOpponent = true;
                     if (decidedButtonText != null)
                         decidedButtonText.text = "相手の準備を待っています...";
@@ -164,7 +167,22 @@ public class SelectUIManager : MonoBehaviour
 
     public void CharacterClick(int ButtonNum)
     {
+        if (battleDataforOnline.selected_character[0] == ButtonNum)
+        {
+            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[0];
+            battleDataforOnline.selected_character[0] = ButtonNum;
+        }else if (battleDataforOnline.selected_character[1] == ButtonNum)
+        {
+            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[1];
+            battleDataforOnline.selected_character[1] = ButtonNum;
+        }else if (battleDataforOnline.selected_character[2] == ButtonNum)
+        {
+            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[2];
+            battleDataforOnline.selected_character[2] = ButtonNum;
+        }else
+        {
         battleDataforOnline.selected_character[selectedUI] = ButtonNum;
+        }
         characterTub.SetActive(false);
         UpDateCharacterUI();
     }
