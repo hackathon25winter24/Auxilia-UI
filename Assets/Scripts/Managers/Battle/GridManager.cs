@@ -178,7 +178,7 @@ public class GridManager : MonoBehaviour
                 if (!isMyTurn) return;
 
                 bool is1p = (battleDataforOnline.my_player_id == 0);
-                _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
+              //  _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
             }
         }
     }
