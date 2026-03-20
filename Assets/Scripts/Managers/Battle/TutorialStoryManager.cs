@@ -41,6 +41,7 @@ public class TutorialStoryManager : MonoBehaviour
         storyManagerData.serif_number = 0;
         storyManagerData.is_auto = false;
         storyManagerData.serif_loading = false;
+        storyManagerData.is_serif = false;
         
         if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
 
@@ -51,6 +52,7 @@ public class TutorialStoryManager : MonoBehaviour
         // 最初のセリフを開始
         StartNewSerif();
         storyManagerData.Tutorial_progress = 0;
+        storyManagerData.is_serif = true;
     }
 
     void Start()
@@ -71,21 +73,26 @@ public class TutorialStoryManager : MonoBehaviour
             if(storyManagerData.serif_number == 2)
             {
                 Back.SetActive(false);
+                storyManagerData.is_serif = false;
             }else if(storyManagerData.serif_number == 6)
             {
-                storyManagerData.Tutorial_progress += 2;
+                storyManagerData.Tutorial_progress = 2;
                 Back.SetActive(false);
+                storyManagerData.is_serif = false;
             }else if(storyManagerData.serif_number == 9)
             {
-                storyManagerData.Tutorial_progress += 1;
+                storyManagerData.Tutorial_progress = 3;
                 Back.SetActive(false);
+                storyManagerData.is_serif = false;
             }else if(storyManagerData.serif_number == 14)
             {
-                storyManagerData.Tutorial_progress += 1;
+                storyManagerData.Tutorial_progress = 4;
                 Back.SetActive(false);
+                storyManagerData.is_serif = false;
             }else
             {
             OnPlayerClick();
+            storyManagerData.is_serif = true;
             }
         }
 
@@ -196,7 +203,7 @@ public class TutorialStoryManager : MonoBehaviour
             sceneData.next_scene_number = 1;
         }else
         {
-            sceneData.next_scene_number = 1;
+            sceneData.next_scene_number = 11;
         }
     }
 
