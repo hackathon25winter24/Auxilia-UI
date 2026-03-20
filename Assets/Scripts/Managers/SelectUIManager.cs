@@ -159,6 +159,9 @@ public class SelectUIManager : MonoBehaviour
             case "BackShadow":
                 characterTub.SetActive(false);
                 break;
+            case "Random":
+            RandomizeFormation();
+            break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
@@ -226,6 +229,36 @@ public class SelectUIManager : MonoBehaviour
 
         costText.text = "cost：" + battleDataforOnline.palyer1_cost;
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
+    }
+
+    public void RandomizeFormation()
+    {
+    // 1. 全キャラクターのインデックス(ID)をリストにコピー
+    List<int> availableIndices = new List<int>();
+    for (int i = 0; i < characterData.characters.Length; i++)
+    {
+        availableIndices.Add(i);
+    }
+
+    // 2. 3つの枠に対して抽選
+    for (int i = 0; i < 3; i++)
+    {
+        if (availableIndices.Count > 0)
+        {
+            // リストからランダムに1つ選ぶ
+            int randomIndex = UnityEngine.Random.Range(0, availableIndices.Count);
+            int selectedId = availableIndices[randomIndex];
+
+            // 自分の編成データに代入
+            battleDataforOnline.selected_character[i] = selectedId;
+
+            // 選んだIDをリストから削除（これで二度と選ばれない）
+            availableIndices.RemoveAt(randomIndex);
+        }
+    }
+
+    // 3. UIを更新して合計コストなどを再計算
+    UpDateCharacterUI();
     }
 
     private async Task SyncRoomStatus()
