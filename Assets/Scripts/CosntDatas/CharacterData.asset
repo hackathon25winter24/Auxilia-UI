@@ -479,32 +479,36 @@ MonoBehaviour:
     _default_hp: 200
     _default_move_cost: 10
     _attacks:
-    - _default_attack_name: "\u9060\u8DDD\u96E2\u5236\u5727"
-      _default_attack_cost: 20
-      _default_attack_power: 20
+    - _default_attack_name: "\u6B8B\u7559\u578B\u30AC\u30B9"
+      _default_attack_cost: 10
+      _default_attack_power: 0
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000032000000000000000000000000000000
-      _attack_button: {fileID: -6211113914983606917, guid: a74b1396b68dbef4f97430424c2cfba7, type: 3}
+      _attack_button: {fileID: -7753384238618468022, guid: d90fd7138706f1e4bbbb1edc456939bd, type: 3}
       _default_attack_range:
       - {x: 3, y: 0}
-      _attack_range_image: {fileID: 8991306831301477543, guid: dc9a12b53fa0d144d9a7c8b0b0ffec30, type: 3}
-    - _default_attack_name: "\u4E2D\u8DDD\u96E2\u5236\u5727"
+      _attack_range_image: {fileID: 8956217934992202829, guid: e4d5c1c60a24b2345a9a61a3973f1edc, type: 3}
+    - _default_attack_name: "\u62E1\u6563\u578B\u6BD2\u30AC\u30B9"
       _default_attack_cost: 20
       _default_attack_power: 20
       _default_attack_target: 0
       debuffs: 0000000000000000000000000000000050000000000000000000000000000000
-      _attack_button: {fileID: 8582767294075729541, guid: 49063b5439a99da4b9f519e3077c99cd, type: 3}
-      _default_attack_range:
-      - {x: 2, y: 0}
-      _attack_range_image: {fileID: 3892192920739480270, guid: 7d326e3590bda8b43aaf670a2cac85d8, type: 3}
-    - _default_attack_name: "\u8ECD\u968A\u5F0F\u8FD1\u63A5\u683C\u95D8\u8853"
-      _default_attack_cost: 30
-      _default_attack_power: 60
-      _default_attack_target: 0
-      debuffs: 0000000000000000000000000000000000000000000000000000000000000000
-      _attack_button: {fileID: -1658104835833474974, guid: b7e73311e341be74d93ab65c848fe5e0, type: 3}
+      _attack_button: {fileID: 610908720128868772, guid: b8ab3207bd4a16b418502303e0d8e12a, type: 3}
       _default_attack_range:
       - {x: 1, y: 0}
-      _attack_range_image: {fileID: 5544735913679204495, guid: b5ee6a718b1be344aa9664623217f605, type: 3}
-    _attack_button_backimage: {fileID: 6180249872933938067, guid: f72a476b79c470b4bb9ba9edf2363854, type: 3}
+      - {x: 2, y: 0}
+      - {x: 3, y: 0}
+      - {x: 2, y: 1}
+      - {x: 2, y: -1}
+      _attack_range_image: {fileID: -2423990898039904114, guid: e891ec9e12be1264baaabd75e44c6cbb, type: 3}
+    - _default_attack_name: "\u6D3B\u6027\u5316\u30AC\u30B9"
+      _default_attack_cost: 20
+      _default_attack_power: 0
+      _default_attack_target: 1
+      debuffs: 9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff9cffffff
+      _attack_button: {fileID: -7275747150402431968, guid: 865f47debf3b36243bb41ee77fd582d1, type: 3}
+      _default_attack_range:
+      - {x: 0, y: 0}
+      _attack_range_image: {fileID: 9112602405718991269, guid: 149bfc505247c7c41a8ecdf0f0a2636f, type: 3}
+    _attack_button_backimage: {fileID: -8166928102031640740, guid: 6cfde5037b5f00e4cb8c616302b814a3, type: 3}
     passive: []
