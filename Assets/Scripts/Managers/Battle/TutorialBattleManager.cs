@@ -36,9 +36,12 @@ public class TutorialBattleManager : MonoBehaviour
     {
         if(storyManagerData.Tutorial_progress > 2)
         {
+        if(storyManagerData.is_serif == false)
+        {
         if (inputData.space_key_ispressed)
         {
             EndMyTurn();
+        }
         }
         }
 
