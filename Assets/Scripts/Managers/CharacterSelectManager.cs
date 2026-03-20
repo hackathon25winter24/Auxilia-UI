@@ -290,29 +290,54 @@ public class CharacterSelectManager : MonoBehaviour
 
         if (gameConnector != null) await gameConnector.UpdateUser();
     }
-
     async void RandomFormation()
     {
-        SEManager.instance?.PlaySelectSE();
-        CharactersData[] characters = characterDataAsset.characters;
-        if (characters.Length == 0) return; // データが存在しない場合のエラー回避
+    SEManager.instance?.PlaySelectSE();
+    
+    // 1. 全キャラクターのリストをコピーして作成
+    List<CharactersData> availableCharacters = new List<CharactersData>(characterDataAsset.characters);
+    
+    // キャラクターが3体未満の場合は重複を許容せざるを得ないのでチェック
+    if (availableCharacters.Count < 3)
+    {
+        Debug.LogWarning("キャラクター総数が3体未満です。重複が発生します。");
+    }
 
-        // インデックスではなく、キャラクターのIDを保存するように修正
-        playerData.character_formation_one = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
-        playerData.character_formation_two = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
-        playerData.character_formation_three = characters[UnityEngine.Random.Range(0, characters.Length)].default_id;
+    // 2. 各スロットに対して抽選を行う
+    int[] selectedIds = new int[3];
 
-        // UIの更新処理（共通化したメソッドを使用）
-        for (int i = 0; i < teamSlotButtons.Length; i++)
+    for (int i = 0; i < 3; i++)
+    {
+        if (availableCharacters.Count > 0)
         {
-            UpdateSlotUI(i);
+            // 残っているキャラからランダムに1人選ぶ
+            int randomIndex = UnityEngine.Random.Range(0, availableCharacters.Count);
+            selectedIds[i] = availableCharacters[randomIndex].default_id;
+
+            // 選んだキャラをリストから削除（これで次は選ばれなくなる）
+            availableCharacters.RemoveAt(randomIndex);
         }
+        else
+        {
+            // キャラが足りなくなった場合の予備（通常は通らない）
+            selectedIds[i] = -1; 
+        }
+    }
 
+    // 3. PlayerDataに反映
+    playerData.character_formation_one = selectedIds[0];
+    playerData.character_formation_two = selectedIds[1];
+    playerData.character_formation_three = selectedIds[2];
 
-        // ステータス更新は全スロットの書き換えが終わった後に1回だけ実行する
-        PartyHPandMOV();
+    // 4. UIの更新処理
+    for (int i = 0; i < teamSlotButtons.Length; i++)
+    {
+        UpdateSlotUI(i);
+    }
 
-        if (gameConnector != null) await gameConnector.UpdateUser();
+    PartyHPandMOV();
+
+    if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
     void BackToTitle()
@@ -370,23 +395,44 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     IEnumerator ConfirmSequence()
+{
+    isAnimating = true;
+    yield return StartCoroutine(Fade(1f, fadeDuration));
+
+    CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
+    int newCharId = selectedChar.default_id;
+
+    // --- 入れ替え（スワップ）ロジックの追加 ---
+    for (int i = 0; i < teamSlotButtons.Length; i++)
     {
-        isAnimating = true;
-        yield return StartCoroutine(Fade(1f, fadeDuration));
+        // 1. 自分以外のスロットをループ
+        if (i == currentSelectingSlotIndex) continue;
 
-        CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
-
-        // データ保存とUI更新
-        SaveCharacterId(currentSelectingSlotIndex, selectedChar.default_id);
-        UpdateSlotUI(currentSelectingSlotIndex); // 共通化したメソッドを使用
-        PartyHPandMOV();
-
-        characterDetailPanel.SetActive(false);
-        characterSelectPanel.SetActive(false);
-
-        yield return StartCoroutine(Fade(0f, fadeDuration));
-        isAnimating = false;
+        // 2. 他のスロットに同じキャラIDがすでに設定されているかチェック
+        if (GetSavedCharacterId(i) == newCharId)
+        {
+            // 3. 元々このスロット（currentSelectingSlotIndex）にいたキャラIDを、
+            //    重複が見つかったスロット（i）に移動させる（入れ替え）
+            int previousCharId = GetSavedCharacterId(currentSelectingSlotIndex);
+            SaveCharacterId(i, previousCharId);
+            UpdateSlotUI(i); // 移動先のUIも更新
+            break; // 重複は1つしかないのでループを抜ける
+        }
     }
+    // ----------------------------------------
+
+    // 現在のスロットに新しいキャラを保存
+    SaveCharacterId(currentSelectingSlotIndex, newCharId);
+    UpdateSlotUI(currentSelectingSlotIndex);
+    
+    PartyHPandMOV();
+
+    characterDetailPanel.SetActive(false);
+    characterSelectPanel.SetActive(false);
+
+    yield return StartCoroutine(Fade(0f, fadeDuration));
+    isAnimating = false;
+}
 
     IEnumerator ScaleAnimation(bool opening)
     {

@@ -23,6 +23,14 @@ public class BGMManager : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+        audioSource.volume = PlayerPrefs.GetFloat("BGMVolume", 1.0f);
+    }
+
+    public void SetVolume(float volume)
+    {
+        audioSource.volume = volume;
+        PlayerPrefs.SetFloat("BGMVolume", volume);
+        PlayerPrefs.Save();
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

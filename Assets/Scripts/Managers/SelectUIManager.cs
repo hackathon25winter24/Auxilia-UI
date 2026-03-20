@@ -159,6 +159,9 @@ public class SelectUIManager : MonoBehaviour
             case "BackShadow":
                 characterTub.SetActive(false);
                 break;
+            case "Random":
+            RandomizeFormation();
+            break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
@@ -166,27 +169,33 @@ public class SelectUIManager : MonoBehaviour
     }
 
     public void CharacterClick(int ButtonNum)
+{
+    // 現在の枠（selectedUI）に元々いたキャラを一時保存
+    int previousChar = battleDataforOnline.selected_character[selectedUI];
+
+    // 重複チェック
+    if (battleDataforOnline.selected_character[0] == ButtonNum)
     {
-        if (battleDataforOnline.selected_character[0] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[0];
-            battleDataforOnline.selected_character[0] = ButtonNum;
-        }else if (battleDataforOnline.selected_character[1] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[1];
-            battleDataforOnline.selected_character[1] = ButtonNum;
-        }else if (battleDataforOnline.selected_character[2] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[2];
-            battleDataforOnline.selected_character[2] = ButtonNum;
-        }else
-        {
-        battleDataforOnline.selected_character[selectedUI] = ButtonNum;
-        }
-        characterTub.SetActive(false);
-        UpDateCharacterUI();
+        // スロット0に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[0] = previousChar;
+    }
+    else if (battleDataforOnline.selected_character[1] == ButtonNum)
+    {
+        // スロット1に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[1] = previousChar;
+    }
+    else if (battleDataforOnline.selected_character[2] == ButtonNum)
+    {
+        // スロット2に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[2] = previousChar;
     }
 
+    // 最後に、今選んだ枠に新しいキャラを入れる
+    battleDataforOnline.selected_character[selectedUI] = ButtonNum;
+
+    characterTub.SetActive(false);
+    UpDateCharacterUI();
+}
     public void CharacterLongClick(int LongButtonNum)
     {}
 
@@ -220,6 +229,36 @@ public class SelectUIManager : MonoBehaviour
 
         costText.text = "cost：" + battleDataforOnline.palyer1_cost;
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
+    }
+
+    public void RandomizeFormation()
+    {
+    // 1. 全キャラクターのインデックス(ID)をリストにコピー
+    List<int> availableIndices = new List<int>();
+    for (int i = 0; i < characterData.characters.Length; i++)
+    {
+        availableIndices.Add(i);
+    }
+
+    // 2. 3つの枠に対して抽選
+    for (int i = 0; i < 3; i++)
+    {
+        if (availableIndices.Count > 0)
+        {
+            // リストからランダムに1つ選ぶ
+            int randomIndex = UnityEngine.Random.Range(0, availableIndices.Count);
+            int selectedId = availableIndices[randomIndex];
+
+            // 自分の編成データに代入
+            battleDataforOnline.selected_character[i] = selectedId;
+
+            // 選んだIDをリストから削除（これで二度と選ばれない）
+            availableIndices.RemoveAt(randomIndex);
+        }
+    }
+
+    // 3. UIを更新して合計コストなどを再計算
+    UpDateCharacterUI();
     }
 
     private async Task SyncRoomStatus()
