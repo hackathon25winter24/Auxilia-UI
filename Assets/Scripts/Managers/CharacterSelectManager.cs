@@ -182,6 +182,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     async void OpenSelectPanel(int slotIndex)
     {
+        SEManager.instance.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
         characterSelectPanel.SetActive(true);
         if (gameConnector != null) await gameConnector.UpdateUser();
@@ -189,6 +190,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     async void CloseSelectPanel()
     {
+        SEManager.instance.PlayBackSE();
         characterSelectPanel.SetActive(false);
         if (gameConnector != null) await gameConnector.UpdateUser();
     }
@@ -237,11 +239,13 @@ public class CharacterSelectManager : MonoBehaviour
 
     void CloseDetailPanel()
     {
+        SEManager.instance.PlayBackSE();
         characterDetailPanel.SetActive(false);
     }
 
     async void ConfirmSelection()
     {
+        SEManager.instance.PlaySelectSE();
         if (currentSelectingSlotIndex >= 0 && currentViewingCharIndex >= 0)
         {
             CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
@@ -264,6 +268,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     async void RandomFormation()
     {
+        SEManager.instance.PlaySelectSE();
         CharactersData[] characters = characterDataAsset.characters;
         System.Random random = new System.Random();
 
@@ -300,6 +305,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     void BackToTitle()
     {
+        SEManager.instance.PlayToNextSE();
         sceneData.next_scene_number = 1;
     }
 
