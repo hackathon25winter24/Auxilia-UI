@@ -77,8 +77,15 @@ public class ResultUIManager : MonoBehaviour
         }
     }
 
+    public RoomData roomData;
+    public GameConnector gameConnector;
+
     void Start()
     {
+        // もしインスペクターで未指定なら、実行時に探す
+        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+        if (roomData == null) roomData = FindFirstObjectByType<RoomData>();
+
         if (battleDataforOnline.my_rate_updown > 0)
         {
             myNewRate.text = battleDataforOnline.rate.ToString();
@@ -122,17 +129,46 @@ public class ResultUIManager : MonoBehaviour
 
     public void OnButtonClick(string buttonName)
     {
+        // Unityイベントから非同期メソッドを呼ぶ
+        _ = HandleButtonClick(buttonName);
+    }
+
+    private async System.Threading.Tasks.Task HandleButtonClick(string buttonName)
+    {
+        // 念のためバトルストリームを停止
+        if (gameConnector != null) await gameConnector.StopStream();
+
         switch (buttonName)
         {
             case "BackToHome":
+                if (gameConnector != null && roomData != null)
+                {
+                    await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
+                }
                 sceneData.next_scene_number = 1;
                 break;
-            case "BackToMatchingRoom":
+
+            case "BackToMatchingRoom": // 退出して部屋一覧へ
+                if (gameConnector != null && roomData != null)
+                {
+                    await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
+                }
                 sceneData.next_scene_number = 9;
                 break;
+
+            case "Rematch": // 新設ボタン名: 再戦
+                if (gameConnector != null && roomData != null)
+                {
+                    // 部屋に留まったまま Ready を false に更新
+                    await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, battleDataforOnline.my_player_id, false);
+                }
+                sceneData.next_scene_number = 10; // 待機室 (MatchingRoom) へ戻る
+                break;
+
             case "BackToMatching":
                 sceneData.next_scene_number = 3;
                 break;
+
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
