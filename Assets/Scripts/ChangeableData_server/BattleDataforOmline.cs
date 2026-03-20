@@ -28,11 +28,13 @@ public class BattleDataforOmline : ScriptableObject
     public int opponent_base_hp;
     public Vector2Int base_position;
     public Vector2Int opponent_base_position;
+    public int now_turn;
 }
 
 [System.Serializable]
 public class CharactersBattleData
 {
+    public uint unique_id;
     public bool[] debuffs = new bool[8];
     public int now_character_hp;
     public int now_character_maxhp;

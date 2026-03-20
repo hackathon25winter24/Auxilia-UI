@@ -144,12 +144,17 @@ public class Attacks
 [System.Serializable]
 public class Passive
 {
+    [SerializeField] int _passive_name;
     [SerializeField] int _passive_power;
     [SerializeField] int _passive_target;
     [SerializeField] Vector2Int[] _passive_range;
     [SerializeField] Sprite _passive_range_image;
     [SerializeField] string _passive_explanation;
 
+    public int passive_name
+    {
+        get{return _passive_name;}
+    }
     public int passive_power
     {
         get{return _passive_power;}

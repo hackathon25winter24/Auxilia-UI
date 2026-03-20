@@ -17,7 +17,6 @@ public class StorySelectUIManager : MonoBehaviour
                 break;
             case "Tutorial":
             storyManagerData.now_story_number = 0;
-            storyManagerData.is_tutorial = false;
             sceneData.next_scene_number = 8;
                 break;
             default:

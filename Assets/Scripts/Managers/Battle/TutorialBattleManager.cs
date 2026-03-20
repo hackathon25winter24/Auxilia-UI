@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Collections;
+using System.Threading.Tasks;
 
 public class TutorialBattleManager : MonoBehaviour
 {
@@ -9,33 +11,35 @@ public class TutorialBattleManager : MonoBehaviour
     public SceneData sceneData;
     public PlayerData playerData;
     public BattleDataforLocal battleDataforLocal;
-    public TextMeshProUGUI gametext;
+    public StoryManagerData storyManagerData;
+    public TextMeshProUGUI gameText;
+    public RectTransform gametext;
 
     public Slider timerSlider; 
     public float maxTime = 60f; 
     private float currentTime;
     private bool isTimerRunning = false;
+    public bool is_text_moving = false;
+    Vector2 startPosition = new Vector2(1000, 0);
+    Vector2 destination = new Vector2(-1000, 0);
+    public float duration = 2.0f;
+    public float elapsed = 0f;
 
     void Start()
     {
-        TimerStart();
+        gameText.text = "battle start!";
+        StartCoroutine(MoveRoutine());
+        StartMyTurn();
     }
 
     void Update()
     {
+        if(storyManagerData.Tutorial_progress > 2)
+        {
         if (inputData.space_key_ispressed)
         {
             EndMyTurn();
         }
-
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            sceneData.next_scene_number = 6;
-        }
-
-        if (battleDataforLocal.game_end)
-        {
-            sceneData.next_scene_number = 6;
         }
 
         if (isTimerRunning)
@@ -52,13 +56,15 @@ public class TutorialBattleManager : MonoBehaviour
                 Debug.Log("タイムアップ！");
                 currentTime = 0;
                 isTimerRunning = false;
-                OnTimeUp();
+                EndMyTurn();
             }
         }
     }
 
     public void StartMyTurn()
     {
+        gameText.text = "your turn";
+        StartCoroutine(MoveRoutine());
         battleDataforLocal.is_myturn = true;
         battleDataforLocal.now_my_cost = 50;
         TimerStart();
@@ -66,17 +72,9 @@ public class TutorialBattleManager : MonoBehaviour
 
     public void EndMyTurn()
     {
+        gameText.text = "turn end";
+        StartCoroutine(MoveRoutine());
         battleDataforLocal.is_myturn = false;
-        StartOpponentTurn();
-    }
-
-    public void StartOpponentTurn()
-    {
-        TimerStart();
-    }
-
-    public void EntOpponentTurn()
-    {
         StartMyTurn();
     }
 
@@ -85,17 +83,36 @@ public class TutorialBattleManager : MonoBehaviour
         currentTime = maxTime;
         timerSlider.maxValue = maxTime;
         timerSlider.value = maxTime;
-        isTimerRunning = true;
+        isTimerRunning = false;
     }
 
-    void OnTimeUp()
+    IEnumerator MoveRoutine()
+{
+    is_text_moving = true;
+
+    float elapsed = 0f;
+
+    while (elapsed < duration)
     {
-        if (battleDataforLocal.is_myturn)
-        {
-            EndMyTurn();
-        }else
-        {
-            EntOpponentTurn();
-        }
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration; // 0.0 ～ 1.0
+
+        // 【ここがポイント！】中間で緩やかになるカスタム曲線
+        // 3次関数を使って「S字を横に倒したような形」を作ります
+        float easedT = t * t * (3f - 2f * t); // 基本のスムーズ曲線
+        
+        // もしもっと極端に「中間で止まりそう」にしたいなら、
+        // サイン波を使って t の進み具合を調整します
+        // 下記は「0.5付近で時間の進みが遅くなる」計算の一例です
+        float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
+        // ※ 0.15f の値を大きくすると、中間での減速がより強くなります
+
+        gametext.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+
+        yield return null;
     }
+    gametext.anchoredPosition = destination;
+
+    is_text_moving = false;
+}
 }

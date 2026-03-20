@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tsukiha_1_0: 7240867303997388393
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

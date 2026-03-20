@@ -59,6 +59,11 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("シーンデータ（ScriptableObject）")]
     public SceneData sceneData;
 
+    [Header("Network")]
+    public GameConnector gameConnector;
+
+
+
     [System.Serializable]
     public class AttackData
     {
@@ -66,6 +71,11 @@ public class CharacterSelectManager : MonoBehaviour
         public TMP_Text attackDamage;
         public TMP_Text attackCost;
         public Image attackRange;
+    }
+
+    void Awake()
+    {
+        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
     }
 
     void Start()
@@ -176,11 +186,16 @@ public class CharacterSelectManager : MonoBehaviour
         return null;
     }
 
+
     void OpenSelectPanelWithFade(int slotIndex)
     {
         if (isAnimating) return;
         currentSelectingSlotIndex = slotIndex;
-        StartCoroutine(FadeSequence(true));
+         SEManager.instance.PlaySelectSE();
+        currentSelectingSlotIndex = slotIndex;
+        characterSelectPanel.SetActive(true);
+        if (gameConnector != null) await gameConnector.UpdateUser();
+         StartCoroutine(FadeSequence(true));
     }
 
     void CloseSelectPanelWithFade()
@@ -192,7 +207,11 @@ public class CharacterSelectManager : MonoBehaviour
     void ConfirmSelectionWithFade()
     {
         if (isAnimating || currentViewingCharIndex < 0) return;
+              SEManager.instance.PlayBackSE();
+        characterSelectPanel.SetActive(false);
+        if (gameConnector != null) await gameConnector.UpdateUser();
         StartCoroutine(ConfirmSequence());
+
     }
 
     void OpenDetailPanelWithAnimation(int charIndex)
@@ -208,15 +227,32 @@ public class CharacterSelectManager : MonoBehaviour
         hpText.text = character.default_hp.ToString();
         moveCostText.text = character.default_move_cost.ToString();
         characterName.text = character.default_name_japanese;
-
         // 設定されている攻撃データ数とUIの枠数の少ない方に合わせてループ（エラー防止）
         int attackCount = Mathf.Min(attacks.Length, character.attacks.Length);
         for (int i = 0; i < attackCount; i++)
         {
-            attacks[i].attackName.text = character.attacks[i].default_attack_name;
-            attacks[i].attackDamage.text = character.attacks[i].default_attack_power.ToString();
-            attacks[i].attackCost.text = character.attacks[i].default_attack_cost.ToString();
-            attacks[i].attackRange.sprite = character.attacks[i].attack_range_image;
+            // UI側のスロット自体のチェック
+            if (attacks == null || i >= attacks.Length || attacks[i] == null)
+            {
+                Debug.LogError($"CharacterSelectManager: UI 'attacks' array at index {i} is null or unassigned in inspector.");
+                continue;
+            }
+
+            // キャラクターデータ側のチェック
+            if (characterAttacks == null || i >= characterAttacks.Length || characterAttacks[i] == null)
+            {
+                if (attacks[i].attackName != null) attacks[i].attackName.text = "---";
+                if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = "0";
+                if (attacks[i].attackCost != null) attacks[i].attackCost.text = "0";
+                if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = null;
+                continue;
+            }
+
+            if (attacks[i].attackName != null) attacks[i].attackName.text = characterAttacks[i].default_attack_name;
+            if (attacks[i].attackDamage != null) attacks[i].attackDamage.text = characterAttacks[i].default_attack_power.ToString();
+            if (attacks[i].attackCost != null) attacks[i].attackCost.text = characterAttacks[i].default_attack_cost.ToString();
+            if (attacks[i].attackRange != null) attacks[i].attackRange.sprite = characterAttacks[i].attack_range_image;
+
         }
 
         StartCoroutine(ScaleAnimation(true));
@@ -224,12 +260,40 @@ public class CharacterSelectManager : MonoBehaviour
 
     void CloseDetailPanelWithAnimation()
     {
+
         if (isAnimating) return;
         StartCoroutine(ScaleAnimation(false));
+
+        SEManager.instance.PlayBackSE();
+        characterDetailPanel.SetActive(false);
     }
 
-    void RandomFormation()
+    async void ConfirmSelection()
     {
+        SEManager.instance.PlaySelectSE();
+        if (currentSelectingSlotIndex >= 0 && currentViewingCharIndex >= 0)
+        {
+            CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
+
+            // 既存データのプロパティから選択枠用の画像を取得
+            teamSlotImages[currentSelectingSlotIndex].sprite = characterDataAsset.characters[currentViewingCharIndex].select_image;
+            teamSlotImages[currentSelectingSlotIndex].gameObject.SetActive(true);
+
+            // PlayerDataへの保存
+            SaveCharacterId(currentSelectingSlotIndex, selectedChar.default_id);
+        }
+
+        characterDetailPanel.SetActive(false);
+        characterSelectPanel.SetActive(false);
+
+        PartyHPandMOV();
+
+        if (gameConnector != null) await gameConnector.UpdateUser();
+    }
+
+    async void RandomFormation()
+    {
+        SEManager.instance.PlaySelectSE();
         CharactersData[] characters = characterDataAsset.characters;
         if (characters.Length == 0) return; // データが存在しない場合のエラー回避
 
@@ -244,12 +308,16 @@ public class CharacterSelectManager : MonoBehaviour
             UpdateSlotUI(i);
         }
 
+
         // ステータス更新は全スロットの書き換えが終わった後に1回だけ実行する
         PartyHPandMOV();
+
+        if (gameConnector != null) await gameConnector.UpdateUser();
     }
 
     void BackToTitle()
     {
+        SEManager.instance.PlayToNextSE();
         sceneData.next_scene_number = 1;
         // 実際のシーン遷移処理が必要であれば、ここに記述します
         // SceneManager.LoadScene(sceneData.next_scene_number);

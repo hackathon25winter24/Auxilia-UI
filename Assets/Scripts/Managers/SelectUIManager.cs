@@ -38,6 +38,11 @@ public class SelectUIManager : MonoBehaviour
     public int selectedUI;
     public int selectedCharacterId;
 
+    // 「決定」ボタンを押した後、相手の準備完了を待っている状態かどうか
+    private bool _waitingForOpponent = false;
+    // 「決定」ボタン上のテキスト（相手待機中メッセージの表示に使う）
+    public TextMeshProUGUI decidedButtonText;
+
     public float maxTime = 100f; 
     private float currentTime;
     private bool isTimerRunning = false;
@@ -48,6 +53,24 @@ public class SelectUIManager : MonoBehaviour
     async void Awake()
     {
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+
+        // 画面遷移直後のため roomData.usersData は古い可能性があるので
+        // サーバーから最新の自分の state を取得して isPlayer を確定する
+        var roomList = await gameConnector.ListRoom(roomData.room_id);
+        int myState = 0;
+        if (roomList != null)
+        {
+            foreach (var r in roomList)
+            {
+                if (r.UserId == playerData.user_id)
+                {
+                    myState = r.State;
+                    break;
+                }
+            }
+        }
+        battleDataforOnline.isPlayer = (myState == 1 || myState == 2);
+
         if (battleDataforOnline.isPlayer)
         {
             playerUI.SetActive(true);
@@ -91,7 +114,7 @@ public class SelectUIManager : MonoBehaviour
         TimerStart();
     }
 
-    public void OnButtonClick(string buttonName)
+    public async void OnButtonClick(string buttonName)
     {
         switch (buttonName)
         {
@@ -111,7 +134,15 @@ public class SelectUIManager : MonoBehaviour
                 CharacterButtons();
                 break;
             case "Decided":
-                sceneData.next_scene_number = 5;
+                if (!_waitingForOpponent)
+                {
+                    await SendDatas();
+                    _waitingForOpponent = true;
+                    if (decidedButtonText != null)
+                        decidedButtonText.text = "相手の準備を待っています...";
+                    // 両者が準備できるまでポーリングで待機し、完了次第バトルシーンへ自動遷移
+                    StartCoroutine(WaitForBothPlayersReady());
+                }
                 break;
             case "BackShadow":
                 characterTub.SetActive(false);
@@ -155,9 +186,8 @@ public class SelectUIManager : MonoBehaviour
         costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
         if (battleDataforOnline.isPlayer)
         {
-            SendDatas();
-            var opponent_characters = GetOpponentDatas();
-            Debug.Log($"相手のキャラID: {opponent_characters}");
+            // サーバーへの無駄な通信を防ぐため、キャラ選択情報の送信は決定ボタンを押した時のみ実行します
+            // 相手のキャラ取得（GetOpponentDatas）も、相手の選択完了をチェックするなどの別処理で行う必要があります
         }else
         {
             // 毎フレーム動かすことができなかったので大体1秒に1回動かしてます
@@ -181,6 +211,38 @@ public class SelectUIManager : MonoBehaviour
     {
         currentTime = maxTime;
         isTimerRunning = true;
+    }
+
+    private IEnumerator WaitForBothPlayersReady()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1.0f);
+
+            // GetGameData は async なので Task として実行して待機
+            var task = gameConnector.GetGameData(roomData.room_id);
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            if (this == null) yield break; // シーン移動で破棄されていたら中断
+
+            var data = task.Result;
+            if (data == null) continue;
+
+            // 両プレイヤーのキャラが3体以上登録されていれば準備완了とみなす
+            int p1count = 0, p2count = 0;
+            foreach (var c in data.Characters)
+            {
+                if (c.Is1P) p1count++;
+                else p2count++;
+            }
+
+            if (p1count >= 3 && p2count >= 3)
+            {
+                // 両方の準備が完了したのでバトルシーンへ遷移
+                sceneData.next_scene_number = 5;
+                yield break;
+            }
+        }
     }
 
     void UpDateCharacterUI()
@@ -224,7 +286,7 @@ public class SelectUIManager : MonoBehaviour
         }
     }
 
-    public async void SendDatas()
+    public async Task SendDatas()
     {
         //ここに自分の編成とコストを送る関数を書いてください
 

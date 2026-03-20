@@ -56,6 +56,8 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Game.Network.RegisterCharactersResponse> __Marshaller_game_network_RegisterCharactersResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.RegisterCharactersResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.StreamGameRequest> __Marshaller_game_network_StreamGameRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.StreamGameRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Game.Network.PlayerAction> __Marshaller_game_network_PlayerAction = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.PlayerAction.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -83,10 +85,42 @@ namespace Game.Network {
         __Marshaller_game_network_RegisterCharactersResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_StreamGame = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
-        grpc::MethodType.DuplexStreaming,
+    static readonly grpc::Method<global::Game.Network.StreamGameRequest, global::Game.Network.GameDataResponse> __Method_StreamGame = new grpc::Method<global::Game.Network.StreamGameRequest, global::Game.Network.GameDataResponse>(
+        grpc::MethodType.ServerStreaming,
         __ServiceName,
         "StreamGame",
+        __Marshaller_game_network_StreamGameRequest,
+        __Marshaller_game_network_GameDataResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyMove = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ApplyMove",
+        __Marshaller_game_network_PlayerAction,
+        __Marshaller_game_network_GameDataResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyAttack = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ApplyAttack",
+        __Marshaller_game_network_PlayerAction,
+        __Marshaller_game_network_GameDataResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_EndTurn = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "EndTurn",
+        __Marshaller_game_network_PlayerAction,
+        __Marshaller_game_network_GameDataResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyGridUpdate = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ApplyGridUpdate",
         __Marshaller_game_network_PlayerAction,
         __Marshaller_game_network_GameDataResponse);
 
@@ -131,15 +165,45 @@ namespace Game.Network {
       }
 
       /// <summary>
-      /// 対戦中のアクション同期（双方向ストリーミング）
-      /// 片方が動かしたら、もう片方に最新の GameDataResponse を流す
+      /// 対戦中のアクション同期（サーバー・ストリーミング）
+      /// ルームIDを指定して受信を開始する
       /// </summary>
-      /// <param name="requestStream">Used for reading requests from the client.</param>
+      /// <param name="request">The request received from the client.</param>
       /// <param name="responseStream">Used for sending responses back to the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>A task indicating completion of the handler.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task StreamGame(grpc::IAsyncStreamReader<global::Game.Network.PlayerAction> requestStream, grpc::IServerStreamWriter<global::Game.Network.GameDataResponse> responseStream, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task StreamGame(global::Game.Network.StreamGameRequest request, grpc::IServerStreamWriter<global::Game.Network.GameDataResponse> responseStream, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// アクション送信（個別の単方向RPC）
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyMove(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyAttack(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> EndTurn(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -290,28 +354,138 @@ namespace Game.Network {
         return CallInvoker.AsyncUnaryCall(__Method_RegisterCharacters, null, options, request);
       }
       /// <summary>
-      /// 対戦中のアクション同期（双方向ストリーミング）
-      /// 片方が動かしたら、もう片方に最新の GameDataResponse を流す
+      /// 対戦中のアクション同期（サーバー・ストリーミング）
+      /// ルームIDを指定して受信を開始する
       /// </summary>
+      /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
       /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> StreamGame(grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Game.Network.GameDataResponse> StreamGame(global::Game.Network.StreamGameRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return StreamGame(new grpc::CallOptions(headers, deadline, cancellationToken));
+        return StreamGame(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// 対戦中のアクション同期（双方向ストリーミング）
-      /// 片方が動かしたら、もう片方に最新の GameDataResponse を流す
+      /// 対戦中のアクション同期（サーバー・ストリーミング）
+      /// ルームIDを指定して受信を開始する
       /// </summary>
+      /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> StreamGame(grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Game.Network.GameDataResponse> StreamGame(global::Game.Network.StreamGameRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncDuplexStreamingCall(__Method_StreamGame, null, options);
+        return CallInvoker.AsyncServerStreamingCall(__Method_StreamGame, null, options, request);
+      }
+      /// <summary>
+      /// アクション送信（個別の単方向RPC）
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyMove(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyMove(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// アクション送信（個別の単方向RPC）
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyMove(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ApplyMove, null, options, request);
+      }
+      /// <summary>
+      /// アクション送信（個別の単方向RPC）
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyMoveAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyMoveAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// アクション送信（個別の単方向RPC）
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyMoveAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ApplyMove, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyAttack(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyAttack(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyAttack(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ApplyAttack, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyAttackAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyAttackAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyAttackAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ApplyAttack, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse EndTurn(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EndTurn(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse EndTurn(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_EndTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> EndTurnAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EndTurnAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> EndTurnAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_EndTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyGridUpdate(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameDataResponse ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ApplyGridUpdate, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyGridUpdateAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyGridUpdateAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyGridUpdateAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ApplyGridUpdate, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -330,7 +504,11 @@ namespace Game.Network {
           .AddMethod(__Method_CreateGame, serviceImpl.CreateGame)
           .AddMethod(__Method_GetGameData, serviceImpl.GetGameData)
           .AddMethod(__Method_RegisterCharacters, serviceImpl.RegisterCharacters)
-          .AddMethod(__Method_StreamGame, serviceImpl.StreamGame).Build();
+          .AddMethod(__Method_StreamGame, serviceImpl.StreamGame)
+          .AddMethod(__Method_ApplyMove, serviceImpl.ApplyMove)
+          .AddMethod(__Method_ApplyAttack, serviceImpl.ApplyAttack)
+          .AddMethod(__Method_EndTurn, serviceImpl.EndTurn)
+          .AddMethod(__Method_ApplyGridUpdate, serviceImpl.ApplyGridUpdate).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -343,7 +521,11 @@ namespace Game.Network {
       serviceBinder.AddMethod(__Method_CreateGame, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.CreateGameRequest, global::Game.Network.GameDataResponse>(serviceImpl.CreateGame));
       serviceBinder.AddMethod(__Method_GetGameData, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.GetGameDataRequest, global::Game.Network.GameDataResponse>(serviceImpl.GetGameData));
       serviceBinder.AddMethod(__Method_RegisterCharacters, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.RegisterCharactersRequest, global::Game.Network.RegisterCharactersResponse>(serviceImpl.RegisterCharacters));
-      serviceBinder.AddMethod(__Method_StreamGame, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.StreamGame));
+      serviceBinder.AddMethod(__Method_StreamGame, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Game.Network.StreamGameRequest, global::Game.Network.GameDataResponse>(serviceImpl.StreamGame));
+      serviceBinder.AddMethod(__Method_ApplyMove, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyMove));
+      serviceBinder.AddMethod(__Method_ApplyAttack, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyAttack));
+      serviceBinder.AddMethod(__Method_EndTurn, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.EndTurn));
+      serviceBinder.AddMethod(__Method_ApplyGridUpdate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyGridUpdate));
     }
 
   }

@@ -7,6 +7,6 @@ public class StoryManagerData : ScriptableObject
     public bool serif_loading;
     public bool is_auto;
     public bool is_wating;
-    public bool is_tutorial;
     public int now_story_number;
+    public int Tutorial_progress;
 }

@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public class MatchingUIManager : MonoBehaviour
 {
@@ -41,7 +42,12 @@ public class MatchingUIManager : MonoBehaviour
     void Start()
     {
         ownerId = playerData.user_id;
-        ownerName = playerData.username;
+        ownerName = playerData.player_name;
+        // 追加：InputFieldに文字が入るたびにUpdateSearchが走るようにする
+        if (kensakuInput != null)
+        {
+            kensakuInput.onValueChanged.AddListener(delegate { UpdateSearch(); });
+        }
     }
 
     public async void OnButtonClick(string buttonName)
@@ -49,13 +55,16 @@ public class MatchingUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Back":
+                SEManager.instance.PlayBackSE();
                 sceneData.next_scene_number = 1;
                 break;
             case "newmake":
+                SEManager.instance.PlayToNextSE();
                 //ここに新しく部屋をつくってそこに入る関数を書いてください
                 OnClick_CreateRoomMatch();
                 break;
             case "ReRoad":
+                SEManager.instance.PlaySelectSE();
                 if (is_roading)break;
                 is_roading = true;
                 nowLoadingText.SetActive(true);
@@ -64,12 +73,19 @@ public class MatchingUIManager : MonoBehaviour
                 is_roading = false;
                 break;
             case "kensaku":
+                SEManager.instance.PlaySelectSE();
                 kensakuButton.SetActive(true);
                 break;
             case "kensakuEnter":
+                SEManager.instance.PlaySelectSE();
                 kensaku_room_name = kensakuInput.text;
+    
+                // 【修正】現在の入力内容で即座に検索を実行する
+                UpdateSearch();
+                kensakuButton.SetActive(false);
                 break;
             case "Backfromkensaku":
+                SEManager.instance.PlayBackSE();
                 kensakuButton.SetActive(false);
                 break;
             default:
@@ -135,21 +151,40 @@ public class MatchingUIManager : MonoBehaviour
 
     async void OnRoomSelected(int index)
     {
+        SEManager.instance.PlayToNextSE();
         if (matchingData.rooms[index].room_is_selected)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
             var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, playerData.user_id);
-            roomData.room_id = response.Rooms[0].RoomId;
-            for (int i = 0; i < matchingData.num_room; i++)
+            if (response != null && response.Rooms.Count > 0)
             {
-                if (matchingData.rooms[i].room_id == roomData.room_id)
+                bool has1p = false, has2p = false;
+                foreach (var r in response.Rooms)
                 {
-                    roomData.room_name = matchingData.rooms[i].room_name;
+                    if (r.UserId != playerData.user_id)
+                    {
+                        if (r.State == 1) has1p = true;
+                        if (r.State == 2) has2p = true;
+                    }
                 }
-            }
+                int newState = 0; // default Spectator
+                if (!has1p) newState = 1;
+                else if (!has2p) newState = 2;
+                
+                await gameConnector.UpdateRoomState(matchingData.rooms[index].room_id, playerData.user_id, newState, false);
 
-            sceneData.next_scene_number = 9;
+                roomData.room_id = response.Rooms[0].RoomId;
+                for (int i = 0; i < matchingData.num_room; i++)
+                {
+                    if (matchingData.rooms[i].room_id == roomData.room_id)
+                    {
+                        roomData.room_name = matchingData.rooms[i].room_name;
+                    }
+                }
+
+                sceneData.next_scene_number = 9;
+            }
         }else
         {
             for (int i = 0; i < matchingData.num_room; i++)
@@ -174,7 +209,11 @@ public class MatchingUIManager : MonoBehaviour
         {
             matchingData.rooms[i].room_id = room_list[i].RoomId;
             matchingData.rooms[i].room_name = room_list[i].RoomName;
-            matchingData.rooms[i].room_host = room_list[i].OwnerId;
+            
+            // オーナーのユーザー情報を取得して名前を表示
+            var owner = await gameConnector.GetUser(room_list[i].OwnerId);
+            matchingData.rooms[i].room_host = (owner != null) ? owner.Name : room_list[i].OwnerId;
+
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
             var joiner_list = await gameConnector.ListRoom(room_list[i].RoomId);
             matchingData.rooms[i].num_room_joiner = joiner_list.Count;
@@ -222,11 +261,74 @@ public class MatchingUIManager : MonoBehaviour
             return;
         }
         var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
-        await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
-        // 新たにRoomDataにIDを追加
-        roomData.room_id = response.RoomId;
-        roomData.room_name = room_name;
+        if (response != null)
+        {
+            await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
+            await gameConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
-        sceneData.next_scene_number = 9;
+            // 新たにRoomDataにIDを追加
+            roomData.room_id = response.RoomId;
+            roomData.room_name = room_name;
+
+            sceneData.next_scene_number = 9;
+        }
     }
+
+    // 1. UpdateSearchメソッドの修正
+public void UpdateSearch()
+{
+    string input = kensakuInput.text;
+
+    // 入力が空なら全ルームを表示
+    if (string.IsNullOrEmpty(input))
+    {
+        CreateRoomButtons(matchingData.num_room);
+    }
+    else
+    {
+        // ルーム名にキーワードが含まれる要素の「インデックス（番号）」を抽出
+        List<int> filteredIndices = new List<int>();
+        for (int i = 0; i < matchingData.rooms.Count; i++)
+        {
+            // 大文字小文字を区別せずに日本語含め検索
+            if (matchingData.rooms[i].room_name.ToLower().Contains(input.ToLower()))
+            {
+                filteredIndices.Add(i);
+            }
+        }
+
+        // 絞り込んだ結果でボタンを再生成
+        UpdateDisplayFiltered(filteredIndices);
+    }
+}
+
+// 2. 絞り込み専用の表示更新メソッドを追加
+private void UpdateDisplayFiltered(List<int> indices)
+{
+    // 既存のボタンを削除
+    foreach (Transform child in contentParent)
+    {
+        Destroy(child.gameObject);
+    }
+
+    // フィルタリングされたインデックスのみでボタンを作成
+    foreach (int index in indices)
+    {
+        GameObject newButton = Instantiate(roomButton, contentParent);
+        newButton.GetComponentInChildren<TextMeshProUGUI>().text = matchingData.rooms[index].room_name;
+
+        ShowRoom entity = newButton.GetComponent<ShowRoom>();
+        if (entity != null)
+        {
+            entity.SetRoomData(
+                matchingData.rooms[index].room_name,
+                matchingData.rooms[index].room_host,
+                matchingData.rooms[index].room_is_gamestarted,
+                matchingData.rooms[index].num_room_joiner);
+        }
+
+        // ボタンクリック時のイベント登録（元のindexを保持）
+        newButton.GetComponent<Button>().onClick.AddListener(() => OnRoomSelected(index));
+    }
+}
 }

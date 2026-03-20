@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
+using Game.Network;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -12,9 +15,6 @@ public class CharacterManager : MonoBehaviour
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public BattleDataforOmline battleDataforOnline;
-    public int[] on_grid_number;
-    public int[] on_grid_number_x;
-    public int[] on_grid_number_y;
     public int selected_character_id;
     public RectTransform AttackButton;
     public Image AttackButtonBackImage;
@@ -24,12 +24,48 @@ public class CharacterManager : MonoBehaviour
     public int attack_number;
     public bool is_attacking;
     public int now_damage;
+    public GameConnector gameConnector;
+    public RoomData roomData;
+    public PlayerData playerData;
+
+    // 送信済みデータのキャッシュ（毎フレーム送るのを防ぐ）
+    private int[] _lastSentX = new int[6];
+    private int[] _lastSentY = new int[6];
+    private Vector2Int _lastAttackDirection;
+    private bool _isFirstAttackFrame; // 連続クリック防止用
+
+
+    private T GetSo<T>(T existing) where T : ScriptableObject
+    {
+        if (existing != null) return existing;
+        var targets = Resources.FindObjectsOfTypeAll<T>();
+        if (targets.Length > 0) return targets[0];
+        return null;
+    }
 
     void Awake()
     {
-        GetBattleData();
+        roomData = GetSo(roomData);
+        playerData = GetSo(playerData);
+        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        gameConnector.characterManager = this.GetComponent<CharacterManager>();
+        
+        if (roomData != null && playerData != null)
+        {
+            gameConnector.StartStream((uint)roomData.room_id, playerData.user_id);
+        }
+        else
+        {
+            Debug.LogError("CharacterManager: roomDataまたはplayerDataが見つからないためStartStreamをスキップしました。");
+        }
     }
-    void Start()
+    void OnDestroy()
+    {
+        _ = gameConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
+    }
+
+
+    public void InitCharacterUI()
     {
         BackButton.gameObject.SetActive(false);
         // 配列が空、または要素が足りない場合の安全策
@@ -41,6 +77,7 @@ public class CharacterManager : MonoBehaviour
 
         for (int i = 0; i <= 5; i++)
         {
+        battleDataforOnline.charactersBattleDatas[i].unique_id = 0; // Reset for new match mapping
         battleDataforOnline.character_isSelected[i] = false;
         battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
         battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
@@ -78,9 +115,7 @@ public class CharacterManager : MonoBehaviour
         characters[id].anchoredPosition = pos;
         character_image[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_mini;
         CharacterSmallwindow[id].sprite = characterData.characters[battleDataforLocal.character_id[id]].default_sprite_smallwindow;
-        on_grid_number_x[id] = gridX;
-        on_grid_number_y[id] = gridY;
-        on_grid_number[id] = gridY * 8 + gridX; // 1次元番号も一応同期
+        battleDataforOnline.charactersBattleDatas[id].now_character_position = new Vector2Int(gridX, gridY);
     }
 
     public void OnButtonClick(string buttonName)
@@ -88,13 +123,14 @@ public class CharacterManager : MonoBehaviour
         if (battleDataforLocal.is_myturn == false)return;
         if (buttonName == "1" || buttonName == "2" || buttonName == "3" || buttonName == "BackButton")
         {
-        DeselectAll();
+        DeselectAll();// 何かの音を実装するかは動作を見てから決める。おそらく初期化用関数？ぼっちにはデバッグできないので分かりませんね
         }
 
         if (battleDataforOnline.character_isSelected[0] || battleDataforOnline.character_isSelected[1] || battleDataforOnline.character_isSelected[2])
         {
             if(buttonName == "BackButton")
             {
+            SEManager.instance.PlayBackSE();
             for (int i = 0; i <= 5; i++)
             {
             battleDataforOnline.character_isSelected[i] = false;
@@ -113,30 +149,40 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 0;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
+            _ = SendGridData();
         }
         if(buttonName == "Attack2") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 1;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
+            _ = SendGridData();
         }
         if(buttonName == "Attack3") 
         {
+            SEManager.instance.PlaySelectSE();
             attack_number = 2;
-            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost <0)return;
+            if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
             is_attacking = true;
+            _isFirstAttackFrame = true; // ガード開始
+            _ = SendGridData();
         }
         
         }
 
         if(buttonName == "BackButton")
             {
+            Debug.Log("ここに音が欲しければ流してね");
             for (int i = 0; i <= 5; i++)
             {
             battleDataforOnline.character_isSelected[i] = false;
@@ -148,6 +194,7 @@ public class CharacterManager : MonoBehaviour
         switch (buttonName)
         {
             case "1":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 0;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -158,8 +205,10 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            _ = SendGridData();
                 break;
             case "2":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 1;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -170,8 +219,10 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            _ = SendGridData();
                 break;
             case "3":
+            SEManager.instance.PlaySelectSE();
             selected_character_id = 2;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -182,10 +233,21 @@ public class CharacterManager : MonoBehaviour
             AttackButtonOne[i].sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[i].attack_button;    
             }
             AttackButtonBackImage.sprite = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attack_button_backimage;
+            _ = SendGridData();
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
                 break;
+        }
+    }
+
+    private async Task SendGridData()
+    {
+        if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
+        {
+            bool is1p = (battleDataforOnline.my_player_id == 0);
+            Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={playerData.user_id}</color>");
+            await gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
         }
     }
 
@@ -198,10 +260,30 @@ public class CharacterManager : MonoBehaviour
         ClearAttackRange(); 
         Attack(); 
 
+        // 攻撃方向が変わった場合、または初めて攻撃モードに入った場合にグリッド同期
+        Vector2Int currentDir = GetMouseDirection();
+        if (currentDir != _lastAttackDirection)
+        {
+            SEManager.instance.PlayClickSE();
+            _lastAttackDirection = currentDir;
+            _ = SendGridData();
+        }
+
         // 左クリックで攻撃を確定させる
         if (inputData.left_mouse_button_ispressed)
         {
+            if (_isFirstAttackFrame)
+            {
+                // ボタンが押されたまま（UIクリックの継続）なら確定させない
+                return;
+            }
+            Debug.Log("<color=white><b>[Update] 攻撃確定入力を検知</b></color>");
             ConfirmAttack();
+        }
+        else
+        {
+            // ボタンが離されたらガード解除
+            _isFirstAttackFrame = false;
         }
     }
     else 
@@ -219,16 +301,8 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    for (int i = 0; i <= 5; i++)
-    {
-    battleDataforOnline.charactersBattleDatas[i].now_character_position
-     = new Vector2Int(on_grid_number_x[i],on_grid_number_y[i]);
-    }
-
-    if (battleDataforLocal.is_myturn == false)
-    {
-        UpdateCharacterPosition();
-    }
+    // 毎フレーム、BattleDataforOnline の座標に基づいてUI画像を同期する（自分のターン・相手ターン問わず）
+    UpdateCharacterPosition();
 
     // 死亡判定
     for(int i = 0; i <= 5; i++)
@@ -245,13 +319,14 @@ public class CharacterManager : MonoBehaviour
         SendBattleData();
     }else
     {
-        GetBattleData();
+        //GetBattleData();
+        // データは自動で送られてくるらしいです
     }
     }
 
     public void UpdateCharacterPosition()
     {
-    for (int i = 3; i <= 5; i++)
+    for (int i = 0; i <= 5; i++)
         {
         int worldPosX = battleDataforOnline.charactersBattleDatas[i].now_character_position.x * 50 - 175;
         int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 30;
@@ -275,8 +350,11 @@ public class CharacterManager : MonoBehaviour
 
     void TryMove(int moveX, int moveY, Vector2 posDelta)
     {
-    int nextX = on_grid_number_x[selected_character_id] + moveX;
-    int nextY = on_grid_number_y[selected_character_id] + moveY;
+    SEManager.instance.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
+    int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
+    int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
+    int nextX = currentX + moveX;
+    int nextY = currentY + moveY;
 
     if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;
 
@@ -287,12 +365,10 @@ public class CharacterManager : MonoBehaviour
     if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
     {
         // A. 現在の場所（移動元）を元の地形に戻す
-        UpdateGridState(on_grid_number_x[selected_character_id], on_grid_number_y[selected_character_id], 0);
+        UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        on_grid_number_x[selected_character_id] = nextX;
-        on_grid_number_y[selected_character_id] = nextY;
-        on_grid_number[selected_character_id] = nextY * 8 + nextX;
+        battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position = new Vector2Int(nextX, nextY);
 
         characters[selected_character_id].anchoredPosition += posDelta;
         AttackButton.anchoredPosition += posDelta;
@@ -314,18 +390,21 @@ public class CharacterManager : MonoBehaviour
 
         int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].default_move_cost;
         if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1])
-    {
-        battleDataforOnline.now_my_cost -= cost -2;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
-    {
-        battleDataforOnline.now_my_cost -= cost +2;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
-    {
-        battleDataforOnline.now_my_cost -= cost;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[1]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
-    {
-        battleDataforOnline.now_my_cost -= cost;
-    }
+        {
+            battleDataforOnline.now_my_cost -= (cost - 2);
+        }
+        else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[5])
+        {
+            battleDataforOnline.now_my_cost -= (cost + 2);
+        }
+        else
+        {
+            battleDataforOnline.now_my_cost -= cost;
+        }
+        Debug.Log($"<color=orange>[TryMove] コスト消費後の残り: {battleDataforOnline.now_my_cost}</color>");
+    
+    // 移動した際にグリッドデータを送信
+    _ = SendGridData();
     }
     }
 
@@ -353,8 +432,8 @@ public class CharacterManager : MonoBehaviour
 
     public void Attack()
     {
-    int currentX = on_grid_number_x[selected_character_id];
-    int currentY = on_grid_number_y[selected_character_id];
+    int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
+    int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
     var ranges = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_range;
 
     // マウスの方向を取得 (Vector2Int.up, down, left, right のいずれかが返る)
@@ -379,23 +458,28 @@ public class CharacterManager : MonoBehaviour
     // 2. マウスがキャラから見てどの方向にいるか判定する関数
     private Vector2Int GetMouseDirection()
     {
-    // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
-    Vector2 charPos = characters[selected_character_id].anchoredPosition;
-    Vector2 mousePos = inputData.mouse_position;
-    Vector2 diff = mousePos - charPos;
+        // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
+        Vector2 charPos = characters[selected_character_id].anchoredPosition;
+        Vector2 mousePos = inputData.mouse_position; 
+        
+        // 【注意】mousePosがスクリーン座標系の場合、正規化や調整が必要になる可能性があります
+        // 一旦、相対ベクトルを計算してログに出力します
+        Vector2 diff = mousePos - charPos;
 
-    // XとYの絶対値を比較して、どちらの方向に大きく動いているか判定
-    if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
-    {
-        // 左右方向
-        return diff.x > 0 ? Vector2Int.right : Vector2Int.left;
-    }
-    else
-    {
-        // 上下方向
-        // UIの座標系に合わせる（上がプラスならup、下がマイナスならdown）
-        return diff.y > 0 ? Vector2Int.up : Vector2Int.down;
-    }
+        Vector2Int result;
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+        {
+            result = diff.x > 0 ? Vector2Int.right : Vector2Int.left;
+        }
+        else
+        {
+            result = diff.y > 0 ? Vector2Int.up : Vector2Int.down;
+        }
+
+        // 変化があった時だけログを出す等しても良いが、デバッグのため一旦そのまま出す
+        // Debug.Log($"[GetMouseDirection] charPos={charPos}, mousePos={mousePos}, diff={diff}, result={result}");
+
+        return result;
     }
 
     public void ClearAttackRange()
@@ -409,28 +493,34 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    public void ConfirmAttack()
+    public async void ConfirmAttack()
     {
+    Debug.Log("<color=white><b>[ConfirmAttack] 処理開始</b></color>");
+    Debug.Log("攻撃時の音が欲しかったらこの辺につければ良さそう");
     int cost = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost;
     // 1. 現在の攻撃の威力を取得
     int power = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_power;
 
     int target = characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_target;
 
+    Debug.Log($"[ConfirmAttack] selected_char={selected_character_id}, attack_num={attack_number}, cost={cost}, power={power}, targetType={target}");
+
     // 2. キャラクターが攻撃範囲内にいるかチェック
-    // ※ プレイヤーが 0,1,2 / 敵が 3,4,5 という構成を想定
     int hit_character = 0;
     if (target == 1 || target == 2)
     {
-    for (int i = 0; i <= 3; i++)
+    for (int i = 0; i <= 2; i++)
     {
         // 味方がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+        int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+        if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
             ApplyDamage(i, power);
             hit_character++;
 
             BuffDebuff(i);
+            await SendAttackInfo(i);
         }
     }
     }
@@ -440,135 +530,174 @@ public class CharacterManager : MonoBehaviour
     for (int i = 3; i <= 5; i++)
     {
         // 敵がいるマスの攻撃フラグが 1 ならヒット！
-        if (gridDataforOnline.grid_attack_position_y[on_grid_number_y[i]].grid_attack_position_x[on_grid_number_x[i]] == 1)
+        int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+        int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+        if (gridDataforOnline.grid_attack_position_y[cy].grid_attack_position_x[cx] == 1)
         {
             ApplyDamage(i, power);
             hit_character++;
 
             BuffDebuff(i);
+            await SendAttackInfo(i);
         }
     }
     if (gridDataforOnline.grid_attack_position_y[battleDataforOnline.opponent_base_position.y].grid_attack_position_x[battleDataforOnline.opponent_base_position.x] == 1)
     {
         hit_character++;
-        battleDataforOnline.opponent_base_hp -= power;
+        
+        // 拠点へのダメージにも倍率を適用
+        bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
+        bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
+        float multiplier = 1.0f;
+        if (hasDown && hasUp) multiplier = 1.0f;
+        else if (hasDown)     multiplier = 0.75f;
+        else if (hasUp)       multiplier = 1.25f;
+
+        int finalBaseDamage = Mathf.RoundToInt(power * multiplier);
+        battleDataforOnline.opponent_base_hp -= finalBaseDamage;
+        
+        await SendAttackInfo(-1);
         if (battleDataforOnline.opponent_base_hp <= 0)
-    {
-        battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
-        battleDataforOnline.game_end = true;
-    }
+        {
+            battleDataforOnline.win_player_id = battleDataforOnline.my_player_id;
+            battleDataforOnline.game_end = true;
+        }
     }
     }
 
-    if (hit_character == 0)
+    if (hit_character > 0)
     {
-
+        Debug.Log("キャラクターまたは拠点に攻撃がヒットしました");
+    }
+    else
+    {
+        // ヒットしなかった場合、特定のスキルによる設置物（トラップ等）の処理
         if (battleDataforOnline.selected_character[selected_character_id] == 3 && attack_number == 2)
         {
             for (int y = 0; y <= 4; y++)
             {
                 for (int x = 0; x <= 7; x++)
                 {
-                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] == 0)
                     {
-                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
-                    {
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
-                    }
-                    }else
-                    {
-                        //当たったキャラクターがいないときの処理を書く
+                        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                        {
+                            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 3;
+                        }
                     }
                 }
             }
-        }else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
+        }
+        else if (battleDataforOnline.selected_character[selected_character_id] == 6 && attack_number == 0)
         {
             for (int y = 0; y <= 4; y++)
             {
                 for (int x = 0; x <= 7; x++)
                 {
-                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] != 1)
+                    if (gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] == 0)
                     {
-                    if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
-                    {
-                        gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
-                        gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
-                    }
-                    }else
-                    {
-                        //当たったキャラクターがいないときの処理を書く
+                        if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
+                        {
+                            gridDataforOnline.grid_state_y[y].grid_state_x[x] = 4;
+                            gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x[x] = 4;
+                        }
                     }
                 }
             }
-        }else
-        {
-            //当たったキャラクターがいないときの処理を書く
         }
+    }
 
-        // 3. 攻撃状態の解除
+    // 3. 攻撃状態の解除とクリーンアップ（ヒットの有無に関わらず実行）
     is_attacking = false;
     ClearAttackRange();
     
-    // UIの非表示設定など（必要に応じて）
-    BackButton.gameObject.SetActive(false);
+    if (BackButton != null) BackButton.gameObject.SetActive(false);
     for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
-    }else
-    {
+
+    // コスト消費
     if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2])
     {
-        battleDataforOnline.now_my_cost -= cost -5;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+        battleDataforOnline.now_my_cost -= (cost - 5);
+    }
+    else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
     {
-        battleDataforOnline.now_my_cost -= cost +5;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
-    {
-        battleDataforOnline.now_my_cost -= cost;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[2]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[6])
+        battleDataforOnline.now_my_cost -= (cost + 5);
+    }
+    else
     {
         battleDataforOnline.now_my_cost -= cost;
     }
 
-    // 3. 攻撃状態の解除
-    is_attacking = false;
-    ClearAttackRange();
-    
-    // UIの非表示設定など（必要に応じて）
-    BackButton.gameObject.SetActive(false);
-    for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
+    Debug.Log($"<color=orange>[ConfirmAttack] 処理完了: 残りコスト={battleDataforOnline.now_my_cost}, 拠点HP={battleDataforOnline.opponent_base_hp}</color>");
 
-    Debug.Log("攻撃完了");
+    // すべての攻撃送信（awaitしたもの）が終わってからグリッド同期
+    await SendGridData();
     }
+
+    private async Task SendAttackInfo(int targetIdx)
+    {
+        uint attackerUid = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id;
+        uint targetUid = (targetIdx != -1) ? battleDataforOnline.charactersBattleDatas[targetIdx].unique_id : 0;
+        uint targetNewHp = (targetIdx != -1) ? (uint)battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp : 0;
+
+        // サーバー側の BaseHp1, BaseHp2 に正しくマッピングする
+        bool is1p = (battleDataforOnline.my_player_id == 0);
+        int sendBaseHp1 = is1p ? battleDataforOnline.base_hp : battleDataforOnline.opponent_base_hp;
+        int sendBaseHp2 = is1p ? battleDataforOnline.opponent_base_hp : battleDataforOnline.base_hp;
+
+        Debug.Log($"<color=orange><b>[SendAttackInfo] 攻撃送信</b>: Side={(is1p ? "1P" : "2P")} Attacker={attackerUid}, Target={targetUid}, NewHP={targetNewHp}</color>");
+
+        await gameConnector.SendAttack(
+            roomData.room_id, 
+            playerData.user_id, 
+            (int)attackerUid, 
+            attack_number, 
+            true, 
+            sendBaseHp1, 
+            sendBaseHp2, 
+            (int)targetUid, 
+            (int)targetNewHp
+        );
     }
 
     private void ApplyDamage(int targetId, int damage)
     {
-    // HPを減らす
-    if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = (int)(damage * 0.75);
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0])
-    {
-        now_damage = (int)(damage * 1.25);
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = damage;
-    }else if (battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0]&&battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7])
-    {
-        now_damage = damage;
-    }
-    battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= now_damage;
+        float multiplier = 1.0f;
+        if(damage >= 0)// 攻撃or回復を分岐
+        {
+        SEManager.instance.PlayDamageSE();
+        // 攻撃側のデバフ/バフ状態を確認
+        bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
+        bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
+        if (hasDown && hasUp) multiplier = 1.0f;
+        else if (hasDown)     multiplier = 0.75f;
+        else if (hasUp)       multiplier = 1.25f;
+        }
 
-    Debug.Log($"キャラ {targetId} に {damage} ダメージ！ 残りHP: {battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}");
+        else// 回復
+        {
+            SEManager.instance.PlayHealSE();
+        }
+
+        // 計算後のダメージをローカル変数に格納
+        int finalDamage = Mathf.RoundToInt(damage * multiplier);
+        
+        // HPを減らす
+        battleDataforOnline.charactersBattleDatas[targetId].now_character_hp -= finalDamage;
+
+        Debug.Log($"<color=orange><b>[ApplyDamage]</b> Target={targetId}, Base={damage}, Mult={multiplier}, Final={finalDamage}, RemainingHP={battleDataforOnline.charactersBattleDatas[targetId].now_character_hp}</color>");
     }
 
     private void ProcessDeath(int targetId)
     {
     Debug.Log($"キャラ {targetId} は倒れた！");
     // オブジェクトを非表示にする、または墓標にするなどの演出
+    // 死亡時の音もここに流してね
     characters[targetId].gameObject.SetActive(false);
     // グリッド上の存在情報を消す
-    UpdateGridState(on_grid_number_x[targetId], on_grid_number_y[targetId], 0);
+    int cx = battleDataforOnline.charactersBattleDatas[targetId].now_character_position.x;
+    int cy = battleDataforOnline.charactersBattleDatas[targetId].now_character_position.y;
+    UpdateGridState(cx, cy, 0);
     }
 
     private void DeselectAll()
@@ -621,13 +750,253 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    void SendBattleData()
+    private Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)
     {
-        //ここにバックエンドにデータを送るための関数を書いてください
+        if (is1p) return new Vector2Int(x, y);
+        return new Vector2Int(7 - x, y);
     }
 
-    void GetBattleData()
+    void SendBattleData()
     {
-        //ここにバックエンドにデータを受け取るための関数を書いてください
+        if (playerData == null || roomData == null) return;
+        string pid = playerData.user_id;
+        int rid = roomData.room_id;
+
+        // 移動したキャラだけ位置を送信（毎フレーム送らないよう差分チェック）
+        for (int i = 0; i <= 2; i++)
+        {
+            int cx = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+            int cy = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+            if (cx != _lastSentX[i] || cy != _lastSentY[i])
+            {
+                uint uid = battleDataforOnline.charactersBattleDatas[i].unique_id;
+                bool is1p = (battleDataforOnline.my_player_id == 0);
+                Vector2Int converted = ConvertCoordinateForServer(cx, cy, is1p);
+                Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y})</color>");
+                _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y);
+                _lastSentX[i] = cx;
+                _lastSentY[i] = cy;
+            }
+        }
+    }
+
+    public void GetBattleData(GameDataResponse data)
+    {
+        if (data == null) return;
+
+        bool is1p = (playerData.user_id == data.Player1Id);
+
+        // 自分原方・HP
+        battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;
+        battleDataforOnline.opponent_base_hp = is1p ? (int)data.BaseHp2 : (int)data.BaseHp1;
+
+        // ターン情報
+        battleDataforOnline.now_turn = (int)data.Turn;
+        bool isMyTurn = is1p ? data.Is1PTurn : !data.Is1PTurn;
+        battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
+
+        // コストをサーバーから反映
+        // ※ サーバー側のコスト同期よりローカルのコスト計算ルール（毎ターン50回復等）を優先するため無効化
+        // battleDataforOnline.now_my_cost    = is1p ? (int)data.Cost1P : (int)data.Cost2P;
+        
+        // 相手のコストはサーバーからの同期を許可する
+        battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
+
+        // グリッドデータ（地形情報）の同期
+        // サーバーは全マス（40マス）を GridType 付きで送ってくる
+        // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
+        //
+        // ① まず sub_grid_state と highlights をリセット（サーバーが全マス送ってくるので毎回上書きでOK）
+        for (int gy = 0; gy < 5; gy++)
+        {
+            for (int gx = 0; gx < 8; gx++)
+            {
+                gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = 0;
+                gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 0;
+            }
+        }
+        // 自分のターンでない場合のみ選択状態をリセットする（自分のターン中に同期で選択が外れるのを防ぐ）
+        // isMyTurn は既に定義済み
+        if (!isMyTurn)
+        {
+            for (int i = 0; i <= 5; i++) battleDataforOnline.character_isSelected[i] = false;
+        }
+
+        if (data.Grids != null && data.Grids.Count > 0)
+        {
+            // デバッグ：サーバーから受け取った GridInfo を確認
+            var gridSb = new System.Text.StringBuilder();
+            gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {data.Grids.Count} 個のGridInfoを受信</color>");
+            foreach (var g in data.Grids)
+            {
+                Vector2Int converted = ConvertCoordinateForServer((int)g.PositionX, (int)g.PositionY, is1p);
+                int gx = converted.x;
+                int gy = converted.y;
+                if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
+                {
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
+                    
+                    // 攻撃範囲ハイライトの同期
+                    if (g.IsAttackRange)
+                    {
+                        gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 1;
+                    }
+
+                    // 選択状態の同期
+                    if (g.IsSelected)
+                    {
+                        // その位置にいるキャラクターを「選択中」にする
+                        for (int i = 0; i <= 5; i++)
+                        {
+                            if (battleDataforOnline.charactersBattleDatas[i].now_character_position.x == gx &&
+                                battleDataforOnline.charactersBattleDatas[i].now_character_position.y == gy)
+                            {
+                                battleDataforOnline.character_isSelected[i] = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (g.GridType != 0)
+                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType} Sel={g.IsSelected} Ark={g.IsAttackRange}");
+                }
+            }
+            Debug.Log(gridSb.ToString());
+        }
+        else
+        {
+            Debug.Log("<color=yellow>[GridSync] data.Grids が null または空</color>");
+        }
+
+        // ② grid_state を sub_grid_state ベースで再構築（キャラクター占有フラグは後で上書き）
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] =
+                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
+
+        // キャラクター位置とHPを反映（UniqueIdによるマッチング）
+        foreach (var c in data.Characters)
+        {
+            int targetIdx = -1;
+            // 既に UniqueId を知っている場合はそれでマッチング
+            for (int i = 0; i <= 5; i++)
+            {
+                if (battleDataforOnline.charactersBattleDatas[i].unique_id == c.Id)
+                {
+                    targetIdx = i;
+                    break;
+                }
+            }
+
+            // 初回で見つからない場合は、初期位置や masterID で推測する
+            if (targetIdx == -1)
+            {
+                bool charIs1p = c.Is1P;
+                bool charIsMine = (is1p == charIs1p);
+                int start = charIsMine ? 0 : 3;
+                int end = charIsMine ? 2 : 5;
+
+                for (int i = start; i <= end; i++)
+                {
+                    // まだ Id が未設定のスロットを探す、かつ masterID が一致するもの
+                    if (battleDataforOnline.charactersBattleDatas[i].unique_id == 0)
+                    {
+                        // 複数同キャラがいる場合は位置で特定するなどの高度な判定が必要だが、
+                        // まずはリスト順が安定していることを期待して空きスロットに入れる
+                        targetIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            if (targetIdx != -1)
+            {
+                int oldHp = battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp;
+                int newHp = (int)c.Hp;
+                if (oldHp != newHp)
+                {
+                    Debug.Log($"<color=red>[GetBattleData] HP同期: idx={targetIdx} uniqueId={c.Id} {oldHp} -> {newHp}</color>");
+                }
+
+                battleDataforOnline.charactersBattleDatas[targetIdx].unique_id = c.Id;
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_hp = newHp;
+                Vector2Int converted = ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is1p);
+                battleDataforOnline.charactersBattleDatas[targetIdx].now_character_position = converted;
+            }
+        }
+
+        if (data.IsFinished)
+        {
+            battleDataforOnline.game_end = true;
+            battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
+            
+            // レート更新情報の反映
+            if (is1p)
+            {
+                battleDataforOnline.my_rate_updown = data.P1RateDelta;
+                battleDataforOnline.opponent_rate_updown = data.P2RateDelta;
+                battleDataforOnline.rate = data.P1Rate;
+                battleDataforOnline.opponent_rate = data.P2Rate;
+            }
+            else
+            {
+                battleDataforOnline.my_rate_updown = data.P2RateDelta;
+                battleDataforOnline.opponent_rate_updown = data.P1RateDelta;
+                battleDataforOnline.rate = data.P2Rate;
+                battleDataforOnline.opponent_rate = data.P1Rate;
+            }
+            Debug.Log($"<color=yellow>[GetBattleData] Game End: MyRate={battleDataforOnline.rate}({battleDataforOnline.my_rate_updown}) OppRate={battleDataforOnline.opponent_rate}({battleDataforOnline.opponent_rate_updown})</color>");
+        }
+
+        if (data.AttackInfos != null && data.AttackInfos.Count > 0)
+        {
+            foreach (var ai in data.AttackInfos)
+            {
+                Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={ai.AttackerSide}, AttackerID={ai.AttackerCharacterId}, Type={ai.AttackType}</color>");
+            }
+        }
+
+        // 【デバッグ】受信データをコンソールに出力（UIには反映しない）
+        var sb = new System.Text.StringBuilder();
+        // --- サーバーデータを即座にUIに反映 ---
+        sb.AppendLine($"<color=cyan>[GetBattleData] サーバーからゲームデータ受信</color>");
+        sb.AppendLine($"  1PTurn={data.Is1PTurn}  BaseHp1={data.BaseHp1}  BaseHp2={data.BaseHp2}  IsFinished={data.IsFinished}  Winner={data.WinnerPlayerId}");
+        foreach (var c in data.Characters)
+        {
+            sb.AppendLine($"  Chara: UniqueId={c.Id}  Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
+        }
+        Debug.Log(sb.ToString());
+
+        // --- サーバーデータを即座にUIに反映 ---
+        // キャラクタースプライトの位置を now_character_position に合わせる
+        // (BattleUIManager.Update が HP/コストを毎フレーム自動更新するのに対し、
+        //  スプライト位置はこのタイミングで一度明示的に更新する必要がある)
+        UpdateCharacterPosition();
+
+        // グリッド上のキャラクター占有フラグを再構築
+        // まずフルリセット
+        for (int gy = 0; gy < 5; gy++)
+            for (int gx = 0; gx < 8; gx++)
+                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
+
+        // 各キャラクターの現在位置を -1 (occupied) にセット
+        for (int i = 0; i <= 5; i++)
+        {
+            int px = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
+            int py = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
+            if (px >= 0 && px < 8 && py >= 0 && py < 5)
+                gridDataforOnline.grid_state_y[py].grid_state_x[px] = -1;
+        }
+
+        // 受信したデータによるグリッド変化が無限ループで送信されないよう前フレーム状態を同期
+        GridManager gm = Object.FindFirstObjectByType<GridManager>();
+        if (gm != null) gm.SyncPrevGridState();
+    }
+
+    // BattleOnlineManagerのEndMyTurnから呼び出す用の機能
+    public void NotifyTurnEnd()
+    {
+        if (playerData == null || roomData == null) return;
+        _ = gameConnector.SendTurnEnd(roomData.room_id, playerData.user_id);
     }
 }

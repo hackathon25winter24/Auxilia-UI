@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      berenice_1_0: 8094912532754129614
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

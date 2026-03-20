@@ -17,4 +17,5 @@ public class UsersData
     public bool is_host;
     public int user_state;
     // -1:いない、0:観戦者、1:1P、2:2P
+    public bool is_ready;
 }

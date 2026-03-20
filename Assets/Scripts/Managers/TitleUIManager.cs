@@ -8,6 +8,7 @@ public class TitleUIManager : MonoBehaviour
     public PlayerData playerData;
     public SceneData sceneData;
     public GameConnector gameConnector;
+    public StoryManagerData storyManagerData;
     public GameObject login_ui;
     public GameObject signup_ui;
     public GameObject error_ui;
@@ -57,9 +58,10 @@ public class TitleUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Login":
-            playerData.username = user_name_for_login.text;
+            SEManager.instance.PlayToNextSE();
+            playerData.player_name = user_name_for_login.text;
             playerData.password = password_for_login.text;
-            var user = await gameConnector.Login(playerData.username, playerData.password);
+            var user = await gameConnector.Login(playerData.player_name, playerData.password);
             if(user == null)
             {
                 error_ui.SetActive(true);
@@ -67,18 +69,20 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            playerData.player_name = user.Name;
-            playerData.battle_number = user.NumBattles;
-            playerData.win_number = user.NumWins;
-            playerData.story_progress = user.Story;
-            playerData.user_id = user.Id;
-            playerData.player_rate = user.Rate;
-            sceneData.next_scene_number = 1;
+            if(playerData.story_progress == 1)
+            {
+                storyManagerData.now_story_number = 0;
+                sceneData.next_scene_number = 8;
+            }else
+            {
+                sceneData.next_scene_number = 1;
+            }
                 break;
             case "Signup":
-            playerData.username = user_name_for_signup.text;
+            SEManager.instance.PlayToNextSE();
+            playerData.player_name = user_name_for_signup.text;
             playerData.password = password_for_signup.text;
-            var new_user = await gameConnector.SignUp(playerData.username, playerData.password);
+            var new_user = await gameConnector.SignUp(playerData.player_name, playerData.password);
             if(new_user == null)
             {
                 error_ui.SetActive(true);
@@ -86,23 +90,27 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            playerData.player_name = new_user.Name;
-            playerData.battle_number = new_user.NumBattles;
-            playerData.win_number = new_user.NumWins;
-            playerData.story_progress = new_user.Story;
-            playerData.user_id = new_user.Id;
-            playerData.player_rate = new_user.Rate;
-            sceneData.next_scene_number = 1;
+            if(playerData.story_progress == 1)
+            {
+                storyManagerData.now_story_number = 0;
+                sceneData.next_scene_number = 8;
+            }else
+            {
+                sceneData.next_scene_number = 1;
+            }
                 break;
             case "GotoSignup":
+            SEManager.instance.PlaySelectSE();
             login_ui.SetActive(false);
             signup_ui.SetActive(true);
                 break;
             case "GotoLogin":
+            SEManager.instance.PlaySelectSE();
             login_ui.SetActive(true);
             signup_ui.SetActive(false);
                 break;
             case "Back":
+            SEManager.instance.PlayBackSE();
             login_ui.SetActive(false);
             signup_ui.SetActive(false);
             targetUI.SetActive(true);
