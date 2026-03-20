@@ -15,7 +15,7 @@ public class BattleDataforOmline : ScriptableObject
     public int palyer1_cost;
     public int palyer2_cost;
     public string opponent_name;
-    public string palyer1_name;
+    public string player1_name;
     public string player2_name;
 
     public int now_moving_player;

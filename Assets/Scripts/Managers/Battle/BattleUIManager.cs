@@ -13,6 +13,7 @@ public class BattleUIManager : MonoBehaviour
     public TextMeshProUGUI[] CharacterHP;
     public Slider[] hpSlider;
     public TextMeshProUGUI[] cost;
+    public TextMeshProUGUI[] playerNames;
     public Image shadow;
     public Image characterStates;
     public RectTransform backfromStates;
@@ -33,6 +34,9 @@ public class BattleUIManager : MonoBehaviour
             UpdateCharacterUI(i);
         }
 
+
+        playerNames[0].text = battleDataforOnline.player1_name;
+        playerNames[1].text = battleDataforOnline.player2_name;
         cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
         cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
         shadow.gameObject.SetActive(false);

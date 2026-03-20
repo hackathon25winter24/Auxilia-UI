@@ -599,9 +599,6 @@ MonoBehaviour:
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  on_grid_number: 000000000000000000000000000000000000000000000000
-  on_grid_number_x: 000000000000000000000000000000000000000000000000
-  on_grid_number_y: 000000000000000000000000000000000000000000000000
   selected_character_id: 0
   AttackButton: {fileID: 966120276}
   AttackButtonBackImage: {fileID: 966120274}
@@ -619,6 +616,10 @@ MonoBehaviour:
   BackButton: {fileID: 712360788}
   attack_number: 0
   is_attacking: 0
+  now_damage: 0
+  gameConnector: {fileID: 0}
+  roomData: {fileID: 0}
+  playerData: {fileID: 0}
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
@@ -869,7 +870,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -982,9 +983,16 @@ MonoBehaviour:
   playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
+  roomData: {fileID: 0}
   gametext: {fileID: 0}
+  gameTextObject: {fileID: 0}
+  gameConnector: {fileID: 0}
   timerSlider: {fileID: 222250393}
   maxTime: 60
+  duration: 2
+  elapsed: 0
+  is_text_moving: 0
+  is_move_player: 0
 --- !u!4 &260079060
 Transform:
   m_ObjectHideFlags: 0
@@ -1661,6 +1669,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ac2fa62a31842074dbd719a968bf0a24, type: 3}
   - {fileID: 21300000, guid: c39125e17c146dd43b7aba4564ac4076, type: 3}
   - {fileID: 21300000, guid: 6c6b145d8f69e364b957a3086594c420, type: 3}
+  characterManager: {fileID: 0}
+  logText: {fileID: 0}
 --- !u!4 &441793171
 Transform:
   m_ObjectHideFlags: 0
@@ -5086,6 +5096,11 @@ MonoBehaviour:
   BaseGrid: {fileID: 21300000, guid: 08e9bb45358a79e41ab9b3c6347d49b9, type: 3}
   CharacterGrid: {fileID: 21300000, guid: 56299ae192556e04a94de1e1cb981a96, type: 3}
   AttackGrid: {fileID: 21300000, guid: 6f8673fdd312a794e9dc52e29eee1509, type: 3}
+  MakibishiGrid: {fileID: 0}
+  LandmineGrid: {fileID: 0}
+  gameConnector: {fileID: 0}
+  roomData: {fileID: 0}
+  playerData: {fileID: 0}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0
@@ -5661,7 +5676,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: adf17dd6946a43649ba256c525c7baf2, type: 3}
+  m_Sprite: {fileID: -5070364314245168040, guid: 3e4cdac7ef0a4564abf7109ca2c980f6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6729,11 +6744,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 20a8af6b71e1f49488ab0b7a74820daa, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -6378618160602490608, guid: e3b56621b08844f4b8c0d61564c89c00, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0

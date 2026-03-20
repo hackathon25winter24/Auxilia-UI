@@ -98,7 +98,7 @@ public class SelectUIManager : MonoBehaviour
             SpectatorUI.SetActive(true);
             ready.SetActive(false); 
             ready2.SetActive(false);
-            nameText.text = battleDataforOnline.palyer1_name;
+            nameText.text = battleDataforOnline.player1_name;
             nameText2.text = battleDataforOnline.player2_name;
             
             // 観戦者もバトル開始を待つ
@@ -115,7 +115,7 @@ public class SelectUIManager : MonoBehaviour
             if (battle_player[0] != null)
             {
                 p1 = await gameConnector.GetUser(battle_player[0].UserId);
-                if (p1 != null) battleDataforOnline.palyer1_name = p1.Name;
+                if (p1 != null) battleDataforOnline.player1_name = p1.Name;
             }
             if (battle_player[1] != null)
             {
@@ -301,7 +301,7 @@ public class SelectUIManager : MonoBehaviour
         if (!battleDataforOnline.isPlayer)
         {
             // 観戦者用：名前を更新
-            nameText.text = battleDataforOnline.palyer1_name;
+            nameText.text = battleDataforOnline.player1_name;
             nameText2.text = battleDataforOnline.player2_name;
         }
     }
