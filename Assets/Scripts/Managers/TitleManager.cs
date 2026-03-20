@@ -27,7 +27,7 @@ public class TitleManager : MonoBehaviour
     {
         if ((inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true) && targetUI.activeSelf)
         {
-            SEManager.instance.PlayToNextSE();
+            SEManager.instance?.PlayToNextSE();
             login_ui.SetActive(true);
             targetUI.SetActive(false);
         }

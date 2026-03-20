@@ -67,49 +67,49 @@ public class BattleUIManager : MonoBehaviour
         switch(buttonName)
         {
             case "smallwindow1":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[0]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "smallwindow2":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[1]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "smallwindow3":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[2]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "smallwindow4":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[3]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "smallwindow5":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[4]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "smallwindow6":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             characterStates.sprite = characterStatesImage[battleDataforOnline.selected_character[5]];
             shadow.gameObject.SetActive(true);
             characterStates.gameObject.SetActive(true);
             backfromStates.gameObject.SetActive(true);
                 break;
             case "backfromcharacterstates":
-            SEManager.instance.PlayBackSE();
+            SEManager.instance?.PlayBackSE();
             shadow.gameObject.SetActive(false);
             characterStates.gameObject.SetActive(false);
             backfromStates.gameObject.SetActive(false);

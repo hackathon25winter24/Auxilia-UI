@@ -4,7 +4,18 @@ using UnityEngine.SceneManagement;
 
 public class SEManager : MonoBehaviour
 {
-    public static SEManager instance;
+    public static SEManager instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<SEManager>();
+            }
+            return _instance;
+        }
+    }
+    private static SEManager _instance;
     public InputData inputData;
     public AudioSource audioSource;
     public AudioClip selectSE;
@@ -21,9 +32,9 @@ public class SEManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null)
+        if (_instance == null)
         {
-            instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else

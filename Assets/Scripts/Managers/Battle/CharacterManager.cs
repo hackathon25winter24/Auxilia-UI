@@ -130,7 +130,7 @@ public class CharacterManager : MonoBehaviour
         {
             if(buttonName == "BackButton")
             {
-            SEManager.instance.PlayBackSE();
+            SEManager.instance?.PlayBackSE();
             for (int i = 0; i <= 5; i++)
             {
             battleDataforOnline.character_isSelected[i] = false;
@@ -149,7 +149,7 @@ public class CharacterManager : MonoBehaviour
 
         if(buttonName == "Attack1") 
         {
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             attack_number = 0;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -159,7 +159,7 @@ public class CharacterManager : MonoBehaviour
         }
         if(buttonName == "Attack2") 
         {
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             attack_number = 1;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -169,7 +169,7 @@ public class CharacterManager : MonoBehaviour
         }
         if(buttonName == "Attack3") 
         {
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             attack_number = 2;
             if (battleDataforOnline.now_my_cost - characterData.characters[battleDataforLocal.character_id[selected_character_id]].attacks[attack_number].default_attack_cost < 0) return;
             AttackButton.gameObject.SetActive(false);
@@ -194,7 +194,7 @@ public class CharacterManager : MonoBehaviour
         switch (buttonName)
         {
             case "1":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             selected_character_id = 0;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -208,7 +208,7 @@ public class CharacterManager : MonoBehaviour
             _ = SendGridData();
                 break;
             case "2":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             selected_character_id = 1;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -222,7 +222,7 @@ public class CharacterManager : MonoBehaviour
             _ = SendGridData();
                 break;
             case "3":
-            SEManager.instance.PlaySelectSE();
+            SEManager.instance?.PlaySelectSE();
             selected_character_id = 2;
             BackButton.gameObject.SetActive(true);
             battleDataforOnline.character_isSelected[selected_character_id] = true;
@@ -264,7 +264,7 @@ public class CharacterManager : MonoBehaviour
         Vector2Int currentDir = GetMouseDirection();
         if (currentDir != _lastAttackDirection)
         {
-            SEManager.instance.PlayClickSE();
+            SEManager.instance?.PlayClickSE();
             _lastAttackDirection = currentDir;
             _ = SendGridData();
         }
@@ -350,7 +350,7 @@ public class CharacterManager : MonoBehaviour
 
     void TryMove(int moveX, int moveY, Vector2 posDelta)
     {
-    SEManager.instance.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
+    SEManager.instance?.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
     int currentX = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.x;
     int currentY = battleDataforOnline.charactersBattleDatas[selected_character_id].now_character_position.y;
     int nextX = currentX + moveX;
@@ -665,7 +665,7 @@ public class CharacterManager : MonoBehaviour
         float multiplier = 1.0f;
         if(damage >= 0)// 攻撃or回復を分岐
         {
-        SEManager.instance.PlayDamageSE();
+        SEManager.instance?.PlayDamageSE();
         // 攻撃側のデバフ/バフ状態を確認
         bool hasDown = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[7];
         bool hasUp = battleDataforOnline.charactersBattleDatas[selected_character_id].debuffs[0];
@@ -676,7 +676,7 @@ public class CharacterManager : MonoBehaviour
 
         else// 回復
         {
-            SEManager.instance.PlayHealSE();
+            SEManager.instance?.PlayHealSE();
         }
 
         // 計算後のダメージをローカル変数に格納
