@@ -45,8 +45,8 @@ public class BattleUIManager : MonoBehaviour
         {
             UpdateCharacterUI(i);
         }
-        cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
-        cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
+        cost[0].text = battleDataforOnline.now_my_cost.ToString();
+        cost[1].text = battleDataforOnline.now_enemy_cost.ToString();
     }
 
     // 特定のインデックス(i)のキャラクターUIを更新する専用メソッド
