@@ -166,27 +166,33 @@ public class SelectUIManager : MonoBehaviour
     }
 
     public void CharacterClick(int ButtonNum)
+{
+    // 現在の枠（selectedUI）に元々いたキャラを一時保存
+    int previousChar = battleDataforOnline.selected_character[selectedUI];
+
+    // 重複チェック
+    if (battleDataforOnline.selected_character[0] == ButtonNum)
     {
-        if (battleDataforOnline.selected_character[0] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[0];
-            battleDataforOnline.selected_character[0] = ButtonNum;
-        }else if (battleDataforOnline.selected_character[1] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[1];
-            battleDataforOnline.selected_character[1] = ButtonNum;
-        }else if (battleDataforOnline.selected_character[2] == ButtonNum)
-        {
-            battleDataforOnline.selected_character[selectedUI] = battleDataforOnline.selected_character[2];
-            battleDataforOnline.selected_character[2] = ButtonNum;
-        }else
-        {
-        battleDataforOnline.selected_character[selectedUI] = ButtonNum;
-        }
-        characterTub.SetActive(false);
-        UpDateCharacterUI();
+        // スロット0に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[0] = previousChar;
+    }
+    else if (battleDataforOnline.selected_character[1] == ButtonNum)
+    {
+        // スロット1に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[1] = previousChar;
+    }
+    else if (battleDataforOnline.selected_character[2] == ButtonNum)
+    {
+        // スロット2に「元いたキャラ」を移動させる
+        battleDataforOnline.selected_character[2] = previousChar;
     }
 
+    // 最後に、今選んだ枠に新しいキャラを入れる
+    battleDataforOnline.selected_character[selectedUI] = ButtonNum;
+
+    characterTub.SetActive(false);
+    UpDateCharacterUI();
+}
     public void CharacterLongClick(int LongButtonNum)
     {}
 
