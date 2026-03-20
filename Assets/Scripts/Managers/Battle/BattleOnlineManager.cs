@@ -13,7 +13,6 @@ public class BattleOnlineManager : MonoBehaviour
     public BattleDataforOmline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
     public RoomData roomData;
-    public CharacterData characterData;
 
     public TextMeshProUGUI gametext;
     public RectTransform gameTextObject;
@@ -94,14 +93,17 @@ public class BattleOnlineManager : MonoBehaviour
             if (charIsMine && myIdx < 3)
             {
                 battleDataforLocal.character_id[myIdx] = (int)c.CharacterId;
+                battleDataforOnline.selected_character[myIdx] = (int)c.CharacterId;
                 myIdx++;
             }
             else if (!charIsMine && opIdx < 6)
             {
                 battleDataforLocal.character_id[opIdx] = (int)c.CharacterId;
+                battleDataforOnline.selected_character[opIdx] = (int)c.CharacterId;
                 opIdx++;
             }
         }
+        Debug.Log($"[BattleOnlineManager] Character mapping finished. MyIdx={myIdx}, OpIdx={opIdx}");
 
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
@@ -134,7 +136,6 @@ public class BattleOnlineManager : MonoBehaviour
             if (_turnTransitionTime > 0) return;
             if (battleDataforLocal.is_myturn != true)
             {
-            Debug.Log($"<color=cyan>[BattleOnlineManager] 自分のターン開始 (now_moving_player={battleDataforOnline.now_moving_player})</color>");
             battleDataforLocal.is_myturn = true;
             StartMyTurn();
             }
@@ -142,9 +143,9 @@ public class BattleOnlineManager : MonoBehaviour
         {
             if(battleDataforLocal.is_myturn != false)
             {
-                Debug.Log($"<color=silver>[BattleOnlineManager] 相手のターン開始 (now_moving_player={battleDataforOnline.now_moving_player})</color>");
                 battleDataforLocal.is_myturn = false;
                 // 自分のターンではないので、相手のターンを勝手に終わらせないようローカルタイマーを停止する
+                isTimerRunning = false;
                 // テキスト表示も相手の番であることを示す
                 gametext.text = "opponent turn";
             }
@@ -187,9 +188,8 @@ public class BattleOnlineManager : MonoBehaviour
     public void StartMyTurn()
     {
         gametext.text = "your turn";
-        // ターン開始時にコストを50回復（最大値などは現状設けていないため加算）
-        battleDataforOnline.now_my_cost += 50;
-        Debug.Log($"<color=cyan>[BattleOnlineManager] ターン開始: コストが {battleDataforOnline.now_my_cost} になりました</color>");
+        // ターン開始時にコストを50にリセット
+        battleDataforOnline.now_my_cost = 50;
         StartCoroutine(MoveRoutine());
         TimerStart();
     }
@@ -198,13 +198,14 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void EndMyTurn()
     {
-        Debug.Log("<color=silver>[BattleOnlineManager] EndMyTurn 実行</color>");
         gametext.text = "turn end";
-        // 次のターンを算出する
-        int nextPlayerId = CalculateNextTurn();
-        battleDataforOnline.now_moving_player = nextPlayerId;
-        Debug.Log($"<color=cyan>[BattleOnlineManager] フロント側で次ターンを算出: {nextPlayerId}</color>");
-
+        if(battleDataforOnline.now_moving_player == 0)
+        {
+            battleDataforOnline.now_moving_player = 1;
+        }else
+        {
+            battleDataforOnline.now_moving_player = 0;
+        }
         StartCoroutine(MoveRoutine());
 
         for (int i = 0; i <= 2; i++)
@@ -219,11 +220,10 @@ public class BattleOnlineManager : MonoBehaviour
         if (characterManager != null) characterManager.NotifyTurnEnd();
 
         // ターン終了直後にサーバーからの古い「自ターンのまま」のデータで上書きされないよう猶予を作る
-        // (通信ラグを考慮して3秒に延長)
-        _turnTransitionTime = 3.0f;
+        _turnTransitionTime = 2.0f;
 
-        // ターン終了時の自動回復は廃止（開始時のみにする）
-        // battleDataforOnline.now_my_cost = 50;
+        // ターン終了時にコストを50まで回復
+        battleDataforOnline.now_my_cost = 50;
 
         // タイマーを念のため止める
         isTimerRunning = false;
@@ -246,29 +246,34 @@ public class BattleOnlineManager : MonoBehaviour
     }
 
     IEnumerator MoveRoutine()
-    {
-        // テキストを画面外から中央へ、そして中央から反対側へ移動させる
-        yield return StartCoroutine(MoveTextRoutine(new Vector2(-1500, 0), new Vector2(0, 0), 1.5f));
-        yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(MoveTextRoutine(new Vector2(0, 0), new Vector2(1500, 0), 1.5f));
-    }
+{
+    is_text_moving = true;
 
-    private IEnumerator MoveTextRoutine(Vector2 startPosition, Vector2 destination, float duration)
-    {
-        is_text_moving = true;
-        float elapsed = 0f;
+    float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
-            gameTextObject.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
-            yield return null;
-        }
-        gameTextObject.anchoredPosition = destination;
-        is_text_moving = false;
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration; // 0.0 ～ 1.0
+
+        // 【ここがポイント！】中間で緩やかになるカスタム曲線
+        // 3次関数を使って「S字を横に倒したような形」を作ります
+        float easedT = t * t * (3f - 2f * t); // 基本のスムーズ曲線
+        
+        // もしもっと極端に「中間で止まりそう」にしたいなら、
+        // サイン波を使って t の進み具合を調整します
+        // 下記は「0.5付近で時間の進みが遅くなる」計算の一例です
+        float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
+        // ※ 0.15f の値を大きくすると、中間での減速がより強くなります
+
+        gameTextObject.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+
+        yield return null;
     }
+    gameTextObject.anchoredPosition = destination;
+
+    is_text_moving = false;
+}
 
     public async Task<bool> GetFirstMovePlayer()
     {
@@ -284,72 +289,5 @@ public class BattleOnlineManager : MonoBehaviour
         {
             return false;
         }
-    }
-
-    private int CalculateNextTurn()
-    {
-        // ユーザー要望：偶数回のターン（１サイクル）が終了したとき、次とその次のプレイヤーをきめる。両方同じはダメ。
-        // ロジック：
-        // 奇数ターン終了時（今がTurn 1, 3...）：必ず相手に回す（これで次とその次が異なることを保証）
-        // 偶数ターン終了時（今がTurn 2, 4...）：コスト計算で次のサイクルのリーダーを決める
-
-        bool isOddTurn = (battleDataforOnline.now_turn % 2 != 0);
-        int currentPlayer = battleDataforOnline.now_moving_player;
-
-        if (isOddTurn)
-        {
-            // 奇数ターンの次は必ず交代
-            int next = (currentPlayer == 0) ? 1 : 0;
-            Debug.Log($"[CalculateNextTurn] 奇数ターン({battleDataforOnline.now_turn})終了 -> 強制交代: {next}");
-            return next;
-        }
-        else
-        {
-            // 偶数ターン終了時：コストが低い方を次のターンのリーダーにする
-            int p1Min = GetMinAliveMoveCost(true);
-            int p2Min = GetMinAliveMoveCost(false);
-
-            Debug.Log($"[CalculateNextTurn] 偶数ターン({battleDataforOnline.now_turn})終了 -> コスト判定 P1={p1Min}, P2={p2Min}");
-
-            if (p1Min < p2Min) return 0;
-            if (p2Min < p1Min) return 1;
-
-            // コスト同値なら強制交代
-            return (currentPlayer == 0) ? 1 : 0;
-        }
-    }
-
-    private int GetMinAliveMoveCost(bool is1P)
-    {
-        if (characterData == null || battleDataforLocal == null || battleDataforOnline == null)
-        {
-            Debug.LogError("[GetMinAliveMoveCost] Required data (characterData/local/online) is null!");
-            return 999;
-        }
-
-        int minCost = 999;
-        bool found = false;
-        int start = is1P ? 0 : 3;
-        int end = is1P ? 2 : 5;
-
-        for (int i = start; i <= end; i++)
-        {
-            // インデックス範囲チェック
-            if (i >= battleDataforOnline.charactersBattleDatas.Length) continue;
-
-            if (battleDataforOnline.charactersBattleDatas[i].now_character_hp > 0)
-            {
-                int charIdx = battleDataforLocal.character_id[i];
-                if (charIdx < 0 || charIdx >= characterData.characters.Length) continue;
-
-                int moveCost = characterData.characters[charIdx].default_move_cost;
-                if (!found || moveCost < minCost)
-                {
-                    minCost = moveCost;
-                    found = true;
-                }
-            }
-        }
-        return found ? minCost : 999;
     }
 }
