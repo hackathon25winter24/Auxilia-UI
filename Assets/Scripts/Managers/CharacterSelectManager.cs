@@ -370,23 +370,44 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     IEnumerator ConfirmSequence()
+{
+    isAnimating = true;
+    yield return StartCoroutine(Fade(1f, fadeDuration));
+
+    CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
+    int newCharId = selectedChar.default_id;
+
+    // --- 入れ替え（スワップ）ロジックの追加 ---
+    for (int i = 0; i < teamSlotButtons.Length; i++)
     {
-        isAnimating = true;
-        yield return StartCoroutine(Fade(1f, fadeDuration));
+        // 1. 自分以外のスロットをループ
+        if (i == currentSelectingSlotIndex) continue;
 
-        CharactersData selectedChar = characterDataAsset.characters[currentViewingCharIndex];
-
-        // データ保存とUI更新
-        SaveCharacterId(currentSelectingSlotIndex, selectedChar.default_id);
-        UpdateSlotUI(currentSelectingSlotIndex); // 共通化したメソッドを使用
-        PartyHPandMOV();
-
-        characterDetailPanel.SetActive(false);
-        characterSelectPanel.SetActive(false);
-
-        yield return StartCoroutine(Fade(0f, fadeDuration));
-        isAnimating = false;
+        // 2. 他のスロットに同じキャラIDがすでに設定されているかチェック
+        if (GetSavedCharacterId(i) == newCharId)
+        {
+            // 3. 元々このスロット（currentSelectingSlotIndex）にいたキャラIDを、
+            //    重複が見つかったスロット（i）に移動させる（入れ替え）
+            int previousCharId = GetSavedCharacterId(currentSelectingSlotIndex);
+            SaveCharacterId(i, previousCharId);
+            UpdateSlotUI(i); // 移動先のUIも更新
+            break; // 重複は1つしかないのでループを抜ける
+        }
     }
+    // ----------------------------------------
+
+    // 現在のスロットに新しいキャラを保存
+    SaveCharacterId(currentSelectingSlotIndex, newCharId);
+    UpdateSlotUI(currentSelectingSlotIndex);
+    
+    PartyHPandMOV();
+
+    characterDetailPanel.SetActive(false);
+    characterSelectPanel.SetActive(false);
+
+    yield return StartCoroutine(Fade(0f, fadeDuration));
+    isAnimating = false;
+}
 
     IEnumerator ScaleAnimation(bool opening)
     {
