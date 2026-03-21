@@ -24,7 +24,17 @@ public class CharacterManager : MonoBehaviour
     public int attack_number;
     public bool is_attacking;
     public int now_damage;
-    public GameConnector gameConnector;
+    public GameConnector gameConnector {
+        get {
+            // 他の GameConnector が Awake で自分自身を Destroy していても、
+            // 正しいシングルトンインスタンス(最初に Awake が完了したもの)を確実に取得するようにする
+            if (GameConnector.instance != null) return GameConnector.instance;
+            if (_gameConnector == null) _gameConnector = GameConnector.instance;
+            return _gameConnector;
+        }
+        set { _gameConnector = value; }
+    }
+    private GameConnector _gameConnector;
     public RoomData roomData;
     public PlayerData playerData;
     
@@ -56,13 +66,18 @@ public class CharacterManager : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("[CharacterManager] Awake Started");
         roomData = GetSo(roomData);
         playerData = GetSo(playerData);
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        // gameConnector = ... // property化により不要
         gameConnector.characterManager = this.GetComponent<CharacterManager>();
+    }
         
+    void Start()
+    {
         if (roomData != null && playerData != null)
         {
+            Debug.Log("[CharacterManager] StartStream starting in Start()");
             gameConnector.StartStream((uint)roomData.room_id, playerData.user_id);
         }
         else
@@ -88,7 +103,7 @@ public class CharacterManager : MonoBehaviour
 
         for (int i = 0; i <= 5; i++)
         {
-        battleDataforOnline.charactersBattleDatas[i].unique_id = 0; // Reset for new match mapping
+        // battleDataforOnline.charactersBattleDatas[i].unique_id = 0; // 以前のGetBattleDataでセットされたIDを消さないようにコメントアウト
         battleDataforOnline.character_isSelected[i] = false;
         battleDataforOnline.charactersBattleDatas[i].now_character_hp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
         battleDataforOnline.charactersBattleDatas[i].now_character_maxhp = characterData.characters[battleDataforLocal.character_id[i]].default_hp;
@@ -103,12 +118,12 @@ public class CharacterManager : MonoBehaviour
         AttackButton.gameObject.SetActive(false);
 
         // anchoredPositionを使用して、Canvas内の相対座標で配置する
-        SetupCharacter(0, new Vector2(-175, 30), 0, 0); // 1人目: (0,0)
-        SetupCharacter(1, new Vector2(-125, -70), 1, 2); // 2人目: (1,2) ※17付近
-        SetupCharacter(2, new Vector2(-175, -170), 0, 4); // 3人目: (0,4) ※32付近
-        SetupCharacter(3, new Vector2(175, 30), 7, 0); // 4人目: (7,0) ※7付近
-        SetupCharacter(4, new Vector2(125, -70), 6, 2); // 5人目: (6,2) ※22付近
-        SetupCharacter(5, new Vector2(175, -170), 7, 4); // 6人目: (7,4) ※39付近
+        SetupCharacter(0, new Vector2(-175, 60), 0, 0); // 1人目: (0,0)
+        SetupCharacter(1, new Vector2(-125, -40), 1, 2); // 2人目: (1,2) ※17付近
+        SetupCharacter(2, new Vector2(-175, -140), 0, 4); // 3人目: (0,4) ※32付近
+        SetupCharacter(3, new Vector2(175, 60), 7, 0); // 4人目: (7,0) ※7付近
+        SetupCharacter(4, new Vector2(125, -40), 6, 2); // 5人目: (6,2) ※22付近
+        SetupCharacter(5, new Vector2(175, -140), 7, 4); // 6人目: (7,4) ※39付近
 
         battleDataforOnline.now_my_cost = 50;
 
@@ -258,7 +273,7 @@ public class CharacterManager : MonoBehaviour
         {
             bool is1p = (battleDataforOnline.my_player_id == 0);
             Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={playerData.user_id}</color>");
-            await gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
+            await gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p, battleDataforOnline.now_my_cost);
         }
     }
 
@@ -340,7 +355,7 @@ public class CharacterManager : MonoBehaviour
     for (int i = 0; i <= 5; i++)
         {
         int worldPosX = battleDataforOnline.charactersBattleDatas[i].now_character_position.x * 50 - 175;
-        int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 30;
+        int worldPosY = battleDataforOnline.charactersBattleDatas[i].now_character_position.y * -50 + 60;
         characters[i].anchoredPosition = new Vector2Int(worldPosX, worldPosY);
         }
     }
@@ -416,6 +431,7 @@ public class CharacterManager : MonoBehaviour
     
     // 移動した際にグリッドデータを送信
     _ = SendGridData();
+
     }
     }
 
@@ -588,6 +604,7 @@ public class CharacterManager : MonoBehaviour
         await SendAttackInfo(-1);
 
         // イベントの発火 (拠点への攻撃)
+        Debug.Log($"<color=white>[CharacterManager] OnAttackExecuted(Base) 発火: attacker={battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id}</color>");
         OnAttackExecuted?.Invoke(new AttackEventData {
             attackerUniqueId = battleDataforOnline.charactersBattleDatas[selected_character_id].unique_id,
             targetUniqueId = 0, // 拠点を0とする
@@ -695,7 +712,8 @@ public class CharacterManager : MonoBehaviour
             sendBaseHp1, 
             sendBaseHp2, 
             (int)targetUid, 
-            (int)targetNewHp
+            (int)targetNewHp,
+            battleDataforOnline.now_my_cost
         );
     }
 
@@ -814,7 +832,7 @@ public class CharacterManager : MonoBehaviour
                 bool is1p = (battleDataforOnline.my_player_id == 0);
                 Vector2Int converted = ConvertCoordinateForServer(cx, cy, is1p);
                 Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y})</color>");
-                _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y);
+                _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y, battleDataforOnline.now_my_cost);
                 _lastSentX[i] = cx;
                 _lastSentY[i] = cy;
             }
@@ -1010,7 +1028,6 @@ public class CharacterManager : MonoBehaviour
                 });
             }
         }
-
         // 【デバッグ】受信データをコンソールに出力（UIには反映しない）
         var sb = new System.Text.StringBuilder();
         // --- サーバーデータを即座にUIに反映 ---
