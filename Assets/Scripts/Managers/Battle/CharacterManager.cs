@@ -997,6 +997,7 @@ public class CharacterManager : MonoBehaviour
         }
 
         if (data.IsFinished)
+        {
             battleDataforOnline.game_end = true;
             battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
             

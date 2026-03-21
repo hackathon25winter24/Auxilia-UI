@@ -20,6 +20,13 @@ public class BattleUIManager : MonoBehaviour
     public Sprite[] characterStatesImage;
     public CharacterManager characterManager;
     public TextMeshProUGUI logText;
+    private Coroutine _clearLogCoroutine;
+    
+    [Header("Base UI")]
+    public Slider myBaseSlider;
+    public Slider enemyBaseSlider;
+    public TextMeshProUGUI myBaseHPText;
+    public TextMeshProUGUI enemyBaseHPText;
     
     public void SubscribeToEvents()
     {
@@ -51,6 +58,11 @@ public class BattleUIManager : MonoBehaviour
         playerNames[1].text = battleDataforOnline.player2_name;
         cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
         cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
+
+        // 拠点の初期化 (MaxHP=200)
+        if (myBaseSlider != null) myBaseSlider.maxValue = 200;
+        if (enemyBaseSlider != null) enemyBaseSlider.maxValue = 200;
+        UpdateBaseUI();
         
         if (shadow != null) shadow.gameObject.SetActive(false);
         if (characterStates != null) characterStates.gameObject.SetActive(false);
@@ -76,6 +88,16 @@ public class BattleUIManager : MonoBehaviour
         }
         cost[0].text = battleDataforOnline.now_my_cost.ToString();
         cost[1].text = battleDataforOnline.now_enemy_cost.ToString();
+        UpdateBaseUI();
+    }
+
+    public void UpdateBaseUI()
+    {
+        if (myBaseSlider != null) myBaseSlider.value = battleDataforOnline.base_hp;
+        if (enemyBaseSlider != null) enemyBaseSlider.value = battleDataforOnline.opponent_base_hp;
+        
+        if (myBaseHPText != null) myBaseHPText.text = battleDataforOnline.base_hp + "/200";
+        if (enemyBaseHPText != null) enemyBaseHPText.text = battleDataforOnline.opponent_base_hp + "/200";
     }
 
     // 特定のインデックス(i)のキャラクターUIを更新する専用メソッド
@@ -192,13 +214,29 @@ public class BattleUIManager : MonoBehaviour
         Debug.Log($"<color=cyan>[BattleUIManager] AddLog</color>: {message}");
         if (logText != null)
         {
-            // 上書きではなく追記にする（最大10行程度に制限するとより良いが、一旦は追記のみ）
             logText.text = message;
+
+            // 3秒後に消去するコルーチンを開始
+            if (_clearLogCoroutine != null)
+            {
+                StopCoroutine(_clearLogCoroutine);
+            }
+            _clearLogCoroutine = StartCoroutine(ClearLogAfterDelay(3f));
         }
         else
         {
             Debug.LogWarning("<color=red>[BattleUIManager] logText (TextMeshProUGUI) がアサインされていません！</color>");
         }
+    }
+
+    private IEnumerator ClearLogAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (logText != null)
+        {
+            logText.text = "";
+        }
+        _clearLogCoroutine = null;
     }
 
     void Awake()
