@@ -230,12 +230,15 @@ public class RoomUIManager : MonoBehaviour
                 UpDateRoom();
                 break;
             case "RenameRoom":
+                if(roomData.usersData[roomData.room_my_number].is_host)
+                {
                 renameRoomUI.SetActive(true);
+                }
                 break;
             case "AplyRenameRoom":
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
-                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name);
+                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name, playerData.user_id, false);
                 UpDateRoom();
                 break;
             case "RenameRoomBack":
