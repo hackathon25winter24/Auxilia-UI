@@ -840,14 +840,16 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    public void GetBattleData(GameDataResponse data)
+    public async Task GetBattleData(GameDataResponse data)
     {
         if (data == null) return;
 
         bool is1p = (playerData.user_id == data.Player1Id);
 
-        battleDataforOnline.player1_name = data.Player1Id;
-        battleDataforOnline.player2_name = data.Player2Id;
+        var user1 = await _gameConnector.GetUser(data.Player1Id);
+        var user2 = await _gameConnector.GetUser(data.Player2Id);
+        battleDataforOnline.player1_name = user1?.Name ?? "";
+        battleDataforOnline.player2_name = user2?.Name ?? "";
 
         // 自分原方・HP
         battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;
