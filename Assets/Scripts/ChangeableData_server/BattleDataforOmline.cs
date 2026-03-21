@@ -10,7 +10,7 @@ public class BattleDataforOmline : ScriptableObject
     public bool[] character_isSelected;
     public int my_player_id;
     public bool game_end;
-    public int win_player_id;
+    public string win_player_id;
     public int all_move_cost;
     public int palyer1_cost;
     public int palyer2_cost;

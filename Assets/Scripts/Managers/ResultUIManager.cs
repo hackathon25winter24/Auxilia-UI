@@ -68,7 +68,7 @@ public class ResultUIManager : MonoBehaviour
         Debug.Log($"<color=yellow>[ResultUI] my_id={battleDataforOnline.my_player_id}, win_id={battleDataforOnline.win_player_id}</color>");
 
         // 勝敗に応じた素材切り替え
-        if (battleDataforOnline.my_player_id == battleDataforOnline.win_player_id)
+        if (playerData.user_id == battleDataforOnline.win_player_id)
         {
             // 勝利
             SEManager.instance?.PlayWinSE();
