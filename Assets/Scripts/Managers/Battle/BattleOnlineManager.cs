@@ -143,7 +143,7 @@ public class BattleOnlineManager : MonoBehaviour
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
 
         // 全体のコストやHPなどを CharacterManager を通して更新・ログ表示
-        characterManager.GetBattleData(gameData);
+        await characterManager.GetBattleData(gameData);
 
         // キャラの配置・モデル表示を初期化（データ取得後に行う必要がある）
         characterManager.InitCharacterUI();

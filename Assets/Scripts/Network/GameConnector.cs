@@ -648,7 +648,7 @@ public class GameConnector : MonoBehaviour
                 {
                     var response = _call.ResponseStream.Current;
                     Debug.Log($"<color=orange>[StreamGame] Server Push received.</color>");
-                    HandleGameData(response);
+                    await HandleGameData(response);
                 }
             }
             catch (OperationCanceledException)
@@ -669,10 +669,10 @@ public class GameConnector : MonoBehaviour
             }
         }
     }
-    private void HandleGameData(GameDataResponse data)
+    private async Task HandleGameData(GameDataResponse data)
     {
         // Unity側で保持している変数をサーバーから受け取ったデータに更新
-        characterManager.GetBattleData(data);
+        await characterManager.GetBattleData(data);
         Debug.Log($"Update received: {data}");
     }
 
