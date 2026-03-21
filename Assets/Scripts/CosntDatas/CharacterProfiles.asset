@@ -143,3 +143,16 @@ MonoBehaviour:
     _height: 147cm
     _weight: 41kg
     _hobby: "\u5C0F\u9CE5\u306B\u990C\u3084\u308A"
+  - _image_mini: {fileID: -6521769860374610411, guid: 1a5991fa3757a0e47a64daae291ec858, type: 3}
+    _image_big: {fileID: 21300000, guid: 10fc4211d774c494782e4c137bf8c834, type: 3}
+    _image_detail: {fileID: -3784651827349605482, guid: 3193505ad64469a438fd6830d560a7a7, type: 3}
+    _name: "\u30C0\u30CB\u30FC\u30EB\u30FB\u30A2\u30C8\u30E9\u30FC\u30F4\u30A3\u30C1\u30FB\u30AB\u30E9\u30DE\u30FC\u30BE\u30D5"
+    _gender: "\u7537"
+    _age: "17\u6B73"
+    _birthday: mystery
+    _affiliation: mystery
+    _birthplace: mystery
+    _blood_type: mystery
+    _height: 170cm
+    _weight: 65kg
+    _hobby: mystery
