@@ -235,6 +235,7 @@ public class RoomUIManager : MonoBehaviour
             case "AplyRenameRoom":
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
+                //部屋の名前を変える関数を入れてください
                 break;
             case "RenameRoomBack":
                 renameRoomUI.SetActive(false);
