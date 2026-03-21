@@ -236,7 +236,7 @@ public class RoomUIManager : MonoBehaviour
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
                 await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name);
-
+                UpDateRoom();
                 break;
             case "RenameRoomBack":
                 renameRoomUI.SetActive(false);
@@ -301,7 +301,7 @@ public class RoomUIManager : MonoBehaviour
             {
                 owner = await gameConnector.GetUser(rooms[i].OwnerId);
                 // Debug.Log($"owner: {owner}");
-                roomData.room_name = owner.Name + "の部屋";
+                roomData.room_name = rooms[i].RoomName;
             }
         }
         for (int i = 0; i < joiner_list.Count; i++)
