@@ -394,11 +394,11 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task<RoomMatchResponse> UpdateRoomName(int roomId, string roomName)
+    public async Task<RoomMatchResponse> UpdateRoomName(int roomId, string roomName, string owner_id, bool is_gaming)
     {
         try
         {
-            var request = new UpdateRoomMatchRequest { RoomId = roomId, RoomName = roomName };
+            var request = new UpdateRoomMatchRequest { RoomId = roomId, RoomName = roomName, OwnerId = owner_id, IsGaming = is_gaming};
             var response = await _roomMatchClient.UpdateRoomMatchAsync(request);
             Debug.Log($"<color=green>部屋名更新成功:</color> RoomID={roomId}, Name={roomName}");
             return response;
