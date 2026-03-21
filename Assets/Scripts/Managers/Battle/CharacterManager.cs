@@ -614,6 +614,11 @@ public class CharacterManager : MonoBehaviour
             isPlayerAttack = true
         });
 
+        if (battleDataforOnline.opponent_base_hp <= 0)
+        {
+            battleDataforOnline.win_player_id = playerData.user_id;
+            battleDataforOnline.game_end = true;
+        }
     }
     }
 
@@ -996,7 +1001,7 @@ public class CharacterManager : MonoBehaviour
         if (data.IsFinished)
         {
             battleDataforOnline.game_end = true;
-            battleDataforOnline.win_player_id = (data.WinnerPlayerId == data.Player1Id) ? data.Player1Id : data.Player2Id;
+            battleDataforOnline.win_player_id = (data.WinnerPlayerId == playerData.user_id) ? playerData.user_id : data.Player1Id;
             Debug.Log($"<color=yellow>[GetBattleData] Game Finished! WinnerID={data.WinnerPlayerId}, WinnerIndex={battleDataforOnline.win_player_id} (P1={data.Player1Id}, P2={data.Player2Id})</color>");
             
             // レート更新情報の反映
