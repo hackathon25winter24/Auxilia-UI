@@ -142,7 +142,7 @@ public class BattleOnlineManager : MonoBehaviour
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
 
-        // 全体のコストやHPなどを CharacterManager を通を通して更新・ログ表示
+        // 全体のコストやHPなどを CharacterManager を通して更新・ログ表示
         characterManager.GetBattleData(gameData);
 
         // キャラの配置・モデル表示を初期化（データ取得後に行う必要がある）

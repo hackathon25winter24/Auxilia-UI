@@ -64,6 +64,9 @@ public class ResultUIManager : MonoBehaviour
             }
         }
 
+        // 勝敗ログ
+        Debug.Log($"<color=yellow>[ResultUI] my_id={battleDataforOnline.my_player_id}, win_id={battleDataforOnline.win_player_id}</color>");
+
         // 勝敗に応じた素材切り替え
         if (battleDataforOnline.my_player_id == battleDataforOnline.win_player_id)
         {

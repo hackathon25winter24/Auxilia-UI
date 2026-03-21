@@ -394,6 +394,22 @@ public class GameConnector : MonoBehaviour
         }
     }
 
+    public async Task<RoomMatchResponse> UpdateRoomName(int roomId, string roomName)
+    {
+        try
+        {
+            var request = new UpdateRoomMatchRequest { RoomId = roomId, RoomName = roomName };
+            var response = await _roomMatchClient.UpdateRoomMatchAsync(request);
+            Debug.Log($"<color=green>部屋名更新成功:</color> RoomID={roomId}, Name={roomName}");
+            return response;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"部屋名の更新に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
+
     public async Task<StartMatchResponse> StartMatch(int roomId)
     {
         try
