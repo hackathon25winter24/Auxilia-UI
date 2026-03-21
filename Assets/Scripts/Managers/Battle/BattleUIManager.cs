@@ -54,8 +54,9 @@ public class BattleUIManager : MonoBehaviour
             UpdateCharacterUI(i);
         }
 
-        playerNames[0].text = is1p ? battleDataforOnline.player1_name : battleDataforOnline.player2_name;
-        playerNames[1].text = is1p ? battleDataforOnline.player2_name : battleDataforOnline.player1_name;
+
+        playerNames[0].text = battleDataforOnline.player1_name;
+        playerNames[1].text = battleDataforOnline.player2_name;
         cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
         cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
 
