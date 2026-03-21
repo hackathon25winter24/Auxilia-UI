@@ -846,10 +846,10 @@ public class CharacterManager : MonoBehaviour
 
         bool is1p = (playerData.user_id == data.Player1Id);
 
-        var user1 = await _gameConnector.GetUser(data.Player1Id);
-        var user2 = await _gameConnector.GetUser(data.Player2Id);
-        battleDataforOnline.player1_name = user1?.Name ?? "";
-        battleDataforOnline.player2_name = user2?.Name ?? "";
+        //var user1 = await _gameConnector.GetUser(data.Player1Id);
+        //var user2 = await _gameConnector.GetUser(data.Player2Id);
+        //battleDataforOnline.player1_name = user1?.Name ?? "";
+        //battleDataforOnline.player2_name = user2?.Name ?? "";
 
         // 自分原方・HP
         battleDataforOnline.base_hp = is1p ? (int)data.BaseHp1 : (int)data.BaseHp2;
