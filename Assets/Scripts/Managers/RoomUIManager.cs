@@ -235,9 +235,39 @@ public class RoomUIManager : MonoBehaviour
             case "AplyRenameRoom":
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
+                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name);
                 break;
             case "RenameRoomBack":
                 renameRoomUI.SetActive(false);
+                break;
+            case "changeStatus":
+                {
+                    int myIdx = roomData.room_my_number;
+                    int currentState = roomData.usersData[myIdx].user_state;
+                    int newState = 0;
+
+                    if (currentState == 0) // 現在観戦者なら1Pか2Pへの変更を試みる
+                    {
+                        bool p1Occupied = false;
+                        bool p2Occupied = false;
+                        for (int i = 0; i < roomData.usersData.Length; i++)
+                        {
+                            if (roomData.usersData[i].user_state == 1) p1Occupied = true;
+                            if (roomData.usersData[i].user_state == 2) p2Occupied = true;
+                        }
+
+                        if (!p1Occupied) newState = 1;
+                        else if (!p2Occupied) newState = 2;
+                        else newState = 0; // 空きがなければ観戦者のまま
+                    }
+                    else // 現在プレイヤーなら観戦者へ
+                    {
+                        newState = 0;
+                    }
+
+                    await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, newState, false);
+                    UpDateRoom();
+                }
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
