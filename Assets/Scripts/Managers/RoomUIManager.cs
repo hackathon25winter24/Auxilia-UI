@@ -236,6 +236,7 @@ public class RoomUIManager : MonoBehaviour
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
                 await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name);
+
                 break;
             case "RenameRoomBack":
                 renameRoomUI.SetActive(false);

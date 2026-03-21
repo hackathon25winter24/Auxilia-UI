@@ -260,7 +260,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      _i_icon_12093_icon_120932_256_0: 66556033714601610
+      _i_icon_12093_icon_120932_256_1: 4856730716717858012
+      _i_icon_12093_icon_120932_256_2: -2171013518458386240
+      _i_icon_12093_icon_120932_256_3: 3820486601081751222
+      _i_icon_12093_icon_120932_256_4: -6789240084711363152
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
