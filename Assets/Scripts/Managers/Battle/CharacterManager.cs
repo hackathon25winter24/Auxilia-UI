@@ -273,6 +273,7 @@ public class CharacterManager : MonoBehaviour
         {
             bool is1p = (battleDataforOnline.my_player_id == 0);
             Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={playerData.user_id}</color>");
+            Debug.Log($"<color=cyan>[SendGridData] Sending Cost: {battleDataforOnline.now_my_cost}</color>");
             await gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p, battleDataforOnline.now_my_cost);
         }
     }
@@ -701,7 +702,7 @@ public class CharacterManager : MonoBehaviour
         int sendBaseHp1 = is1p ? battleDataforOnline.base_hp : battleDataforOnline.opponent_base_hp;
         int sendBaseHp2 = is1p ? battleDataforOnline.opponent_base_hp : battleDataforOnline.base_hp;
 
-        Debug.Log($"<color=orange><b>[SendAttackInfo] 攻撃送信</b>: Side={(is1p ? "1P" : "2P")} Attacker={attackerUid}, Target={targetUid}, NewHP={targetNewHp}</color>");
+        Debug.Log($"<color=orange><b>[SendAttackInfo] 攻撃送信</b>: Side={(is1p ? "1P" : "2P")} Attacker={attackerUid}, Target={targetUid}, NewHP={targetNewHp}, Cost={battleDataforOnline.now_my_cost}</color>");
 
         await gameConnector.SendAttack(
             roomData.room_id, 
@@ -831,7 +832,7 @@ public class CharacterManager : MonoBehaviour
                 uint uid = battleDataforOnline.charactersBattleDatas[i].unique_id;
                 bool is1p = (battleDataforOnline.my_player_id == 0);
                 Vector2Int converted = ConvertCoordinateForServer(cx, cy, is1p);
-                Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y})</color>");
+                Debug.Log($"<color=orange>[SendMove] idx={i}  unique_id={uid}  x={cx}({converted.x})  y={cy}({converted.y}) Cost={battleDataforOnline.now_my_cost}</color>");
                 _ = gameConnector.SendMove(rid, pid, (int)uid, converted.x, converted.y, battleDataforOnline.now_my_cost);
                 _lastSentX[i] = cx;
                 _lastSentY[i] = cy;
@@ -858,11 +859,19 @@ public class CharacterManager : MonoBehaviour
         battleDataforOnline.now_moving_player = isMyTurn ? battleDataforOnline.my_player_id : (battleDataforOnline.my_player_id == 0 ? 1 : 0);
 
         // コストをサーバーから反映
-        // ※ サーバー側のコスト同期よりローカルのコスト計算ルール（毎ターン50回復等）を優先するため無効化
-        // battleDataforOnline.now_my_cost    = is1p ? (int)data.Cost1P : (int)data.Cost2P;
-        
-        // 相手のコストはサーバーからの同期を許可する
-        battleDataforOnline.now_enemy_cost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
+        int serverMyCost = is1p ? (int)data.Cost1P : (int)data.Cost2P;
+        int serverEnemyCost = is1p ? (int)data.Cost2P : (int)data.Cost1P;
+
+        if (serverMyCost == 0 && battleDataforOnline.now_my_cost > 0 && !data.IsFinished)
+        {
+            Debug.LogWarning($"<color=red>[CostSync] IGNORED zero cost update from server. Server: P1={data.Cost1P}, P2={data.Cost2P}</color>");
+        }
+        else
+        {
+            Debug.Log($"<color=cyan>[CostSync] received Cost: mine={serverMyCost}, enemy={serverEnemyCost}</color>");
+            battleDataforOnline.now_my_cost = serverMyCost;
+            battleDataforOnline.now_enemy_cost = serverEnemyCost;
+        }
 
         // グリッドデータ（地形情報）の同期
         // サーバーは全マス（40マス）を GridType 付きで送ってくる
@@ -999,6 +1008,10 @@ public class CharacterManager : MonoBehaviour
                 battleDataforOnline.opponent_rate_updown = data.P2RateDelta;
                 battleDataforOnline.rate = data.P1Rate;
                 battleDataforOnline.opponent_rate = data.P2Rate;
+                battleDataforOnline.now_my_cost = (int)data.Cost1P;
+                battleDataforOnline.now_enemy_cost = (int)data.Cost2P;
+                Debug.Log($"<color=cyan>[CostSync] received Cost1P={data.Cost1P}, Cost2P={data.Cost2P}</color>");
+                Debug.Log($"[RateSync] P1: {data.P1Rate} (+{data.P1RateDelta}), P2: {data.P2Rate} (+{data.P2RateDelta})");
             }
             else
             {
@@ -1006,6 +1019,7 @@ public class CharacterManager : MonoBehaviour
                 battleDataforOnline.opponent_rate_updown = data.P1RateDelta;
                 battleDataforOnline.rate = data.P2Rate;
                 battleDataforOnline.opponent_rate = data.P1Rate;
+                Debug.Log($"[RateSync-2P] P2: {data.P2Rate} (+{data.P2RateDelta}), P1: {data.P1Rate} (+{data.P1RateDelta})");
             }
             Debug.Log($"<color=yellow>[GetBattleData] Game End: MyRate={battleDataforOnline.rate}({battleDataforOnline.my_rate_updown}) OppRate={battleDataforOnline.opponent_rate}({battleDataforOnline.opponent_rate_updown})</color>");
         }
