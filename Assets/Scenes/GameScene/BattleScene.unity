@@ -617,7 +617,6 @@ MonoBehaviour:
   attack_number: 0
   is_attacking: 0
   now_damage: 0
-  gameConnector: {fileID: 0}
   roomData: {fileID: 0}
   playerData: {fileID: 0}
 --- !u!4 &56944130
@@ -986,7 +985,6 @@ MonoBehaviour:
   roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
   gametext: {fileID: 649590194}
   gameTextObject: {fileID: 649590193}
-  gameConnector: {fileID: 0}
   timerSlider: {fileID: 222250393}
   maxTime: 60
   duration: 2
@@ -1655,6 +1653,9 @@ MonoBehaviour:
   cost:
   - {fileID: 630293456}
   - {fileID: 702537226}
+  playerNames:
+  - {fileID: 1643739406}
+  - {fileID: 1539785020}
   shadow: {fileID: 323237426}
   characterStates: {fileID: 452606659}
   backfromStates: {fileID: 337890647}
@@ -9195,7 +9196,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 30}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1763814117
@@ -9338,8 +9339,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -9349,7 +9350,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_wordSpacing: 0
+  m_wordSpacing: 4
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -9406,8 +9407,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 10, y: 120}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1806626569
 GameObject:

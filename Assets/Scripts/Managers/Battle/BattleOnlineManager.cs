@@ -17,7 +17,17 @@ public class BattleOnlineManager : MonoBehaviour
     public TextMeshProUGUI gametext;
     public RectTransform gameTextObject;
 
-    public GameConnector gameConnector;
+    private GameConnector _gameConnector;
+    public GameConnector gameConnector {
+        get {
+            // 他の GameConnector が Awake で自分自身を Destroy していても、
+            // 正しいシングルトンインスタンス(最初に Awake が完了したもの)を確実に取得するようにする
+            if (GameConnector.instance != null) return GameConnector.instance;
+            if (_gameConnector == null) _gameConnector = GameConnector.instance;
+            return _gameConnector;
+        }
+        set { _gameConnector = value; }
+    }
 
     public Slider timerSlider; 
     public float maxTime = 60f; 
@@ -41,25 +51,58 @@ public class BattleOnlineManager : MonoBehaviour
 
     async void Awake()
     {
-        roomData = GetSo(roomData);
-        playerData = GetSo(playerData);
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
-        characterManager = FindFirstObjectByType<CharacterManager>();
-        battleDataforLocal.is_myturn = false;
-
-        // サーバーからゲームデータを取得して初期化する
-        if (roomData == null) {
-            Debug.LogError("[BattleOnlineManager] roomDataが見つかりません。");
-            return;
-        }
-        var gameData = await gameConnector.GetGameData(roomData.room_id);
-        if (gameData == null)
+        Debug.Log("[BattleOnlineManager] Awake Started");
+        try
         {
-            Debug.LogError("[BattleOnlineManager] ゲームデータの取得に失敗しました。");
-            return;
-        }
+            roomData = GetSo(roomData);
+            playerData = GetSo(playerData);
+            // gameConnector = ... // property化により不要
+            characterManager = FindFirstObjectByType<CharacterManager>();
+            battleDataforLocal.is_myturn = false;
+
+            // --- 重要: 通信開始前にイベントだけ先に購読する ---
+            var battleUI = FindFirstObjectByType<BattleUIManager>();
+            if (battleUI != null)
+            {
+                battleUI.characterManager = characterManager;
+                battleUI.SubscribeToEvents();
+                Debug.Log("[BattleOnlineManager] Early event subscription successful.");
+            }
+
+            // サーバーからゲームデータを取得して初期化する
+            if (roomData == null) {
+                Debug.LogError("[BattleOnlineManager] roomDataが見つかりません。");
+                return;
+            }
+            if (gameConnector == null) {
+                Debug.LogError("[BattleOnlineManager] gameConnectorが見つかりません。");
+                return;
+            }
+
+            Debug.Log($"[BattleOnlineManager] Calling GetGameData for room_id: {roomData.room_id}");
+            var gameData = await gameConnector.GetGameData(roomData.room_id);
+            if (gameData == null)
+            {
+                Debug.LogError("[BattleOnlineManager] ゲームデータの取得に失敗しました。");
+                return;
+            }
+            Debug.Log("[BattleOnlineManager] GameData received successfully. Player1Id=" + gameData.Player1Id);
+
+        // GameConnectorにこのシーンのCharacterManagerを登録
+        gameConnector.characterManager = characterManager;
 
         bool is1p = (playerData.user_id == gameData.Player1Id);
+
+        // プレイヤー1と2のユーザーネームを取得して反映
+        var user1 = await gameConnector.GetUser(gameData.Player1Id);
+        var user2 = await gameConnector.GetUser(gameData.Player2Id);
+        battleDataforOnline.player1_name = user1?.Name ?? "Player1";
+        battleDataforOnline.player2_name = user2?.Name ?? "Player2";
+
+        // 相手の名前を特定して保存（後続のUIやリザルトで使用）
+        string opponentName = is1p ? battleDataforOnline.player2_name : battleDataforOnline.player1_name;
+        battleDataforLocal.enemy_name = opponentName;
+        battleDataforOnline.opponent_name = opponentName;
 
         // 自分のプレイヤーIDをScriptableObjectに保存
         battleDataforOnline.my_player_id = is1p ? 0 : 1;
@@ -74,15 +117,6 @@ public class BattleOnlineManager : MonoBehaviour
         // スタート時はどちらもコスト50に初期化
         battleDataforOnline.now_my_cost = 50;
         battleDataforOnline.now_enemy_cost = 50;
-
-        // 相手の名前を取得してScriptableObjectに保存
-        string opponentId = is1p ? gameData.Player2Id : gameData.Player1Id;
-        var opponentUser = await gameConnector.GetUser(opponentId);
-        if (opponentUser != null)
-        {
-            battleDataforLocal.enemy_name         = opponentUser.Name;
-            battleDataforOnline.opponent_name     = opponentUser.Name;
-        }
 
         // キャラクターデータを振り分ける
         // character_id[0..2] = 自分、[3..5] = 相手
@@ -108,21 +142,29 @@ public class BattleOnlineManager : MonoBehaviour
         // 先行判定（ローカルフラグ）
         is_move_player = is1p ? gameData.Is1PTurn : !gameData.Is1PTurn;
 
-        // 全体のコストやHPなどを CharacterManager を通して更新・ログ表示
+        // 全体のコストやHPなどを CharacterManager を通を通して更新・ログ表示
         characterManager.GetBattleData(gameData);
 
-        // すべてのデータが揃ったので、UIを初期化する
+        // キャラの配置・モデル表示を初期化（データ取得後に行う必要がある）
         characterManager.InitCharacterUI();
-        var battleUI = FindFirstObjectByType<BattleUIManager>();
-        if (battleUI != null) 
+        Debug.Log("[BattleOnlineManager] CharacterManager.InitCharacterUI finished.");
+
+        // UI（スライダーや名前）を最新データで更新
+        if (battleUI != null)
         {
-            battleUI.characterManager = characterManager;
             battleUI.InitUI();
+            battleUI.SubscribeToEvents();
+            Debug.Log("[BattleOnlineManager] BattleUIManager.InitUI & SubscribeToEvents finished.");
         }
 
         // バトル開始演出を開始
         gametext.text = "battle start!";
         StartCoroutine(MoveRoutine());
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[BattleOnlineManager] Awake Exception: {e.Message}\n{e.StackTrace}");
+        }
     }
     private float _turnTransitionTime = 0f; // ターン切り替え時の猶予時間
     

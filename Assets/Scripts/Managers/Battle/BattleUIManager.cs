@@ -21,8 +21,21 @@ public class BattleUIManager : MonoBehaviour
     public CharacterManager characterManager;
     public TextMeshProUGUI logText;
     
+    public void SubscribeToEvents()
+    {
+        if (characterManager != null)
+        {
+            // 重複購読を防ぐため一旦解除
+            characterManager.OnAttackExecuted -= HandleAttackExecuted;
+            characterManager.OnAttackExecuted += HandleAttackExecuted;
+            Debug.Log("<color=green>[BattleUIManager] OnAttackExecuted サブスクライブ完了</color>");
+        }
+    }
+
     public void InitUI()
     {
+        Debug.Log("[BattleUIManager] InitUI started.");
+
         // 初期化処理
         for (int i = 0; i <= 5; i++)
         {
@@ -34,19 +47,16 @@ public class BattleUIManager : MonoBehaviour
             UpdateCharacterUI(i);
         }
 
-
         playerNames[0].text = battleDataforOnline.player1_name;
         playerNames[1].text = battleDataforOnline.player2_name;
         cost[0].text = "cost:" + battleDataforOnline.now_my_cost;
         cost[1].text = "cost:" + battleDataforOnline.now_enemy_cost;
-        shadow.gameObject.SetActive(false);
-        characterStates.gameObject.SetActive(false);
-        backfromStates.gameObject.SetActive(false);
-
-        if (characterManager != null)
-        {
-            characterManager.OnAttackExecuted += HandleAttackExecuted;
-        }
+        
+        if (shadow != null) shadow.gameObject.SetActive(false);
+        if (characterStates != null) characterStates.gameObject.SetActive(false);
+        if (backfromStates != null) backfromStates.gameObject.SetActive(false);
+        
+        Debug.Log("[BattleUIManager] InitUI finished successfully.");
     }
 
     void OnDestroy()
@@ -138,6 +148,7 @@ public class BattleUIManager : MonoBehaviour
 
     private void HandleAttackExecuted(CharacterManager.AttackEventData data)
     {
+        Debug.Log($"<color=cyan>[BattleUIManager] HandleAttackExecuted 受信</color>: Attacker={data.attackerUniqueId}, Target={data.targetUniqueId}, Damage={data.finalDamage}");
         string attackerName = GetCharacterName(data.attackerUniqueId);
         string targetName = data.targetUniqueId == 0 ? "拠点" : GetCharacterName(data.targetUniqueId);
 
@@ -157,6 +168,7 @@ public class BattleUIManager : MonoBehaviour
         }
 
         AddLog(logMessage);
+        Debug.Log($"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     private string GetCharacterName(uint uniqueId)
@@ -177,9 +189,20 @@ public class BattleUIManager : MonoBehaviour
 
     private void AddLog(string message)
     {
+        Debug.Log($"<color=cyan>[BattleUIManager] AddLog</color>: {message}");
         if (logText != null)
         {
+            // 上書きではなく追記にする（最大10行程度に制限するとより良いが、一旦は追記のみ）
             logText.text = message;
         }
+        else
+        {
+            Debug.LogWarning("<color=red>[BattleUIManager] logText (TextMeshProUGUI) がアサインされていません！</color>");
+        }
+    }
+
+    void Awake()
+    {
+        Debug.Log("[BattleUIManager] Awake Started");
     }
 }

@@ -37,9 +37,16 @@ public class GameConnector : MonoBehaviour
         OnErrorMessage?.Invoke(message);
     }
 
+    public static GameConnector instance;
+
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        if (instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         var channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
@@ -58,6 +65,11 @@ public class GameConnector : MonoBehaviour
             HttpHandler = streamHandler
         });
         _battleStreamClient = new BattleService.BattleServiceClient(streamChannel);
+
+        // --- 全てが初期化されてから instance を代入 ---
+        instance = this;
+        DontDestroyOnLoad(this.gameObject);
+        Debug.Log("[GameConnector] Awake finished and instance is now available.");
     }
 
     public async Task<UserResponse> SignUp(string userName, string password)
@@ -561,6 +573,10 @@ public class GameConnector : MonoBehaviour
     {
         try
         {
+            if (_battleClient == null) {
+                Debug.LogError("[GameConnector] RegisterCharacters: _battleClient is null!");
+                return null;
+            }
             var request = new RegisterCharactersRequest{RoomId = (uint)roomId, Is1P = is1p};
             request.CharacterIds.Add(characterIds.Select(x => (uint)x).ToArray());
             Debug.Log($"CharacterIds: {request.CharacterIds}");
@@ -576,14 +592,21 @@ public class GameConnector : MonoBehaviour
 
     public async Task<GameDataResponse> GetGameData(int roomId)
     {
+        Debug.Log($"[GameConnector] GetGameData for room {roomId} called.");
         try
         {
+            if (_battleClient == null) {
+                Debug.LogError("[GameConnector] GetGameData: _battleClient is null!");
+                return null;
+            }
             var request = new GetGameDataRequest{RoomId = (uint)roomId};
             var reponse = await _battleClient.GetGameDataAsync(request);
+            Debug.Log($"[GameConnector] GetGameData for room {roomId} succeeded.");
             return reponse;
         }
         catch (RpcException e)
         {
+            Debug.LogError($"[GameConnector] GetGameData for room {roomId} failed: {e.Status.Detail}");
             ShowErrorMessage($"ゲームデータの取得に失敗しました: {e.Status.Detail}");
             return null;
         }
@@ -638,10 +661,15 @@ public class GameConnector : MonoBehaviour
     }
 
     // おそらくこれを呼び出せばDBのApplyMoveが動くはずです
-    public async Task SendMove(int roomId, string playerId, int charaId, int x, int y)
+    public async Task SendMove(int roomId, string playerId, int charaId, int x, int y, int cost)
     {
+        if (_battleClient == null)
+        {
+            Debug.LogError("[GameConnector] SendMove: _battleClient is null!");
+            return;
+        }
         var move = new MoveAction{CharacterUniqueId = (uint)charaId, ToX = (uint)x, ToY = (uint)y};
-        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move};
+        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move, Cost = (uint)cost};
         
         try 
         {
@@ -653,12 +681,17 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP)
+    public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP, int cost)
     {
         var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
-        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack};
+        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack, Cost = (uint)cost};
         
         Debug.Log($"<color=orange>[SendAttack] 通信開始: attacker={attackerCharaId}, target={attackedCharaId}, newHp={newHP}, bhp1={baseHP1}, bhp2={baseHP2}</color>");
+        if (_battleClient == null)
+        {
+            Debug.LogError("[GameConnector] _battleClient が null です！初期化に失敗している可能性があります。");
+            return;
+        }
         try 
         {
             await _battleClient.ApplyAttackAsync(action);
@@ -673,6 +706,11 @@ public class GameConnector : MonoBehaviour
 
     public async Task SendTurnEnd(int roomId, string playerId)
     {
+        if (_battleClient == null)
+        {
+            Debug.LogError("[GameConnector] SendTurnEnd: _battleClient is null!");
+            return;
+        }
         bool endTurn = true;
         var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, EndTurn = endTurn};
         
@@ -686,7 +724,7 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataforOmline battleData, bool is1p)
+    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataforOmline battleData, bool is1p, int cost)
     {
         var gridUpdate = new GridUpdateAction();
         for (int y = 0; y < 5; y++)
@@ -719,7 +757,12 @@ public class GameConnector : MonoBehaviour
             }
         }
 
-        var action = new PlayerAction { RoomId = (uint)roomId, PlayerId = playerId, GridUpdate = gridUpdate };
+        var action = new PlayerAction { RoomId = (uint)roomId, PlayerId = playerId, GridUpdate = gridUpdate, Cost = (uint)cost };
+        
+        if (_battleClient == null) {
+            Debug.LogError("[GameConnector] SendGridUpdate: _battleClient is null!");
+            return;
+        }
 
         try
         {
