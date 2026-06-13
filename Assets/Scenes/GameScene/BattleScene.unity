@@ -606,7 +606,6 @@ MonoBehaviour:
   - {fileID: 650600073}
   - {fileID: 1397172211}
   - {fileID: 1806626573}
-  battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
@@ -1784,7 +1783,13 @@ MonoBehaviour:
   - {fileID: 650600069}
   - {fileID: 1397172207}
   - {fileID: 1806626569}
-  characterSmallwindow: []
+  characterSmallwindow:
+  - {fileID: 1220754459}
+  - {fileID: 470910967}
+  - {fileID: 1730774631}
+  - {fileID: 569126653}
+  - {fileID: 1399910092}
+  - {fileID: 1266030268}
   self:
     player_id: 
     player_name: 

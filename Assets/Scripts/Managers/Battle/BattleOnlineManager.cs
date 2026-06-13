@@ -431,13 +431,13 @@ public class BattleOnlineManager : MonoBehaviour
         // unique_idはAwake時に代入されているので、これを用いてマッチング
         for (int i = 0; i <= 2; i++)
         {
-            if (player.characters[i].unique_id == c.Id)// 各プレイヤーのキャラ3枠でIDが一致したキャラ
+            if (player.characters[i].unique_id == c.CharacterId)// 各プレイヤーのキャラ3枠でIDが一致したキャラ
             {
                 int oldHp = player.characters[i].now_character_hp;
                 int newHp = (int)c.Hp;
                 if (oldHp != newHp)
                 {
-                    Debug.Log($"<color=red>[GetBattleData] HP同期: idx={i} uniqueId={c.Id} {oldHp} -> {newHp}</color>");
+                    Debug.Log($"<color=red>[GetBattleData] HP同期: idx={i} uniqueId={c.CharacterId} {oldHp} -> {newHp}</color>");
                 }
                 // hpの同期
                 player.characters[i].now_character_hp = newHp;

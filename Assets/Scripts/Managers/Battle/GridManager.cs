@@ -192,7 +192,7 @@ public class GridManager : MonoBehaviour
     }
     */
 
-    public Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)// 1p2pで反転させた座標を返す
+    public Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)// 1p2pで反転させたグリッド座標を返す
     {
         if (is1p) return new Vector2Int(x, y);
         return new Vector2Int(7 - x, y);

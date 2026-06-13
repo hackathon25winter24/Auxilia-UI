@@ -149,7 +149,8 @@ public class BattleViewManager : MonoBehaviour
             CharactersBattleData chara = DecideCharacter(i);
             int worldPosX = chara.now_character_position.x * 50 - 175;
             int worldPosY = chara.now_character_position.y * -50 + 60;
-            characters[i].transform.position = new Vector3Int(worldPosX, worldPosY);
+            Debug.Log($"chara[{i}] position: {characters[i].transform.localPosition}");
+            characters[i].transform.localPosition = new Vector3Int(worldPosX, worldPosY);
         }
     }
 
