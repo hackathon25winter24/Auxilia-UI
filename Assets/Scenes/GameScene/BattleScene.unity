@@ -473,7 +473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -175, y: -140}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &55049834
@@ -580,6 +580,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cacc094ee4969934a9984789a9e3ece4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  is_1p: 0
+  self:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 0
+    current_cost_remaining: 0
+    characters: []
+    rate: 0
+    rate_updown: 0
+  opponent:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 0
+    current_cost_remaining: 0
+    characters: []
+    rate: 0
+    rate_updown: 0
   characters:
   - {fileID: 1961868592}
   - {fileID: 511543639}
@@ -587,38 +606,24 @@ MonoBehaviour:
   - {fileID: 650600073}
   - {fileID: 1397172211}
   - {fileID: 1806626573}
-  character_image:
-  - {fileID: 1961868589}
-  - {fileID: 511543636}
-  - {fileID: 37222588}
-  - {fileID: 650600070}
-  - {fileID: 1397172208}
-  - {fileID: 1806626570}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  selected_character_id: 0
-  AttackButton: {fileID: 966120276}
-  AttackButtonBackImage: {fileID: 966120274}
-  AttackButtonOne:
+  selected_character_index: -1
+  attackButton: {fileID: 966120276}
+  attackButtonBackImage: {fileID: 966120274}
+  attackButtonOne:
   - {fileID: 1900378553}
   - {fileID: 1940744645}
   - {fileID: 1870815619}
-  CharacterSmallwindow:
-  - {fileID: 1220754459}
-  - {fileID: 470910967}
-  - {fileID: 1730774631}
-  - {fileID: 569126653}
-  - {fileID: 1399910092}
-  - {fileID: 1266030268}
   BackButton: {fileID: 712360788}
+  battleViewManager: {fileID: 441793170}
   attack_number: 0
   is_attacking: 0
-  now_damage: 0
   roomData: {fileID: 0}
-  playerData: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
@@ -979,9 +984,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
+  battleView: {fileID: 441793170}
+  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
+  gridManager: {fileID: 0}
   roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
   gametext: {fileID: 649590194}
   gameTextObject: {fileID: 649590193}
@@ -990,7 +998,6 @@ MonoBehaviour:
   duration: 2
   elapsed: 0
   is_text_moving: 0
-  is_move_player: 0
 --- !u!4 &260079060
 Transform:
   m_ObjectHideFlags: 0
@@ -1749,7 +1756,7 @@ GameObject:
   - component: {fileID: 441793171}
   - component: {fileID: 441793170}
   m_Layer: 0
-  m_Name: BattleUIManager
+  m_Name: BattleViewManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1767,11 +1774,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a89d29977a2d843ad164e94fc277a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
-  inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
-  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
+  userData: {fileID: 0}
+  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
-  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  characters:
+  - {fileID: 1961868588}
+  - {fileID: 511543635}
+  - {fileID: 37222587}
+  - {fileID: 650600069}
+  - {fileID: 1397172207}
+  - {fileID: 1806626569}
+  characterSmallwindow: []
+  self:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 0
+    current_cost_remaining: 0
+    characters: []
+    rate: 0
+    rate_updown: 0
+  opponent:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 0
+    current_cost_remaining: 0
+    characters: []
+    rate: 0
+    rate_updown: 0
   CharacterHP:
   - {fileID: 1629088067}
   - {fileID: 1433219959}
@@ -2539,7 +2570,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -125, y: -40}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &529460514
@@ -3689,7 +3720,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 175, y: 60}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &662030278
@@ -4071,7 +4102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &712360788
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5740,7 +5771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   grids:
   - {fileID: 939007880}
   - {fileID: 856278059}
@@ -5791,7 +5822,7 @@ MonoBehaviour:
   LandmineGrid: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
   gameConnector: {fileID: 0}
   roomData: {fileID: 0}
-  playerData: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0
@@ -7401,7 +7432,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -40}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1399910088
@@ -9817,7 +9848,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 175, y: -140}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1813632467
@@ -10867,7 +10898,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -175, y: 60}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2053539651

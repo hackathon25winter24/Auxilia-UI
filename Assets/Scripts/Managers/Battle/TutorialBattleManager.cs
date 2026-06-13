@@ -9,8 +9,9 @@ public class TutorialBattleManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
-    public BattleDataforLocal battleDataforLocal;
+    public UserData userData;
+    // バトルデータはBattleDataForOnlineの設計を利用しているが、問題が生じたら新たに作り直すべき
+    public BattleDataForOnline battleDataForTutorial;
     public StoryManagerData storyManagerData;
     public TextMeshProUGUI gameText;
     public RectTransform gametext;
@@ -68,8 +69,8 @@ public class TutorialBattleManager : MonoBehaviour
     {
         gameText.text = "your turn";
         StartCoroutine(MoveRoutine());
-        battleDataforLocal.is_myturn = true;
-        battleDataforLocal.now_my_cost = 50;
+        battleDataForTutorial.is_1p_turn = true;
+        battleDataForTutorial.player1.current_cost_remaining = 50;
         TimerStart();
     }
 
@@ -77,7 +78,7 @@ public class TutorialBattleManager : MonoBehaviour
     {
         gameText.text = "turn end";
         StartCoroutine(MoveRoutine());
-        battleDataforLocal.is_myturn = false;
+        battleDataForTutorial.is_1p_turn = false;
         StartMyTurn();
     }
 

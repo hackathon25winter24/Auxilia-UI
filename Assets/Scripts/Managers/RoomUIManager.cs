@@ -11,7 +11,7 @@ public class RoomUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public RoomData roomData;
 
     public Image[] joinnersUI;
@@ -70,7 +70,7 @@ public class RoomUIManager : MonoBehaviour
             {
                 try 
                 {
-                    _roomStream = gameConnector.StreamRoom(new RoomStreamRequest { RoomId = roomData.room_id, UserId = playerData.user_id });
+                    _roomStream = gameConnector.StreamRoom(new RoomStreamRequest { RoomId = roomData.room_id, UserId = userData.user_id });
                     Debug.Log($"<color=cyan>[StreamRoom] サーバーのリアルタイム同期に接続しました！ (RoomID: {roomData.room_id})</color>");
 
                     while (_isStreaming && !_cts.IsCancellationRequested && await _roomStream.ResponseStream.MoveNext(_cts.Token))
@@ -158,12 +158,12 @@ public class RoomUIManager : MonoBehaviour
         {
             case "Back":
                 SEManager.instance?.PlayBackSE();
-                await gameConnector.LeaveRoom(roomData.room_id, playerData.user_id);
+                await gameConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
                 SEManager.instance?.PlayToNextSE();
-                if (roomData.usersData[roomData.room_my_number].is_host)
+                if (roomData.usersData[roomData.room_my_index].is_host)
                 {
                     bool allReady = true;
                     int activeCount = 0;
@@ -198,7 +198,7 @@ public class RoomUIManager : MonoBehaviour
                         }
 
                         // サーバー上でホストもready状態にしておく
-                        await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, roomData.usersData[roomData.room_my_number].user_state, true);
+                        await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, true);
                         await gameConnector.StartMatch(roomData.room_id);
                         sceneData.next_scene_number = 10;
                     }
@@ -210,8 +210,8 @@ public class RoomUIManager : MonoBehaviour
                 else
                 {
                     // ゲスト（親以外）は自分のready状態を切り替える
-                    bool newReady = !roomData.usersData[roomData.room_my_number].is_ready;
-                    await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, roomData.usersData[roomData.room_my_number].user_state, newReady);
+                    bool newReady = !roomData.usersData[roomData.room_my_index].is_ready;
+                    await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, newReady);
                     
                     if (startBattleButtonText != null)
                     {
@@ -226,11 +226,11 @@ public class RoomUIManager : MonoBehaviour
                 break;
             case "Spectator":
                 SEManager.instance?.PlaySelectSE();
-                await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, 0, false);
+                await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);
                 UpDateRoom();
                 break;
             case "RenameRoom":
-                if(roomData.usersData[roomData.room_my_number].is_host)
+                if(roomData.usersData[roomData.room_my_index].is_host)
                 {
                 renameRoomUI.SetActive(true);
                 }
@@ -238,7 +238,7 @@ public class RoomUIManager : MonoBehaviour
             case "AplyRenameRoom":
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
-                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name, playerData.user_id, false);
+                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name, userData.user_id, false);
                 UpDateRoom();
                 break;
             case "RenameRoomBack":
@@ -246,7 +246,7 @@ public class RoomUIManager : MonoBehaviour
                 break;
             case "changeStatus":
                 {
-                    int myIdx = roomData.room_my_number;
+                    int myIdx = roomData.room_my_index;
                     int currentState = roomData.usersData[myIdx].user_state;
                     int newState = 0;
 
@@ -269,7 +269,7 @@ public class RoomUIManager : MonoBehaviour
                         newState = 0;
                     }
 
-                    await gameConnector.UpdateRoomState(roomData.room_id, playerData.user_id, newState, false);
+                    await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, newState, false);
                     UpDateRoom();
                 }
                 break;
@@ -314,7 +314,7 @@ public class RoomUIManager : MonoBehaviour
             // 通信待ちの間にシーン移動などでオブジェクトが破棄されていた場合は即時中断する
             if (this == null) return;
 
-            if (user.Id == playerData.user_id) roomData.room_my_number = i;
+            if (user.Id == userData.user_id) roomData.room_my_index = i;
  
             roomData.usersData[i].user_name = user.Name;
             roomData.usersData[i].user_rate = user.Rate;
@@ -355,8 +355,8 @@ public class RoomUIManager : MonoBehaviour
 
         if (startBattleButtonText != null)
         {
-            bool amIHost = roomData.usersData[roomData.room_my_number].is_host;
-            bool amIReady = roomData.usersData[roomData.room_my_number].is_ready;
+            bool amIHost = roomData.usersData[roomData.room_my_index].is_host;
+            bool amIReady = roomData.usersData[roomData.room_my_index].is_ready;
             
             if (amIHost)
             {
@@ -377,7 +377,7 @@ public class RoomUIManager : MonoBehaviour
             if (rooms[i].RoomId == roomData.room_id && rooms[i].IsGaming)
             {
                 // 自分のstate（1P,2P,観戦者）に応じてisPlayerを設定してから遷移
-                int myState = roomData.usersData[roomData.room_my_number].user_state;
+                int myState = roomData.usersData[roomData.room_my_index].user_state;
                 sceneData.next_scene_number = 10;
                 return;
             }

@@ -8,7 +8,7 @@ public class HomeUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public TextMeshProUGUI playerName;
     public TextMeshProUGUI playerRate;
     public TextMeshProUGUI messageText;
@@ -38,8 +38,8 @@ public class HomeUIManager : MonoBehaviour
 
     void Awake()
     {
-        playerName.text = playerData.player_name;
-        playerRate.text = "レート：" + playerData.player_rate.ToString();
+        playerName.text = userData.user_name;
+        playerRate.text = "レート：" + userData.rate.ToString();
         HomeCharacterSetUI.gameObject.SetActive(false);
         StartCoroutine(AnimateEnter());
         BigBackButton.gameObject.SetActive(false);

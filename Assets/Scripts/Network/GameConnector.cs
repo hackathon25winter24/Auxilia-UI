@@ -24,8 +24,8 @@ public class GameConnector : MonoBehaviour
     private CancellationTokenSource _cts;
     private bool _isStreamActive;
 
-    public CharacterManager characterManager;
-    public PlayerData playerData;
+    public BattleOnlineManager battleOnlineManager;
+    public UserData userData;
 
     // 通信エラーやサーバーからのメッセージを UI に渡すためのイベント
     public event Action<string> OnErrorMessage;
@@ -81,15 +81,15 @@ public class GameConnector : MonoBehaviour
 
             Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
 
-            if (playerData != null)
+            if (userData != null)
             {
-                playerData.player_name = response.Name;
-                playerData.battle_number = response.NumBattles;
-                playerData.win_number = response.NumWins;
-                playerData.story_progress = response.Story;
-                playerData.user_id = response.Id;
-                playerData.player_rate = response.Rate;
-                playerData.password = password;
+                userData.user_id = response.Id;
+                userData.user_name = response.Name;
+                userData.password = password;
+                userData.story_progress = response.Story;
+                userData.num_wins = response.NumWins;
+                userData.num_battles = response.NumBattles;
+                userData.rate = response.Rate;
             }
             else
             {
@@ -131,14 +131,19 @@ public class GameConnector : MonoBehaviour
             var response = await _userClient.LoginAsync(request);
 
             // 成功時の処理
-            if (playerData != null)
+            if (userData != null)
             {
-                playerData.player_name = response.Name;
-                playerData.battle_number = response.NumBattles;
-                playerData.win_number = response.NumWins;
-                playerData.story_progress = response.Story;
-                playerData.user_id = response.Id;
-                playerData.player_rate = response.Rate;
+                userData.user_id = response.Id;
+                userData.user_name = response.Name;
+                userData.password = password;
+                userData.story_progress = response.Story;
+                userData.num_wins = response.NumWins;
+                userData.num_battles = response.NumBattles;
+                userData.rate = response.Rate;
+                userData.home_character_id = response.HomeCharacterId;
+                userData.deck1 = response.Deck1;
+                userData.deck2 = response.Deck2;
+                userData.deck3 = response.Deck3;
             }
             else
             {
@@ -258,17 +263,17 @@ public class GameConnector : MonoBehaviour
         {
             var request = new UpdateUserRequest
             {
-                Id = playerData.user_id,
-                Name = playerData.player_name,
-                Password = playerData.password,
-                Story = playerData.story_progress,
-                NumWins = playerData.win_number,
-                NumBattles = playerData.battle_number,
-                Rate = playerData.player_rate,
-                HomeCharacterId = playerData.home_character_ID,
-                Deck1 = playerData.character_formation_one,
-                Deck2 = playerData.character_formation_two,
-                Deck3 = playerData.character_formation_three,
+                Id = userData.user_id,
+                Name = userData.user_name,
+                Password = userData.password,
+                Story = userData.story_progress,
+                NumWins = userData.num_wins,
+                NumBattles = userData.num_battles,
+                Rate = userData.rate,
+                HomeCharacterId = userData.home_character_id,
+                Deck1 = userData.deck1,
+                Deck2 = userData.deck2,
+                Deck3 = userData.deck3,
             };
             var response = await _userClient.UpdateUserAsync(request);
             return response;
@@ -283,23 +288,23 @@ public class GameConnector : MonoBehaviour
 
     public async Task<bool> UpdateStory()
     {
-        playerData.story_progress += 1;
+        userData.story_progress += 1;
 
         try
         {
             var request = new UpdateUserRequest
             {
-                Id = playerData.user_id,
-                Name = playerData.player_name,
-                Password = playerData.password,
-                Story = playerData.story_progress,
-                NumWins = playerData.win_number,
-                NumBattles = playerData.battle_number,
-                Rate = playerData.player_rate,
-                HomeCharacterId = playerData.home_character_ID,
-                Deck1 = playerData.character_formation_one,
-                Deck2 = playerData.character_formation_two,
-                Deck3 = playerData.character_formation_three,
+                Id = userData.user_id,
+                Name = userData.user_name,
+                Password = userData.password,
+                Story = userData.story_progress,
+                NumWins = userData.num_wins,
+                NumBattles = userData.num_battles,
+                Rate = userData.rate,
+                HomeCharacterId = userData.home_character_id,
+                Deck1 = userData.deck1,
+                Deck2 = userData.deck2,
+                Deck3 = userData.deck3,
             };
             var response = await _userClient.UpdateUserAsync(request);
             if(response != null) return true;
@@ -672,7 +677,7 @@ public class GameConnector : MonoBehaviour
     private async Task HandleGameData(GameDataResponse data)
     {
         // Unity側で保持している変数をサーバーから受け取ったデータに更新
-        await characterManager.GetBattleData(data);
+        battleOnlineManager.ReceiveBattleData(data);
         Debug.Log($"Update received: {data}");
     }
 
@@ -740,7 +745,7 @@ public class GameConnector : MonoBehaviour
         }
     }
 
-    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataforOmline battleData, bool is1p, int cost)
+    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataForOnline battleData, bool is1p, int cost)
     {
         var gridUpdate = new GridUpdateAction();
         for (int y = 0; y < 5; y++)
@@ -750,6 +755,8 @@ public class GameConnector : MonoBehaviour
                 int sendX = is1p ? x : 7 - x;
                 int sendY = y;
 
+                // isSelectedはおそらく別で送るようにするはず。Unity側でキャラが押された時にサーバーのIsSelectedをtrueにするリクエストを送りたい。
+                /*
                 bool isSelected = false;
                 for (int i = 0; i < battleData.charactersBattleDatas.Length; i++)
                 {
@@ -761,13 +768,14 @@ public class GameConnector : MonoBehaviour
                         break;
                     }
                 }
+                */
 
                 gridUpdate.Grids.Add(new GridInfo
                 {
                     PositionX = (uint)sendX,
                     PositionY = (uint)sendY,
                     GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x],
-                    IsSelected = isSelected,
+                    // IsSelected = isSelected,
                     IsAttackRange = gridData.grid_attack_position_y[y].grid_attack_position_x[x] == 1
                 });
             }

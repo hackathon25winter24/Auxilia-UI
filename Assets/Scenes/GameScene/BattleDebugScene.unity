@@ -617,9 +617,8 @@ MonoBehaviour:
   attack_number: 0
   is_attacking: 0
   now_damage: 0
-  gameConnector: {fileID: 0}
   roomData: {fileID: 0}
-  playerData: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &56944130
 Transform:
   m_ObjectHideFlags: 0
@@ -980,13 +979,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
   roomData: {fileID: 0}
   gametext: {fileID: 0}
   gameTextObject: {fileID: 0}
-  gameConnector: {fileID: 0}
   timerSlider: {fileID: 222250393}
   maxTime: 60
   duration: 2
@@ -1655,6 +1653,7 @@ MonoBehaviour:
   cost:
   - {fileID: 630293456}
   - {fileID: 702537226}
+  playerNames: []
   shadow: {fileID: 323237426}
   characterStates: {fileID: 452606659}
   backfromStates: {fileID: 337890647}
@@ -1671,6 +1670,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6c6b145d8f69e364b957a3086594c420, type: 3}
   characterManager: {fileID: 0}
   logText: {fileID: 0}
+  myBaseSlider: {fileID: 0}
+  enemyBaseSlider: {fileID: 0}
+  myBaseHPText: {fileID: 0}
+  enemyBaseHPText: {fileID: 0}
 --- !u!4 &441793171
 Transform:
   m_ObjectHideFlags: 0
@@ -5100,7 +5103,7 @@ MonoBehaviour:
   LandmineGrid: {fileID: 0}
   gameConnector: {fileID: 0}
   roomData: {fileID: 0}
-  playerData: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &1061844919
 Transform:
   m_ObjectHideFlags: 0

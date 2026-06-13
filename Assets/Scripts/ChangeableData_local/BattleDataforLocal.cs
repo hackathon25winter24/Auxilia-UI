@@ -10,7 +10,6 @@ public class BattleDataforLocal : ScriptableObject
     public int now_my_cost;
     public int now_enemy_cost;
     public string enemy_name;
-    public int all_move_cost;
     public bool game_end;
     public bool is_win;
 }

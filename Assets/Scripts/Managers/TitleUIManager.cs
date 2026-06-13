@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public class TitleUIManager : MonoBehaviour
 {
-    public PlayerData playerData;
+    public UserData userData;
     public SceneData sceneData;
     public GameConnector gameConnector;
     public StoryManagerData storyManagerData;
@@ -59,9 +59,9 @@ public class TitleUIManager : MonoBehaviour
         {
             case "Login":
             SEManager.instance?.PlayToNextSE();
-            playerData.player_name = user_name_for_login.text;
-            playerData.password = password_for_login.text;
-            var user = await gameConnector.Login(playerData.player_name, playerData.password);
+            userData.user_name = user_name_for_login.text;
+            userData.password = password_for_login.text;
+            var user = await gameConnector.Login(userData.user_name, userData.password);
             if(user == null)
             {
                 error_ui.SetActive(true);
@@ -69,7 +69,7 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            if(playerData.story_progress == 1)
+            if(userData.story_progress == 1)
             {
                 storyManagerData.now_story_number = 0;
                 sceneData.next_scene_number = 8;
@@ -80,9 +80,9 @@ public class TitleUIManager : MonoBehaviour
                 break;
             case "Signup":
             SEManager.instance?.PlayToNextSE();
-            playerData.player_name = user_name_for_signup.text;
-            playerData.password = password_for_signup.text;
-            var new_user = await gameConnector.SignUp(playerData.player_name, playerData.password);
+            userData.user_name = user_name_for_signup.text;
+            userData.password = password_for_signup.text;
+            var new_user = await gameConnector.SignUp(userData.user_name, userData.password);
             if(new_user == null)
             {
                 error_ui.SetActive(true);
@@ -90,7 +90,7 @@ public class TitleUIManager : MonoBehaviour
                 error_ui.SetActive(false);
                 return;
             }
-            if(playerData.story_progress == 1)
+            if(userData.story_progress == 1)
             {
                 storyManagerData.now_story_number = 0;
                 sceneData.next_scene_number = 8;

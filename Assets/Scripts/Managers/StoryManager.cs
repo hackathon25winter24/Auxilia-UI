@@ -9,7 +9,7 @@ public class StoryManager : MonoBehaviour
     [Header("Data References")]
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public StoryData storyData;
     public StoryManagerData storyManagerData;
     public StoryCharacterData storyCharacterData;

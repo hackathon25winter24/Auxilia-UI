@@ -9,9 +9,9 @@ public class SelectUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public CharacterData characterData;
-    public BattleDataforOmline battleDataforOnline;
+    public BattleDataForOnline battleDataforOnline;
     public RoomData roomData;
 
     public TextMeshProUGUI party_move_cost;
@@ -36,7 +36,6 @@ public class SelectUIManager : MonoBehaviour
 
     public GameConnector gameConnector;
     
-    public int selectedUI;
     public int selectedCharacterId;
 
     // 「決定」ボタンを押した後、相手の準備完了を待っている状態かどうか
@@ -48,6 +47,12 @@ public class SelectUIManager : MonoBehaviour
     private float currentTime;
     private bool isTimerRunning = false;
 
+    private int selectedCharacter1;// デッキ1枠目の選択キャラ保存用変数。以下同様
+    private int selectedCharacter2;
+    private int selectedCharacter3;
+
+    private int selectedUI;// 1~3のどの枠が押されたか
+
     Game.Network.UserResponse p1 = new Game.Network.UserResponse();
     Game.Network.UserResponse p2 = new Game.Network.UserResponse();
 
@@ -56,8 +61,8 @@ public class SelectUIManager : MonoBehaviour
         gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
 
         SelectedTub.SetActive(false);
-        // 1P/2Pの名前を取得
-        await UpdatePlayerNames();
+        // 1P/2Pの情報を取得
+        await GetPlayerInfo();
 
         // 自分の状態を確認してプレイヤーかどうか判定
         var roomList = await gameConnector.ListRoom(roomData.room_id);
@@ -66,22 +71,21 @@ public class SelectUIManager : MonoBehaviour
         {
             foreach (var r in roomList)
             {
-                if (r.UserId == playerData.user_id)
+                if (r.UserId == userData.user_id)
                 {
                     myState = r.State;
                     break;
                 }
             }
         }
-        battleDataforOnline.isPlayer = (myState == 1 || myState == 2);
 
-        if (battleDataforOnline.isPlayer)
+        if (myState == 1 || myState == 2)
         {
             playerUI.SetActive(true);
             SpectatorUI.SetActive(false);
-            battleDataforOnline.selected_character[0] = playerData.character_formation_one;
-            battleDataforOnline.selected_character[1] = playerData.character_formation_two;
-            battleDataforOnline.selected_character[2] = playerData.character_formation_three;
+            selectedCharacter1 = userData.deck1;
+            selectedCharacter2 = userData.deck2;
+            selectedCharacter3 = userData.deck3;
             characterTub.SetActive(false);
             start_game_text.gameObject.SetActive(false);
             UpDateCharacterUI();
@@ -98,8 +102,8 @@ public class SelectUIManager : MonoBehaviour
             SpectatorUI.SetActive(true);
             ready.SetActive(false); 
             ready2.SetActive(false);
-            nameText.text = battleDataforOnline.player1_name;
-            nameText2.text = battleDataforOnline.player2_name;
+            nameText.text = p1.Name;
+            nameText2.text = p2.Name;
             
             // 観戦者もバトル開始を待つ
             StartCoroutine(WaitForBothPlayersReady());
@@ -107,7 +111,7 @@ public class SelectUIManager : MonoBehaviour
         TimerStart();
     }
 
-    private async Task UpdatePlayerNames()
+    private async Task GetPlayerInfo()
     {
         var battle_player = await gameConnector.GetBattlePlayer(roomData.room_id);
         if (battle_player != null && battle_player.Count >= 2)
@@ -115,12 +119,10 @@ public class SelectUIManager : MonoBehaviour
             if (battle_player[0] != null)
             {
                 p1 = await gameConnector.GetUser(battle_player[0].UserId);
-                if (p1 != null) battleDataforOnline.player1_name = p1.Name;
             }
             if (battle_player[1] != null)
             {
                 p2 = await gameConnector.GetUser(battle_player[1].UserId);
-                if (p2 != null) battleDataforOnline.player2_name = p2.Name;
             }
         }
     }
@@ -130,17 +132,17 @@ public class SelectUIManager : MonoBehaviour
         switch (buttonName)
         {
             case "Select1":
-                selectedUI = 0;
-                characterTub.SetActive(true);
-                CharacterButtons();
-                break;
-            case "Select2":
                 selectedUI = 1;
                 characterTub.SetActive(true);
                 CharacterButtons();
                 break;
-            case "Select3":
+            case "Select2":
                 selectedUI = 2;
+                characterTub.SetActive(true);
+                CharacterButtons();
+                break;
+            case "Select3":
+                selectedUI = 3;
                 characterTub.SetActive(true);
                 CharacterButtons();
                 break;
@@ -171,27 +173,50 @@ public class SelectUIManager : MonoBehaviour
     public void CharacterClick(int ButtonNum)
 {
     // 現在の枠（selectedUI）に元々いたキャラを一時保存
-    int previousChar = battleDataforOnline.selected_character[selectedUI];
+    int previousChar = 0;
+    if (selectedUI == 1)
+    {
+        previousChar = selectedCharacter1;
+    }
+    else if (selectedUI == 2)
+    {
+        previousChar = selectedCharacter2;
+    }
+    else if (selectedUI == 3)
+    {
+        previousChar = selectedCharacter3;
+    }
 
     // 重複チェック
-    if (battleDataforOnline.selected_character[0] == ButtonNum)
+    if (selectedCharacter1 == ButtonNum)
     {
         // スロット0に「元いたキャラ」を移動させる
-        battleDataforOnline.selected_character[0] = previousChar;
+        selectedCharacter1 = previousChar;
     }
-    else if (battleDataforOnline.selected_character[1] == ButtonNum)
+    else if (selectedCharacter2 == ButtonNum)
     {
         // スロット1に「元いたキャラ」を移動させる
-        battleDataforOnline.selected_character[1] = previousChar;
+        selectedCharacter2 = previousChar;
     }
-    else if (battleDataforOnline.selected_character[2] == ButtonNum)
+    else if (selectedCharacter3 == ButtonNum)
     {
         // スロット2に「元いたキャラ」を移動させる
-        battleDataforOnline.selected_character[2] = previousChar;
+        selectedCharacter3 = previousChar;
     }
 
     // 最後に、今選んだ枠に新しいキャラを入れる
-    battleDataforOnline.selected_character[selectedUI] = ButtonNum;
+    if (selectedUI == 1)
+    {
+        selectedCharacter1 = ButtonNum;
+    }
+    else if (selectedUI == 2)
+    {
+        selectedCharacter2 = ButtonNum;
+    }
+    else if (selectedUI == 3)
+    {
+        selectedCharacter3 = ButtonNum;
+    }
 
     characterTub.SetActive(false);
     UpDateCharacterUI();
@@ -226,9 +251,9 @@ public class SelectUIManager : MonoBehaviour
             _pollTimer = 1.0f; // 1秒おきに更新
             await SyncRoomStatus();
         }
-
-        costText.text = "cost：" + battleDataforOnline.palyer1_cost;
-        costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
+        // これ何？
+        // costText.text = "cost:" + battleDataforOnline.palyer1_cost;
+        // costText2.text = "cost:" + battleDataforOnline.palyer2_cost;
     }
 
     public void RandomizeFormation()
@@ -250,8 +275,9 @@ public class SelectUIManager : MonoBehaviour
             int selectedId = availableIndices[randomIndex];
 
             // 自分の編成データに代入
-            battleDataforOnline.selected_character[i] = selectedId;
-
+            if (i == 0) selectedCharacter1 = selectedId;
+            if (i == 1) selectedCharacter2 = selectedId;
+            if (i == 2) selectedCharacter3 = selectedId;
             // 選んだIDをリストから削除（これで二度と選ばれない）
             availableIndices.RemoveAt(randomIndex);
         }
@@ -291,19 +317,24 @@ public class SelectUIManager : MonoBehaviour
             }
         }
 
-        battleDataforOnline.palyer1_cost = p1Cost;
-        battleDataforOnline.palyer2_cost = p2Cost;
+        // おそらくやりたいことはこういうことだと思う。観戦者用の双方コスト表示テキストと予想
+        // ↑Updateのテキスト表示処理のこと
+        costText.text = "cost:" + p1Cost;
+        costText2.text = "cost:" + p2Cost;
 
         // 準備完了インジケータ（3体登録されていたら表示）
         if (ready != null) ready.SetActive(p1Count >= 3);
         if (ready2 != null) ready2.SetActive(p2Count >= 3);
 
+        // キャラ選択中にプレイヤーの名前が変わることはないと思うのだけど、この処理は何？
+        /*
         if (!battleDataforOnline.isPlayer)
         {
             // 観戦者用：名前を更新
             nameText.text = battleDataforOnline.player1_name;
             nameText2.text = battleDataforOnline.player2_name;
         }
+        */
     }
 
     void TimerStart()
@@ -346,15 +377,15 @@ public class SelectUIManager : MonoBehaviour
 
     void UpDateCharacterUI()
     {
-        battleDataforOnline.all_move_cost
-        = characterData.characters[battleDataforOnline.selected_character[0]].default_move_cost
-        + characterData.characters[battleDataforOnline.selected_character[1]].default_move_cost
-        + characterData.characters[battleDataforOnline.selected_character[2]].default_move_cost;
-        party_move_cost.text = "cost : " + battleDataforOnline.all_move_cost;
-        for (int i = 0; i <= 2; i++)
-        {
-            SelecuUI[i].sprite = characterData.characters[battleDataforOnline.selected_character[i]].select_image;
-        }
+        int allMoveCost = 0;
+        allMoveCost
+        = characterData.characters[selectedCharacter1].default_move_cost
+        + characterData.characters[selectedCharacter2].default_move_cost
+        + characterData.characters[selectedCharacter3].default_move_cost;
+        party_move_cost.text = "cost : " + allMoveCost;
+        SelecuUI[0].sprite = characterData.characters[selectedCharacter1].select_image;
+        SelecuUI[1].sprite = characterData.characters[selectedCharacter2].select_image;
+        SelecuUI[2].sprite = characterData.characters[selectedCharacter3].select_image;
     }
 
     public void CharacterButtons()
@@ -389,17 +420,13 @@ public class SelectUIManager : MonoBehaviour
     {
         //ここに自分の編成とコストを送る関数を書いてください
 
-        // 自分の編成は1P2Pに関係なくBattleDataforOmlineの0, 1, 2に入っている想定で書いてます。
-        int chara1 = battleDataforOnline.selected_character[0];
-        int chara2 = battleDataforOnline.selected_character[1];
-        int chara3 = battleDataforOnline.selected_character[2];
-        int[] charas = {chara1, chara2, chara3};
+        int[] charas = {selectedCharacter1, selectedCharacter2, selectedCharacter3};
         bool is1p = false;
 
         var room = await gameConnector.ListRoom(roomData.room_id);
         for (int i = 0; i < room.Count; i++)
         {
-            if (room[i].UserId == playerData.user_id && room[i].State == 1)
+            if (room[i].UserId == userData.user_id && room[i].State == 1)
             {
                 is1p = true;
             }
@@ -416,7 +443,7 @@ public class SelectUIManager : MonoBehaviour
         var opponent_characters = new List<int>(3);
         for (int i = 0; i < room.Count; i++)
         {
-            if (room[i].UserId == playerData.user_id && room[i].State == 1)
+            if (room[i].UserId == userData.user_id && room[i].State == 1)
             {
                 is1p = true;
             }

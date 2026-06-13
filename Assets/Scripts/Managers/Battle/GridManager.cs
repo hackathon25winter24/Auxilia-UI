@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class GridManager : MonoBehaviour
 {
     public GridDataforOnline gridDataforOnline;
-    public BattleDataforOmline battleDataforOnline;
+    public BattleDataForOnline battleDataForOnline;
     public Image[] grids; 
     public Sprite NormalGrid;
     public Sprite ProhibitGrid;
@@ -16,7 +16,10 @@ public class GridManager : MonoBehaviour
 
     public GameConnector gameConnector;
     public RoomData roomData;
-    public PlayerData playerData;
+    public UserData userData;
+
+    private PlayerState self;
+    private PlayerState opponent;
 
     // デバッグ用：前フレームのグリッド状態キャッシュ（変化検知用）
     private int[,] _prevGridState = new int[5, 8];
@@ -32,7 +35,7 @@ public class GridManager : MonoBehaviour
     void Awake()
     {
         roomData = GetSo(roomData);
-        playerData = GetSo(playerData);
+        userData = GetSo(userData);
         gameConnector = FindFirstObjectByType<GameConnector>();
 
         // 全グリッドの初期化
@@ -77,6 +80,9 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        bool is_1p = (userData.user_id == battleDataForOnline.player1.player_id);
+        self     = (is_1p) ? battleDataForOnline.player1 : battleDataForOnline.player2;
+        opponent = (is_1p) ? battleDataForOnline.player2 : battleDataForOnline.player1;
         for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
@@ -111,18 +117,24 @@ public class GridManager : MonoBehaviour
         }
 
         // 2. キャラクター位置の反映 (上書き)
-        for(int i = 0; i <= 5; i++)
+        for(int i = 0; i < 3; i++)
         {
-        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataforOnline.character_isSelected[i])
+            // 自分がキャラを選択している時
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && self.characters[i].character_isSelected)
         {
-            grids[battleDataforOnline.charactersBattleDatas[i].now_character_position.x + battleDataforOnline.charactersBattleDatas[i].now_character_position.y * 8].sprite = CharacterGrid;
+            grids[self.characters[i].now_character_position.x + self.characters[i].now_character_position.y * 8].sprite = CharacterGrid;
+        }
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && opponent.characters[i].character_isSelected)
+        {
+            grids[opponent.characters[i].now_character_position.x + opponent.characters[i].now_character_position.y * 8].sprite = CharacterGrid;
         }
         }
 
         // 3. 攻撃範囲の反映
         if (gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] == 1)
         {
-            // 地形が 0 (通常) の時だけ攻撃色にする
+            // 地形が 0 (通常) 、-1（プレイヤー）の時だけ攻撃色にする
+            int 撒菱や拠点の足元は赤くならないということかな = 0;
             if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == 0)
             {
                 grids[grid_index].sprite = AttackGrid;
@@ -165,24 +177,9 @@ public class GridManager : MonoBehaviour
                 SetGridVisual(x, y);
             }
         }
-
-        if (changed)
-        {
-            Debug.Log($"<color=lime>[GridManager] グリッド変化検知:\n{logSb}</color>");
-            
-            // サーバーに全グリッドデータを送信
-            if (gameConnector != null && roomData != null && playerData != null && battleDataforOnline != null)
-            {
-                // 自分のターンでない場合は送信しない（不意な上書き防止）
-                bool isMyTurn = (battleDataforOnline.now_moving_player == battleDataforOnline.my_player_id);
-                if (!isMyTurn) return;
-
-                bool is1p = (battleDataforOnline.my_player_id == 0);
-              //  _ = gameConnector.SendGridUpdate(roomData.room_id, playerData.user_id, gridDataforOnline, battleDataforOnline, is1p);
-            }
-        }
     }
 
+/*  Updateでやってる処理だと思うのでおそらくいらないはず。問題なければ削除してOK
     public void SyncPrevGridState()
     {
         for (int y = 0; y < 5; y++)
@@ -192,5 +189,12 @@ public class GridManager : MonoBehaviour
                 _prevGridState[y, x] = gridDataforOnline.grid_state_y[y].grid_state_x[x];
             }
         }
+    }
+    */
+
+    public Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)// 1p2pで反転させた座標を返す
+    {
+        if (is1p) return new Vector2Int(x, y);
+        return new Vector2Int(7 - x, y);
     }
 }

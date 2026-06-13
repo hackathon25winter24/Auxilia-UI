@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 3
 --- !u!1 &29101786
 GameObject:
@@ -372,7 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   playerName: {fileID: 1420715821}
   playerRate: {fileID: 961410520}
   messageText: {fileID: 648251360}
@@ -1087,7 +1087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 0}
+  userData: {fileID: 0}
   CharacuerID: 0
 --- !u!1 &300000011
 GameObject:
@@ -1806,7 +1806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 2
 --- !u!1 &451043617
 GameObject:
@@ -2501,7 +2501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 4
 --- !u!1 &611132599
 GameObject:
@@ -3164,7 +3164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 1
 --- !u!1 &700474767
 GameObject:
@@ -3810,7 +3810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 10
 --- !u!114 &772683136
 MonoBehaviour:
@@ -4032,7 +4032,7 @@ MonoBehaviour:
   HomeCharacterName: {fileID: 648230619}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   backImage: {fileID: 2022563825}
   back_image: {fileID: 8608827522239398513, guid: 31381e1d1a8e9134c8c73955b1069bfa, type: 3}
   CharacterImage: {fileID: 472281390}
@@ -4755,7 +4755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 6
 --- !u!1 &1026087610
 GameObject:
@@ -5931,7 +5931,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 5
 --- !u!1 &1363476752
 GameObject:
@@ -6707,7 +6707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 9
 --- !u!1 &1566172045
 GameObject:
@@ -8634,7 +8634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 7
 --- !u!1 &2061792844
 GameObject:
@@ -8724,7 +8724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 0
 --- !u!1 &2070419612
 GameObject:
@@ -8814,7 +8814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c192a2b102d1248b5466cdfa597687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   CharacuerID: 8
 --- !u!1 &2120792481
 GameObject:

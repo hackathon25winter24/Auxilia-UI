@@ -54,7 +54,7 @@ public class CharacterSelectManager : MonoBehaviour
     public CharacterData characterDataAsset;
 
     [Header("プレイヤーデータ（ScriptableObject）")]
-    public PlayerData playerData;
+    public UserData userData;
 
     [Header("シーンデータ（ScriptableObject）")]
     public SceneData sceneData;
@@ -160,9 +160,9 @@ public class CharacterSelectManager : MonoBehaviour
     {
         switch (slotIndex)
         {
-            case 0: return playerData.character_formation_one;
-            case 1: return playerData.character_formation_two;
-            case 2: return playerData.character_formation_three;
+            case 0: return userData.deck1;
+            case 1: return userData.deck2;
+            case 2: return userData.deck3;
             default: return -1;
         }
     }
@@ -171,9 +171,9 @@ public class CharacterSelectManager : MonoBehaviour
     {
         switch (slotIndex)
         {
-            case 0: playerData.character_formation_one = id; break;
-            case 1: playerData.character_formation_two = id; break;
-            case 2: playerData.character_formation_three = id; break;
+            case 0: userData.deck1 = id; break;
+            case 1: userData.deck2 = id; break;
+            case 2: userData.deck3 = id; break;
         }
     }
 
@@ -325,9 +325,9 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     // 3. PlayerDataに反映
-    playerData.character_formation_one = selectedIds[0];
-    playerData.character_formation_two = selectedIds[1];
-    playerData.character_formation_three = selectedIds[2];
+    userData.deck1 = selectedIds[0];
+    userData.deck2 = selectedIds[1];
+    userData.deck3 = selectedIds[2];
 
     // 4. UIの更新処理
     for (int i = 0; i < teamSlotButtons.Length; i++)
@@ -350,13 +350,13 @@ public class CharacterSelectManager : MonoBehaviour
 
     void PartyHPandMOV()
     {
-        int partyHP = characterDataAsset.characters[playerData.character_formation_one].default_hp
-                    + characterDataAsset.characters[playerData.character_formation_two].default_hp
-                    + characterDataAsset.characters[playerData.character_formation_three].default_hp;
+        int partyHP = characterDataAsset.characters[userData.deck1].default_hp
+                    + characterDataAsset.characters[userData.deck2].default_hp
+                    + characterDataAsset.characters[userData.deck3].default_hp;
 
-        int partyMov = characterDataAsset.characters[playerData.character_formation_one].default_move_cost
-                     + characterDataAsset.characters[playerData.character_formation_two].default_move_cost
-                     + characterDataAsset.characters[playerData.character_formation_three].default_move_cost;
+        int partyMov = characterDataAsset.characters[userData.deck1].default_move_cost
+                     + characterDataAsset.characters[userData.deck2].default_move_cost
+                     + characterDataAsset.characters[userData.deck3].default_move_cost;
 
         partyHPText.text = partyHP.ToString();
         partyMovText.text = partyMov.ToString();

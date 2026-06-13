@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e90a9cbbe56a5043ac99c32bdf0fb4b, type: 3}
-  m_Name: BattleDataforOmline
+  m_Name: BattleDataForOnline
   m_EditorClassIdentifier: 
   charactersBattleDatas:
   - now_character_hp: 150

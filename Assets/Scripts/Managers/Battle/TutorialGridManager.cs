@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class TutorialGridManager : MonoBehaviour
 {
     public GridDataforOnline gridDataforOnline;
-    public BattleDataforOmline battleDataforOnline;
+    public BattleDataForOnline battleDataForTutorial;
+    public TutorialBattleManager tutorialBattleManager;
     public Image[] grids; 
     public Sprite NormalGrid;
     public Sprite ProhibitGrid;
@@ -57,6 +58,7 @@ public class TutorialGridManager : MonoBehaviour
 
     void Start()
     {
+        battleDataForTutorial = tutorialBattleManager.battleDataForTutorial;
         for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
@@ -90,12 +92,12 @@ public class TutorialGridManager : MonoBehaviour
             default: grids[grid_index].sprite = NormalGrid; break;
         }
 
-        // 2. キャラクター位置の反映 (上書き)
-        for(int i = 0; i <= 5; i++)
+        // 2. キャラクター位置の反映 (上書き) チュートリアルなので自分のみでOK
+        for(int i = 0; i <= 2; i++)
         {
-        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataforOnline.character_isSelected[i])
+        if (gridDataforOnline.grid_state_y[y].grid_state_x[x] == -1 && battleDataForTutorial.player1.characters[i].character_isSelected)
         {
-            grids[battleDataforOnline.charactersBattleDatas[i].now_character_position.x + battleDataforOnline.charactersBattleDatas[i].now_character_position.y * 8].sprite = CharacterGrid;
+            grids[battleDataForTutorial.player1.characters[i].now_character_position.x + battleDataForTutorial.player1.characters[i].now_character_position.y * 8].sprite = CharacterGrid;
         }
         }
 

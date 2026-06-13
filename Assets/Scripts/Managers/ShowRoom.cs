@@ -13,10 +13,10 @@ public class ShowRoom : MonoBehaviour
     public Sprite[] StateImage;
 
     // データをセットするための関数を用意する
-    public void SetRoomData(string room_name, string room_host, bool state, int num_joinner)
+    public void SetRoomData(string room_name, string owner_name, bool state, int num_joinner)
     {
         roomNameText.text = room_name;
-        roomHostText.text = "親：" + room_host;
+        roomHostText.text = "親：" + owner_name;
         roomJoinnerText.text = num_joinner.ToString() + "/8";
         if (state == false)
         {

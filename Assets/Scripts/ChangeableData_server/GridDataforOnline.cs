@@ -10,7 +10,7 @@ public class GridDataforOnline : ScriptableObject
     public int GetState(int x, int y)
     {
         if (y < 0 || y >= _grid_state_y.Length) return -1;
-        if (x < 0 || x >= _grid_state_y[y].grid_state_x.Length) return-1;
+        if (x < 0 || x >= _grid_state_y[y].grid_state_x.Length) return -1;
         
         return _grid_state_y[y].grid_state_x[x];
     }
@@ -22,7 +22,7 @@ public class GridDataforOnline : ScriptableObject
     public int SubGetState(int x, int y)
     {
         if (y < 0 || y >= _sub_grid_state_y.Length) return -1;
-        if (x < 0 || x >= _sub_grid_state_y[y].sub_grid_state_x.Length) return-1;
+        if (x < 0 || x >= _sub_grid_state_y[y].sub_grid_state_x.Length) return -1;
         
         return _sub_grid_state_y[y].sub_grid_state_x[x];
     }
@@ -34,7 +34,7 @@ public class GridDataforOnline : ScriptableObject
     public int GetAttackPosition(int x, int y)
     {
         if (y < 0 || y >= _grid_attack_position_y.Length) return -1;
-        if (x < 0 || x >= _grid_attack_position_y[y].grid_attack_position_x.Length) return-1;
+        if (x < 0 || x >= _grid_attack_position_y[y].grid_attack_position_x.Length) return -1;
         
         return _grid_attack_position_y[y].grid_attack_position_x[x];
     }
