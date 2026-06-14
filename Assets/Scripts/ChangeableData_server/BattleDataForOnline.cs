@@ -31,7 +31,7 @@ public class CharactersBattleData
 {
     public int unique_id;
     public int now_character_hp;
-    public bool character_isSelected;
+    public bool character_isSelected;// フロントだけで使用しているブール。現在動かしているキャラがtrueになる
     public int now_character_move_cost;// コスト変更はどこでやるか要検討。デバフ情報だけ貰ってローカルで計算してもよい？
     public bool[] debuffs = new bool[8];// 0: 威力上昇, 1: 俊足, 2: 俊敏化, 3: 毒, 4: 麻痺, 5: 鈍足, 6: 鈍化, 7: 出血
     public Vector2Int now_character_position;// サーバーのキャラのPositionX,Yを参照して代入される。指定したキャラが現在いるマス目を表すものとして使われています。グリッドとの関係は未調査

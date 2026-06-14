@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c911fea15476d4e27b4add824cbcd6c2, type: 3}
   m_Name: UserData
   m_EditorClassIdentifier: 
-  user_id: 
-  story: 0
-  rate: 0
-  user_name: 
+  user_id: cba46e8b-abac-4ba7-95eb-1d78c1132000
+  user_name: aspara
+  password: 1234567
+  story_progress: 1
   num_wins: 0
   num_battles: 0
+  rate: 0
   home_character_id: 0
   deck1: 0
   deck2: 0

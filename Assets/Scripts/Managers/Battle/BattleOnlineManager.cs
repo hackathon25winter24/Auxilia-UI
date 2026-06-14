@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 public class BattleOnlineManager : MonoBehaviour
 {
+    public CharacterData characterData;
     public InputData inputData;
     public SceneData sceneData;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
-    public BattleViewManager battleView;
+    public BattleViewManager battleViewManager;
     public GridDataforOnline gridDataforOnline;
     public GridManager gridManager;
     public RoomData roomData;
@@ -52,7 +53,7 @@ public class BattleOnlineManager : MonoBehaviour
         return null;
     }
 
-    async void Awake()
+    void Awake()
     {
         Debug.Log("[BattleOnlineManager] Awake Started");
         try
@@ -194,7 +195,9 @@ public class BattleOnlineManager : MonoBehaviour
             var user1 = await gameConnector.GetUser(gameData.Player1Id);
             var user2 = await gameConnector.GetUser(gameData.Player2Id);
             battleDataforOnline.player1.player_name = user1?.Name ?? "1P";
-            battleDataforOnline.player2.player_name = user2?.Name ?? "Opponent";
+            battleDataforOnline.player2.player_name = user2?.Name ?? "2P";
+            battleDataforOnline.player1.player_id = user1?.Id ?? "unknown";
+            battleDataforOnline.player2.player_id = user2?.Id ?? "unknown";
 
             // キャラクターデータを振り分ける（初回のみ実行のためここに記述）
             int player1Idx = 0;
@@ -218,13 +221,13 @@ public class BattleOnlineManager : MonoBehaviour
         ReceiveBattleData(gameData);
 
         // キャラの配置・モデル表示を初期化
-        characterManager.InitCharacterUI(gameData.Characters);
+        battleViewManager.SetupCharacters(gameData.Characters);
         Debug.Log("[BattleOnlineManager] CharacterManager.InitCharacterUI finished.");
 
         // UI（スライダーや名前）を最新データで更新
-        if (battleView != null)
+        if (battleViewManager != null)
         {
-            battleView.InitUI();
+            battleViewManager.InitUI();
             // battleView.SubscribeToEvents();いらない気がする。不具合生じたら戻す
             Debug.Log("[BattleOnlineManager] BattleViewManager.InitUI finished.");
         }
@@ -234,15 +237,6 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void ReceiveBattleData(Game.Network.GameDataResponse gameData)// バトル中の相互ストリーミング用関数
     {
-        // 自分のターンでない場合のみ選択状態をリセットする（自分のターン中に同期で選択が外れるのを防ぐ）
-        // 本当に必要か要検討
-        // 万が一相手ターン中に自キャラの選択が残ってしまうとまずいので、念の為残しておこうかな
-        int ここに書くべき処理かは検討の余地あり = 0;
-        if (battleDataforOnline.is_1p_turn != (userData.user_id == battleDataforOnline.player1.player_id))
-        {
-            // そもそも直接selfを書き換えてはならないので一旦コメントアウトします
-            //for (int i = 0; i < 3; i++) self.characters[i].character_isSelected = false;
-        }
         // サーバーの情報をBattleDataForOnlineに代入する。基本的にbattleDataForOnlineのデータはここでのみ代入され、サーバーと一致している状態を維持する
         SetBattleDataForOnline(gameData);
 
@@ -256,10 +250,6 @@ public class BattleOnlineManager : MonoBehaviour
             battleDataforOnline.player2.rate_updown = gameData.P2RateDelta;
             battleDataforOnline.player1.rate = gameData.P1Rate;
             battleDataforOnline.player2.rate = gameData.P2Rate;
-            int なぜかここにコスト処理があるがいらないよね = 0;
-            // battleDataforOnline.now_my_cost = (int)data.Cost1P;
-            // battleDataforOnline.now_enemy_cost = (int)data.Cost2P;
-            // Debug.Log($"<color=cyan>[CostSync] received Cost1P={data.Cost1P}, Cost2P={data.Cost2P}</color>");
             Debug.Log($"[RateSync] P1: {gameData.P1Rate} (+{gameData.P1RateDelta}), P2: {gameData.P2Rate} (+{gameData.P2RateDelta})");
             int 自分のレートはどこで更新されるのか要確認 = 0;
             //Debug.Log($"<color=yellow>[GetBattleData] Game End: MyRate={battleDataforOnline.self.rate}({battleDataforOnline.self.rate_updown}) OppRate={battleDataforOnline.opponent.rate}({battleDataforOnline.opponent.rate_updown})</color>");
@@ -439,15 +429,21 @@ public class BattleOnlineManager : MonoBehaviour
                 {
                     Debug.Log($"<color=red>[GetBattleData] HP同期: idx={i} uniqueId={c.CharacterId} {oldHp} -> {newHp}</color>");
                 }
+
                 // hpの同期
                 player.characters[i].now_character_hp = newHp;
+
                 // キャラ座標の同期（自分が2pなら反転して管理）
                 Vector2Int converted = gridManager.ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is_1p);
                 player.characters[i].now_character_position = converted;
+
                 // 選択状態の同期
-                player.characters[i].character_isSelected = c.IsSelected;
-                int 移動コストなどもここでやるかどうするか = 0;
-                // デバフの同期（コストに影響する系のデバフはここで計算して処理する？バックと要相談）
+                // キャラ選択状態は現状同期する必要はないみたいです
+                //player.characters[i].character_isSelected = c.IsSelected;
+
+                // 移動コストの同期（デフォルトコストを代入しデバフによる増減を計算。デバフがないときはこれがそのまま移動コストになる。）
+                player.characters[i].now_character_move_cost = characterData.characters[c.CharacterId].default_move_cost;
+                // デバフの同期
                 if (c.Conditions != null && c.Conditions.Count > 0)
                 {
                     foreach (Game.Network.CharacterCondition cond in c.Conditions)
@@ -458,6 +454,15 @@ public class BattleOnlineManager : MonoBehaviour
                             if (cond.ConditionId == j)
                             {
                                 battleDataforOnline.player1.characters[i].debuffs[j] = true;
+
+                                if(cond.ConditionId == 1)// 俊足
+                                {
+                                    player.characters[i].now_character_move_cost = characterData.characters[c.CharacterId].default_move_cost - 2;
+                                }
+                                else if(cond.ConditionId == 5)// 鈍足
+                                {
+                                    player.characters[i].now_character_move_cost = characterData.characters[c.CharacterId].default_move_cost + 2;
+                                }
                             }
                         }
                     }
@@ -478,6 +483,10 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void EndMyTurn()
     {
+        // 直接battleDataForOnlineを書き換えてはならないので一旦コメントアウトします
+        // character_isSelectedだけはサーバーに送らないフロントのみのブールなので直接書き換えます
+        for (int i = 0; i < 3; i++) battleDataforOnline.player1.characters[i].character_isSelected = false;
+        for (int i = 0; i < 3; i++) battleDataforOnline.player2.characters[i].character_isSelected = false;
         gametext.text = "turn end";
         StartCoroutine(MoveRoutine());
 

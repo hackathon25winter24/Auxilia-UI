@@ -13,60 +13,60 @@ MonoBehaviour:
   m_Name: BattleDataForOnline
   m_EditorClassIdentifier: 
   turn_number: 0
-  is_1p_turn: 1
+  is_1p_turn: 0
   is_finished: 0
   winner_player_id: 
   player1:
-    player_id: 
+    player_id: fa71df94-7277-4e00-bdbc-268063cdf126
     player_name: Mira2
     base_position: {x: 0, y: 0}
     base_hp: 200
     current_cost_remaining: 50
     characters:
     - unique_id: 0
-      now_character_hp: 0
+      now_character_hp: 150
       character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
-      now_character_position: {x: 0, y: 0}
-    - unique_id: 0
-      now_character_hp: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 7, y: 0}
+    - unique_id: 1
+      now_character_hp: 300
       character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
-      now_character_position: {x: 0, y: 0}
-    - unique_id: 0
-      now_character_hp: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 6, y: 2}
+    - unique_id: 5
+      now_character_hp: 250
       character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
-      now_character_position: {x: 0, y: 0}
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 7, y: 4}
     rate: 0
     rate_updown: 0
   player2:
-    player_id: 
+    player_id: cba46e8b-abac-4ba7-95eb-1d78c1132000
     player_name: aspara
     base_position: {x: 0, y: 0}
     base_hp: 200
     current_cost_remaining: 50
     characters:
-    - unique_id: 0
-      now_character_hp: 0
+    - unique_id: 7
+      now_character_hp: 300
       character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
+      now_character_move_cost: 5
+      debuffs: 0000000000000000
       now_character_position: {x: 0, y: 0}
+    - unique_id: 1
+      now_character_hp: 300
+      character_isSelected: 1
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 5, y: 2}
     - unique_id: 0
-      now_character_hp: 0
+      now_character_hp: 150
       character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
-      now_character_position: {x: 0, y: 0}
-    - unique_id: 0
-      now_character_hp: 0
-      character_isSelected: 0
-      now_character_move_cost: 0
-      debuffs: 
-      now_character_position: {x: 0, y: 0}
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 0, y: 4}
     rate: 0
     rate_updown: 0

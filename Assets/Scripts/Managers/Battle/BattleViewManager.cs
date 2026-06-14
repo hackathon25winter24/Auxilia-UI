@@ -11,6 +11,8 @@ public class BattleViewManager : MonoBehaviour
     public CharacterData characterData;
 
     public GameObject[] characters;// 自分: 0..2, 相手: 3..5
+    public GameObject attackWindow;
+    public Image[] attackButtons;
     public Image[] characterSmallwindow;// 自分: 0..2, 相手: 3..5
     public PlayerState self;
     public PlayerState opponent;
@@ -53,6 +55,7 @@ public class BattleViewManager : MonoBehaviour
         UpdateCharacterUI();
         UpdateBaseUI();
         UpdateCharacterPosition();
+        UpdateAttackWindow();
 
         cost[0].text = "cost:" + self.current_cost_remaining;
         cost[1].text = "cost:" + opponent.current_cost_remaining;
@@ -149,7 +152,6 @@ public class BattleViewManager : MonoBehaviour
             CharactersBattleData chara = DecideCharacter(i);
             int worldPosX = chara.now_character_position.x * 50 - 175;
             int worldPosY = chara.now_character_position.y * -50 + 60;
-            Debug.Log($"chara[{i}] position: {characters[i].transform.localPosition}");
             characters[i].transform.localPosition = new Vector3Int(worldPosX, worldPosY);
         }
     }
@@ -314,5 +316,41 @@ public class BattleViewManager : MonoBehaviour
             logText.text = "";
         }
         _clearLogCoroutine = null;
+    }
+
+    public void ShowAttackWindow()
+    {
+        for (int i = 0; i <= 2; i++)
+        {
+            if (self.characters[i].character_isSelected)
+            {
+                attackWindow.GetComponent<RectTransform>().anchoredPosition = characters[i].transform.localPosition + new Vector3(100, 0, 0);
+                if (!attackWindow.activeSelf)
+                {
+                    attackWindow.SetActive(true);
+                
+                    attackWindow.GetComponent<Image>().sprite = characterData.characters[self.characters[i].unique_id].attack_button_backimage;
+                    for (int j = 0; j <= 2; j++)
+                    {
+                        attackButtons[j].sprite = characterData.characters[self.characters[i].unique_id].attacks[j].attack_button;    
+                    }
+                }
+            }
+        }
+    }
+    public void UpdateAttackWindow()
+    {
+        for (int i = 0; i <= 2; i++)
+        {
+            if (self.characters[i].character_isSelected && attackWindow.activeSelf)
+            {
+                attackWindow.GetComponent<RectTransform>().anchoredPosition = characters[i].transform.localPosition + new Vector3(100, 0, 0);
+            }
+        }
+    }
+
+    public void HideAttackWindow()
+    {
+        attackWindow.SetActive(false);
     }
 }

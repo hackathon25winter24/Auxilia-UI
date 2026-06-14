@@ -11,19 +11,15 @@ public class CharacterManager : MonoBehaviour
     public bool is_1p;// is_1pは自キャラ相手キャラ、自ターン相手ターンの判別に用いる
     public PlayerState self;
     public PlayerState opponent;
-    public RectTransform[] characters;// 移動済み
     public InputData inputData;
     public GridDataforOnline gridDataforOnline;
-    public CharacterData characterData;// 移動済み
+    public CharacterData characterData;
     public BattleDataForOnline battleDataforOnline;
     public int selected_character_index = -1;// selected_character_id -> selected_character_index  -1は未選択を表したいがエラー吐かないか心配
-    public RectTransform attackButton;
-    public Image attackButtonBackImage;
-    public Image[] attackButtonOne;
     public RectTransform BackButton;
     public BattleViewManager battleViewManager;
     public int attack_number;
-    public bool is_attacking;
+    public bool is_attacking = false;
     public GameConnector gameConnector {
         get {
             // 他の GameConnector が Awake で自分自身を Destroy していても、
@@ -84,40 +80,6 @@ public class CharacterManager : MonoBehaviour
     }
 
 
-    public void InitCharacterUI(Google.Protobuf.Collections.RepeatedField<UniqueCharacter> uniqueCharacters)
-    {
-        // BackButton.gameObject.SetActive(false);
-        // シーン上で元からやっておけばいいと思ったのでコメントアウト
-        
-        // 配列が空、または要素が足りない場合の安全策
-        if (characters == null || characters.Length < 6)
-        {
-            Debug.LogError("CharacterManager: characters配列に6つの要素をアサインしてください。");
-            return;
-        }
-
-        // battleViewManagerでキャラを表示させる
-        battleViewManager.SetupCharacters(uniqueCharacters);
-        /*
-        SetupCharacter(0, new Vector2(-175, 60), 0, 0); // 1人目: (0,0)
-        SetupCharacter(1, new Vector2(-125, -40), 1, 2); // 2人目: (1,2) ※17付近
-        SetupCharacter(2, new Vector2(-175, -140), 0, 4); // 3人目: (0,4) ※32付近
-        SetupCharacter(3, new Vector2(175, 60), 7, 0); // 4人目: (7,0) ※7付近
-        SetupCharacter(4, new Vector2(125, -40), 6, 2); // 5人目: (6,2) ※22付近
-        SetupCharacter(5, new Vector2(175, -140), 7, 4); // 6人目: (7,4) ※39付近
-        */
-
-        int これは何をする設定 = 0;
-        for (int i = 0; i <= 2; i++)
-        {
-        characters[i].localScale = new Vector3(-1, 1, 1);
-        }
-
-        is_attacking = false;
-        int 結局ここでやるべきはSetupCharactersだけなのでこれを直接呼び出せばいいのでは = 0;
-    }
-
-
     public void OnButtonClick(string buttonName)
     {
         if (battleDataforOnline.is_1p_turn != is_1p)return;// 相手のターンなら何もしない
@@ -133,48 +95,26 @@ public class CharacterManager : MonoBehaviour
                 SEManager.instance?.PlaySelectSE();
                 selected_character_index = 0;
                 BackButton.gameObject.SetActive(true);
-                int キャラクターの選択をサーバーに通知する処理を書く = 0;
-                int 次フレームでフロントのis_selectedがtrueになる = 0;
-                // battleDataforOnline.character_isSelected[selected_character_id] = true;
-
-                int というかキャラ選択が通ってサーバーから通知が来たら攻撃ボタンが自動で出る方がいいのでは = 0;
-                attackButton.gameObject.SetActive(true);
-                attackButton.anchoredPosition = characters[0].anchoredPosition + new Vector2(100, 0); 
-                for (int i = 0; i <= 2; i++)
-                {
-                    attackButtonOne[i].sprite = characterData.characters[self.characters[selected_character_index].unique_id].attacks[i].attack_button;    
-                }
-                attackButtonBackImage.sprite = characterData.characters[self.characters[selected_character_index].unique_id].attack_button_backimage;
+                // キャラクターの選択をサーバーに通知する処理は現状不要。battleDataForOnlineを直接書き換える。
+                // 次フレームでフロントのis_selectedがtrueになる
+                self.characters[selected_character_index].character_isSelected = true;
+                battleViewManager.ShowAttackWindow();
                 _ = SendGridData();     int これは何の処理 = 0;
                 break;
             case "2":
                 SEManager.instance?.PlaySelectSE();
                 selected_character_index = 1;
                 BackButton.gameObject.SetActive(true);
-                キャラクターの選択をサーバーに通知する処理を書く = 0;
-                次フレームでフロントのis_selectedがtrueになる = 0;
-                attackButton.gameObject.SetActive(true);
-                attackButton.anchoredPosition = characters[1].anchoredPosition + new Vector2(100, 0);
-                for (int i = 0; i <= 2; i++)
-                {
-                    attackButtonOne[i].sprite = characterData.characters[self.characters[selected_character_index].unique_id].attacks[i].attack_button;
-                }
-                attackButtonBackImage.sprite = characterData.characters[self.characters[selected_character_index].unique_id].attack_button_backimage;
+                self.characters[selected_character_index].character_isSelected = true;
+                battleViewManager.ShowAttackWindow();
                 _ = SendGridData();
                 break;
             case "3":
                 SEManager.instance?.PlaySelectSE();
                 selected_character_index = 2;
                 BackButton.gameObject.SetActive(true);
-                キャラクターの選択をサーバーに通知する処理を書く = 0;
-                次フレームでフロントのis_selectedがtrueになる = 0;
-                attackButton.gameObject.SetActive(true);
-                attackButton.anchoredPosition = characters[2].anchoredPosition + new Vector2(100, 0); 
-                for (int i = 0; i <= 2; i++)
-                {
-                    attackButtonOne[i].sprite = characterData.characters[self.characters[selected_character_index].unique_id].attacks[i].attack_button;    
-                }
-                attackButtonBackImage.sprite = characterData.characters[self.characters[selected_character_index].unique_id].attack_button_backimage;
+                self.characters[selected_character_index].character_isSelected = true;
+                battleViewManager.ShowAttackWindow();
                 _ = SendGridData();
                 break;
             default:
@@ -226,7 +166,7 @@ public class CharacterManager : MonoBehaviour
                 // コスト不足ならリターン
                 if (self.current_cost_remaining - characterData.characters[self.characters[selected_character_index].unique_id].attacks[attack_number].default_attack_cost < 0) return;
                 // 攻撃範囲選択処理に移行
-                attackButton.gameObject.SetActive(false);
+                battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
                 // グリッドは後で考える
@@ -239,7 +179,7 @@ public class CharacterManager : MonoBehaviour
                 // コスト不足ならリターン
                 if (self.current_cost_remaining - characterData.characters[self.characters[selected_character_index].unique_id].attacks[attack_number].default_attack_cost < 0) return;
                 // 攻撃範囲選択処理に移行
-                attackButton.gameObject.SetActive(false);
+                battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
                 _ = SendGridData();
@@ -251,7 +191,7 @@ public class CharacterManager : MonoBehaviour
                 // コスト不足ならリターン
                 if (self.current_cost_remaining - characterData.characters[self.characters[selected_character_index].unique_id].attacks[attack_number].default_attack_cost < 0) return;
                 // 攻撃範囲選択処理に移行
-                attackButton.gameObject.SetActive(false);
+                battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
                 _ = SendGridData();
@@ -265,7 +205,8 @@ public class CharacterManager : MonoBehaviour
         {
             Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={userData.user_id}</color>");
             Debug.Log($"<color=cyan>[SendGridData] Sending Cost: {self.current_cost_remaining}</color>");
-            await gameConnector.SendGridUpdate(roomData.room_id, userData.user_id, gridDataforOnline, battleDataforOnline, is_1p, self.current_cost_remaining);
+            // 一旦コメントアウト
+            // await gameConnector.SendGridUpdate(roomData.room_id, userData.user_id, gridDataforOnline, battleDataforOnline, is_1p, self.current_cost_remaining);
         }
     }
 
@@ -306,7 +247,7 @@ public class CharacterManager : MonoBehaviour
         }
         else 
         {
-            if(self.characters[selected_character_index].debuffs[4])// 麻痺
+            if(selected_character_index > 0 && self.characters[selected_character_index].debuffs[4])// 麻痺
             {
 
             }else
@@ -348,7 +289,7 @@ public class CharacterManager : MonoBehaviour
         return range;
     }
 
-    void TryMove(int moveX, int moveY, Vector2 posDelta)
+    async void TryMove(int moveX, int moveY, Vector2 posDelta)
     {
         SEManager.instance?.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
         int currentX = self.characters[selected_character_index].now_character_position.x;
@@ -364,11 +305,14 @@ public class CharacterManager : MonoBehaviour
     if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
     {
         // A. 現在の場所（移動元）を元の地形に戻す
+        int 直接Gridを変更しない = 0;
         UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
         // 本来ここでSendMoveを呼ぶ。下のコードは消す
-        self.characters[selected_character_index].now_character_position = new Vector2Int(nextX, nextY);
+        await gameConnector.SendMove(roomData.room_id, self.player_id, self.characters[selected_character_index].unique_id, 
+        nextX, nextY, self.characters[selected_character_index].now_character_move_cost);
+        // self.characters[selected_character_index].now_character_position = new Vector2Int(nextX, nextY);
 
         //デバフマスの処理をする
         if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 3)
@@ -387,6 +331,8 @@ public class CharacterManager : MonoBehaviour
         // B. 新しい場所（移動先）を「キャラあり」状態にする
         UpdateGridState(nextX, nextY, -1);
 
+        // コストは少なくともBattleDataForOnlineの移動コストを利用するはず。新たに計算する必要はない
+        /*
         int cost = characterData.characters[self.characters[selected_character_index].unique_id].default_move_cost;
         if (self.characters[selected_character_index].debuffs[1])
         {
@@ -397,6 +343,7 @@ public class CharacterManager : MonoBehaviour
         {
             cost += 2;
         }
+        */
         // ここでSendMoveを呼べば良い？
     
     // 移動した際にグリッドデータを送信
@@ -759,9 +706,11 @@ public class CharacterManager : MonoBehaviour
     {
         // キャラの選択を全てリセットして、攻撃画面を開いていたらそれも閉じる。攻撃選択中のブール、グリッド変化も消す
 
-        int gameConnectorのキャラ選択解除処理を叩く = 0;
-
-        attackButton.gameObject.SetActive(false);// 攻撃選択画面を閉じる
+        for (int i = 0; i <= 2; i++)
+        {
+            self.characters[i].character_isSelected = false;
+        }
+        battleViewManager.HideAttackWindow();
         is_attacking = false;// 攻撃選択中ブールをfalseに
         int gameConnectorの攻撃範囲表示グリッドを消す処理を叩く = 0;
     }

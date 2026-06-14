@@ -466,7 +466,7 @@ RectTransform:
   m_GameObject: {fileID: 37222587}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1427061202}
@@ -599,24 +599,11 @@ MonoBehaviour:
     characters: []
     rate: 0
     rate_updown: 0
-  characters:
-  - {fileID: 1961868592}
-  - {fileID: 511543639}
-  - {fileID: 37222591}
-  - {fileID: 650600073}
-  - {fileID: 1397172211}
-  - {fileID: 1806626573}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   selected_character_index: -1
-  attackButton: {fileID: 966120276}
-  attackButtonBackImage: {fileID: 966120274}
-  attackButtonOne:
-  - {fileID: 1900378553}
-  - {fileID: 1940744645}
-  - {fileID: 1870815619}
   BackButton: {fileID: 712360788}
   battleViewManager: {fileID: 441793170}
   attack_number: 0
@@ -981,12 +968,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b597258f1345c4ca5a1c7a66b3d44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterData: {fileID: 0}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
-  battleView: {fileID: 441793170}
+  battleViewManager: {fileID: 441793170}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
   gridManager: {fileID: 0}
   roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
@@ -1783,6 +1771,11 @@ MonoBehaviour:
   - {fileID: 650600069}
   - {fileID: 1397172207}
   - {fileID: 1806626569}
+  attackWindow: {fileID: 966120273}
+  attackButtons:
+  - {fileID: 1900378553}
+  - {fileID: 1940744645}
+  - {fileID: 1870815619}
   characterSmallwindow:
   - {fileID: 1220754459}
   - {fileID: 470910967}
@@ -2568,7 +2561,7 @@ RectTransform:
   m_GameObject: {fileID: 511543635}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1427061202}
@@ -10896,7 +10889,7 @@ RectTransform:
   m_GameObject: {fileID: 1961868588}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1427061202}
