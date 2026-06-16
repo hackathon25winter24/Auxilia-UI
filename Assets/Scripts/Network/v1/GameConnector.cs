@@ -682,72 +682,153 @@ public class GameConnector : MonoBehaviour
     }
 
     // おそらくこれを呼び出せばDBのApplyMoveが動くはずです
-    public async Task SendMove(int roomId, string playerId, int charaId, int x, int y, int cost)
+    public async UniTask<bool> SendMove(int roomId, string playerId, int charaId, int x, int y, CancellationToken ct = default)
     {
         if (_battleClient == null)
         {
             Debug.LogError("[GameConnector] SendMove: _battleClient is null!");
-            return;
+            return false;
         }
-        var move = new MoveAction{CharacterUniqueId = (uint)charaId, ToX = (uint)x, ToY = (uint)y};
-        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Move = move, Cost = (uint)cost};
+
+        // 💡 サーバー側の引数仕様（RoomId, PlayerId, CharacterId を最上位に配置）に修正
+        var request = new MoveAction
+        {
+            RoomId = (uint)roomId,
+            PlayerId = playerId,
+            CharacterId = (uint)charaId,
+            ToX = (uint)x,
+            ToY = (uint)y
+        };
         
         try 
         {
-            await _battleClient.ApplyMoveAsync(action);
+            var response = await _battleClient.ApplyMoveAsync(request, cancellationToken: ct);
+            return response.Success;
         }
         catch (RpcException e)
         {
             ShowErrorMessage($"移動の送信に失敗しました: {e.Status.Detail}");
+            return false;
         }
     }
 
-    public async Task SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, bool isStarted, int baseHP1, int baseHP2, int attackedCharaId, int newHP, int cost)
+    /// <summary>
+    /// 攻撃アクションの送信（新仕様の複数被弾・拠点削り対応）
+    /// </summary>
+    public async UniTask<bool> SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, List<AttackInfo> attackInfos, CancellationToken ct = default)
     {
-        var attack = new AttackAction{AttackerCharacterUniqueId = (uint)attackerCharaId, AttackType = attackType, IsStarted = isStarted, BaseHp1 = (uint)baseHP1, BaseHp2 = (uint)baseHP2, AttackedCharacterUniqueId = (uint)attackedCharaId, NewHp = (uint)newHP};
-        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, Attack = attack, Cost = (uint)cost};
-        
-        Debug.Log($"<color=orange>[SendAttack] 通信開始: attacker={attackerCharaId}, target={attackedCharaId}, newHp={newHP}, bhp1={baseHP1}, bhp2={baseHP2}</color>");
         if (_battleClient == null)
         {
             Debug.LogError("[GameConnector] _battleClient が null です！初期化に失敗している可能性があります。");
-            return;
+            return false;
         }
+
+        //  サーバー側の引数（単一ターゲットの指定から、repeated AttackInfo への一括格納）に対応
+        var request = new AttackAction
+        {
+            RoomId = (uint)roomId,
+            PlayerId = playerId,
+            AttackerCharacterId = (uint)attackerCharaId,
+            AttackType = attackType
+        };
+        
+        // repeated フィールドには AddRange でデータを追加します
+        if (attackInfos != null)
+        {
+            request.AttackInfos.AddRange(attackInfos);
+        }
+        
+        Debug.Log($"<color=orange>[SendAttack] 通信開始: Room={roomId}, Attacker={attackerCharaId}, TargetsCount={attackInfos?.Count ?? 0}</color>");
+        
         try 
         {
-            await _battleClient.ApplyAttackAsync(action);
-            Debug.Log($"<color=orange>[SendAttack] 通信成功</color>");
+            var response = await _battleClient.ApplyAttackAsync(request, cancellationToken: ct);
+            Debug.Log($"<color=orange>[SendAttack] 通信成功: {response.Message}</color>");
+            return response.Success;
         }
         catch (RpcException e)
         {
             Debug.LogError($"[SendAttack] 通信失敗: {e.Status.Detail}");
             ShowErrorMessage($"攻撃の送信に失敗しました: {e.Status.Detail}");
+            return false;
         }
     }
 
-    public async Task SendTurnEnd(int roomId, string playerId)
+    /// <summary>
+    /// 手動ターン終了（またはタイマー時間切れ）を送信
+    /// </summary>
+    public async UniTask<bool> SendTurnEnd(int roomId, string playerId, CancellationToken ct = default)
     {
         if (_battleClient == null)
         {
             Debug.LogError("[GameConnector] SendTurnEnd: _battleClient is null!");
-            return;
+            return false;
         }
-        bool endTurn = true;
-        var action = new PlayerAction{RoomId = (uint)roomId, PlayerId = playerId, EndTurn = endTurn};
+
+        // 💡 新仕様の EndTurnRequest に型を変更
+        var request = new EndTurnRequest
+        {
+            RoomId = (uint)roomId,
+            PlayerId = playerId
+        };
         
         try 
         {
-            await _battleClient.EndTurnAsync(action);
+            var response = await _battleClient.EndTurnAsync(request, cancellationToken: ct);
+            return response.Success;
         }
         catch (RpcException e)
         {
             ShowErrorMessage($"ターン終了の送信に失敗しました: {e.Status.Detail}");
+            return false;
         }
     }
 
-    public async Task SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataForOnline battleData, bool is1p, int cost)
+    /// <summary>
+    /// 新規追加：全演出終了後、次のターンを開始させるリクエスト
+    /// </summary>
+    public async UniTask<bool> SendNewTurn(int roomId, string playerId, CancellationToken ct = default)
     {
-        var gridUpdate = new GridUpdateAction();
+        if (_battleClient == null)
+        {
+            Debug.LogError("[GameConnector] SendNewTurn: _battleClient is null!");
+            return false;
+        }
+
+        var request = new NewTurnRequest
+        {
+            RoomId = (uint)roomId,
+            PlayerId = playerId
+        };
+
+        try
+        {
+            var response = await _battleClient.NewTurnAsync(request, cancellationToken: ct);
+            return response.Success;
+        }
+        catch (RpcException e)
+        {
+            ShowErrorMessage($"新規ターン開始の送信に失敗しました: {e.Status.Detail}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 盤面（グリッド）の同期更新情報を送信
+    /// </summary>
+    public async UniTask<bool> SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataForOnline battleData, bool is1p, CancellationToken ct = default)
+    {
+        if (_battleClient == null) {
+            Debug.LogError("[GameConnector] SendGridUpdate: _battleClient is null!");
+            return false;
+        }
+
+        var request = new GridUpdateAction
+        {
+            RoomId = (uint)roomId,
+            PlayerId = playerId
+        };
+
         for (int y = 0; y < 5; y++)
         {
             for (int x = 0; x < 8; x++)
@@ -755,51 +836,30 @@ public class GameConnector : MonoBehaviour
                 int sendX = is1p ? x : 7 - x;
                 int sendY = y;
 
-                // isSelectedはおそらく別で送るようにするはず。Unity側でキャラが押された時にサーバーのIsSelectedをtrueにするリクエストを送りたい。
-                /*
-                bool isSelected = false;
-                for (int i = 0; i < battleData.charactersBattleDatas.Length; i++)
-                {
-                    if (battleData.charactersBattleDatas[i].now_character_position.x == x &&
-                        battleData.charactersBattleDatas[i].now_character_position.y == y &&
-                        battleData.character_isSelected[i])
-                    {
-                        isSelected = true;
-                        break;
-                    }
-                }
-                */
-
-                gridUpdate.Grids.Add(new GridInfo
+                request.Grids.Add(new GridInfo
                 {
                     PositionX = (uint)sendX,
                     PositionY = (uint)sendY,
                     GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x],
-                    // IsSelected = isSelected,
-                    IsAttackRange = gridData.grid_attack_position_y[y].grid_attack_position_x[x] == 1
+                    IsAttackRange = gridData.grid_attack_position_y[y].grid_attack_position_x[x] == 1,
+                    IsSelected = false // 💡 コメント欄の通り、別途動かす想定でデフォルトfalse化
                 });
             }
         }
-
-        var action = new PlayerAction { RoomId = (uint)roomId, PlayerId = playerId, GridUpdate = gridUpdate, Cost = (uint)cost };
         
-        if (_battleClient == null) {
-            Debug.LogError("[GameConnector] SendGridUpdate: _battleClient is null!");
-            return;
-        }
-
         try
         {
-            await _battleClient.ApplyGridUpdateAsync(action);
+            var response = await _battleClient.ApplyGridUpdateAsync(request, cancellationToken: ct);
             Debug.Log($"<color=lime>[GridUpdate] サーバーへの送信成功 (Room:{roomId})</color>");
+            return response.Success;
         }
         catch (RpcException e)
         {
             Debug.LogError($"[GridUpdate] サーバーへの送信失敗: {e.Status.Detail}");
             ShowErrorMessage($"グリッド情報の送信に失敗しました: {e.Status.Detail}");
+            return false;
         }
     }
-
 
     public async Task StopStream()
     {
