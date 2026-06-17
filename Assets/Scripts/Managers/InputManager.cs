@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
     public InputData inputData;
+
+    private RectTransform canvasRect;
 
     private void Awake()
     {
@@ -15,6 +18,13 @@ public class InputManager : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        canvasRect = FindFirstObjectByType<Canvas>().GetComponent<RectTransform>();
     }
 
     void Update()
@@ -23,10 +33,9 @@ public class InputManager : MonoBehaviour
     inputData.left_mouse_button_ispressed = Mouse.current.leftButton.wasPressedThisFrame;
     inputData.right_mouse_button_ispressed = Mouse.current.rightButton.wasPressedThisFrame;
 
-    //マウス座標（カメラ中心を原点にする修正）
+    //マウス座標（キャンバス座標に揃える）
     Vector2 rawMousePos = Mouse.current.position.ReadValue();
-    Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-    inputData.mouse_position = rawMousePos - screenCenter; 
+    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, rawMousePos, null, out inputData.mouse_position);
 
     inputData.mouse_wheel = Mouse.current.scroll.ReadValue();
 
@@ -42,4 +51,8 @@ public class InputManager : MonoBehaviour
     inputData.a_key_ispressed = kb.aKey.wasPressedThisFrame;
     inputData.s_key_ispressed = kb.sKey.wasPressedThisFrame;
 }
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 }
