@@ -198,18 +198,14 @@ public class BattleConnector : MonoBehaviour
     {
         if (_battleClient == null) return false;
 
-        // 💡 自分が2Pの場合、サーバーの絶対座標（1P視点基準）に反転させる
-        int sendX = is1p ? x : 7 - x;
-        int sendY = y;
-
         var request = new GridUpdateAction
         {
             RoomId = (uint)roomId,
             // PlayerId = playerId // ※もし .proto に player_id を追加した場合はここを有効化してください
             Grid = new GridInfo
             {
-                PositionX = (uint)sendX,
-                PositionY = (uint)sendY,
+                PositionX = (uint)x,
+                PositionY = (uint)y,
                 GridType = gridType,
                 DebuffType = debuffType,
                 IsCharacterStay = false // 💡 座標競合を防ぐため、フロントからは一律false（判定はサーバーに一任）を推奨
@@ -219,7 +215,7 @@ public class BattleConnector : MonoBehaviour
         try
         {
             var response = await _battleClient.ApplyGridUpdateAsync(request, cancellationToken: ct);
-            Debug.Log($"<color=lime>[GridUpdate] 差分送信成功: ({sendX}, {sendY}) -> Type:{gridType}</color>");
+            Debug.Log($"<color=lime>[GridUpdate] 差分送信成功: ({x}, {y}) -> Type:{gridType}</color>");
             return response.Success;
         }
         catch (RpcException e)
