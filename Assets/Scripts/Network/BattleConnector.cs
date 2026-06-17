@@ -190,38 +190,41 @@ public class BattleConnector : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// rpc ApplyGridUpdate(GridUpdateAction) returns (AcceptResponse);
-    /// </summary>
-    public async UniTask<bool> SendGridUpdate(int roomId, string playerId, GridDataforOnline gridData, BattleDataForOnline battleData, bool is1p, CancellationToken ct = default)
+/// <summary>
+/// 変更のあったグリッドの差分（1マス分）だけをサーバーに送信する
+/// rpc ApplyGridUpdate(GridUpdateAction) returns (AcceptResponse);
+/// </summary>
+    public async UniTask<bool> SendGridUpdate(int roomId, string playerId, int x, int y, int gridType, int debuffType, bool is1p, CancellationToken ct = default)
     {
-        var request = new GridUpdateAction { RoomId = (uint)roomId, PlayerId = playerId };
-        for (int y = 0; y < 5; y++)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                int sendX = is1p ? x : 7 - x;
-                int sendY = y;
+        if (_battleClient == null) return false;
 
-                request.Grids.Add(new GridInfo
-                {
-                    PositionX = (uint)sendX,
-                    PositionY = (uint)sendY,
-                    GridType = gridData.sub_grid_state_y[y].sub_grid_state_x[x],
-                    IsAttackRange = gridData.grid_attack_position_y[y].grid_attack_position_x[x] == 1,
-                    IsSelected = false
-                });
+        // 💡 自分が2Pの場合、サーバーの絶対座標（1P視点基準）に反転させる
+        int sendX = is1p ? x : 7 - x;
+        int sendY = y;
+
+        var request = new GridUpdateAction
+        {
+            RoomId = (uint)roomId,
+            // PlayerId = playerId // ※もし .proto に player_id を追加した場合はここを有効化してください
+            Grid = new GridInfo
+            {
+                PositionX = (uint)sendX,
+                PositionY = (uint)sendY,
+                GridType = gridType,
+                DebuffType = debuffType,
+                IsCharacterStay = false // 💡 座標競合を防ぐため、フロントからは一律false（判定はサーバーに一任）を推奨
             }
-        }
+        };
         
         try
         {
             var response = await _battleClient.ApplyGridUpdateAsync(request, cancellationToken: ct);
+            Debug.Log($"<color=lime>[GridUpdate] 差分送信成功: ({sendX}, {sendY}) -> Type:{gridType}</color>");
             return response.Success;
         }
         catch (RpcException e)
         {
-            _core.ShowErrorMessage($"グリッド情報の送信に失敗しました: {e.Status.Detail}");
+            _core.ShowErrorMessage($"グリッド情報の差分送信に失敗しました: {e.Status.Detail}");
             return false;
         }
     }
@@ -281,3 +284,46 @@ public class BattleConnector : MonoBehaviour
         }
     }
 }
+
+//使用例
+// private CancellationTokenSource _cts;
+
+//     private void Start()
+//     {
+//         // 1. スイッチ（Source）を作成
+//         _cts = new CancellationTokenSource();
+
+//         // 2. 処理を始めるときに、旗（cancellationToken）を渡す
+//         //実行中の非同期処理やバックグラウンド処理を、安全かつ確実に途中で終了（キャンセル）させるための仕組み
+//         StartNetworkConnection(_cts.Token);
+//     }
+
+//     private void OnDestroy()
+//     {
+//         // 3. 自身が破壊されたら（シーン遷移など）、実行中の処理にストップをかける
+//         if (_cts != null)
+//         {
+//             _cts.Cancel(); // これで旗に「ストップ」が書き込まれる
+//             _cts.Dispose();
+//         }
+//     }
+
+
+// public async UniTask StartNetworkConnection(CancellationToken ct)
+// {
+//     try
+//     {
+//         Debug.Log("通信を開始します...");
+
+//         // gRPCの通信APIに、旗（ct）をそのまま渡す
+//         // もし通信中に ct.Cancel() が呼ばれると、この通信はその瞬間に強制終了します
+//         var response = await _battleClient.ApplyMoveAsync(request, cancellationToken: ct);
+        
+//         Debug.Log("通信が正常に完了しました！");
+//     }
+//     catch (System.OperationCanceledException)
+//     {
+//         // 💡 キャンセルされた場合は、ここを通過して安全に終了する
+//         Debug.LogWarning("通信処理が安全にキャンセルされました。");
+//     }
+// }
