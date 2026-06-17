@@ -269,21 +269,21 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc FetchActionLog(FetchActionLogRequest) returns (GameActionLog);
     /// </summary>
-    // public async UniTask<GameActionLog> FetchActionLog(int roomId, uint sequence, CancellationToken ct = default)
-    // {
-    //     var request = new FetchActionLogRequest { RoomId = (uint)roomId, Sequence = sequence };
-    //     try
-    //     {
+    public async UniTask<GameActionLog> FetchActionLog(int roomId, uint sequence, CancellationToken ct = default)
+    {
+        var request = new FetchActionLogRequest { RoomId = (uint)roomId, Sequence = sequence };
+        try
+        {
 
-    //         var response = await _battleClient.FetchActionLogAsync(request, cancellationToken: ct);
-    //         return response;
-    //     }
-    //     catch (RpcException e)
-    //     {
-    //         _core.ShowErrorMessage($"アクションログ(Seq:{sequence})の取得に失敗しました: {e.Status.Detail}");
-    //         return null;
-    //     }
-    // }
+            var response = await _battleClient.FetchActionLogAsync(request, cancellationToken: ct);
+            return response;
+        }
+        catch (RpcException e)
+        {
+            _core.ShowErrorMessage($"アクションログ(Seq:{sequence})の取得に失敗しました: {e.Status.Detail}");
+            return null;
+        }
+    }
 }
 
 //使用例
