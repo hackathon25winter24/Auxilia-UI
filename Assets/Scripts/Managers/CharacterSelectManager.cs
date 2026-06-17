@@ -60,7 +60,8 @@ public class CharacterSelectManager : MonoBehaviour
     public SceneData sceneData;
 
     [Header("Network")]
-    public GameConnector gameConnector;
+
+    public AuthenticationConnector authenticationConnector;
 
 
 
@@ -75,7 +76,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     void Awake()
     {
-        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+        if (authenticationConnector == null) authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
     }
 
     void Start()
@@ -194,7 +195,7 @@ public class CharacterSelectManager : MonoBehaviour
          SEManager.instance?.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
         characterSelectPanel.SetActive(true);
-        if (gameConnector != null) await gameConnector.UpdateUser();
+        if (authenticationConnector != null) await authenticationConnector.UpdateUser();
          StartCoroutine(FadeSequence(true));
     }
 
@@ -209,7 +210,7 @@ public class CharacterSelectManager : MonoBehaviour
         if (isAnimating || currentViewingCharIndex < 0) return;
               SEManager.instance?.PlayBackSE();
         characterSelectPanel.SetActive(false);
-        if (gameConnector != null) await gameConnector.UpdateUser();
+        if (authenticationConnector != null) await authenticationConnector.UpdateUser();
         StartCoroutine(ConfirmSequence());
 
     }
@@ -288,7 +289,7 @@ public class CharacterSelectManager : MonoBehaviour
 
         PartyHPandMOV();
 
-        if (gameConnector != null) await gameConnector.UpdateUser();
+        if (authenticationConnector != null) await authenticationConnector.UpdateUser();
     }
     async void RandomFormation()
     {
@@ -337,7 +338,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     PartyHPandMOV();
 
-    if (gameConnector != null) await gameConnector.UpdateUser();
+    if (authenticationConnector != null) await authenticationConnector.UpdateUser();
     }
 
     void BackToTitle()

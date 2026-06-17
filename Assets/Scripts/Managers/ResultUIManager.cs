@@ -86,7 +86,8 @@ public class ResultUIManager : MonoBehaviour
     }
 
     public RoomData roomData;
-    public GameConnector gameConnector;
+    public MatchingConnector matchingConnector;
+    public BattleConnector battleConnector;
 
     void Start()
     {
@@ -144,34 +145,34 @@ public class ResultUIManager : MonoBehaviour
     private async System.Threading.Tasks.Task HandleButtonClick(string buttonName)
     {
         // 念のためバトルストリームを停止
-        if (gameConnector != null) await gameConnector.StopStream();
+        if (battleConnector != null) await battleConnector.StopStream();
 
         switch (buttonName)
         {
             case "BackToHome":
                 SEManager.instance?.PlayToNextSE();
-                if (gameConnector != null && roomData != null)
+                if (matchingConnector != null && roomData != null)
                 {
-                    await gameConnector.LeaveRoom(roomData.room_id, userData.user_id);
+                    await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 }
                 sceneData.next_scene_number = 1;
                 break;
 
             case "BackToMatchingRoom": // 退出して部屋一覧へ
                 SEManager.instance?.PlayToNextSE();
-                if (gameConnector != null && roomData != null)
+                if (matchingConnector != null && roomData != null)
                 {
-                    await gameConnector.LeaveRoom(roomData.room_id, userData.user_id);
+                    await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 }
                 sceneData.next_scene_number = 9;
                 break;
 
             case "Rematch": // 新設ボタン名: 再戦
                 SEManager.instance?.PlayToNextSE();
-                if (gameConnector != null && roomData != null)
+                if (matchingConnector != null && roomData != null)
                 {
                     // 部屋に留まったまま Ready を false に更新
-                    await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);// 一旦StateをSpectatorにしときます
+                    await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);// 一旦StateをSpectatorにしときます
                 }
                 sceneData.next_scene_number = 10; // 待機室 (MatchingRoom) へ戻る
                 break;
@@ -194,9 +195,13 @@ public class ResultUIManager : MonoBehaviour
         battleDataForOnline = GetSO(battleDataForOnline);
         roomData = GetSO(roomData);
 
-        if (gameConnector == null)
+        if (matchingConnector == null)
         {
-            gameConnector = FindFirstObjectByType<GameConnector>();
+            matchingConnector = FindFirstObjectByType<MatchingConnector>();
+        }
+        if (battleConnector == null)
+        {
+            battleConnector = FindFirstObjectByType<BattleConnector>();
         }
     }
 

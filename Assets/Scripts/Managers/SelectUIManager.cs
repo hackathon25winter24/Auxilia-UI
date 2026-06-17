@@ -34,7 +34,9 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI nameText2;
     public TextMeshProUGUI timertext2;
 
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
+    public MatchingConnector matchingConnector;
+    public BattleConnector battleConnector;
     
     public int selectedCharacterId;
 
@@ -58,14 +60,16 @@ public class SelectUIManager : MonoBehaviour
 
     async void Awake()
     {
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        matchingConnector = FindFirstObjectByType<MatchingConnector>();
+        authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
+        battleConnector = FindFirstObjectByType<BattleConnector>();
 
         SelectedTub.SetActive(false);
         // 1P/2Pの情報を取得
         await GetPlayerInfo();
 
         // 自分の状態を確認してプレイヤーかどうか判定
-        var roomList = await gameConnector.ListRoom(roomData.room_id);
+        var roomList = await matchingConnector.ListRoom(roomData.room_id);
         int myState = 0;
         if (roomList != null)
         {
@@ -113,16 +117,16 @@ public class SelectUIManager : MonoBehaviour
 
     private async Task GetPlayerInfo()
     {
-        var battle_player = await gameConnector.GetBattlePlayer(roomData.room_id);
+        var battle_player = await matchingConnector.GetBattlePlayer(roomData.room_id);
         if (battle_player != null && battle_player.Count >= 2)
         {
             if (battle_player[0] != null)
             {
-                p1 = await gameConnector.GetUser(battle_player[0].UserId);
+                p1 = await authenticationConnector.GetUser(battle_player[0].UserId);
             }
             if (battle_player[1] != null)
             {
-                p2 = await gameConnector.GetUser(battle_player[1].UserId);
+                p2 = await authenticationConnector.GetUser(battle_player[1].UserId);
             }
         }
     }
@@ -423,7 +427,7 @@ public class SelectUIManager : MonoBehaviour
         int[] charas = {selectedCharacter1, selectedCharacter2, selectedCharacter3};
         bool is1p = false;
 
-        var room = await gameConnector.ListRoom(roomData.room_id);
+        var room = await matchingConnector.ListRoom(roomData.room_id);
         for (int i = 0; i < room.Count; i++)
         {
             if (room[i].UserId == userData.user_id && room[i].State == 1)
@@ -431,14 +435,14 @@ public class SelectUIManager : MonoBehaviour
                 is1p = true;
             }
         }
-        await gameConnector.RegisterCharacters(roomData.room_id, is1p, charas);
+        await battleConnector.RegisterCharacters(roomData.room_id, is1p, charas);
     }
 
     public async Task<List<int>> GetOpponentDatas()
     {
         //ここに相手の編成とコストを受け取る関数を書いてください
-        var data = await gameConnector.GetGameData(roomData.room_id);
-        var room = await gameConnector.ListRoom(roomData.room_id);
+        var data = await battleConnector.GetGameData(roomData.room_id);
+        var room = await matchingConnector.ListRoom(roomData.room_id);
         bool is1p = false;
         var opponent_characters = new List<int>(3);
         for (int i = 0; i < room.Count; i++)
@@ -462,7 +466,7 @@ public class SelectUIManager : MonoBehaviour
     public async Task<Game.Network.GameDataResponse> GetDatas()
     {
         //ここに試合中の全体の編成とコストを受け取る関数を書いてください
-        var data = await gameConnector.GetGameData(roomData.room_id);
+        var data = await battleConnector.GetGameData(roomData.room_id);
         return data;
     }
 }

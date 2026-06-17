@@ -14,7 +14,6 @@ public class GridManager : MonoBehaviour
     public Sprite MakibishiGrid;
     public Sprite LandmineGrid;
 
-    public GameConnector gameConnector;
     public RoomData roomData;
     public UserData userData;
 
@@ -36,7 +35,6 @@ public class GridManager : MonoBehaviour
     {
         roomData = GetSo(roomData);
         userData = GetSo(userData);
-        gameConnector = FindFirstObjectByType<GameConnector>();
 
         // 全グリッドの初期化
         for (int y = 0; y < 5; y++)

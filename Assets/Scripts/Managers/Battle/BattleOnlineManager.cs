@@ -32,6 +32,9 @@ public class BattleOnlineManager : MonoBehaviour
         }
         set { _gameConnector = value; }
     }
+    // 暫定的に代用しておきます
+    public BattleConnector battleConnector;
+    public AuthenticationConnector authenticationConnector;
 
     public Slider timerSlider; 
     public float maxTime = 60f; 
@@ -60,7 +63,10 @@ public class BattleOnlineManager : MonoBehaviour
         {
             roomData = GetSo(roomData);
             userData = GetSo(userData);
-            // gameConnector = ... // property化により不要
+            
+            battleConnector = FindFirstObjectByType<BattleConnector>();
+            authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
+
             characterManager = FindFirstObjectByType<CharacterManager>();
             gridManager = FindFirstObjectByType<GridManager>();
             // GameConnectorにこのシーンのBattleOnlineManagerを登録
@@ -92,7 +98,7 @@ public class BattleOnlineManager : MonoBehaviour
         if (roomData != null && userData != null)
         {
             Debug.Log("[BattleOnlineManager] StartStream starting in Start()");
-            gameConnector.StartStream((uint)roomData.room_id, userData.user_id);
+            battleConnector.StartStream((uint)roomData.room_id, userData.user_id);
         }
         else
         {
@@ -173,13 +179,13 @@ public class BattleOnlineManager : MonoBehaviour
                 Debug.LogError("[BattleOnlineManager] roomDataが見つかりません。");
                 return;
             }
-            if (gameConnector == null) {
-                Debug.LogError("[BattleOnlineManager] gameConnectorが見つかりません。");
+            if (battleConnector == null) {
+                Debug.LogError("[BattleOnlineManager] battleConnectorが見つかりません。");
                 return;
             }
 
             Debug.Log($"[BattleOnlineManager] Calling GetGameData for room_id: {roomData.room_id}");
-            var gameData = await gameConnector.GetGameData(roomData.room_id);// ここで初期化用データ取得
+            var gameData = await battleConnector.GetGameData(roomData.room_id);// ここで初期化用データ取得
             if (gameData == null)
             {
                 Debug.LogError("[BattleOnlineManager] ゲームデータの取得に失敗しました。");
@@ -192,8 +198,8 @@ public class BattleOnlineManager : MonoBehaviour
             // レート情報はサーバー側にいつ代入されるのか？
 
             // 1p2pのユーザーネームを取得して反映（初回のみ実行のためここに記述）
-            var user1 = await gameConnector.GetUser(gameData.Player1Id);
-            var user2 = await gameConnector.GetUser(gameData.Player2Id);
+            var user1 = await authenticationConnector.GetUser(gameData.Player1Id);
+            var user2 = await authenticationConnector.GetUser(gameData.Player2Id);
             battleDataforOnline.player1.player_name = user1?.Name ?? "1P";
             battleDataforOnline.player2.player_name = user2?.Name ?? "2P";
             battleDataforOnline.player1.player_id = user1?.Id ?? "unknown";
@@ -268,7 +274,6 @@ public class BattleOnlineManager : MonoBehaviour
                 
 
                 // イベントの発火 (攻撃ログ?)
-                int イベント購読が苦手で分からないので後回し = 0;
                 /*
                 OnAttackExecuted?.Invoke(new AttackEventData {
                     attackerUniqueId = ai.AttackerCharacterId,
@@ -279,7 +284,7 @@ public class BattleOnlineManager : MonoBehaviour
                 });
                 */
 
-                int ここで攻撃されたキャラに演出をする = 0;
+                // ここで攻撃されたキャラに演出をする
             }
         }
         // 【デバッグ】受信データをコンソールに出力（UIには反映しない）
@@ -351,6 +356,7 @@ public class BattleOnlineManager : MonoBehaviour
             battleDataforOnline.player2.current_cost_remaining = (int)gameData.Cost2P;
         }
 
+/*
         // グリッドデータ（地形情報）の同期
         // サーバーは全マス（40マス）を GridType 付きで送ってくる
         // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
@@ -404,6 +410,7 @@ public class BattleOnlineManager : MonoBehaviour
                 gridDataforOnline.grid_state_y[gy].grid_state_x[gx] =
                     gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
 
+*/
 
         // キャラクターのデータを反映（UniqueIdによるマッチング）
         foreach (var c in gameData.Characters)
