@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Cysharp.Threading.Tasks;
 using Roommatch;
 using Room;
 
@@ -19,7 +20,7 @@ public class MatchingConnector : MonoBehaviour
         _roomClient = new RoomService.RoomServiceClient(_core.Channel);
     }
 
-    public async Task<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
+    public async UniTask<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
     {
         try
         {
@@ -39,7 +40,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<RoomMatch> UpdateRoomMatch(int roomId, string roomName, string ownerId, bool isGaming)
+    public async UniTask<RoomMatch> UpdateRoomMatch(int roomId, string roomName, string ownerId, bool isGaming)
     {
         try
         {
@@ -59,7 +60,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<List<RoomMatch>> GetAllRoomMatch()
+    public async UniTask<List<RoomMatch>> GetAllRoomMatch()
     {
         try
         {
@@ -74,7 +75,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<RoomMatchResponse> UpdateRoomName(int roomId, string roomName, string ownerId, bool isGaming)
+    public async UniTask<RoomMatchResponse> UpdateRoomName(int roomId, string roomName, string ownerId, bool isGaming)
     {
         try
         {
@@ -88,7 +89,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<StartMatchResponse> StartMatch(int roomId)
+    public async UniTask<StartMatchResponse> StartMatch(int roomId)
     {
         try
         {
@@ -107,7 +108,7 @@ public class MatchingConnector : MonoBehaviour
         return _roomClient.StreamRoom(request);
     }
 
-    public async Task<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
+    public async UniTask<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
     {
         try
         {
@@ -121,7 +122,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<JoinRoomResponse> JoinRoom(int roomId, string userId)
+    public async UniTask<JoinRoomResponse> JoinRoom(int roomId, string userId)
     {
         try
         {
@@ -140,7 +141,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<LeaveRoomResponse> LeaveRoom(int roomId, string userId)
+    public async UniTask<LeaveRoomResponse> LeaveRoom(int roomId, string userId)
     {
         try
         {
@@ -154,7 +155,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<EnterRingResponse> EnterRing(int roomId, string userId)
+    public async UniTask<EnterRingResponse> EnterRing(int roomId, string userId)
     {
         try
         {
@@ -168,7 +169,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<List<Room.Room>> ListRoom(int roomId)
+    public async UniTask<List<Room.Room>> ListRoom(int roomId)
     {
         try
         {
@@ -183,7 +184,7 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public async Task<List<Room.Room>> GetBattlePlayer(int roomId)
+    public async UniTask<List<Room.Room>> GetBattlePlayer(int roomId)
     {
         try
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Cysharp.Threading.Tasks;
 using Game.Network;
 
 public class AuthenticationConnector : MonoBehaviour
@@ -18,7 +19,7 @@ public class AuthenticationConnector : MonoBehaviour
         _userClient = new UserService.UserServiceClient(_core.Channel);
     }
 
-    public async Task<UserResponse> SignUp(string userName, string password)
+    public async UniTask<UserResponse> SignUp(string userName, string password)
     {
         try
         {
@@ -54,7 +55,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<UserResponse> Login(string userName, string password)
+    public async UniTask<UserResponse> Login(string userName, string password)
     {
         try
         {
@@ -92,7 +93,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<List<UserResponse>> GetAllUsers()
+    public async UniTask<List<UserResponse>> GetAllUsers()
     {
         try
         {
@@ -107,7 +108,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<UserResponse> GetUser(string userId)
+    public async UniTask<UserResponse> GetUser(string userId)
     {
         try
         {
@@ -121,7 +122,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<bool> DeleteUser(string userId = "")
+    public async UniTask<bool> DeleteUser(string userId = "")
     {
         try
         {
@@ -149,7 +150,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<UserResponse> UpdateUser()
+    public async UniTask<UserResponse> UpdateUser()
     {
         try
         {
@@ -176,7 +177,7 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
-    public async Task<bool> UpdateStory()
+    public async UniTask<bool> UpdateStory()
     {
         _userData.story_progress += 1;
         try

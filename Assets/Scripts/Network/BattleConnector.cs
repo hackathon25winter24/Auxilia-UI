@@ -32,7 +32,7 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc CreateGame(CreateGameRequest) returns (GameDataResponse);
     /// </summary>
-    public async Task<GameDataResponse> CreateGameData(uint roomID, string player1Id, string player2Id)
+    public async UniTask<GameDataResponse> CreateGameData(uint roomID, string player1Id, string player2Id)
     {
         try
         {
@@ -49,7 +49,7 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc RegisterCharacters(RegisterCharactersRequest) returns (RegisterCharactersResponse);
     /// </summary>
-    public async Task<List<UniqueCharacter>> RegisterCharacters(int roomId, bool is1p, int[] characterIds)
+    public async UniTask<List<UniqueCharacter>> RegisterCharacters(int roomId, bool is1p, int[] characterIds)
     {
         try
         {
@@ -68,7 +68,7 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc GetGameData(GetGameDataRequest) returns (GameDataResponse);
     /// </summary>
-    public async Task<GameDataResponse> GetGameData(int roomId)
+    public async UniTask<GameDataResponse> GetGameData(int roomId)
     {
         try
         {
@@ -92,7 +92,7 @@ public class BattleConnector : MonoBehaviour
         _ = ConnectAndReceiveLoop(roomId, playerId);
     }
 
-    private async Task ConnectAndReceiveLoop(uint roomId, string playerId)
+    private async UniTask ConnectAndReceiveLoop(uint roomId, string playerId)
     {
         while (_isStreamActive)
         {
@@ -119,7 +119,7 @@ public class BattleConnector : MonoBehaviour
         }
     }
 
-    private async Task HandleGameData(GameDataResponse data)
+    private async UniTask HandleGameData(GameDataResponse data)
     {
         if (_battleOnlineManager != null)
         {
@@ -128,7 +128,7 @@ public class BattleConnector : MonoBehaviour
         await Task.CompletedTask;
     }
 
-    public async Task StopStream()
+    public async UniTask StopStream()
     {
         _isStreamActive = false;
         try
@@ -269,20 +269,21 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc FetchActionLog(FetchActionLogRequest) returns (GameActionLog);
     /// </summary>
-    public async UniTask<GameActionLog> FetchActionLog(int roomId, uint sequence, CancellationToken ct = default)
-    {
-        var request = new FetchActionLogRequest { RoomId = (uint)roomId, Sequence = sequence };
-        try
-        {
-            var response = await _battleClient.FetchActionLogAsync(request, cancellationToken: ct);
-            return response;
-        }
-        catch (RpcException e)
-        {
-            _core.ShowErrorMessage($"アクションログ(Seq:{sequence})の取得に失敗しました: {e.Status.Detail}");
-            return null;
-        }
-    }
+    // public async UniTask<GameActionLog> FetchActionLog(int roomId, uint sequence, CancellationToken ct = default)
+    // {
+    //     var request = new FetchActionLogRequest { RoomId = (uint)roomId, Sequence = sequence };
+    //     try
+    //     {
+
+    //         var response = await _battleClient.FetchActionLogAsync(request, cancellationToken: ct);
+    //         return response;
+    //     }
+    //     catch (RpcException e)
+    //     {
+    //         _core.ShowErrorMessage($"アクションログ(Seq:{sequence})の取得に失敗しました: {e.Status.Detail}");
+    //         return null;
+    //     }
+    // }
 }
 
 //使用例
