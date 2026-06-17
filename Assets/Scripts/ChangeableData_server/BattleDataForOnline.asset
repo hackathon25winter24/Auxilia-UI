@@ -61,7 +61,7 @@ MonoBehaviour:
       character_isSelected: 1
       now_character_move_cost: 10
       debuffs: 0000000000000000
-      now_character_position: {x: 5, y: 2}
+      now_character_position: {x: 2, y: 2}
     - unique_id: 0
       now_character_hp: 150
       character_isSelected: 0

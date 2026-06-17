@@ -225,6 +225,8 @@ public class CharacterManager : MonoBehaviour
             {
                 SEManager.instance?.PlayClickSE();
                 _lastAttackDirection = currentDir;
+                // ここで攻撃キャラId、1Pか、攻撃番号、攻撃予告方向をバックに送ればGridに組み込む必要はなくなる。
+                // Gridにするならここにサーバーへのグリッド変更通知（どのグリッドがどう変わるのか）を送信
                 _ = SendGridData();
             }
 
@@ -261,17 +263,6 @@ public class CharacterManager : MonoBehaviour
         }
 
         // 死亡判定はサーバーで通知して欲しい。フロントでは判定処理を持たないで攻撃や移動と同じようにイベントを貰ってProsessDeathを叩く
-
-        /*
-        if(battleDataforLocal.is_myturn)
-        {
-            SendBattleData();
-        }else
-        {
-            //GetBattleData();
-            // データは自動で送られてくるらしいです
-        }
-        */
     }
 
 
@@ -402,12 +393,10 @@ public class CharacterManager : MonoBehaviour
     // 2. マウスがキャラから見てどの方向にいるか判定する関数
     private Vector2Int GetMouseDirection()
     {
-        // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
-        Vector2 charPos = battleViewManager.characters[selected_character_index].transform.position;
-        Vector2 mousePos = inputData.mouse_position; 
+        // キャラクターのキャンバスに対する相対座標とマウスのキャンバス座標の差分を取る
+        Vector2 charPos = battleViewManager.characters[selected_character_index].transform.localPosition;
+        Vector2 mousePos = inputData.mouse_position;
         
-        // 【注意】mousePosがスクリーン座標系の場合、正規化や調整が必要になる可能性があります
-        // 一旦、相対ベクトルを計算してログに出力します
         Vector2 diff = mousePos - charPos;
 
         Vector2Int result;
