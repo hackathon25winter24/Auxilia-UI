@@ -25,7 +25,7 @@ public class TutorialStoryManager : MonoBehaviour
     public GameObject Back;
 
     [Header("Network")]
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
 
 
     [Header("Settings")]
@@ -43,7 +43,7 @@ public class TutorialStoryManager : MonoBehaviour
         storyManagerData.serif_loading = false;
         storyManagerData.is_serif = false;
         
-        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+        if (authenticationConnector == null) authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
 
         autoText.gameObject.SetActive(false);
         Texts.SetActive(true);
@@ -200,7 +200,7 @@ public class TutorialStoryManager : MonoBehaviour
         if(userData.story_progress == 1)
         {
             userData.story_progress = 2;
-            if (gameConnector != null) await gameConnector.UpdateUser();
+            if (authenticationConnector != null) await authenticationConnector.UpdateUser();
             sceneData.next_scene_number = 1;
         }else
         {

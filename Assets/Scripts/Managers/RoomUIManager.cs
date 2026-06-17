@@ -18,7 +18,9 @@ public class RoomUIManager : MonoBehaviour
     public Sprite[] joinnersUIImage;
     public TextMeshProUGUI[] userName;
     public TextMeshProUGUI[] userRate;
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
+    public MatchingConnector matchingConnector;
+    public BattleConnector battleConnector;
     public GameObject renameRoomUI;
     public TMP_InputField renameRoomText;
 
@@ -70,7 +72,7 @@ public class RoomUIManager : MonoBehaviour
             {
                 try 
                 {
-                    _roomStream = gameConnector.StreamRoom(new RoomStreamRequest { RoomId = roomData.room_id, UserId = userData.user_id });
+                    _roomStream = matchingConnector.StreamRoom(new RoomStreamRequest { RoomId = roomData.room_id, UserId = userData.user_id });
                     Debug.Log($"<color=cyan>[StreamRoom] サーバーのリアルタイム同期に接続しました！ (RoomID: {roomData.room_id})</color>");
 
                     while (_isStreaming && !_cts.IsCancellationRequested && await _roomStream.ResponseStream.MoveNext(_cts.Token))
@@ -114,7 +116,9 @@ public class RoomUIManager : MonoBehaviour
     void Awake()
     {
         renameRoomUI.SetActive(false);
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
+        matchingConnector = FindFirstObjectByType<MatchingConnector>();
+        battleConnector = FindFirstObjectByType<BattleConnector>();
         UpDateRoom();
         StartRealtimeSync();
 
@@ -158,7 +162,7 @@ public class RoomUIManager : MonoBehaviour
         {
             case "Back":
                 SEManager.instance?.PlayBackSE();
-                await gameConnector.LeaveRoom(roomData.room_id, userData.user_id);
+                await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 sceneData.next_scene_number = 3;
                 break;
             case "StartBattle":
@@ -183,7 +187,7 @@ public class RoomUIManager : MonoBehaviour
                         // joiner_list は別メソッドのローカル変数のため roomData.usersData を使用
                         string p1Id = "";
                         string p2Id = "";
-                        var roomList = await gameConnector.ListRoom(roomData.room_id);
+                        var roomList = await matchingConnector.ListRoom(roomData.room_id);
                         if (roomList != null)
                         {
                             foreach (var r in roomList)
@@ -194,12 +198,12 @@ public class RoomUIManager : MonoBehaviour
                         }
                         if (!string.IsNullOrEmpty(p1Id) && !string.IsNullOrEmpty(p2Id))
                         {
-                            await gameConnector.CreateGameData((uint)roomData.room_id, p1Id, p2Id);
+                            await battleConnector.CreateGameData((uint)roomData.room_id, p1Id, p2Id);
                         }
 
                         // サーバー上でホストもready状態にしておく
-                        await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, true);
-                        await gameConnector.StartMatch(roomData.room_id);
+                        await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, true);
+                        await matchingConnector.StartMatch(roomData.room_id);
                         sceneData.next_scene_number = 10;
                     }
                     else
@@ -211,7 +215,7 @@ public class RoomUIManager : MonoBehaviour
                 {
                     // ゲスト（親以外）は自分のready状態を切り替える
                     bool newReady = !roomData.usersData[roomData.room_my_index].is_ready;
-                    await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, newReady);
+                    await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, roomData.usersData[roomData.room_my_index].user_state, newReady);
                     
                     if (startBattleButtonText != null)
                     {
@@ -226,7 +230,7 @@ public class RoomUIManager : MonoBehaviour
                 break;
             case "Spectator":
                 SEManager.instance?.PlaySelectSE();
-                await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);
+                await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);
                 UpDateRoom();
                 break;
             case "RenameRoom":
@@ -238,7 +242,7 @@ public class RoomUIManager : MonoBehaviour
             case "AplyRenameRoom":
                 roomData.room_name = renameRoomText.text;
                 renameRoomUI.SetActive(false);
-                await gameConnector.UpdateRoomName(roomData.room_id, roomData.room_name, userData.user_id, false);
+                await matchingConnector.UpdateRoomName(roomData.room_id, roomData.room_name, userData.user_id, false);
                 UpDateRoom();
                 break;
             case "RenameRoomBack":
@@ -269,7 +273,7 @@ public class RoomUIManager : MonoBehaviour
                         newState = 0;
                     }
 
-                    await gameConnector.UpdateRoomState(roomData.room_id, userData.user_id, newState, false);
+                    await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, newState, false);
                     UpDateRoom();
                 }
                 break;
@@ -291,8 +295,8 @@ public class RoomUIManager : MonoBehaviour
         }
 
         //バックエンドから部屋の情報を取得してください
-        var joiner_list = await gameConnector.ListRoom(roomData.room_id);
-        var rooms = await gameConnector.GetAllRoomMatch();
+        var joiner_list = await matchingConnector.ListRoom(roomData.room_id);
+        var rooms = await matchingConnector.GetAllRoomMatch();
         
         if (this == null) return; // シーン移動で破棄されていた場合の安全策
         if (joiner_list == null || rooms == null || joiner_list.Count == 0) return;
@@ -302,14 +306,14 @@ public class RoomUIManager : MonoBehaviour
         {
             if (rooms[i].RoomId == roomData.room_id)
             {
-                owner = await gameConnector.GetUser(rooms[i].OwnerId);
+                owner = await authenticationConnector.GetUser(rooms[i].OwnerId);
                 // Debug.Log($"owner: {owner}");
                 roomData.room_name = rooms[i].RoomName;
             }
         }
         for (int i = 0; i < joiner_list.Count; i++)
         {
-            var user = await gameConnector.GetUser(joiner_list[i].UserId);
+            var user = await authenticationConnector.GetUser(joiner_list[i].UserId);
             
             // 通信待ちの間にシーン移動などでオブジェクトが破棄されていた場合は即時中断する
             if (this == null) return;

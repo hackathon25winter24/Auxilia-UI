@@ -7,7 +7,7 @@ public class TitleUIManager : MonoBehaviour
 {
     public UserData userData;
     public SceneData sceneData;
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
     public StoryManagerData storyManagerData;
     public GameObject login_ui;
     public GameObject signup_ui;
@@ -22,7 +22,7 @@ public class TitleUIManager : MonoBehaviour
     void Awake()
     {
         error_ui.SetActive(false);
-        if (gameConnector != null)
+        if (authenticationConnector != null)
         {
             gameConnector.OnErrorMessage += HandleConnectorError;
         }
@@ -30,7 +30,7 @@ public class TitleUIManager : MonoBehaviour
 
     void OnDestroy()
     {
-        if (gameConnector != null)
+        if (authenticationConnector != null)
         {
             gameConnector.OnErrorMessage -= HandleConnectorError;
         }
@@ -61,7 +61,7 @@ public class TitleUIManager : MonoBehaviour
             SEManager.instance?.PlayToNextSE();
             userData.user_name = user_name_for_login.text;
             userData.password = password_for_login.text;
-            var user = await gameConnector.Login(userData.user_name, userData.password);
+            var user = await authenticationConnector.Login(userData.user_name, userData.password);
             if(user == null)
             {
                 error_ui.SetActive(true);
@@ -82,7 +82,7 @@ public class TitleUIManager : MonoBehaviour
             SEManager.instance?.PlayToNextSE();
             userData.user_name = user_name_for_signup.text;
             userData.password = password_for_signup.text;
-            var new_user = await gameConnector.SignUp(userData.user_name, userData.password);
+            var new_user = await authenticationConnector.SignUp(userData.user_name, userData.password);
             if(new_user == null)
             {
                 error_ui.SetActive(true);

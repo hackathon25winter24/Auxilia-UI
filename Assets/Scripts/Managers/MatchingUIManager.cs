@@ -19,7 +19,8 @@ public class MatchingUIManager : MonoBehaviour
     public Transform contentParentJoinner;
     public GameObject kensakuButton;
     public TMP_InputField kensakuInput;
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
+    public MatchingConnector matchingConnector;
     public bool is_roading;
     public GameObject nowLoadingText;
 
@@ -29,7 +30,8 @@ public class MatchingUIManager : MonoBehaviour
     {
         nowLoadingText.SetActive(false);
         kensakuButton.SetActive(false);
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        matchingConnector = FindFirstObjectByType<MatchingConnector>();
+        authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
         is_roading = true;
         nowLoadingText.SetActive(true);
         await UpDateRoomInformation();
@@ -130,7 +132,7 @@ public class MatchingUIManager : MonoBehaviour
         }
 
         // 部屋をクリックした時にも部屋情報を取得（ローカルに保存しておいて読み込むでも良いが、matchingDataが多くの情報を保管しすぎても見ずらいかなと思ったり。なるべくDB側とデータの構造を合わせた方が管理しやすいと思うので。）
-        var joinners = await gameConnector.ListRoom(matchingData.rooms[roomNumber].room_id);
+        var joinners = await matchingConnector.ListRoom(matchingData.rooms[roomNumber].room_id);
         for (int i = 0; i < num_joinner; i++)
         {
             GameObject newButton = Instantiate(playerName, contentParentJoinner);
@@ -139,7 +141,7 @@ public class MatchingUIManager : MonoBehaviour
 
         if (entity != null)
         {
-            var joinner_info = await gameConnector.GetUser(joinners[i].UserId);// ユーザーの名前とレート情報を引き出すため
+            var joinner_info = await authenticationConnector.GetUser(joinners[i].UserId);// ユーザーの名前とレート情報を引き出すため
             string joinner_name = joinner_info.Name;
             int joinner_rate = joinner_info.Rate;
             entity.SetJoinnerData(joinner_name, joinner_rate, joinners[i].State);
@@ -155,7 +157,7 @@ public class MatchingUIManager : MonoBehaviour
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
-            var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, userData.user_id);
+            var response = await matchingConnector.JoinRoom(matchingData.rooms[index].room_id, userData.user_id);
             if (response != null && response.Rooms.Count > 0)
             {
                 bool has1p = false, has2p = false;
@@ -171,7 +173,7 @@ public class MatchingUIManager : MonoBehaviour
                 if (!has1p) newState = 1;
                 else if (!has2p) newState = 2;
                 
-                await gameConnector.UpdateRoomState(matchingData.rooms[index].room_id, userData.user_id, newState, false);
+                await matchingConnector.UpdateRoomState(matchingData.rooms[index].room_id, userData.user_id, newState, false);
 
                 // 次はここから直す？
                 roomData.room_id = response.Rooms[0].RoomId;
@@ -201,7 +203,7 @@ public class MatchingUIManager : MonoBehaviour
         Debug.Log("UpdateRoomInformation実行中");
         //ここに部屋の数を取得する関数を書いてください
         // List<RoomMatch> room_list に全部屋の情報が入ってます
-        var room_list = await gameConnector.GetAllRoomMatch();
+        var room_list = await matchingConnector.GetAllRoomMatch();
         //データはmatchingData.num_roomに格納してください
         matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
@@ -209,9 +211,9 @@ public class MatchingUIManager : MonoBehaviour
         for (int i = 0; i < room_list.Count; i++)
         {
             int room_id = room_list[i].RoomId;
-            var joinners = await gameConnector.ListRoom(room_id);// 各部屋の参加者数取得のため
+            var joinners = await matchingConnector.ListRoom(room_id);// 各部屋の参加者数取得のため
             string owner_id = room_list[i].OwnerId;
-            var owner = await gameConnector.GetUser(owner_id);// 各部屋のオーナー情報を取得
+            var owner = await authenticationConnector.GetUser(owner_id);// 各部屋のオーナー情報を取得
 
             // matchingDataをDBの最新状態に更新
             matchingData.rooms[i].num_room_joiner = joinners.Count;
@@ -244,11 +246,11 @@ public class MatchingUIManager : MonoBehaviour
             Debug.Log("部屋名が入力されていないかユーザーIDが登録されていません");
             return;
         }
-        var response = await gameConnector.CreateRoomMatch(room_name, userData.user_id, false);
+        var response = await matchingConnector.CreateRoomMatch(room_name, userData.user_id, false);
         if (response != null)
         {
-            await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
-            await gameConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
+            await matchingConnector.JoinRoom(response.RoomId, response.OwnerId);
+            await matchingConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
             // 新たにRoomDataにIDを追加
             roomData.room_id = response.RoomId;

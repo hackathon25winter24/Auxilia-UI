@@ -31,6 +31,8 @@ public class CharacterManager : MonoBehaviour
         set { _gameConnector = value; }
     }
     private GameConnector _gameConnector;
+    // おそらくシングルトンになれば上の方が良い。暫定的な処理を書いておきます。
+    public BattleConnector battleConnector;
     public RoomData roomData;
     public UserData userData;
 
@@ -64,6 +66,8 @@ public class CharacterManager : MonoBehaviour
     void Awake()
     {
         Debug.Log("[CharacterManager] Awake Started");
+        // 暫定的な処理
+        battleConnector = FindFirstObjectByType<BattleConnector>();
         roomData = GetSo(roomData);
         userData = GetSo(userData);
     }
@@ -76,7 +80,7 @@ public class CharacterManager : MonoBehaviour
     }
     void OnDestroy()
     {
-        _ = gameConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
+        _ = battleConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
     }
 
 
@@ -201,7 +205,7 @@ public class CharacterManager : MonoBehaviour
 
     private async Task SendGridData()// 現状だとGridDataForOnlineをフロントで書き換えて、そのデータをサーバーに同期させる構造になってるように見える。
     {
-        if (gameConnector != null && roomData != null && userData != null && battleDataforOnline != null)
+        if (battleConnector != null && roomData != null && userData != null && battleDataforOnline != null)
         {
             Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={userData.user_id}</color>");
             Debug.Log($"<color=cyan>[SendGridData] Sending Cost: {self.current_cost_remaining}</color>");
@@ -255,10 +259,10 @@ public class CharacterManager : MonoBehaviour
             }else
             {
                 // 移動処理
-                if (inputData.up_key_ispressed)    TryMove(0, -1, new Vector2(0, 50));
-                else if (inputData.down_key_ispressed)  TryMove(0, 1, new Vector2(0, -50));
-                else if (inputData.right_key_ispressed) TryMove(1, 0, new Vector2(50, 0));
-                else if (inputData.left_key_ispressed)  TryMove(-1, 0, new Vector2(-50, 0));
+                if (inputData.up_key_ispressed)    TryMove(0, -1);
+                else if (inputData.down_key_ispressed)  TryMove(0, 1);
+                else if (inputData.right_key_ispressed) TryMove(1, 0);
+                else if (inputData.left_key_ispressed)  TryMove(-1, 0);
             }
         }
 
@@ -280,7 +284,7 @@ public class CharacterManager : MonoBehaviour
         return range;
     }
 
-    async void TryMove(int moveX, int moveY, Vector2 posDelta)
+    async void TryMove(int moveX, int moveY)
     {
         SEManager.instance?.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
         int currentX = self.characters[selected_character_index].now_character_position.x;
@@ -300,10 +304,8 @@ public class CharacterManager : MonoBehaviour
         UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        // 本来ここでSendMoveを呼ぶ。下のコードは消す
-        await gameConnector.SendMove(roomData.room_id, self.player_id, self.characters[selected_character_index].unique_id, 
-        nextX, nextY, self.characters[selected_character_index].now_character_move_cost);
-        // self.characters[selected_character_index].now_character_position = new Vector2Int(nextX, nextY);
+        await battleConnector.SendMove(roomData.room_id, self.player_id, self.characters[selected_character_index].unique_id, 
+        nextX, nextY);
 
         //デバフマスの処理をする
         if(gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] == 3)
@@ -776,6 +778,6 @@ public class CharacterManager : MonoBehaviour
     public void NotifyTurnEnd()
     {
         if (userData == null || roomData == null) return;
-        _ = gameConnector.SendTurnEnd(roomData.room_id, userData.user_id);
+        _ = battleConnector.SendTurnEnd(roomData.room_id, userData.user_id);
     }
 }
