@@ -103,10 +103,6 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    public AsyncServerStreamingCall<ListRoomResponse> StreamRoom(RoomStreamRequest request)
-    {
-        return _roomClient.StreamRoom(request);
-    }
 
     public async UniTask<UpdateRoomStateResponse> UpdateRoomState(int roomId, string userId, int state, bool isReady)
     {

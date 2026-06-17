@@ -7,46 +7,43 @@ using System.Threading.Tasks;
 
 public class BattleOnlineManager : MonoBehaviour
 {
+    [Header("Data & ScriptableObjects")]
     public CharacterData characterData;
     public InputData inputData;
     public SceneData sceneData;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
-    public BattleViewManager battleViewManager;
     public GridDataforOnline gridDataforOnline;
-    public GridManager gridManager;
     public RoomData roomData;
 
+    [Header("Managers & Views")]
+    public BattleViewManager battleViewManager;
+    public GridManager gridManager;
+    private CharacterManager characterManager;
+
+    [Header("UI Elements")]
     public TextMeshProUGUI gametext;
     public RectTransform gameTextObject;
-
-    private GameConnector _gameConnector;
-    public GameConnector gameConnector {
-        get {
-            // 他の GameConnector が Awake で自分自身を Destroy していても、
-            // 正しいシングルトンインスタンス(最初に Awake が完了したもの)を確実に取得するようにする
-            if (GameConnector.instance != null) return GameConnector.instance;
-            if (_gameConnector == null) _gameConnector = GameConnector.instance;
-            return _gameConnector;
-        }
-        set { _gameConnector = value; }
-    }
-    // 暫定的に代用しておきます
-    public BattleConnector battleConnector;
-    public AuthenticationConnector authenticationConnector;
-
     public Slider timerSlider; 
+
+    [Header("Timer Settings")]
     public float maxTime = 60f; 
     private float currentTime;
     private bool isTimerRunning = false;
 
+    [Header("Text Animation Settings")]
     Vector2 startPosition = new Vector2(1000, 0);
     Vector2 destination = new Vector2(-1000, 0);
     public float duration = 2.0f;
     public float elapsed = 0f;
     public bool is_text_moving;
     private uint consumed_attack_id = 0;
+
+    private NetworkManager Net => NetworkManager.Instance;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
+    private BattleConnector battleConnector => Net?.Battle;
+
 
     private T GetSo<T>(T existing) where T : ScriptableObject
     {
@@ -63,14 +60,19 @@ public class BattleOnlineManager : MonoBehaviour
         {
             roomData = GetSo(roomData);
             userData = GetSo(userData);
-            
-            battleConnector = FindFirstObjectByType<BattleConnector>();
-            authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
 
             characterManager = FindFirstObjectByType<CharacterManager>();
             gridManager = FindFirstObjectByType<GridManager>();
-            // GameConnectorにこのシーンのBattleOnlineManagerを登録
-            gameConnector.battleOnlineManager = this;
+
+            if (Net != null)
+            {
+                Net.battleOnlineManager = this;
+            }
+            else
+            {
+                Debug.LogError("[BattleOnlineManager] NetworkManager.Instance が存在しません。インスペクターか初期化順を確認してください。");
+                return;
+            }
 
             // --- 重要: 通信開始前にイベントだけ先に購読する ---
             var battleView = FindFirstObjectByType<BattleViewManager>();
@@ -95,14 +97,14 @@ public class BattleOnlineManager : MonoBehaviour
     }
     void Start()
     {
-        if (roomData != null && userData != null)
+        if (roomData != null && userData != null && Net != null && Net.Battle != null)
         {
             Debug.Log("[BattleOnlineManager] StartStream starting in Start()");
-            battleConnector.StartStream((uint)roomData.room_id, userData.user_id);
+            Net.Battle.StartStream((uint)roomData.room_id, userData.user_id);
         }
         else
         {
-            Debug.LogError("BattleOnlineManager: roomDataまたはplayerDataが見つからないためStartStreamをスキップしました。");
+            Debug.LogError("BattleOnlineManager: 必要なデータまたは NetworkManager.Battle が見つからないため StartStream をスキップしました。");
         }
     }
 
@@ -485,8 +487,6 @@ public class BattleOnlineManager : MonoBehaviour
         StartCoroutine(MoveRoutine());
         TimerStart();
     }
-
-    private CharacterManager characterManager;
 
     public void EndMyTurn()
     {

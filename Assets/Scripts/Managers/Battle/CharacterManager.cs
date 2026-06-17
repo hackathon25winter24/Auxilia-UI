@@ -20,19 +20,6 @@ public class CharacterManager : MonoBehaviour
     public BattleViewManager battleViewManager;
     public int attack_number;
     public bool is_attacking = false;
-    public GameConnector gameConnector {
-        get {
-            // 他の GameConnector が Awake で自分自身を Destroy していても、
-            // 正しいシングルトンインスタンス(最初に Awake が完了したもの)を確実に取得するようにする
-            if (GameConnector.instance != null) return GameConnector.instance;
-            if (_gameConnector == null) _gameConnector = GameConnector.instance;
-            return _gameConnector;
-        }
-        set { _gameConnector = value; }
-    }
-    private GameConnector _gameConnector;
-    // おそらくシングルトンになれば上の方が良い。暫定的な処理を書いておきます。
-    public BattleConnector battleConnector;
     public RoomData roomData;
     public UserData userData;
 
@@ -54,6 +41,9 @@ public class CharacterManager : MonoBehaviour
     private Vector2Int _lastAttackDirection;
     private bool _isFirstAttackFrame; // 連続クリック防止用
 
+    private NetworkManager Net => NetworkManager.Instance;
+    private BattleConnector battleConnector => Net?.Battle;
+
 
     private T GetSo<T>(T existing) where T : ScriptableObject
     {
@@ -66,8 +56,11 @@ public class CharacterManager : MonoBehaviour
     void Awake()
     {
         Debug.Log("[CharacterManager] Awake Started");
-        // 暫定的な処理
-        battleConnector = FindFirstObjectByType<BattleConnector>();
+        if (Net == null)
+        {
+            Debug.LogError("[CharacterManager] NetworkManager.Instance が存在しません。初期化順を確認してください。");
+            return;
+        }
         roomData = GetSo(roomData);
         userData = GetSo(userData);
     }
@@ -80,7 +73,7 @@ public class CharacterManager : MonoBehaviour
     }
     void OnDestroy()
     {
-        _ = battleConnector.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
+        _ = battleConnector?.StopStream();// 自動更新を終了する。場所は必要に応じて変えてください
     }
 
 

@@ -194,28 +194,31 @@ public class BattleConnector : MonoBehaviour
 /// 変更のあったグリッドの差分（1マス分）だけをサーバーに送信する
 /// rpc ApplyGridUpdate(GridUpdateAction) returns (AcceptResponse);
 /// </summary>
-    public async UniTask<bool> SendGridUpdate(int roomId, string playerId, int x, int y, int gridType, int debuffType, bool is1p, CancellationToken ct = default)
+    public async UniTask<bool> SendGridUpdate(int roomId, string playerId,List<GridInfo> gridList, CancellationToken ct = default)
     {
         if (_battleClient == null) return false;
 
         var request = new GridUpdateAction
         {
             RoomId = (uint)roomId,
-            // PlayerId = playerId // ※もし .proto に player_id を追加した場合はここを有効化してください
-            Grid = new GridInfo
-            {
-                PositionX = (uint)x,
-                PositionY = (uint)y,
-                GridType = gridType,
-                DebuffType = debuffType,
-                IsCharacterStay = false // 💡 座標競合を防ぐため、フロントからは一律false（判定はサーバーに一任）を推奨
-            }
+            PlayerId = playerId
         };
+
+        foreach (var g in gridList)
+        {
+            request.Grids.Add(new GridInfo
+            {
+                PositionX = (uint)g.PositionX,
+                PositionY = (uint)g.PositionY,
+                GridType = g.GridType,
+                DebuffType = g.DebuffType
+            });
+        }
         
         try
         {
             var response = await _battleClient.ApplyGridUpdateAsync(request, cancellationToken: ct);
-            Debug.Log($"<color=lime>[GridUpdate] 差分送信成功: ({x}, {y}) -> Type:{gridType}</color>");
+            Debug.Log($"<color=lime>[GridUpdate] 差分送信成功");
             return response.Success;
         }
         catch (RpcException e)
