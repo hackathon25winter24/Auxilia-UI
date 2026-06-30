@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 using System.Threading.Tasks;
+using System.Threading;
 
 public class BattleOnlineManager : MonoBehaviour
 {
@@ -43,6 +44,8 @@ public class BattleOnlineManager : MonoBehaviour
     private NetworkManager Net => NetworkManager.Instance;
     private AuthenticationConnector authenticationConnector => Net?.Auth;
     private BattleConnector battleConnector => Net?.Battle;
+    private float _turnTransitionTime = 0f;
+    private CancellationTokenSource _battleCts;
 
 
     private T GetSo<T>(T existing) where T : ScriptableObject
@@ -108,7 +111,6 @@ public class BattleOnlineManager : MonoBehaviour
         }
     }
 
-    private float _turnTransitionTime = 0f; // ターン切り替え時の猶予時間
     
     void Update()
     {
@@ -265,14 +267,14 @@ public class BattleOnlineManager : MonoBehaviour
 
 
         // 攻撃情報の受け取り
-        if (gameData.AttackInfos != null && gameData.AttackInfos.Count > 0)
+        if (gameData.GameActionLog.AttackDetail != null && gameData.GameActionLog.AttackDetail.TargetCharacterUniqueIds.Count > 0)
         {
-            foreach (var ai in gameData.AttackInfos)
+            foreach (var tcuid in gameData.GameActionLog.AttackDetail.TargetCharacterUniqueIds)
             {
                 // すでに処理した情報だった場合は受け取らない
-                if (ai.Id <= consumed_attack_id) break;
-                consumed_attack_id = ai.Id;
-                Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={ai.AttackerSide}, AttackerID={ai.AttackerCharacterId}, Type={ai.AttackType}</color>");
+                if (gameData.GameActionLog.Sequence <= consumed_attack_id) break;
+                consumed_attack_id = gameData.GameActionLog.Sequence;
+                Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={gameData.GameActionLog.PlayerId}, AttackerID={gameData.GameActionLog.ActorCharacterUniqueId}, Type={gameData.GameActionLog.AttackDetail.AttackType}</color>");
                 
 
                 // イベントの発火 (攻撃ログ?)
