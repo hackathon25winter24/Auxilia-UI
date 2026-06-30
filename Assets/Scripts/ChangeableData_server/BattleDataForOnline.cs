@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "BattleDataForOnline", menuName = "Scriptable Objects/BattleDataForOnline")]
 public class BattleDataForOnline : ScriptableObject
@@ -9,6 +10,7 @@ public class BattleDataForOnline : ScriptableObject
     public string winner_player_id;
     public PlayerState player1;
     public PlayerState player2;
+    public List<DebuffGrid> debuffGrids = new List<DebuffGrid>();
 }
 
 [System.Serializable]
@@ -35,4 +37,12 @@ public class CharactersBattleData
     public int now_character_move_cost;// コスト変更はどこでやるか要検討。デバフ情報だけ貰ってローカルで計算してもよい？
     public bool[] debuffs = new bool[8];// 0: 威力上昇, 1: 俊足, 2: 俊敏化, 3: 毒, 4: 麻痺, 5: 鈍足, 6: 鈍化, 7: 出血
     public Vector2Int now_character_position;// サーバーのキャラのPositionX,Yを参照して代入される。指定したキャラが現在いるマス目を表すものとして使われています。グリッドとの関係は未調査
+}
+
+
+[System.Serializable]
+public class DebuffGrid
+{
+    public Vector2Int position;
+    public int debuffType;
 }
