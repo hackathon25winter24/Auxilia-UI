@@ -1130,7 +1130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a89d29977a2d843ad164e94fc277a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userData: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   characters:
@@ -1715,52 +1715,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &274369377
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 274369379}
-  - component: {fileID: 274369378}
-  m_Layer: 0
-  m_Name: Gameconnecter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &274369378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274369377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b839d7088c07011439a282720b59c9c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleOnlineManager: {fileID: 0}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
---- !u!4 &274369379
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274369377}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 449.69327, y: 202.67078, z: -2.4102023}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &295775403
 GameObject:
   m_ObjectHideFlags: 0
@@ -4028,6 +3982,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &654459091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 654459093}
+  - component: {fileID: 654459092}
+  m_Layer: 0
+  m_Name: NetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &654459092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654459091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74f67daefcde34ed0b5583510f661238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleOnlineManager: {fileID: 0}
+  userData: {fileID: 0}
+--- !u!4 &654459093
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654459091}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1000.1699, y: 412.48065, z: -6.901499}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &724537373
 GameObject:
   m_ObjectHideFlags: 0
@@ -4735,13 +4735,13 @@ MonoBehaviour:
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
+  userData: {fileID: 0}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
-  battleViewManager: {fileID: 230577679}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  gridManager: {fileID: 0}
   roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
+  battleViewManager: {fileID: 230577679}
+  gridManager: {fileID: 0}
   gametext: {fileID: 804024913}
   gameTextObject: {fileID: 804024912}
   timerSlider: {fileID: 1371578506}
@@ -8449,9 +8449,8 @@ MonoBehaviour:
   AttackGrid: {fileID: -5848888792363991607, guid: 3897784cf3a7932429efa5a38f733182, type: 3}
   MakibishiGrid: {fileID: -6893078568485714706, guid: 19e22a87479b3a5458f0e9787f2ce5cd, type: 3}
   LandmineGrid: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
-  gameConnector: {fileID: 0}
   roomData: {fileID: 0}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
+  userData: {fileID: 0}
 --- !u!4 &1561611875
 Transform:
   m_ObjectHideFlags: 0
@@ -11369,5 +11368,5 @@ SceneRoots:
   - {fileID: 230577680}
   - {fileID: 810701686}
   - {fileID: 40473829}
-  - {fileID: 274369379}
   - {fileID: 1954012816}
+  - {fileID: 654459093}

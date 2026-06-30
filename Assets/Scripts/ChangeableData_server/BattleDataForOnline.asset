@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BattleDataForOnline
   m_EditorClassIdentifier: 
   turn_number: 0
-  is_1p_turn: 0
+  is_1p_turn: 1
   is_finished: 0
   winner_player_id: 
   player1:
@@ -28,7 +28,7 @@ MonoBehaviour:
       character_isSelected: 0
       now_character_move_cost: 10
       debuffs: 0000000000000000
-      now_character_position: {x: 7, y: 0}
+      now_character_position: {x: 5, y: 0}
     - unique_id: 1
       now_character_hp: 300
       character_isSelected: 0
@@ -55,13 +55,13 @@ MonoBehaviour:
       character_isSelected: 0
       now_character_move_cost: 5
       debuffs: 0000000000000000
-      now_character_position: {x: 0, y: 0}
+      now_character_position: {x: 1, y: 0}
     - unique_id: 1
       now_character_hp: 300
       character_isSelected: 1
       now_character_move_cost: 10
       debuffs: 0000000000000000
-      now_character_position: {x: 2, y: 2}
+      now_character_position: {x: 1, y: 2}
     - unique_id: 0
       now_character_hp: 150
       character_isSelected: 0
@@ -70,3 +70,84 @@ MonoBehaviour:
       now_character_position: {x: 0, y: 4}
     rate: 0
     rate_updown: 0
+  debuffGrids:
+  - position: {x: 0, y: 0}
+    debuffType: 0
+  - position: {x: 0, y: 1}
+    debuffType: 0
+  - position: {x: 0, y: 2}
+    debuffType: 0
+  - position: {x: 0, y: 3}
+    debuffType: 0
+  - position: {x: 0, y: 4}
+    debuffType: 0
+  - position: {x: 1, y: 0}
+    debuffType: 0
+  - position: {x: 1, y: 1}
+    debuffType: 0
+  - position: {x: 1, y: 2}
+    debuffType: 0
+  - position: {x: 1, y: 3}
+    debuffType: 0
+  - position: {x: 1, y: 4}
+    debuffType: 0
+  - position: {x: 2, y: 0}
+    debuffType: 0
+  - position: {x: 2, y: 1}
+    debuffType: 0
+  - position: {x: 2, y: 2}
+    debuffType: 0
+  - position: {x: 2, y: 3}
+    debuffType: 0
+  - position: {x: 2, y: 4}
+    debuffType: 0
+  - position: {x: 3, y: 0}
+    debuffType: 0
+  - position: {x: 3, y: 1}
+    debuffType: 0
+  - position: {x: 3, y: 2}
+    debuffType: 0
+  - position: {x: 3, y: 3}
+    debuffType: 0
+  - position: {x: 3, y: 4}
+    debuffType: 0
+  - position: {x: 4, y: 0}
+    debuffType: 0
+  - position: {x: 4, y: 1}
+    debuffType: 0
+  - position: {x: 4, y: 2}
+    debuffType: 0
+  - position: {x: 4, y: 3}
+    debuffType: 0
+  - position: {x: 4, y: 4}
+    debuffType: 0
+  - position: {x: 5, y: 0}
+    debuffType: 0
+  - position: {x: 5, y: 1}
+    debuffType: 0
+  - position: {x: 5, y: 2}
+    debuffType: 0
+  - position: {x: 5, y: 3}
+    debuffType: 0
+  - position: {x: 5, y: 4}
+    debuffType: 0
+  - position: {x: 6, y: 0}
+    debuffType: 0
+  - position: {x: 6, y: 1}
+    debuffType: 0
+  - position: {x: 6, y: 2}
+    debuffType: 0
+  - position: {x: 6, y: 3}
+    debuffType: 0
+  - position: {x: 6, y: 4}
+    debuffType: 0
+  - position: {x: 7, y: 0}
+    debuffType: 0
+  - position: {x: 7, y: 1}
+    debuffType: 0
+  - position: {x: 7, y: 2}
+    debuffType: 0
+  - position: {x: 7, y: 3}
+    debuffType: 0
+  - position: {x: 7, y: 4}
+    debuffType: 0

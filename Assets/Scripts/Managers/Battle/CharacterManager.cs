@@ -93,10 +93,8 @@ public class CharacterManager : MonoBehaviour
                 selected_character_index = 0;
                 BackButton.gameObject.SetActive(true);
                 // キャラクターの選択をサーバーに通知する処理は現状不要。battleDataForOnlineを直接書き換える。
-                // 次フレームでフロントのis_selectedがtrueになる
                 self.characters[selected_character_index].character_isSelected = true;
                 battleViewManager.ShowAttackWindow();
-                _ = SendGridData();     int これは何の処理 = 0;
                 break;
             case "2":
                 SEManager.instance?.PlaySelectSE();
@@ -104,7 +102,6 @@ public class CharacterManager : MonoBehaviour
                 BackButton.gameObject.SetActive(true);
                 self.characters[selected_character_index].character_isSelected = true;
                 battleViewManager.ShowAttackWindow();
-                _ = SendGridData();
                 break;
             case "3":
                 SEManager.instance?.PlaySelectSE();
@@ -112,7 +109,6 @@ public class CharacterManager : MonoBehaviour
                 BackButton.gameObject.SetActive(true);
                 self.characters[selected_character_index].character_isSelected = true;
                 battleViewManager.ShowAttackWindow();
-                _ = SendGridData();
                 break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
@@ -147,6 +143,7 @@ public class CharacterManager : MonoBehaviour
                 */
 
                 int これは何の処理 = 0;
+                // ↑おそらく攻撃範囲の表示をリセットする処理
                 for (int y = 0; y < 5; y++)
                 {
                     for (int x = 0; x < 8; x++)
@@ -166,8 +163,6 @@ public class CharacterManager : MonoBehaviour
                 battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
-                // グリッドは後で考える
-                _ = SendGridData();
             }
             if(buttonName == "Attack2") 
             {
@@ -179,7 +174,6 @@ public class CharacterManager : MonoBehaviour
                 battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
-                _ = SendGridData();
             }
             if(buttonName == "Attack3") 
             {
@@ -191,19 +185,7 @@ public class CharacterManager : MonoBehaviour
                 battleViewManager.HideAttackWindow();
                 is_attacking = true;
                 _isFirstAttackFrame = true; // ガード開始
-                _ = SendGridData();
             }
-        }
-    }
-
-    private async Task SendGridData()// 現状だとGridDataForOnlineをフロントで書き換えて、そのデータをサーバーに同期させる構造になってるように見える。
-    {
-        if (battleConnector != null && roomData != null && userData != null && battleDataforOnline != null)
-        {
-            Debug.Log($"<color=yellow><b>[SendGridData] 送信開始</b>: Room={roomData.room_id}, User={userData.user_id}</color>");
-            Debug.Log($"<color=cyan>[SendGridData] Sending Cost: {self.current_cost_remaining}</color>");
-            // 一旦コメントアウト
-            // await gameConnector.SendGridUpdate(roomData.room_id, userData.user_id, gridDataforOnline, battleDataforOnline, is_1p, self.current_cost_remaining);
         }
     }
 
@@ -224,7 +206,7 @@ public class CharacterManager : MonoBehaviour
                 _lastAttackDirection = currentDir;
                 // ここで攻撃キャラId、1Pか、攻撃番号、攻撃予告方向をバックに送ればGridに組み込む必要はなくなる。
                 // Gridにするならここにサーバーへのグリッド変更通知（どのグリッドがどう変わるのか）を送信
-                _ = SendGridData();
+                // 攻撃予告方向はバックに送らない可能性あり
             }
 
             // 左クリックで攻撃を確定させる
@@ -333,7 +315,7 @@ public class CharacterManager : MonoBehaviour
         // ここでSendMoveを呼べば良い？
     
     // 移動した際にグリッドデータを送信
-    _ = SendGridData();
+    // _ = SendGridData();
 
     }
     }
@@ -603,8 +585,7 @@ public class CharacterManager : MonoBehaviour
     */
 
     // すべての攻撃送信（awaitしたもの）が終わってからグリッド同期
-    int 必要かどうか要検討 = 0;
-    await SendGridData();
+
     }
 
     private async Task SendAttackInfo(int targetIdx)

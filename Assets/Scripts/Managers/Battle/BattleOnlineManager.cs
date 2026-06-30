@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
-using System.Threading.Tasks;
 using System.Threading;
 
 public class BattleOnlineManager : MonoBehaviour
@@ -267,7 +266,7 @@ public class BattleOnlineManager : MonoBehaviour
 
 
         // 攻撃情報の受け取り
-        if (gameData.GameActionLog.AttackDetail != null && gameData.GameActionLog.AttackDetail.TargetCharacterUniqueIds.Count > 0)
+        if (gameData.GameActionLog?.AttackDetail != null && gameData.GameActionLog.AttackDetail.TargetCharacterUniqueIds.Count > 0)
         {
             foreach (var tcuid in gameData.GameActionLog.AttackDetail.TargetCharacterUniqueIds)
             {
@@ -300,30 +299,6 @@ public class BattleOnlineManager : MonoBehaviour
             sb.AppendLine($"  Chara: UniqueId={c.Id}  Is1P={c.Is1P}  CharaId={c.CharacterId}  HP={c.Hp}  PosX={c.PositionX}  PosY={c.PositionY}");
         }
         Debug.Log(sb.ToString());
-
-
-        /* ここのコメントアウトの内容はSetBattleDataForOnlineのグリッド同期で十分だと思うのですが、有識者の方これ消して大丈夫ですか？問題なければ削除お願いします
-
-        // グリッド上のキャラクター占有フラグを再構築
-        // まずフルリセット
-        for (int gy = 0; gy < 5; gy++)
-            for (int gx = 0; gx < 8; gx++)
-                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] = gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
-
-        // 各キャラクターの現在位置を -1 (occupied) にセット
-        for (int i = 0; i <= 5; i++)
-        {
-            int px = battleDataforOnline.charactersBattleDatas[i].now_character_position.x;
-            int py = battleDataforOnline.charactersBattleDatas[i].now_character_position.y;
-            if (px >= 0 && px < 8 && py >= 0 && py < 5)
-                gridDataforOnline.grid_state_y[py].grid_state_x[px] = -1;
-        }
- 
-        // 受信したデータによるグリッド変化が無限ループで送信されないよう前フレーム状態を同期
-        GridManager gm = Object.FindFirstObjectByType<GridManager>();
-        if (gm != null) gm.SyncPrevGridState();
-
-        */
     }
 
     // 同期時にサーバーから受け取った情報は、この関数を通してSOにセットする。するのはセットだけでイベント通知や具体的な処理は書かない
@@ -342,85 +317,27 @@ public class BattleOnlineManager : MonoBehaviour
         battleDataforOnline.player2.base_hp = (int)gameData.BaseHp2;
 
         // コストをサーバーから反映
-        // ここの処理が分かったらおそらくis_1pを削除できる。ここではis_1pを持つ必要はないと思う
-        bool is_1p = (userData.user_id == gameData.Player1Id);
-        int serverMyCost = is_1p ? (int)gameData.Cost1P : (int)gameData.Cost2P;
-        PlayerState player = is_1p ? battleDataforOnline.player1 : battleDataforOnline.player2;
-
-        if (serverMyCost == 0 && player.current_cost_remaining > 0 && !gameData.IsFinished)
-        {
-            int 何をしているか分からなかった処理 = 0;
-            // おそらくローカル側からサーバー側を書き換えた時の処理なので、サーバー側を主軸にするなら不要では
-            Debug.LogWarning($"<color=red>[CostSync] IGNORED zero cost update from server. Server: P1={gameData.Cost1P}, P2={gameData.Cost2P}</color>");
-        }
-        else
-        {
-            Debug.Log($"<color=cyan>[CostSync] received Cost: 1p={gameData.Cost1P}, 2p={gameData.Cost2P}</color>");
-            battleDataforOnline.player1.current_cost_remaining = (int)gameData.Cost1P;
-            battleDataforOnline.player2.current_cost_remaining = (int)gameData.Cost2P;
-        }
-
-/*
-        // グリッドデータ（地形情報）の同期
-        // サーバーは全マス（40マス）を GridType 付きで送ってくる
-        // GridType の値はクライアントと同じ体系: 0=通常, 1=拠点, -2=進入禁止, -1=キャラ占有, 3=まきびし, 4=地雷
-        //
-        // ① まず sub_grid_state と highlights をリセット（サーバーが全マス送ってくるので毎回上書きでOK）
-        for (int gy = 0; gy < 5; gy++)
-        {
-            for (int gx = 0; gx < 8; gx++)
-            {
-                gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = 0;
-                gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 0;
-            }
-        }
-
-        // グリッドの同期処理
-        if (gameData.Grids != null && gameData.Grids.Count > 0)
-        {
-            // デバッグ：サーバーから受け取った GridInfo を確認
-            var gridSb = new System.Text.StringBuilder();
-            gridSb.AppendLine($"<color=yellow>[GridSync] サーバーから {gameData.Grids.Count} 個のGridInfoを受信</color>");
-            foreach (var g in gameData.Grids)
-            {
-                Vector2Int converted = gridManager.ConvertCoordinateForServer((int)g.PositionX, (int)g.PositionY, is_1p);
-                int gx = converted.x;
-                int gy = converted.y;
-                if (gx >= 0 && gx < 8 && gy >= 0 && gy < 5)
-                {
-                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx] = (int)g.GridType;
-                    
-                    // 攻撃範囲ハイライトの同期
-                    if (g.IsAttackRange)
-                    {
-                        gridDataforOnline.grid_attack_position_y[gy].grid_attack_position_x[gx] = 1;
-                    }
-
-                    if (g.GridType != 0)// 通常マスでない場所をログに出す
-                        gridSb.AppendLine($"  Grid[{gx},{gy}] GridType={g.GridType} Sel={g.IsSelected} Ark={g.IsAttackRange}");
-                }
-            }
-            Debug.Log(gridSb.ToString());
-        }
-        else
-        {
-            Debug.Log("<color=yellow>[GridSync] data.Grids が null または空</color>");
-        }
-
-        // ② grid_state を sub_grid_state ベースで再構築（キャラクター占有フラグは後で上書き）
-        int これもsubの役割が分からないため適当か不明 = 0;
-        for (int gy = 0; gy < 5; gy++)
-            for (int gx = 0; gx < 8; gx++)
-                gridDataforOnline.grid_state_y[gy].grid_state_x[gx] =
-                    gridDataforOnline.sub_grid_state_y[gy].sub_grid_state_x[gx];
-
-*/
+        battleDataforOnline.player1.current_cost_remaining = (int)gameData.Cost1P;
+        battleDataforOnline.player2.current_cost_remaining = (int)gameData.Cost2P;
 
         // キャラクターのデータを反映（UniqueIdによるマッチング）
         foreach (var c in gameData.Characters)
         {
+            bool is_1p = (userData.user_id == gameData.Player1Id);
             // SetCharacterDataはここでのみ呼び出せばOKなように作ってます
             SetCharacterData(c, is_1p);
+        }
+
+        // デバフマスの受け取り
+        // 毎回上書きする
+        battleDataforOnline.debuffGrids.Clear();
+        foreach (var g in gameData.Grids)
+        {
+            DebuffGrid debuffGrid = new DebuffGrid();
+            debuffGrid.position = new Vector2Int((int)g.PositionX, (int)g.PositionY);
+            debuffGrid.debuffType = g.DebuffType;
+            battleDataforOnline.debuffGrids.Add(debuffGrid);
+            Debug.Log($"DebuffGrid added. {debuffGrid.position} Type: {debuffGrid.debuffType}");
         }
     }
 
@@ -449,8 +366,7 @@ public class BattleOnlineManager : MonoBehaviour
                 player.characters[i].now_character_position = converted;
 
                 // 選択状態の同期
-                // キャラ選択状態は現状同期する必要はないみたいです
-                //player.characters[i].character_isSelected = c.IsSelected;
+                // キャラ選択状態はバックは持たず、自環境での処理のみに用います
 
                 // 移動コストの同期（デフォルトコストを代入しデバフによる増減を計算。デバフがないときはこれがそのまま移動コストになる。）
                 player.characters[i].now_character_move_cost = characterData.characters[c.CharacterId].default_move_cost;
@@ -492,7 +408,6 @@ public class BattleOnlineManager : MonoBehaviour
 
     public void EndMyTurn()
     {
-        // 直接battleDataForOnlineを書き換えてはならないので一旦コメントアウトします
         // character_isSelectedだけはサーバーに送らないフロントのみのブールなので直接書き換えます
         for (int i = 0; i < 3; i++) battleDataforOnline.player1.characters[i].character_isSelected = false;
         for (int i = 0; i < 3; i++) battleDataforOnline.player2.characters[i].character_isSelected = false;
@@ -504,9 +419,9 @@ public class BattleOnlineManager : MonoBehaviour
         for (int i = 0; i <= 2; i++)
         {
             if(battleDataforOnline.player1.characters[i].debuffs[3])
-        {
-            // サーバーに毒ダメージでのhp20減少を通知する処理
-        }
+            {
+                // サーバーに毒ダメージでのhp20減少を通知する処理
+            }
         }
 
         // サーバーにターン終了を通知する
