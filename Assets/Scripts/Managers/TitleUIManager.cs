@@ -24,7 +24,7 @@ public class TitleUIManager : MonoBehaviour
         error_ui.SetActive(false);
         if (authenticationConnector != null)
         {
-            gameConnector.OnErrorMessage += HandleConnectorError;
+            NetworkManager.Instance.OnErrorMessage += HandleConnectorError;
         }
     }
 
@@ -32,7 +32,7 @@ public class TitleUIManager : MonoBehaviour
     {
         if (authenticationConnector != null)
         {
-            gameConnector.OnErrorMessage -= HandleConnectorError;
+            NetworkManager.Instance.OnErrorMessage -= HandleConnectorError;
         }
     }
 

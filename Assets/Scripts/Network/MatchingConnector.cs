@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Cysharp.Threading.Tasks;
@@ -12,6 +13,10 @@ public class MatchingConnector : MonoBehaviour
     private NetworkClientCore _core;
     private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
     private RoomService.RoomServiceClient _roomClient;
+
+    private AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> _roomStreamCall;
+    private CancellationTokenSource _roomStreamCts;
+    private bool _isRoomStreamActive;
 
     public void Initialize(NetworkClientCore core)
     {
@@ -198,6 +203,100 @@ public class MatchingConnector : MonoBehaviour
         {
             _core.ShowErrorMessage($"1P2Pの取得に失敗しました: {e.Status.Detail}");
             return null;
+        }
+    }
+
+    /// <summary>
+    /// ルーム同期の双方向ストリームを開始し、監視ループを実行します
+    /// </summary>
+    public void StartRoomStream(int roomId, string userId, Action<ListRoomResponse> onRoomUpdated)
+    {
+        if (_isRoomStreamActive)
+        {
+            Debug.LogWarning("[MatchingConnector] 既にルームストリームが稼働しています。一度切断します。");
+            _ = StopRoomStream();
+        }
+
+        _roomStreamCts = new CancellationTokenSource();
+        _isRoomStreamActive = true;
+
+        RoomStreamLoop(roomId, userId, onRoomUpdated, _roomStreamCts.Token).Forget();
+    }
+
+    /// <summary>
+    /// ルームストリームを安全に終了・破棄します
+    /// </summary>
+    public async UniTask StopRoomStream()
+    {
+        _isRoomStreamActive = false;
+
+        if (_roomStreamCall != null)
+        {
+            try
+            {
+                // クライアント側からの送信完了をサーバーに通知
+                await _roomStreamCall.RequestStream.CompleteAsync();
+            }
+            catch (Exception) { /* 切断時の例外は無視 */ }
+            
+            _roomStreamCall.Dispose();
+            _roomStreamCall = null;
+        }
+
+        if (_roomStreamCts != null)
+        {
+            _roomStreamCts.Cancel();
+            _roomStreamCts.Dispose();
+            _roomStreamCts = null;
+        }
+
+        Debug.Log("[MatchingConnector] Room stream stopped safely.");
+    }
+
+    /// <summary>
+    /// 双方向ストリームの接続、リクエスト初期シグナルの送信、およびサーバー応答の受信を行う内部ループ
+    /// </summary>
+    private async UniTaskVoid RoomStreamLoop(int roomId, string userId, Action<ListRoomResponse> onRoomUpdated, CancellationToken ct)
+    {
+        Debug.Log($"[MatchingConnector] RoomStreamLoop Started. Room:{roomId}, User:{userId}");
+
+        try
+        {
+            // 1. 双方向ストリーミングのコール（コネクション）を生成
+            _roomStreamCall = _roomClient.StreamRoom(cancellationToken: ct);
+
+            // 2. 双方向ストリームなので、まず「この部屋に居ます」という最初の要求(RequestStream)を書き込む
+            var initialRequest = new RoomStreamRequest { RoomId = roomId, UserId = userId };
+            await _roomStreamCall.RequestStream.WriteAsync(initialRequest);
+            Debug.Log("[MatchingConnector] Initial RoomStreamRequest written to RequestStream.");
+
+            // 3. サーバーから随時プッシュされてくる部屋の状態（ListRoomResponse）を監視・待機
+            while (await _roomStreamCall.ResponseStream.MoveNext(ct))
+            {
+                ListRoomResponse response = _roomStreamCall.ResponseStream.Current;
+                Debug.Log($"[MatchingConnector] ルーム更新データを受信しました。参加人数: {response.Rooms.Count}");
+
+                if (onRoomUpdated != null)
+                {
+                    // Unityのメインスレッドに戻して安全にコールバック（UI更新など）を実行
+                    await UniTask.SwitchToMainThread(ct);
+                    onRoomUpdated.Invoke(response);
+                }
+            }
+        }
+        catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled)
+        {
+            Debug.Log("[MatchingConnector] ルームストリームが正常に切断（キャンセル）されました。");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[MatchingConnector] ルームストリームループ内で例外が発生しました: {e.Message}");
+            _core?.ShowErrorMessage("ルームのリアルタイム同期が切断されました。");
+        }
+        finally
+        {
+            _isRoomStreamActive = false;
+            Debug.Log("[MatchingConnector] RoomStreamLoop Finished.");
         }
     }
 }

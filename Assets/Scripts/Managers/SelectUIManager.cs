@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using Cysharp.Threading.Tasks;
 
 public class SelectUIManager : MonoBehaviour
 {
@@ -349,34 +350,35 @@ public class SelectUIManager : MonoBehaviour
 
     private IEnumerator WaitForBothPlayersReady()
     {
-        while (true)
+        // UniTask をコルーチン内で扱うためのブリッジ (UniTask.ToCoroutine)
+        yield return UniTask.ToCoroutine(async () =>
         {
-            yield return new WaitForSeconds(1.0f);
-
-            // GetGameData は async なので Task として実行して待機
-            var task = gameConnector.GetGameData(roomData.room_id);
-            yield return new WaitUntil(() => task.IsCompleted);
-
-            if (this == null) yield break; // シーン移動で破棄されていたら中断
-
-            var data = task.Result;
-            if (data == null) continue;
-
-            // 両プレイヤーのキャラが3体以上登録されていれば準備완了とみなす
-            int p1count = 0, p2count = 0;
-            foreach (var c in data.Characters)
+            while (true)
             {
-                if (c.Is1P) p1count++;
-                else p2count++;
-            }
+                // 1. await で直接結果を受け取る（Resultプロパティは不要）
+                var data = await NetworkManager.Instance.Battle.GetGameData(roomData.room_id);
 
-            if (p1count >= 3 && p2count >= 3)
-            {
-                // 両方の準備が完了したのでバトルシーンへ遷移
-                sceneData.next_scene_number = 5;
-                yield break;
+                // 2. 正常にデータが取れたか判定
+                if (data != null && data.Characters != null)
+                {
+                    int p1count = 0, p2count = 0;
+                    foreach (var c in data.Characters)
+                    {
+                        if (c.Is1P) p1count++;
+                        else p2count++;
+                    }
+
+                    if (p1count >= 3 && p2count >= 3)
+                    {
+                        sceneData.next_scene_number = 5;
+                        return; // ループ終了
+                    }
+                }
+
+                // 3. 次の確認まで待機
+                await UniTask.Delay(1000);
             }
-        }
+        });
     }
 
     void UpDateCharacterUI()

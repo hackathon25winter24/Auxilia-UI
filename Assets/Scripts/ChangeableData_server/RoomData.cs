@@ -12,7 +12,7 @@ public class RoomData : ScriptableObject
 [System.Serializable]
 public class UsersData
 {
-    public string user_name;
+    public string user_id;
     public int user_rate;
     public bool is_host;
     public int user_state;
