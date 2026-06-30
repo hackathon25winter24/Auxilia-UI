@@ -10,9 +10,9 @@ public class TutorialStoryManager : MonoBehaviour
     public InputData inputData;
     public SceneData sceneData;
     public StoryManagerData storyManagerData;
-    public PlayerData playerData;
-    public BattleDataforOmline battleDataforOnline;
-    public BattleDataforLocal battleDataforLocal;
+    public UserData userData;
+    public BattleDataForOnline battleDataForTutorial;
+    public TutorialBattleManager tutorialBattleManager;
     
     [Header("Tutorial Sentences")]
     public string[] serif_tutorial; // インスペクターでセリフを入力
@@ -25,7 +25,7 @@ public class TutorialStoryManager : MonoBehaviour
     public GameObject Back;
 
     [Header("Network")]
-    public GameConnector gameConnector;
+    public AuthenticationConnector authenticationConnector;
 
 
     [Header("Settings")]
@@ -43,7 +43,7 @@ public class TutorialStoryManager : MonoBehaviour
         storyManagerData.serif_loading = false;
         storyManagerData.is_serif = false;
         
-        if (gameConnector == null) gameConnector = FindFirstObjectByType<GameConnector>();
+        if (authenticationConnector == null) authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
 
         autoText.gameObject.SetActive(false);
         Texts.SetActive(true);
@@ -57,7 +57,8 @@ public class TutorialStoryManager : MonoBehaviour
 
     void Start()
     {
-        battleDataforOnline.opponent_base_hp = 100;
+        battleDataForTutorial = tutorialBattleManager.battleDataForTutorial;// 同じbattleDataForTutorialを取得する
+        battleDataForTutorial.player2.base_hp = 100;
     }
 
     void Update()
@@ -96,19 +97,19 @@ public class TutorialStoryManager : MonoBehaviour
             }
         }
 
-        if(storyManagerData.serif_number == 2 && battleDataforOnline.character_isSelected[1])
+        if(storyManagerData.serif_number == 2 && battleDataForTutorial.player1.characters[1].character_isSelected)
         {
             OnPlayerClick();
         }
-        if(storyManagerData.serif_number == 6 && battleDataforLocal.now_my_cost == 0)
+        if(storyManagerData.serif_number == 6 && battleDataForTutorial.player1.current_cost_remaining == 0)
         {
             OnPlayerClick();
         }
-        if(storyManagerData.serif_number == 9 && battleDataforLocal.now_my_cost == 50)
+        if(storyManagerData.serif_number == 9 && battleDataForTutorial.player1.current_cost_remaining == 50)
         {
             OnPlayerClick();
         }
-        if(storyManagerData.serif_number == 14 && battleDataforOnline.opponent_base_hp != 100)
+        if(storyManagerData.serif_number == 14 && battleDataForTutorial.player2.base_hp != 100)
         {
             OnPlayerClick();
         }
@@ -196,10 +197,10 @@ public class TutorialStoryManager : MonoBehaviour
 
     async void EndStory()
     {
-        if(playerData.story_progress == 1)
+        if(userData.story_progress == 1)
         {
-            playerData.story_progress = 2;
-            if (gameConnector != null) await gameConnector.UpdateUser();
+            userData.story_progress = 2;
+            if (authenticationConnector != null) await authenticationConnector.UpdateUser();
             sceneData.next_scene_number = 1;
         }else
         {

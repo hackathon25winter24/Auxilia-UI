@@ -9,7 +9,7 @@ public class MatchingUIManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public MatchingData matchingData;
     public RoomData roomData;
 
@@ -19,9 +19,8 @@ public class MatchingUIManager : MonoBehaviour
     public Transform contentParentJoinner;
     public GameObject kensakuButton;
     public TMP_InputField kensakuInput;
-    public GameConnector gameConnector;
-    public string ownerName;
-    public string ownerId;
+    public AuthenticationConnector authenticationConnector;
+    public MatchingConnector matchingConnector;
     public bool is_roading;
     public GameObject nowLoadingText;
 
@@ -31,7 +30,8 @@ public class MatchingUIManager : MonoBehaviour
     {
         nowLoadingText.SetActive(false);
         kensakuButton.SetActive(false);
-        gameConnector = FindFirstObjectByType<GameConnector>().GetComponent<GameConnector>();
+        matchingConnector = FindFirstObjectByType<MatchingConnector>();
+        authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
         is_roading = true;
         nowLoadingText.SetActive(true);
         await UpDateRoomInformation();
@@ -41,8 +41,6 @@ public class MatchingUIManager : MonoBehaviour
 
     void Start()
     {
-        ownerId = playerData.user_id;
-        ownerName = playerData.player_name;
         // 追加：InputFieldに文字が入るたびにUpdateSearchが走るようにする
         if (kensakuInput != null)
         {
@@ -96,6 +94,7 @@ public class MatchingUIManager : MonoBehaviour
 
     public void CreateRoomButtons(int roomCount)
     {
+        Debug.Log("CreateRoomButtons起動");
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
@@ -104,6 +103,7 @@ public class MatchingUIManager : MonoBehaviour
         for (int i = 0; i < roomCount; i++)
         {
             GameObject newButton = Instantiate(roomButton, contentParent);
+            Debug.Log("roomButtonが生成された");
 
             newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = matchingData.rooms[i].room_name;
 
@@ -112,27 +112,27 @@ public class MatchingUIManager : MonoBehaviour
         if (entity != null)
         {
             entity.SetRoomData(matchingData.rooms[i].room_name,
-            matchingData.rooms[i].room_host,
+            matchingData.rooms[i].owner_name,
             matchingData.rooms[i].room_is_gamestarted,
             matchingData.rooms[i].num_room_joiner);
         }
 
             int roomIndex = i; 
-            matchingData.rooms[i].room_is_selected = false;
             newButton.GetComponent<Button>().onClick.AddListener(() => OnRoomSelected(roomIndex));
         }
     }
 
-    public void CreateJoinnerNames(int roomNumber)
+    public async void CreateJoinnerNames(int roomNumber)
     {
         int num_joinner = matchingData.rooms[roomNumber].num_room_joiner;
-        SetupJoinners(num_joinner);
 
         foreach (Transform child in contentParentJoinner)
         {
             Destroy(child.gameObject);
         }
 
+        // 部屋をクリックした時にも部屋情報を取得（ローカルに保存しておいて読み込むでも良いが、matchingDataが多くの情報を保管しすぎても見ずらいかなと思ったり。なるべくDB側とデータの構造を合わせた方が管理しやすいと思うので。）
+        var joinners = await matchingConnector.ListRoom(matchingData.rooms[roomNumber].room_id);
         for (int i = 0; i < num_joinner; i++)
         {
             GameObject newButton = Instantiate(playerName, contentParentJoinner);
@@ -141,9 +141,10 @@ public class MatchingUIManager : MonoBehaviour
 
         if (entity != null)
         {
-            entity.SetJoinnerData(matchingData.rooms[roomNumber].joinners[i].name,
-            matchingData.rooms[roomNumber].joinners[i].rate,
-            matchingData.rooms[roomNumber].joinners[i].state);
+            var joinner_info = await authenticationConnector.GetUser(joinners[i].UserId);// ユーザーの名前とレート情報を引き出すため
+            string joinner_name = joinner_info.Name;
+            int joinner_rate = joinner_info.Rate;
+            entity.SetJoinnerData(joinner_name, joinner_rate, joinners[i].State);
         }
 
         }
@@ -152,17 +153,17 @@ public class MatchingUIManager : MonoBehaviour
     async void OnRoomSelected(int index)
     {
         SEManager.instance?.PlayToNextSE();
-        if (matchingData.rooms[index].room_is_selected)
+        if (matchingData.selected_room_id == matchingData.rooms[index].room_id)
         {
             Debug.Log($"部屋 {index + 1} に入室します");
             //ここに部屋に入る関数を書いてください
-            var response = await gameConnector.JoinRoom(matchingData.rooms[index].room_id, playerData.user_id);
+            var response = await matchingConnector.JoinRoom(matchingData.rooms[index].room_id, userData.user_id);
             if (response != null && response.Rooms.Count > 0)
             {
                 bool has1p = false, has2p = false;
                 foreach (var r in response.Rooms)
                 {
-                    if (r.UserId != playerData.user_id)
+                    if (r.UserId != userData.user_id)
                     {
                         if (r.State == 1) has1p = true;
                         if (r.State == 2) has2p = true;
@@ -172,8 +173,9 @@ public class MatchingUIManager : MonoBehaviour
                 if (!has1p) newState = 1;
                 else if (!has2p) newState = 2;
                 
-                await gameConnector.UpdateRoomState(matchingData.rooms[index].room_id, playerData.user_id, newState, false);
+                await matchingConnector.UpdateRoomState(matchingData.rooms[index].room_id, userData.user_id, newState, false);
 
+                // 次はここから直す？
                 roomData.room_id = response.Rooms[0].RoomId;
                 for (int i = 0; i < matchingData.num_room; i++)
                 {
@@ -189,9 +191,8 @@ public class MatchingUIManager : MonoBehaviour
         {
             for (int i = 0; i < matchingData.num_room; i++)
             {
-            matchingData.rooms[i].room_is_selected = false;
+            matchingData.selected_room_id = matchingData.rooms[index].room_id;
             }
-            matchingData.rooms[index].room_is_selected = true;
             CreateJoinnerNames(index);
         }
     }
@@ -199,48 +200,33 @@ public class MatchingUIManager : MonoBehaviour
     //部屋の情報を更新したいときはこのメソッドをたたいてください
     public async Task UpDateRoomInformation()
     {
+        Debug.Log("UpdateRoomInformation実行中");
         //ここに部屋の数を取得する関数を書いてください
         // List<RoomMatch> room_list に全部屋の情報が入ってます
-        var room_list = await gameConnector.GetAllRoomMatch();
+        var room_list = await matchingConnector.GetAllRoomMatch();
         //データはmatchingData.num_roomに格納してください
         matchingData.num_room = room_list.Count;
         SetupRooms(matchingData.num_room);
+        matchingData.selected_room_id = -1;// どの部屋も選んでいない時、-1にします。
         for (int i = 0; i < room_list.Count; i++)
         {
-            matchingData.rooms[i].room_id = room_list[i].RoomId;
-            matchingData.rooms[i].room_name = room_list[i].RoomName;
-            
-            // オーナーのユーザー情報を取得して名前を表示
-            var owner = await gameConnector.GetUser(room_list[i].OwnerId);
-            matchingData.rooms[i].room_host = (owner != null) ? owner.Name : room_list[i].OwnerId;
+            int room_id = room_list[i].RoomId;
+            var joinners = await matchingConnector.ListRoom(room_id);// 各部屋の参加者数取得のため
+            string owner_id = room_list[i].OwnerId;
+            var owner = await authenticationConnector.GetUser(owner_id);// 各部屋のオーナー情報を取得
 
+            // matchingDataをDBの最新状態に更新
+            matchingData.rooms[i].num_room_joiner = joinners.Count;
+            matchingData.rooms[i].room_id = room_id;
+            matchingData.rooms[i].room_name = room_list[i].RoomName;
+            matchingData.rooms[i].owner_id = owner_id;
+            matchingData.rooms[i].owner_name = (owner != null) ? owner.Name : owner_id;
             matchingData.rooms[i].room_is_gamestarted = room_list[i].IsGaming;
-            var joiner_list = await gameConnector.ListRoom(room_list[i].RoomId);
-            matchingData.rooms[i].num_room_joiner = joiner_list.Count;
-            // 移動しました
-            SetupJoinners(i);
-            for (int j = 0; j < joiner_list.Count; j++)
-            {
-                var user = await gameConnector.GetUser(joiner_list[j].UserId);
-                Debug.Log($"{i}番目の部屋{j}番目のusername: {user.Name}");
-                matchingData.rooms[i].joinners[j].name = user.Name;
-                matchingData.rooms[i].joinners[j].state = joiner_list[j].State;
-            }
-            //Debug.Log($"部屋ID: {room_list[i].RoomId}, 部屋名: {room_list[i].RoomName}, オーナーID: {room_list[i].OwnerId}, 試合中: {room_list[i].IsGaming}");
         }
 
         CreateRoomButtons(matchingData.num_room);
     }
 
-    public void SetupJoinners(int roomNumber)
-    {
-    matchingData.rooms[roomNumber].joinners.Clear();
-
-    for (int i = 0; i < matchingData.rooms[roomNumber].num_room_joiner; i++)
-    {
-        matchingData.rooms[roomNumber].joinners.Add(new JoinnersData()); 
-    }
-    }
 
     public void SetupRooms(int count)
     {
@@ -254,17 +240,17 @@ public class MatchingUIManager : MonoBehaviour
 
     public async void OnClick_CreateRoomMatch()
     {
-        string room_name = ownerName + "の部屋"; // ここを書き換えれば最初の部屋名が変わります
-        if (string.IsNullOrEmpty(room_name) || string.IsNullOrEmpty(ownerId))
+        string room_name = userData.user_name + "の部屋"; // ここを書き換えれば最初の部屋名が変わります
+        if (string.IsNullOrEmpty(room_name) || string.IsNullOrEmpty(userData.user_id))
         {
             Debug.Log("部屋名が入力されていないかユーザーIDが登録されていません");
             return;
         }
-        var response = await gameConnector.CreateRoomMatch(room_name, ownerId, false);
+        var response = await matchingConnector.CreateRoomMatch(room_name, userData.user_id, false);
         if (response != null)
         {
-            await gameConnector.JoinRoom(response.RoomId, response.OwnerId);
-            await gameConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
+            await matchingConnector.JoinRoom(response.RoomId, response.OwnerId);
+            await matchingConnector.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
             // 新たにRoomDataにIDを追加
             roomData.room_id = response.RoomId;
@@ -322,7 +308,7 @@ private void UpdateDisplayFiltered(List<int> indices)
         {
             entity.SetRoomData(
                 matchingData.rooms[index].room_name,
-                matchingData.rooms[index].room_host,
+                matchingData.rooms[index].owner_name,
                 matchingData.rooms[index].room_is_gamestarted,
                 matchingData.rooms[index].num_room_joiner);
         }

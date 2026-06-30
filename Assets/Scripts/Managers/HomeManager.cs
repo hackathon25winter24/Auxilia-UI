@@ -7,7 +7,7 @@ public class HomeManager : MonoBehaviour
     public TextMeshProUGUI HomeCharacterName;
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public Image backImage;
     public Sprite back_image;
     public Image CharacterImage; 
@@ -35,70 +35,70 @@ public class HomeManager : MonoBehaviour
 
     public void ChangeToPhoto()
     {
-        if(playerData.home_character_ID == 0)
+        if(userData.home_character_id == 0)
         {
             CharacterImage.sprite = Sophie;
             HomeCharacter_icon.sprite = First_squad;
             Player_icon.sprite = First_squad_user;
             HomeCharacterName.text = "ソフィー・マヤ・フローレス";
         }
-        if(playerData.home_character_ID == 1)
+        if(userData.home_character_id == 1)
         {
             CharacterImage.sprite = Jude;
             HomeCharacter_icon.sprite = First_squad;
             Player_icon.sprite = First_squad_user;
             HomeCharacterName.text = "ジュード・アーノルド・ダガー";
         }
-        if(playerData.home_character_ID == 2)
+        if(userData.home_character_id == 2)
         {
             CharacterImage.sprite = Nadia;
             HomeCharacter_icon.sprite = Second_squad;
             Player_icon.sprite = Second_squad_user;
             HomeCharacterName.text = "ナディア・ミレーヌ・エイギーユ・ドゥ・メデゥシーヌ";
         }
-        if(playerData.home_character_ID == 3)
+        if(userData.home_character_id == 3)
         {
             CharacterImage.sprite = Tsukiha;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
             HomeCharacterName.text = "三雲 月葉";
         }
-        if(playerData.home_character_ID == 4)
+        if(userData.home_character_id == 4)
         {
             CharacterImage.sprite = Aoi;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
             HomeCharacterName.text = "藤原 扇衣";
         }
-        if(playerData.home_character_ID == 5)
+        if(userData.home_character_id == 5)
         {
             CharacterImage.sprite = Sena;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
             HomeCharacterName.text = "一条 星凪";
         }
-        if(playerData.home_character_ID == 6)
+        if(userData.home_character_id == 6)
         {
             CharacterImage.sprite = Berenice;
             HomeCharacter_icon.sprite = Second_squad;
             Player_icon.sprite = Second_squad_user;
             HomeCharacterName.text = "ベレニス・イネス・マルヴェランス";
         }
-        if(playerData.home_character_ID == 7)
+        if(userData.home_character_id == 7)
         {
             CharacterImage.sprite = Chiyo;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
             HomeCharacterName.text = "望月 千代";
         }
-        if(playerData.home_character_ID == 8)
+        if(userData.home_character_id == 8)
         {
             CharacterImage.sprite = Shincho;
             HomeCharacter_icon.sprite = Third_squad;
             Player_icon.sprite = Third_squad_user;
             HomeCharacterName.text = "新著 久無子";
         }
-        if(playerData.home_character_ID == 9)
+        if(userData.home_character_id == 9)
         {
             CharacterImage.sprite = Zina;
             HomeCharacter_icon.sprite = Fourth_squad;
@@ -106,7 +106,7 @@ public class HomeManager : MonoBehaviour
             HomeCharacterName.text = "ジナイダ・ヤカーヴナ・ストレリツォーヴァ";
         }
 
-         if(playerData.home_character_ID == 10)
+         if(userData.home_character_id == 10)
         {
             CharacterImage.sprite = Dana;
             HomeCharacter_icon.sprite = Fourth_squad;

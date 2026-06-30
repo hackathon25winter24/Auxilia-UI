@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e90a9cbbe56a5043ac99c32bdf0fb4b, type: 3}
+  m_Name: BattleDataForOnline
+  m_EditorClassIdentifier: 
+  turn_number: 0
+  is_1p_turn: 0
+  is_finished: 0
+  winner_player_id: 
+  player1:
+    player_id: fa71df94-7277-4e00-bdbc-268063cdf126
+    player_name: Mira2
+    base_position: {x: 0, y: 0}
+    base_hp: 200
+    current_cost_remaining: 50
+    characters:
+    - unique_id: 0
+      now_character_hp: 150
+      character_isSelected: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 7, y: 0}
+    - unique_id: 1
+      now_character_hp: 300
+      character_isSelected: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 6, y: 2}
+    - unique_id: 5
+      now_character_hp: 250
+      character_isSelected: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 7, y: 4}
+    rate: 0
+    rate_updown: 0
+  player2:
+    player_id: cba46e8b-abac-4ba7-95eb-1d78c1132000
+    player_name: aspara
+    base_position: {x: 0, y: 0}
+    base_hp: 200
+    current_cost_remaining: 50
+    characters:
+    - unique_id: 7
+      now_character_hp: 300
+      character_isSelected: 0
+      now_character_move_cost: 5
+      debuffs: 0000000000000000
+      now_character_position: {x: 0, y: 0}
+    - unique_id: 1
+      now_character_hp: 300
+      character_isSelected: 1
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 2, y: 2}
+    - unique_id: 0
+      now_character_hp: 150
+      character_isSelected: 0
+      now_character_move_cost: 10
+      debuffs: 0000000000000000
+      now_character_position: {x: 0, y: 4}
+    rate: 0
+    rate_updown: 0

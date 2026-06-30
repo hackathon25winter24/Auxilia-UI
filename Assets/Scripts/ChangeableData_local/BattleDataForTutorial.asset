@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e90a9cbbe56a5043ac99c32bdf0fb4b, type: 3}
+  m_Name: BattleDataForTutorial
+  m_EditorClassIdentifier: 
+  turn_number: 0
+  is_1p_turn: 1
+  is_finished: 0
+  winner_player_id: 
+  player1:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 0
+    current_cost_remaining: 50
+    characters:
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    rate: 0
+    rate_updown: 0
+  player2:
+    player_id: 
+    player_name: 
+    base_position: {x: 0, y: 0}
+    base_hp: 100
+    current_cost_remaining: 0
+    characters:
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    - unique_id: 0
+      now_character_hp: 0
+      character_isSelected: 0
+      now_character_move_cost: 0
+      debuffs: 
+      now_character_position: {x: 0, y: 0}
+    rate: 0
+    rate_updown: 0

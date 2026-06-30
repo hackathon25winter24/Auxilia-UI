@@ -58,7 +58,23 @@ namespace Game.Network {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Game.Network.StreamGameRequest> __Marshaller_game_network_StreamGameRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.StreamGameRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Game.Network.PlayerAction> __Marshaller_game_network_PlayerAction = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.PlayerAction.Parser));
+    static readonly grpc::Marshaller<global::Game.Network.MoveAction> __Marshaller_game_network_MoveAction = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.MoveAction.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.AcceptResponse> __Marshaller_game_network_AcceptResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.AcceptResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.AttackAction> __Marshaller_game_network_AttackAction = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.AttackAction.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.GridUpdateAction> __Marshaller_game_network_GridUpdateAction = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.GridUpdateAction.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.ApplyEffectRequest> __Marshaller_game_network_ApplyEffectRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.ApplyEffectRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.EndTurnRequest> __Marshaller_game_network_EndTurnRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.EndTurnRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.NewTurnRequest> __Marshaller_game_network_NewTurnRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.NewTurnRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.FetchActionLogRequest> __Marshaller_game_network_FetchActionLogRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.FetchActionLogRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Game.Network.GameActionLog> __Marshaller_game_network_GameActionLog = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Game.Network.GameActionLog.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Game.Network.CreateGameRequest, global::Game.Network.GameDataResponse> __Method_CreateGame = new grpc::Method<global::Game.Network.CreateGameRequest, global::Game.Network.GameDataResponse>(
@@ -93,36 +109,60 @@ namespace Game.Network {
         __Marshaller_game_network_GameDataResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyMove = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+    static readonly grpc::Method<global::Game.Network.MoveAction, global::Game.Network.AcceptResponse> __Method_ApplyMove = new grpc::Method<global::Game.Network.MoveAction, global::Game.Network.AcceptResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
         "ApplyMove",
-        __Marshaller_game_network_PlayerAction,
-        __Marshaller_game_network_GameDataResponse);
+        __Marshaller_game_network_MoveAction,
+        __Marshaller_game_network_AcceptResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyAttack = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+    static readonly grpc::Method<global::Game.Network.AttackAction, global::Game.Network.AcceptResponse> __Method_ApplyAttack = new grpc::Method<global::Game.Network.AttackAction, global::Game.Network.AcceptResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
         "ApplyAttack",
-        __Marshaller_game_network_PlayerAction,
-        __Marshaller_game_network_GameDataResponse);
+        __Marshaller_game_network_AttackAction,
+        __Marshaller_game_network_AcceptResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_EndTurn = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
-        grpc::MethodType.Unary,
-        __ServiceName,
-        "EndTurn",
-        __Marshaller_game_network_PlayerAction,
-        __Marshaller_game_network_GameDataResponse);
-
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse> __Method_ApplyGridUpdate = new grpc::Method<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(
+    static readonly grpc::Method<global::Game.Network.GridUpdateAction, global::Game.Network.AcceptResponse> __Method_ApplyGridUpdate = new grpc::Method<global::Game.Network.GridUpdateAction, global::Game.Network.AcceptResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
         "ApplyGridUpdate",
-        __Marshaller_game_network_PlayerAction,
-        __Marshaller_game_network_GameDataResponse);
+        __Marshaller_game_network_GridUpdateAction,
+        __Marshaller_game_network_AcceptResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.ApplyEffectRequest, global::Game.Network.AcceptResponse> __Method_ApplyEffect = new grpc::Method<global::Game.Network.ApplyEffectRequest, global::Game.Network.AcceptResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ApplyEffect",
+        __Marshaller_game_network_ApplyEffectRequest,
+        __Marshaller_game_network_AcceptResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.EndTurnRequest, global::Game.Network.AcceptResponse> __Method_EndTurn = new grpc::Method<global::Game.Network.EndTurnRequest, global::Game.Network.AcceptResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "EndTurn",
+        __Marshaller_game_network_EndTurnRequest,
+        __Marshaller_game_network_AcceptResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.NewTurnRequest, global::Game.Network.AcceptResponse> __Method_NewTurn = new grpc::Method<global::Game.Network.NewTurnRequest, global::Game.Network.AcceptResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "NewTurn",
+        __Marshaller_game_network_NewTurnRequest,
+        __Marshaller_game_network_AcceptResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Game.Network.FetchActionLogRequest, global::Game.Network.GameActionLog> __Method_FetchActionLog = new grpc::Method<global::Game.Network.FetchActionLogRequest, global::Game.Network.GameActionLog>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "FetchActionLog",
+        __Marshaller_game_network_FetchActionLogRequest,
+        __Marshaller_game_network_GameActionLog);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -185,25 +225,43 @@ namespace Game.Network {
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyMove(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> ApplyMove(global::Game.Network.MoveAction request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyAttack(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> ApplyAttack(global::Game.Network.AttackAction request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> EndTurn(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> ApplyGridUpdate(global::Game.Network.GridUpdateAction request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameDataResponse> ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> ApplyEffect(global::Game.Network.ApplyEffectRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> EndTurn(global::Game.Network.EndTurnRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.AcceptResponse> NewTurn(global::Game.Network.NewTurnRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Game.Network.GameActionLog> FetchActionLog(global::Game.Network.FetchActionLogRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -388,7 +446,7 @@ namespace Game.Network {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyMove(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Game.Network.AcceptResponse ApplyMove(global::Game.Network.MoveAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyMove(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
@@ -399,7 +457,7 @@ namespace Game.Network {
       /// <param name="options">The options for the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyMove(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual global::Game.Network.AcceptResponse ApplyMove(global::Game.Network.MoveAction request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_ApplyMove, null, options, request);
       }
@@ -412,7 +470,7 @@ namespace Game.Network {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyMoveAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyMoveAsync(global::Game.Network.MoveAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyMoveAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
@@ -423,69 +481,129 @@ namespace Game.Network {
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyMoveAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyMoveAsync(global::Game.Network.MoveAction request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_ApplyMove, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyAttack(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Game.Network.AcceptResponse ApplyAttack(global::Game.Network.AttackAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyAttack(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyAttack(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual global::Game.Network.AcceptResponse ApplyAttack(global::Game.Network.AttackAction request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_ApplyAttack, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyAttackAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyAttackAsync(global::Game.Network.AttackAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyAttackAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyAttackAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyAttackAsync(global::Game.Network.AttackAction request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_ApplyAttack, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse EndTurn(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return EndTurn(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse EndTurn(global::Game.Network.PlayerAction request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_EndTurn, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> EndTurnAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return EndTurnAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> EndTurnAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_EndTurn, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Game.Network.AcceptResponse ApplyGridUpdate(global::Game.Network.GridUpdateAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyGridUpdate(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Game.Network.GameDataResponse ApplyGridUpdate(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual global::Game.Network.AcceptResponse ApplyGridUpdate(global::Game.Network.GridUpdateAction request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_ApplyGridUpdate, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyGridUpdateAsync(global::Game.Network.PlayerAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyGridUpdateAsync(global::Game.Network.GridUpdateAction request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ApplyGridUpdateAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameDataResponse> ApplyGridUpdateAsync(global::Game.Network.PlayerAction request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyGridUpdateAsync(global::Game.Network.GridUpdateAction request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_ApplyGridUpdate, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse ApplyEffect(global::Game.Network.ApplyEffectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyEffect(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse ApplyEffect(global::Game.Network.ApplyEffectRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ApplyEffect, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyEffectAsync(global::Game.Network.ApplyEffectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ApplyEffectAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> ApplyEffectAsync(global::Game.Network.ApplyEffectRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ApplyEffect, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse EndTurn(global::Game.Network.EndTurnRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EndTurn(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse EndTurn(global::Game.Network.EndTurnRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_EndTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> EndTurnAsync(global::Game.Network.EndTurnRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EndTurnAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> EndTurnAsync(global::Game.Network.EndTurnRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_EndTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse NewTurn(global::Game.Network.NewTurnRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return NewTurn(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.AcceptResponse NewTurn(global::Game.Network.NewTurnRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_NewTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> NewTurnAsync(global::Game.Network.NewTurnRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return NewTurnAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.AcceptResponse> NewTurnAsync(global::Game.Network.NewTurnRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_NewTurn, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameActionLog FetchActionLog(global::Game.Network.FetchActionLogRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return FetchActionLog(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Game.Network.GameActionLog FetchActionLog(global::Game.Network.FetchActionLogRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_FetchActionLog, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameActionLog> FetchActionLogAsync(global::Game.Network.FetchActionLogRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return FetchActionLogAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Game.Network.GameActionLog> FetchActionLogAsync(global::Game.Network.FetchActionLogRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_FetchActionLog, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -507,8 +625,11 @@ namespace Game.Network {
           .AddMethod(__Method_StreamGame, serviceImpl.StreamGame)
           .AddMethod(__Method_ApplyMove, serviceImpl.ApplyMove)
           .AddMethod(__Method_ApplyAttack, serviceImpl.ApplyAttack)
+          .AddMethod(__Method_ApplyGridUpdate, serviceImpl.ApplyGridUpdate)
+          .AddMethod(__Method_ApplyEffect, serviceImpl.ApplyEffect)
           .AddMethod(__Method_EndTurn, serviceImpl.EndTurn)
-          .AddMethod(__Method_ApplyGridUpdate, serviceImpl.ApplyGridUpdate).Build();
+          .AddMethod(__Method_NewTurn, serviceImpl.NewTurn)
+          .AddMethod(__Method_FetchActionLog, serviceImpl.FetchActionLog).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -522,10 +643,13 @@ namespace Game.Network {
       serviceBinder.AddMethod(__Method_GetGameData, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.GetGameDataRequest, global::Game.Network.GameDataResponse>(serviceImpl.GetGameData));
       serviceBinder.AddMethod(__Method_RegisterCharacters, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.RegisterCharactersRequest, global::Game.Network.RegisterCharactersResponse>(serviceImpl.RegisterCharacters));
       serviceBinder.AddMethod(__Method_StreamGame, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Game.Network.StreamGameRequest, global::Game.Network.GameDataResponse>(serviceImpl.StreamGame));
-      serviceBinder.AddMethod(__Method_ApplyMove, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyMove));
-      serviceBinder.AddMethod(__Method_ApplyAttack, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyAttack));
-      serviceBinder.AddMethod(__Method_EndTurn, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.EndTurn));
-      serviceBinder.AddMethod(__Method_ApplyGridUpdate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.PlayerAction, global::Game.Network.GameDataResponse>(serviceImpl.ApplyGridUpdate));
+      serviceBinder.AddMethod(__Method_ApplyMove, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.MoveAction, global::Game.Network.AcceptResponse>(serviceImpl.ApplyMove));
+      serviceBinder.AddMethod(__Method_ApplyAttack, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.AttackAction, global::Game.Network.AcceptResponse>(serviceImpl.ApplyAttack));
+      serviceBinder.AddMethod(__Method_ApplyGridUpdate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.GridUpdateAction, global::Game.Network.AcceptResponse>(serviceImpl.ApplyGridUpdate));
+      serviceBinder.AddMethod(__Method_ApplyEffect, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.ApplyEffectRequest, global::Game.Network.AcceptResponse>(serviceImpl.ApplyEffect));
+      serviceBinder.AddMethod(__Method_EndTurn, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.EndTurnRequest, global::Game.Network.AcceptResponse>(serviceImpl.EndTurn));
+      serviceBinder.AddMethod(__Method_NewTurn, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.NewTurnRequest, global::Game.Network.AcceptResponse>(serviceImpl.NewTurn));
+      serviceBinder.AddMethod(__Method_FetchActionLog, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Game.Network.FetchActionLogRequest, global::Game.Network.GameActionLog>(serviceImpl.FetchActionLog));
     }
 
   }

@@ -5,7 +5,7 @@ using TMPro;
 
 public class TutorialBattleUIManager : MonoBehaviour
 {
-    public BattleDataforLocal battleDataforLocal;
+    public BattleDataForOnline battleDataForTutorial;
     public InputData inputData;
     public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
@@ -16,15 +16,15 @@ public class TutorialBattleUIManager : MonoBehaviour
     
     void Awake()
     {
-        cost[0].text = "cost:" + battleDataforLocal.now_my_cost;
-        cost[1].text = "cost:" + battleDataforLocal.now_enemy_cost;
+        cost[0].text = "cost:" + battleDataForTutorial.player1.current_cost_remaining;
+        cost[1].text = "cost:" + battleDataForTutorial.player2.current_cost_remaining;
         characterStatus.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        cost[0].text = "cost:" + battleDataforLocal.now_my_cost;
-        cost[1].text = "cost:" + battleDataforLocal.now_enemy_cost;
+        cost[0].text = "cost:" + battleDataForTutorial.player1.current_cost_remaining;
+        cost[1].text = "cost:" + battleDataForTutorial.player2.current_cost_remaining;
     }
 
         public void OnButtonClick(string buttonName)

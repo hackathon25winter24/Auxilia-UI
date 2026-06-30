@@ -5,7 +5,7 @@ public class TitleManager : MonoBehaviour
 {
     public InputData inputData;
     public SceneData sceneData;
-    public PlayerData playerData;
+    public UserData userData;
     public Image titleImage;
     public Image rogoImage;
     public Image tap_to_startImage;
