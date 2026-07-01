@@ -12,6 +12,7 @@ public class TitleUIManager : MonoBehaviour
     public GameObject signup_ui;
     public GameObject error_ui;
     public GameObject targetUI;
+    public GameObject now_loading_ui;
     public TMP_InputField user_name_for_login;
     public TMP_InputField password_for_login;
     public TMP_InputField user_name_for_signup;
@@ -21,6 +22,7 @@ public class TitleUIManager : MonoBehaviour
     void Awake()
     {
         error_ui.SetActive(false);
+        now_loading_ui.SetActive(false);
         if (NetworkManager.Instance != null)
         {
             NetworkManager.Instance.OnErrorMessage += HandleConnectorError;
@@ -70,10 +72,14 @@ public class TitleUIManager : MonoBehaviour
             }
             if(userData.story_progress == 1)
             {
+                login_ui.SetActive(false);
+                now_loading_ui.SetActive(true);
                 storyManagerData.now_story_number = 0;
                 sceneData.next_scene_number = 8;
             }else
             {
+                login_ui.SetActive(false);
+                now_loading_ui.SetActive(true);
                 sceneData.next_scene_number = 1;
             }
                 break;
@@ -91,10 +97,14 @@ public class TitleUIManager : MonoBehaviour
             }
             if(userData.story_progress == 1)
             {
+                signup_ui.SetActive(false);
+                now_loading_ui.SetActive(true);
                 storyManagerData.now_story_number = 0;
                 sceneData.next_scene_number = 8;
             }else
             {
+                signup_ui.SetActive(false);
+                now_loading_ui.SetActive(true);
                 sceneData.next_scene_number = 1;
             }
                 break;
