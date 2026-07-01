@@ -56,6 +56,7 @@ public class NetworkManager : MonoBehaviour
         _auth.Initialize(_core, userData);
         _matching.Initialize(_core);
         _battle.Initialize(_core, battleOnlineManager);
+        //_battle.Initialize(_core);
 
         Debug.Log("[NetworkManager] All split connectors initialized and grouped under NetworkManager.");
     }

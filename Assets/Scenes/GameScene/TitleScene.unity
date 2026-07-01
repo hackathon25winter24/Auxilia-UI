@@ -1385,7 +1385,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  gameConnector: {fileID: 1194035285}
   storyManagerData: {fileID: 11400000, guid: ee4517df9ad7e93439920f1d97ae78b6, type: 2}
   login_ui: {fileID: 1044915571}
   signup_ui: {fileID: 93753269}
@@ -1547,7 +1546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
-  playerData: {fileID: 11400000, guid: 763d0e0fc578ded44abb3ded2c4ea741, type: 2}
+  userData: {fileID: 0}
   titleImage: {fileID: 1687843541}
   rogoImage: {fileID: 112144336}
   tap_to_startImage: {fileID: 1810285777}
@@ -3209,7 +3208,7 @@ GameObject:
   - component: {fileID: 1194035286}
   - component: {fileID: 1194035285}
   m_Layer: 0
-  m_Name: Gameconnecter
+  m_Name: NetworkManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3224,10 +3223,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1194035284}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b839d7088c07011439a282720b59c9c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 74f67daefcde34ed0b5583510f661238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterManager: {fileID: 0}
+  battleOnlineManager: {fileID: 0}
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &1194035286
 Transform:

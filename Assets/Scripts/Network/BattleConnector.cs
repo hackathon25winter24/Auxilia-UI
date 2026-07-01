@@ -20,6 +20,7 @@ public class BattleConnector : MonoBehaviour
 
     private BattleOnlineManager _battleOnlineManager;
 
+    //public void Initialize(NetworkClientCore core)
     public void Initialize(NetworkClientCore core, BattleOnlineManager battleOnlineManager)
     {
         _core = core;
