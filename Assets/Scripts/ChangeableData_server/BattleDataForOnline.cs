@@ -10,7 +10,7 @@ public class BattleDataForOnline : ScriptableObject
     public string winner_player_id;
     public PlayerState player1;
     public PlayerState player2;
-    public List<DebuffGrid> debuffGrids = new List<DebuffGrid>();
+    public List<UniqueGrid> uniqueGrids = new List<UniqueGrid>();
 }
 
 [System.Serializable]
@@ -18,7 +18,7 @@ public class PlayerState
 {
     public string player_id;
     public string player_name;
-    public Vector2Int base_position;// 拠点位置はGridが持ってもいいと思うが、暫定的にここに記述。最終設計はGridをいじる時に決めたい。初期値を代入する設定は未作成なので注意
+    public Vector2Int base_position;// 拠点位置はゲーム開始時にここに代入されるようにしたい。初期値を代入する設定は未作成なので注意
     public int base_hp;
     public int current_cost_remaining;
     public CharactersBattleData[] characters;
@@ -36,13 +36,15 @@ public class CharactersBattleData
     public bool character_isSelected;// フロントだけで使用しているブール。現在動かしているキャラがtrueになる
     public int now_character_move_cost;// コスト変更はどこでやるか要検討。デバフ情報だけ貰ってローカルで計算してもよい？
     public bool[] debuffs = new bool[8];// 0: 威力上昇, 1: 俊足, 2: 俊敏化, 3: 毒, 4: 麻痺, 5: 鈍足, 6: 鈍化, 7: 出血
-    public Vector2Int now_character_position;// サーバーのキャラのPositionX,Yを参照して代入される。指定したキャラが現在いるマス目を表すものとして使われています。グリッドとの関係は未調査
+    public Vector2Int now_character_position;// サーバーのキャラのPositionX,Yを参照して代入される。指定したキャラが現在いるマス目を表すものとして使われています。
 }
 
 
 [System.Serializable]
-public class DebuffGrid
+// バックから送られる特殊なグリッドの情報。
+// gridTypeは　0: 侵入不能マス, 1: 地雷マス, 2: 撒菱マス, 3: 毒ガスマス, 4: 不変マス
+public class UniqueGrid
 {
     public Vector2Int position;
-    public int debuffType;
+    public int gridType;
 }

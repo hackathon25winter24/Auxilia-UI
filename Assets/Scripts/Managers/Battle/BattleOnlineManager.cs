@@ -328,16 +328,16 @@ public class BattleOnlineManager : MonoBehaviour
             SetCharacterData(c, is_1p);
         }
 
-        // デバフマスの受け取り
-        // 毎回上書きする
-        battleDataforOnline.debuffGrids.Clear();
+        // 特殊マスの受け取り
+        // 毎回新たなデータで更新する
+        battleDataforOnline.uniqueGrids.Clear();
         foreach (var g in gameData.Grids)
         {
-            DebuffGrid debuffGrid = new DebuffGrid();
-            debuffGrid.position = new Vector2Int((int)g.PositionX, (int)g.PositionY);
-            debuffGrid.debuffType = g.DebuffType;
-            battleDataforOnline.debuffGrids.Add(debuffGrid);
-            Debug.Log($"DebuffGrid added. {debuffGrid.position} Type: {debuffGrid.debuffType}");
+            UniqueGrid uniqueGrid = new UniqueGrid();
+            uniqueGrid.position = new Vector2Int((int)g.PositionX, (int)g.PositionY);
+            uniqueGrid.gridType = g.GridType;
+            battleDataforOnline.uniqueGrids.Add(uniqueGrid);
+            Debug.Log($"UniqueGrid added. {uniqueGrid.position} Type: {uniqueGrid.gridType}");
         }
     }
 

@@ -16,6 +16,7 @@ public class CharacterManager : MonoBehaviour
     public CharacterData characterData;
     public BattleDataForOnline battleDataforOnline;
     public int selected_character_index = -1;// selected_character_id -> selected_character_index  -1は未選択を表したいがエラー吐かないか心配
+    public List<Vector2Int> attackRange = new List<Vector2Int>();
     public RectTransform BackButton;
     public BattleViewManager battleViewManager;
     public int attack_number;
@@ -195,19 +196,7 @@ public class CharacterManager : MonoBehaviour
 
         if (is_attacking) 
         {
-            ClearAttackRange(); 
-            Attack(); 
-
-            // 攻撃方向が変わった場合、または初めて攻撃モードに入った場合にグリッド同期
-            Vector2Int currentDir = GetMouseDirection();
-            if (currentDir != _lastAttackDirection)
-            {
-                SEManager.instance?.PlayClickSE();
-                _lastAttackDirection = currentDir;
-                // ここで攻撃キャラId、1Pか、攻撃番号、攻撃予告方向をバックに送ればGridに組み込む必要はなくなる。
-                // Gridにするならここにサーバーへのグリッド変更通知（どのグリッドがどう変わるのか）を送信
-                // 攻撃予告方向はバックに送らない可能性あり
-            }
+            SetAttackRange(); 
 
             // 左クリックで攻撃を確定させる
             if (inputData.left_mouse_button_ispressed)
@@ -342,29 +331,39 @@ public class CharacterManager : MonoBehaviour
         return false;
     }
 
-    public void Attack()
+    public void SetAttackRange()
     {
-    int currentX = self.characters[selected_character_index].now_character_position.x;
-    int currentY = self.characters[selected_character_index].now_character_position.y;
-    var ranges = characterData.characters[self.characters[selected_character_index].unique_id].attacks[attack_number].default_attack_range;
-
-    // マウスの方向を取得 (Vector2Int.up, down, left, right のいずれかが返る)
-    Vector2Int direction = GetMouseDirection();
-
-    foreach (Vector2Int range in ranges)
-    {
-        // 方向に基づいて攻撃範囲を回転/反転させる計算
-        // デフォルトの範囲データが「右向き(X+)」を正としていると仮定した場合の計算例
-        Vector2Int rotatedRange = RotateRange(range, direction);
-
-        int targetX = currentX + rotatedRange.x;
-        int targetY = currentY + rotatedRange.y;
-
-        if (targetX >= 0 && targetX < 8 && targetY >= 0 && targetY < 5)
+        // マウスの方向を取得 (Vector2Int.up, down, left, right のいずれかが返る)
+        // 攻撃方向が変わった場合、または初めて攻撃モードに入った場合に動く
+        Vector2Int currentDir = GetMouseDirection();
+        if (currentDir != _lastAttackDirection)
         {
-            gridDataforOnline.grid_attack_position_y[targetY].grid_attack_position_x[targetX] = 1;
+            SEManager.instance?.PlayClickSE();
+            _lastAttackDirection = currentDir;
+
+            int currentX = self.characters[selected_character_index].now_character_position.x;
+            int currentY = self.characters[selected_character_index].now_character_position.y;
+            var ranges = characterData.characters[self.characters[selected_character_index].unique_id].attacks[attack_number].default_attack_range;
+
+            // 攻撃範囲のリセットと更新
+            ClearAttackRange();
+
+            foreach (Vector2Int range in ranges)
+            {
+                // 方向に基づいて攻撃範囲を回転/反転させる計算
+                // デフォルトの範囲データが「右向き(X+)」を正としていると仮定した場合の計算例
+                Vector2Int rotatedRange = RotateRange(range, currentDir);
+
+                int targetX = currentX + rotatedRange.x;
+                int targetY = currentY + rotatedRange.y;
+
+                attackRange.Add(new Vector2Int(targetX, targetY));
+                /*if (targetX >= 0 && targetX < 8 && targetY >= 0 && targetY < 5)
+                {
+                    gridDataforOnline.grid_attack_position_y[targetY].grid_attack_position_x[targetX] = 1;
+                }*/
+            }
         }
-    }
     }
 
     // 2. マウスがキャラから見てどの方向にいるか判定する関数
@@ -394,13 +393,17 @@ public class CharacterManager : MonoBehaviour
 
     public void ClearAttackRange()
     {
-    for (int y = 0; y < 5; y++)
-        {
-            for (int x = 0; x < 8; x++)
+        attackRange.Clear();
+        // gridManagerの攻撃範囲を消す処理はここで叩く？
+        /*
+        for (int y = 0; y < 5; y++)
             {
-            gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+                for (int x = 0; x < 8; x++)
+                {
+                    gridDataforOnline.grid_attack_position_y[y].grid_attack_position_x[x] = 0;
+                }
             }
-        }
+        */
     }
 
     public async void ConfirmAttack()
@@ -676,8 +679,8 @@ public class CharacterManager : MonoBehaviour
             self.characters[i].character_isSelected = false;
         }
         battleViewManager.HideAttackWindow();
-        is_attacking = false;// 攻撃選択中ブールをfalseに
-        int gameConnectorの攻撃範囲表示グリッドを消す処理を叩く = 0;
+        is_attacking = false;
+        ClearAttackRange();
     }
 
     public void BuffDebuff(int index)
