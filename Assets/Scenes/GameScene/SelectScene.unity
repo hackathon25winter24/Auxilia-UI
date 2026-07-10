@@ -175,8 +175,9 @@ MonoBehaviour:
   nameText: {fileID: 914225192}
   nameText2: {fileID: 1561983189}
   timertext2: {fileID: 607152488}
-  gameConnector: {fileID: 0}
-  selectedUI: 0
+  authenticationConnector: {fileID: 0}
+  matchingConnector: {fileID: 0}
+  battleConnector: {fileID: 0}
   selectedCharacterId: 0
   decidedButtonText: {fileID: 0}
   maxTime: 100
@@ -252,7 +253,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 5
+  m_ScrollSensitivity: -6
   m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
