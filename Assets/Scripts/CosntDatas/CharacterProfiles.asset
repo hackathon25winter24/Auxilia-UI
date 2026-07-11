@@ -41,7 +41,7 @@ MonoBehaviour:
     _hobby: "\u7B4B\u30C8\u30EC"
   - _image_mini: {fileID: 21300000, guid: 8829786a14e2a4a4dabbf3d9a09bad31, type: 3}
     _image_big: {fileID: 21300000, guid: 56d8bbabda7abe742bfa1bfe68113e1b, type: 3}
-    _image_detail: {fileID: 0}
+    _image_detail: {fileID: 8314858775564062062, guid: 85a384fa836994d49bd581d6e500be8b, type: 3}
     _name: "\u30CA\u30C7\u30A3\u30A2\u30FB\u30DF\u30EC\u30FC\u30CC\u30FB\u30A8\u30A4\u30AE\u30FC\u30E6\u30FB\u30C9\u30A5\u30FB\u30E1\u30C7\u30A5\u30B7\u30FC\u30CC"
     _gender: "\u5973"
     _age: "19\u6B73"
@@ -54,7 +54,7 @@ MonoBehaviour:
     _hobby: "\u72AC\u306E\u4E16\u8A71"
   - _image_mini: {fileID: 21300000, guid: d639dcac02da21f4e8252a527cd7aa60, type: 3}
     _image_big: {fileID: 21300000, guid: 32fd8ffc9e56f964fb3c7da76d81e6e2, type: 3}
-    _image_detail: {fileID: 0}
+    _image_detail: {fileID: 1845130351903015196, guid: b7a806a2d2c5fb241ab7dddcdb99a51d, type: 3}
     _name: "\u4E09\u96F2 \u6708\u8449(\u307F\u304F\u3082 \u3064\u304D\u306F)"
     _gender: "\u5973"
     _age: "16\u6B73"
@@ -93,7 +93,7 @@ MonoBehaviour:
     _hobby: "\u304A\u3057\u3083\u3079\u308A\u3001\u83EF\u9053"
   - _image_mini: {fileID: 21300000, guid: 23e6cb9594be1e340a911bd0cf7fe4b3, type: 3}
     _image_big: {fileID: 21300000, guid: 5bf0d7b9d22fc744194e08dc50857ce5, type: 3}
-    _image_detail: {fileID: 0}
+    _image_detail: {fileID: 2274411440236338096, guid: c255e22d6d96c514085031acbedd305d, type: 3}
     _name: "\u30D9\u30EC\u30CB\u30B9\u30FB\u30A4\u30CD\u30B9\u30FB\u30DE\u30EB\u30F4\u30A7\u30E9\u30F3\u30B9"
     _gender: "\u5973"
     _age: "18\u6B73"
