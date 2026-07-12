@@ -76,15 +76,6 @@ public class BattleOnlineManager : MonoBehaviour
                 return;
             }
 
-            // --- 重要: 通信開始前にイベントだけ先に購読する ---
-            var battleView = FindFirstObjectByType<BattleViewManager>();
-            if (battleView != null)
-            {
-                battleView.characterManager = characterManager;
-                battleView.SubscribeToEvents();
-                Debug.Log("[BattleOnlineManager] Early event subscription successful.");
-            }
-
             // サーバーからゲームデータを取得して初期化する
             SetFirstGameData();
 
@@ -274,19 +265,15 @@ public class BattleOnlineManager : MonoBehaviour
                 if (gameData.GameActionLog.Sequence <= consumed_attack_id) break;
                 consumed_attack_id = gameData.GameActionLog.Sequence;
                 Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={gameData.GameActionLog.PlayerId}, AttackerID={gameData.GameActionLog.ActorCharacterUniqueId}, Type={gameData.GameActionLog.AttackDetail.AttackType}</color>");
-                
 
-                // イベントの発火 (攻撃ログ?)
-                /*
-                OnAttackExecuted?.Invoke(new AttackEventData {
-                    attackerUniqueId = ai.AttackerCharacterId,
-                    targetUniqueId = 0, // 不明
-                    finalDamage = 0,    // 不明（HP同期側で検知可能）
-                    attackType = ai.AttackType,
-                    isPlayerAttack = false
-                });
-                */
-
+                CharacterManager.AttackEventData newEvent = new CharacterManager.AttackEventData();
+                newEvent.attackerUniqueId = gameData.GameActionLog.ActorCharacterUniqueId;
+                newEvent.attackType = gameData.GameActionLog.AttackDetail.AttackType;
+                newEvent.targetUniqueId = tcuid;
+                newEvent.isPlayerAttack = gameData.GameActionLog.PlayerId == userData.user_id;
+                // 最終ダメージの計算はちょっと面倒なので、一旦飛ばします
+                newEvent.finalDamage = 0;
+                battleViewManager.ShowAttackLog(newEvent);
                 // ここで攻撃されたキャラに演出をする
             }
         }

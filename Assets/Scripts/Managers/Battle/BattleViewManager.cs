@@ -26,7 +26,6 @@ public class BattleViewManager : MonoBehaviour
     public Image characterStates;
     public RectTransform backfromStates;
     public Sprite[] characterStatesImage;
-    public CharacterManager characterManager;
     public TextMeshProUGUI logText;
     private Coroutine _clearLogCoroutine;
     
@@ -64,18 +63,6 @@ public class BattleViewManager : MonoBehaviour
         // cost[1].text = battleDataForOnline.now_enemy_cost.ToString();
     }
 
-    public void SubscribeToEvents()
-    {
-        if (characterManager != null)
-        {
-            // 重複購読を防ぐため一旦解除
-            characterManager.OnAttackExecuted -= HandleAttackExecuted;
-            characterManager.OnAttackExecuted += HandleAttackExecuted;
-            Debug.Log("<color=green>[BattleViewManager] OnAttackExecuted サブスクライブ完了</color>");
-        }
-    }
-
-
     public void InitUI()
     {
         Debug.Log("[BattleViewManager] InitUI started.");
@@ -106,15 +93,6 @@ public class BattleViewManager : MonoBehaviour
         
         Debug.Log("[BattleViewManager] InitUI finished successfully.");
     }
-
-    void OnDestroy()
-    {
-        if (characterManager != null)
-        {
-            characterManager.OnAttackExecuted -= HandleAttackExecuted;
-        }
-    }
-
 
     private T GetSo<T>(T existing) where T : ScriptableObject
     {
@@ -247,11 +225,12 @@ public class BattleViewManager : MonoBehaviour
         }
     }
 
-    private void HandleAttackExecuted(CharacterManager.AttackEventData data)
+    public void ShowAttackLog(CharacterManager.AttackEventData data)
     {
+        int ここで攻撃ログを管理する = 0;
         Debug.Log($"<color=cyan>[BattleViewManager] HandleAttackExecuted 受信</color>: Attacker={data.attackerUniqueId}, Target={data.targetUniqueId}, Damage={data.finalDamage}");
         string attackerName = GetCharacterName(data.attackerUniqueId);
-        string targetName = data.targetUniqueId == 0 ? "拠点" : GetCharacterName(data.targetUniqueId);
+        string targetName = (data.targetUniqueId == 98 || data.targetUniqueId == 99) ? "拠点" : GetCharacterName(data.targetUniqueId);
 
         string logMessage = "";
         if (data.isPlayerAttack)
