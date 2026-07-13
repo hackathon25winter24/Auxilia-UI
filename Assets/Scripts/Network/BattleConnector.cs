@@ -156,9 +156,9 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc ApplyMove(MoveAction) returns (AcceptResponse);
     /// </summary>
-    public async UniTask<bool> SendMove(int roomId, string playerId, int charaId, int x, int y, CancellationToken ct = default)
+    public async UniTask<bool> SendMove(int roomId, string playerId, uint charaId, int x, int y, CancellationToken ct = default)
     {
-        var request = new MoveAction { RoomId = (uint)roomId, PlayerId = playerId, CharacterId = (uint)charaId, ToX = (uint)x, ToY = (uint)y };
+        var request = new MoveAction { RoomId = (uint)roomId, PlayerId = playerId, CharacterId = charaId, ToX = (uint)x, ToY = (uint)y };
         try 
         {
             var response = await _battleClient.ApplyMoveAsync(request, cancellationToken: ct);
@@ -174,9 +174,9 @@ public class BattleConnector : MonoBehaviour
     /// <summary>
     /// rpc ApplyAttack(AttackAction) returns (AcceptResponse);
     /// </summary>
-    public async UniTask<bool> SendAttack(int roomId, string playerId, int attackerCharaId, int attackType, List<AttackInfo> attackInfos, CancellationToken ct = default)
+    public async UniTask<bool> SendAttack(int roomId, string playerId, uint attackerCharaId, int attackType, List<AttackInfo> attackInfos, CancellationToken ct = default)
     {
-        var request = new AttackAction { RoomId = (uint)roomId, PlayerId = playerId, AttackerCharacterId = (uint)attackerCharaId, AttackType = attackType };
+        var request = new AttackAction { RoomId = (uint)roomId, PlayerId = playerId, AttackerCharacterId = attackerCharaId, AttackType = attackType };
         if (attackInfos != null) request.AttackInfos.AddRange(attackInfos);
         
         try 

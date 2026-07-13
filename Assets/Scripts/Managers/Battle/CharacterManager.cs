@@ -268,7 +268,7 @@ public class CharacterManager : MonoBehaviour
         UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        await battleConnector.SendMove(roomData.room_id, self.player_id, self.characters[selected_character_index].unique_id, 
+        await battleConnector.SendMove(roomData.room_id, self.player_id, Support.GetUCID(roomData.room_id, self.characters[selected_character_index].unique_id, is_1p), 
         nextX, nextY);
 
         //デバフマスの処理をする
