@@ -192,11 +192,11 @@ public class CharacterSelectManager : MonoBehaviour
     {
         if (isAnimating) return;
         currentSelectingSlotIndex = slotIndex;
-         SEManager.instance?.PlaySelectSE();
+        SEManager.instance?.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
-        characterSelectPanel.SetActive(true);
+        //characterSelectPanel.SetActive(true);
         if (authenticationConnector != null) await authenticationConnector.UpdateUser();
-         StartCoroutine(FadeSequence(true));
+        StartCoroutine(FadeSequence(true));
     }
 
     void CloseSelectPanelWithFade()
