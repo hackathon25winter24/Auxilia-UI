@@ -3270,8 +3270,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1053060123}
         m_TargetAssemblyTypeName: RoomUIManager, Assembly-CSharp
-        m_MethodName: OnButtonClick
-        m_Mode: 5
+        m_MethodName: OnClickLeaveRoom
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4183,7 +4183,6 @@ MonoBehaviour:
   - {fileID: 959374606}
   - {fileID: 1481852140}
   - {fileID: 1681809784}
-  gameConnector: {fileID: 0}
   renameRoomUI: {fileID: 1336134750}
   renameRoomText: {fileID: 291271055}
 --- !u!4 &1053060124
@@ -6386,8 +6385,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1053060123}
         m_TargetAssemblyTypeName: RoomUIManager, Assembly-CSharp
-        m_MethodName: OnButtonClick
-        m_Mode: 5
+        m_MethodName: OnClickReadyOrStart
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

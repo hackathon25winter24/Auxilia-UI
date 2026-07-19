@@ -23,6 +23,7 @@ public class RoomUIManager : MonoBehaviour
     public TextMeshProUGUI[] userRate;
     private NetworkManager Net => NetworkManager.Instance;
     private MatchingConnector matchingConnector => Net?.Matching;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
     public GameObject renameRoomUI;
     public TMP_InputField renameRoomText;
 
@@ -155,7 +156,7 @@ public class RoomUIManager : MonoBehaviour
     /// <summary>
     /// 部屋のビジュアル要素（テキスト・ボタン・アウトライン）を最新データに書き換える
     /// </summary>
-    public void UpDateRoomVisuals(List<Room.Room> rooms)
+    public async void UpDateRoomVisuals(List<Room.Room> rooms)
     {
         if (roomData == null || roomData.usersData == null) return;
 
@@ -183,8 +184,9 @@ public class RoomUIManager : MonoBehaviour
                 2 => "[2P] ",
                 _ => "[観戦] "
             };
-            userName[i].text = roleStr + "ID: " + roomData.usersData[i].user_id.Substring(0, Math.Min(8, roomData.usersData[i].user_id.Length)); // 長いので頭8文字
-            userRate[i].text = "Rate: 1500"; 
+            var userInfo = await authenticationConnector.GetUser(roomData.usersData[i].user_id);
+            userName[i].text = (userInfo != null)? userInfo.Name : "???";
+            userRate[i].text = "Rate: " + ((userInfo != null)? userInfo.Rate : "???"); 
 
             // 準備完了状態の枠を光らせる（Outline制御）
             var optOutline = joinnersUI[i].GetComponent<Outline>();
@@ -294,6 +296,7 @@ public class RoomUIManager : MonoBehaviour
             
             // ロビーシーンなどへの遷移ロジックをここに記述
             Debug.Log("部屋を退出しました。ロビーへ戻ります。");
+            sceneData.next_scene_number = 3;
         }
     }
 }
