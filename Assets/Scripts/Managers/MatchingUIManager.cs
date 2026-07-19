@@ -183,7 +183,8 @@ public class MatchingUIManager : MonoBehaviour
                     }
                 }
 
-                SetFirstRoomData(response.Rooms);
+                var rooms = new List<Room.Room>(response.Rooms);
+                SetFirstRoomData(rooms);
 
                 sceneData.next_scene_number = 9;
             }
@@ -197,7 +198,7 @@ public class MatchingUIManager : MonoBehaviour
         }
     }
 
-    private void SetFirstRoomData(Google.Protobuf.Collections.RepeatedField<Room.Room> rooms)
+    private void SetFirstRoomData(List<Room.Room> rooms)
     {
         // 中身はRoomUIManagerのUpdateRoomDataModelと同じです
         if (roomData == null) return;
@@ -309,12 +310,15 @@ public class MatchingUIManager : MonoBehaviour
         var response = await NetworkManager.Instance.Matching.CreateRoomMatch(room_name, userData.user_id, false);
         if (response != null)
         {
-            await NetworkManager.Instance.Matching.JoinRoom(response.RoomId, response.OwnerId);
+            var joinRoomResponse = await NetworkManager.Instance.Matching.JoinRoom(response.RoomId, response.OwnerId);
             await NetworkManager.Instance.Matching.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
             // 新たにRoomDataにIDを追加
             roomData.room_id = response.RoomId;
             roomData.room_name = room_name;
+
+            var rooms = new List<Room.Room>(joinRoomResponse.Rooms);
+            SetFirstRoomData(rooms);
 
             sceneData.next_scene_number = 9;
         }
