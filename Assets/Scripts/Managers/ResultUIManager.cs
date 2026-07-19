@@ -8,6 +8,7 @@ public class ResultUIManager : MonoBehaviour
     public InputData inputData;
     public SceneData sceneData;
     public UserData userData;
+    public RoomData roomData;
     public BattleDataForOnline battleDataForOnline;
 
     public PlayerState self;
@@ -26,6 +27,10 @@ public class ResultUIManager : MonoBehaviour
     public Sprite[] resultImage;
     public Image[] UpDown;
     public Sprite[] UpDownImage;
+
+    private NetworkManager Net => NetworkManager.Instance;
+    private MatchingConnector matchingConnector => Net?.Matching;
+    private BattleConnector battleConnector => Net?.Battle;
 
     void Awake()
     {
@@ -84,10 +89,6 @@ public class ResultUIManager : MonoBehaviour
             if (resultImage.Length > 1) result.sprite = resultImage[1];
         }
     }
-
-    public RoomData roomData;
-    public MatchingConnector matchingConnector;
-    public BattleConnector battleConnector;
 
     void Start()
     {
@@ -194,15 +195,6 @@ public class ResultUIManager : MonoBehaviour
         userData = GetSO(userData);
         battleDataForOnline = GetSO(battleDataForOnline);
         roomData = GetSO(roomData);
-
-        if (matchingConnector == null)
-        {
-            matchingConnector = FindFirstObjectByType<MatchingConnector>();
-        }
-        if (battleConnector == null)
-        {
-            battleConnector = FindFirstObjectByType<BattleConnector>();
-        }
     }
 
     private T GetSO<T>(T existing) where T : ScriptableObject

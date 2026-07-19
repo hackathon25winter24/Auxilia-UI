@@ -61,7 +61,8 @@ public class CharacterSelectManager : MonoBehaviour
 
     [Header("Network")]
 
-    public AuthenticationConnector authenticationConnector;
+    private NetworkManager Net => NetworkManager.Instance;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
 
 
 
@@ -74,10 +75,6 @@ public class CharacterSelectManager : MonoBehaviour
         public Image attackRange;
     }
 
-    void Awake()
-    {
-        if (authenticationConnector == null) authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
-    }
 
     void Start()
     {
