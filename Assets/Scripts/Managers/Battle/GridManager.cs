@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,8 @@ public class GridManager : MonoBehaviour
     public Sprite AttackGrid;
     public Sprite MakibishiGrid;
     public Sprite LandmineGrid;
+    public Sprite PoisonGasGrid;
+    public Sprite RestrainingGrid;
 
     public RoomData roomData;
     public UserData userData;
@@ -57,18 +60,18 @@ public class GridManager : MonoBehaviour
         }
         
         // 特殊なグリッドの設定
-        SetInitialGridState(1, 1, -2);
-        SetInitialGridState(5, 1, -2);
-        SetInitialGridState(0, 2, 1);
-        SetInitialGridState(7, 2, 1);
-        SetInitialGridState(2, 3, -2);
-        SetInitialGridState(6, 3, -2);
-        SetInitialGridState(0, 0, -1);
-        SetInitialGridState(1, 2, -1);
-        SetInitialGridState(0, 4, -1);
-        SetInitialGridState(7, 0, -1);
-        SetInitialGridState(6, 2, -1);
-        SetInitialGridState(7, 4, -1);
+        SetInitialGridState(1, 1, 0);
+        SetInitialGridState(5, 1, 0);
+        // SetInitialGridState(0, 2, 1);
+        // SetInitialGridState(7, 2, 1);
+        SetInitialGridState(2, 3, 0);
+        SetInitialGridState(6, 3, 0);
+        // SetInitialGridState(0, 0, -1);
+        // SetInitialGridState(1, 2, -1);
+        // SetInitialGridState(0, 4, -1);
+        // SetInitialGridState(7, 0, -1);
+        // SetInitialGridState(6, 2, -1);
+        // SetInitialGridState(7, 4, -1);
     }
 
     // コードをスッキリさせるための補助関数
@@ -161,11 +164,13 @@ public class GridManager : MonoBehaviour
                     changed = true;
                     string spriteName = current switch
                     {
-                        1    => "BaseGrid",
-                        -2   => "ProhibitGrid",
-                        -1   => "NormalGrid(Char)",
-                        3    => "MakibishiGrid",
-                        4    => "LandmineGrid",
+                        // 1    => "BaseGrid",
+                        0    => "ProhibitGrid",
+                        // -1   => "NormalGrid(Char)",
+                        1    => "LandmineGrid",
+                        2    => "MakibishiGrid",
+                        3    => "PoisonGasGrid",
+                        4    => "RestrainingGrid",
                         _    => "NormalGrid"
                     };
                     logSb.AppendLine($"  [{x},{y}] {_prevGridState[y, x]} -> {current} ({spriteName})");
@@ -195,4 +200,83 @@ public class GridManager : MonoBehaviour
         if (is1p) return new Vector2Int(x, y);
         return new Vector2Int(7 - x, y);
     }
-}
+
+    // 以下、手を加えたところ
+
+    // 選択されたキャラクターのマスの見た目を変える
+    public void ChangeSelectedCharacterGrid(Vector2Int characterPosition)
+    {
+        if (!IsOnGrid(characterPosition)) return;
+
+        int gridIndex = characterPosition.y * 8 + characterPosition.x;
+
+        // デバフマスや侵入不可能マスであるときには変化させない
+        foreach (var uq in battleDataForOnline.uniqueGrids)
+        {
+            if (characterPosition == uq.position) return;
+        }
+
+        grids[gridIndex].sprite = CharacterGrid;
+    }
+
+    // キャラクターの攻撃範囲のマスの見た目を変える
+    public void ChangeAttackGrid(Vector2Int attackPosition)
+    {
+        if(IsOnGrid(attackPosition)) return;
+
+        int gridIndex = attackPosition.y * 8 + attackPosition.x;
+
+        // デバフマスや侵入不可能マスであるときには変化させない
+        foreach(var uq in battleDataForOnline.uniqueGrids)
+        {
+            if (attackPosition == uq.position) return;
+        }
+
+        grids[gridIndex].sprite = AttackGrid;
+    }
+
+    // 主にデバフマスの見た目を変える
+    public void ChangeGridLooks(Vector2Int position, int gridType)
+    {
+        int gridIndex = position.y * 8 + position.x;
+        switch (gridType)
+        {
+            case 0: grids[gridIndex].sprite = ProhibitGrid; break;
+            case 1: grids[gridIndex].sprite = LandmineGrid; break;
+            case 2: grids[gridIndex].sprite = MakibishiGrid; break;
+            case 3: grids[gridIndex].sprite = PoisonGasGrid; break;
+            case 4: grids[gridIndex].sprite = RestrainingGrid; break;
+            default: grids[gridIndex].sprite = NormalGrid; break;
+        }
+    }
+
+    // 移動可能か判定
+    public bool IsMoveable(Vector2Int position)
+    {
+        int y = position.y;
+        int x = position.x;
+        int gridIndex = y * 8 + x;
+
+        // 範囲外()
+        if (!IsOnGrid(position)) return false;
+
+        // 侵入不可能マス
+        if (battleDataForOnline.uniqueGrids[gridIndex].gridType == 0) return false;
+        // 不変マス
+        if (battleDataForOnline.uniqueGrids[gridIndex].gridType == 4) return false;
+
+        return true;
+    }
+
+    public bool IsOnGrid(Vector2Int position)
+    {
+        int y = position.y;
+        int x = position.x;
+
+        // 範囲外(gridDataforOnlineに依存しない見直しが必要)
+        if (y < 0 || y >= gridDataforOnline.sub_grid_state_y.Length) return false;
+        if (x < 0 || x >= gridDataforOnline.sub_grid_state_y[y].sub_grid_state_x.Length) return false;
+
+        return true;
+    }
+}  
