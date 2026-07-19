@@ -35,9 +35,10 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI nameText2;
     public TextMeshProUGUI timertext2;
 
-    public AuthenticationConnector authenticationConnector;
-    public MatchingConnector matchingConnector;
-    public BattleConnector battleConnector;
+    private NetworkManager Net => NetworkManager.Instance;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
+    private MatchingConnector matchingConnector => Net?.Matching;
+    private BattleConnector battleConnector => Net?.Battle;
     
     public int selectedCharacterId;
 
@@ -61,10 +62,6 @@ public class SelectUIManager : MonoBehaviour
 
     async void Awake()
     {
-        matchingConnector = FindFirstObjectByType<MatchingConnector>();
-        authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
-        battleConnector = FindFirstObjectByType<BattleConnector>();
-
         SelectedTub.SetActive(false);
         // 1P/2Pの情報を取得
         await GetPlayerInfo();

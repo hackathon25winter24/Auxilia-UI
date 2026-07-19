@@ -20,9 +20,8 @@ public class RoomUIManager : MonoBehaviour
     public Sprite[] joinnersUIImage;
     public TextMeshProUGUI[] userName;
     public TextMeshProUGUI[] userRate;
-    public AuthenticationConnector authenticationConnector;
-    public MatchingConnector matchingConnector;
-    public BattleConnector battleConnector;
+    private NetworkManager Net => NetworkManager.Instance;
+    private MatchingConnector matchingConnector => Net?.Matching;
     public GameObject renameRoomUI;
     public TMP_InputField renameRoomText;
 
