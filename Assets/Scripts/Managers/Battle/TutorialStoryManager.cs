@@ -25,7 +25,8 @@ public class TutorialStoryManager : MonoBehaviour
     public GameObject Back;
 
     [Header("Network")]
-    public AuthenticationConnector authenticationConnector;
+    private NetworkManager Net => NetworkManager.Instance;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
 
 
     [Header("Settings")]
@@ -42,8 +43,6 @@ public class TutorialStoryManager : MonoBehaviour
         storyManagerData.is_auto = false;
         storyManagerData.serif_loading = false;
         storyManagerData.is_serif = false;
-        
-        if (authenticationConnector == null) authenticationConnector = FindFirstObjectByType<AuthenticationConnector>();
 
         autoText.gameObject.SetActive(false);
         Texts.SetActive(true);

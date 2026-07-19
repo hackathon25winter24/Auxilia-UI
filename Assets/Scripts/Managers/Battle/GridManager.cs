@@ -177,7 +177,8 @@ public class GridManager : MonoBehaviour
                     _prevGridState[y, x] = current;
                 }
 
-                SetGridVisual(x, y);
+                // debug test
+                // SetGridVisual(x, y);
             }
         }
     }
@@ -219,6 +220,21 @@ public class GridManager : MonoBehaviour
         grids[gridIndex].sprite = CharacterGrid;
     }
 
+    public void ClearSelectedCharacterGrid(Vector2Int characterPosition)
+    {
+        if (!IsOnGrid(characterPosition)) return;
+
+        int gridIndex = characterPosition.y * 8 + characterPosition.x;
+
+        // デバフマスや侵入不可能マスであるときには変化させない
+        foreach (var uq in battleDataForOnline.uniqueGrids)
+        {
+            if (characterPosition == uq.position) return;
+        }
+
+        grids[gridIndex].sprite = NormalGrid;
+    }
+
     // キャラクターの攻撃範囲のマスの見た目を変える
     public void ChangeAttackGrid(Vector2Int attackPosition)
     {
@@ -233,6 +249,21 @@ public class GridManager : MonoBehaviour
         }
 
         grids[gridIndex].sprite = AttackGrid;
+    }
+
+    public void ClearAttackGrid(Vector2Int attackPosition)
+    {
+        if(IsOnGrid(attackPosition)) return;
+
+        int gridIndex = attackPosition.y * 8 + attackPosition.x;
+
+        // デバフマスや侵入不可能マスであるときには変化させない
+        foreach(var uq in battleDataForOnline.uniqueGrids)
+        {
+            if (attackPosition == uq.position) return;
+        }
+
+        grids[gridIndex].sprite = NormalGrid;
     }
 
     // 主にデバフマスの見た目を変える

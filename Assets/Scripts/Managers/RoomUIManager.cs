@@ -59,6 +59,9 @@ public class RoomUIManager : MonoBehaviour
             
             matchingConnector.StartRoomStream(roomData.room_id, userData.user_id, OnRoomStreamUpdated);
         }
+
+        // 初期情報をUIに反映
+        UpDateRoomVisuals(null);
     }
 
     private void OnDestroy()
@@ -225,7 +228,10 @@ public class RoomUIManager : MonoBehaviour
         }
 
         // 試合開始フラグなどの監視・遷移チェック
-        CheckAndTransitionToBattle(rooms);
+        if (rooms != null)
+        {
+            CheckAndTransitionToBattle(rooms);
+        }
     }
 
     private void CheckAndTransitionToBattle(List<Room.Room> rooms)
