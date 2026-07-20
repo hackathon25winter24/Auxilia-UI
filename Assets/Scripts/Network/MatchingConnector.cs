@@ -206,6 +206,41 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
+    public async UniTask<SetReadyResponse> SetReady(int roomId, string userId, bool isReady)
+    {
+        var request = new SetReadyRequest
+        {
+            RoomId = roomId,
+            UserId = userId,
+            Ready = isReady
+        };
+
+        Debug.Log($"[MatchingConnector] Sending SetReady... Room: {roomId}, User: {userId}, Ready: {isReady}");
+
+        try
+        {
+            // 通常の_channelを使ってクライアントを生成し、非同期でリクエストを送信
+            var client = new RoomService.RoomServiceClient(_channel);
+            
+            // このコンポーネントが破棄されたらキャンセルされるようにトークンを渡す
+            var response = await client.SetReadyAsync(request, cancellationToken: this.GetCancellationTokenOnDestroy());
+            
+            Debug.Log($"[MatchingConnector] SetReady Response Received. Total Rooms Count: {response.Rooms.Count}");
+            return response;
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.FailedPrecondition)
+        {
+            // Go側で「spectator cannot ready (観戦者は準備完了できない)」が返ってきた場合のハンドリング
+            Debug.LogWarning($"[MatchingConnector] SetReady Rejected: 観戦者は準備完了できません。");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[MatchingConnector] SetReady Error: {ex.Message}");
+            throw;
+        }
+    }
+
     /// <summary>
     /// ルーム同期の双方向ストリームを開始し、監視ループを実行します
     /// </summary>
