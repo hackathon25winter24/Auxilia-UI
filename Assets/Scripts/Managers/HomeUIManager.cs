@@ -352,12 +352,16 @@ public class HomeUIManager : MonoBehaviour
                 isExiting = false;
                 settingUI.gameObject.SetActive(false);
                 CreditUI.gameObject.SetActive(true);
+                uiContainer.gameObject.SetActive(false);
+                uiContainer_left.gameObject.SetActive(false);
             break;
             case "BackFromCredit":
                 SEManager.instance?.PlayBackSE();
                 isExiting = false;
                 CreditUI.gameObject.SetActive(false);
                 settingUI.gameObject.SetActive(true);
+                uiContainer.gameObject.SetActive(true);
+                uiContainer_left.gameObject.SetActive(true);
             break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);

@@ -194,7 +194,6 @@ public class CharacterSelectManager : MonoBehaviour
         currentSelectingSlotIndex = slotIndex;
         SEManager.instance?.PlaySelectSE();
         currentSelectingSlotIndex = slotIndex;
-        //characterSelectPanel.SetActive(true);
         if (authenticationConnector != null) await authenticationConnector.UpdateUser();
         StartCoroutine(FadeSequence(true));
     }
