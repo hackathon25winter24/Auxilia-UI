@@ -22,6 +22,7 @@ public class HomeUIManager : MonoBehaviour
     public RectTransform settingUI;
     public Slider bgmSlider;
     public Slider seSlider;
+    public RectTransform CreditUI;
     public Vector2 exitPosition = new Vector2(600, 0);
     public Vector2 exitPosition_left = new Vector2(-600, 0);
     public Vector2 enterPosition = new Vector2(300, 0);
@@ -44,6 +45,7 @@ public class HomeUIManager : MonoBehaviour
         StartCoroutine(AnimateEnter());
         BigBackButton.gameObject.SetActive(false);
         settingUI.gameObject.SetActive(false);
+        CreditUI.gameObject.SetActive(false);
         messageText.gameObject.SetActive(false);
 
         // スライダーの初期値を設定
@@ -336,14 +338,30 @@ public class HomeUIManager : MonoBehaviour
                 settingUI.gameObject.SetActive(false);
                 break;
             case "EndGame":
-            Application.Quit();
-            #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+                Application.Quit();
+                #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+                #endif
             break;
             case "GotoTitle":
-            SEManager.instance?.PlayToNextSE();
-            sceneData.next_scene_number = 0;
+                SEManager.instance?.PlayToNextSE();
+                sceneData.next_scene_number = 0;
+            break;
+            case "OpenCredit":
+                SEManager.instance?.PlaySelectSE();
+                isExiting = false;
+                settingUI.gameObject.SetActive(false);
+                CreditUI.gameObject.SetActive(true);
+                uiContainer.gameObject.SetActive(false);
+                uiContainer_left.gameObject.SetActive(false);
+            break;
+            case "BackFromCredit":
+                SEManager.instance?.PlayBackSE();
+                isExiting = false;
+                CreditUI.gameObject.SetActive(false);
+                settingUI.gameObject.SetActive(true);
+                uiContainer.gameObject.SetActive(true);
+                uiContainer_left.gameObject.SetActive(true);
             break;
             default:
                 Debug.Log("不明なボタン: " + buttonName);
