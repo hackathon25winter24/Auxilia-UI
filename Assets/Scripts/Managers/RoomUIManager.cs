@@ -28,24 +28,22 @@ public class RoomUIManager : MonoBehaviour
     public TMP_InputField renameRoomText;
 
     private TextMeshProUGUI startBattleButtonText;
-    private TextMeshProUGUI roomNameText; 
+    [SerializeField] TextMeshProUGUI roomNameText; 
     private GameObject editButton;        
 
     private bool _isStreaming;
 
     void Start()
     {
+        Debug.Log("RoomUIManager Loaded");
         var startButton = GameObject.Find("StartBattleButton");
         if (startButton != null)
         {
             startBattleButtonText = startButton.GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        var rNameObj = GameObject.Find("RoomNameText");
-        if (rNameObj != null)
-        {
-            roomNameText = rNameObj.GetComponent<TextMeshProUGUI>();
-        }
+        roomNameText.text = roomData.room_name;
+
 
         editButton = GameObject.Find("EditButton");
 
