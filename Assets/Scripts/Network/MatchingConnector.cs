@@ -208,22 +208,16 @@ public class MatchingConnector : MonoBehaviour
 
     public async UniTask<SetReadyResponse> SetReady(int roomId, string userId, bool isReady)
     {
-        var request = new SetReadyRequest
-        {
-            RoomId = roomId,
-            UserId = userId,
-            Ready = isReady
-        };
 
         Debug.Log($"[MatchingConnector] Sending SetReady... Room: {roomId}, User: {userId}, Ready: {isReady}");
 
         try
         {
+            var request = new SetReadyRequest{RoomId = roomId,UserId = userId,Ready = isReady};
             // 通常の_channelを使ってクライアントを生成し、非同期でリクエストを送信
-            var client = new RoomService.RoomServiceClient(_channel);
             
             // このコンポーネントが破棄されたらキャンセルされるようにトークンを渡す
-            var response = await client.SetReadyAsync(request, cancellationToken: this.GetCancellationTokenOnDestroy());
+            var response = await _roomClient.SetReadyAsync(request, cancellationToken: this.GetCancellationTokenOnDestroy());
             
             Debug.Log($"[MatchingConnector] SetReady Response Received. Total Rooms Count: {response.Rooms.Count}");
             return response;
