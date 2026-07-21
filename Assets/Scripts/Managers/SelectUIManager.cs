@@ -367,6 +367,7 @@ public class SelectUIManager : MonoBehaviour
 
                     if (p1count >= 3 && p2count >= 3)
                     {
+                        SetFirstGameData(data);
                         sceneData.next_scene_number = 5;
                         return; // ループ終了
                     }
@@ -467,5 +468,130 @@ public class SelectUIManager : MonoBehaviour
         //ここに試合中の全体の編成とコストを受け取る関数を書いてください
         var data = await battleConnector.GetGameData(roomData.room_id);
         return data;
+    }
+
+    public async void SetFirstGameData(Game.Network.GameDataResponse gameData)
+    {
+        if (roomData == null) {
+                Debug.LogError("[SelectUIManager] roomDataが見つかりません。");
+                return;
+            }
+            if (battleConnector == null) {
+                Debug.LogError("[SelectUIManager] battleConnectorが見つかりません。");
+                return;
+            }
+
+            Debug.Log($"[SelectUIManager] Calling GetGameData for room_id: {roomData.room_id}");
+            if (gameData == null)
+            {
+                Debug.LogError("[SelectUIManager] ゲームデータの取得に失敗しました。");
+                return;
+            }
+            Debug.Log("[SelectUIManager] GameData received successfully. Player1Id=" + gameData.Player1Id);
+
+            // プレイヤー情報やコスト、HP初期値はゲームデータ作成時にサーバー側で代入済み
+            // ここではデータを受け取ってbattleDataForOnlineを更新するだけ
+            // レート情報はサーバー側にいつ代入されるのか？
+
+            // 1p2pのユーザーネームを取得して反映（初回のみ実行のためここに記述）
+            var user1 = await authenticationConnector.GetUser(gameData.Player1Id);
+            var user2 = await authenticationConnector.GetUser(gameData.Player2Id);
+            battleDataforOnline.player1.player_name = user1?.Name ?? "1P";
+            battleDataforOnline.player2.player_name = user2?.Name ?? "2P";
+            battleDataforOnline.player1.player_id = user1?.Id ?? "unknown";
+            battleDataforOnline.player2.player_id = user2?.Id ?? "unknown";
+
+            // キャラクターデータを振り分ける（初回のみ実行のためここに記述）
+            int player1Idx = 0;
+            int player2Idx = 0;// インデックスは両方0..2
+            foreach (var c in gameData.Characters)
+            {
+                if (c.Is1P)
+                {
+                    battleDataforOnline.player1.characters[player1Idx].unique_id = (int)c.CharacterId;
+                    player1Idx++;
+                }
+                else if (!c.Is1P)
+                {
+                    battleDataforOnline.player2.characters[player2Idx].unique_id = (int)c.CharacterId;
+                    player2Idx++;
+                }
+            }
+
+        SetBattleDataForOnline(gameData);
+    }
+
+    public async void SetBattleDataForOnline(Game.Network.GameDataResponse gameData)
+    {
+        if (gameData == null) return;
+
+        battleDataforOnline.is_finished = gameData.IsFinished;
+        battleDataforOnline.winner_player_id = gameData.WinnerPlayerId;
+        
+        // ターン順
+        battleDataforOnline.is_1p_turn = gameData.Is1PTurn;
+
+        // 拠点HP
+        battleDataforOnline.player1.base_hp = (int)gameData.BaseHp1;
+        battleDataforOnline.player2.base_hp = (int)gameData.BaseHp2;
+
+        // コストをサーバーから反映
+        battleDataforOnline.player1.current_cost_remaining = (int)gameData.Cost1P;
+        battleDataforOnline.player2.current_cost_remaining = (int)gameData.Cost2P;
+
+        // キャラクターのデータを反映（UniqueIdによるマッチング）
+        foreach (var c in gameData.Characters)
+        {
+            bool is_1p = (userData.user_id == gameData.Player1Id);
+            SetCharacterData(c, is_1p);
+        }
+
+        // 特殊マスの受け取り
+        // 毎回新たなデータで更新する
+        battleDataforOnline.uniqueGrids.Clear();
+        foreach (var g in gameData.Grids)
+        {
+            UniqueGrid uniqueGrid = new UniqueGrid();
+            uniqueGrid.position = new Vector2Int((int)g.PositionX, (int)g.PositionY);
+            uniqueGrid.gridType = g.GridType;
+            battleDataforOnline.uniqueGrids.Add(uniqueGrid);
+            Debug.Log($"UniqueGrid added. {uniqueGrid.position} Type: {uniqueGrid.gridType}");
+        }
+    }
+    void SetCharacterData(Game.Network.UniqueCharacter c, bool is_1p)
+    {
+        // 1pと2pの処理分岐用。同IDキャラの混線を防止する役割も
+        PlayerState player = c.Is1P ? battleDataforOnline.player1 : battleDataforOnline.player2;
+        // unique_idはAwake時に代入されているので、これを用いてマッチング
+        for (int i = 0; i <= 2; i++)
+        {
+            if (player.characters[i].unique_id == c.CharacterId)// 各プレイヤーのキャラ3枠でIDが一致したキャラ
+            {
+                int oldHp = player.characters[i].now_character_hp;
+                int newHp = (int)c.Hp;
+                if (oldHp != newHp)
+                {
+                    Debug.Log($"<color=red>[GetBattleData] HP同期: idx={i} uniqueId={c.CharacterId} {oldHp} -> {newHp}</color>");
+                }
+
+                // hpの同期
+                player.characters[i].now_character_hp = newHp;
+
+                // キャラ座標の同期（自分が2pなら反転して管理）
+                Vector2Int converted = ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is_1p);
+                player.characters[i].now_character_position = converted;
+
+                // 選択状態の同期
+                // キャラ選択状態はバックは持たず、自環境での処理のみに用います
+
+                // 移動コストの同期
+                player.characters[i].now_character_move_cost = characterData.characters[c.CharacterId].default_move_cost;
+            }
+        }
+    }
+    public Vector2Int ConvertCoordinateForServer(int x, int y, bool is1p)// 1p2pで反転させたグリッド座標を返す
+    {
+        if (is1p) return new Vector2Int(x, y);
+        return new Vector2Int(7 - x, y);
     }
 }

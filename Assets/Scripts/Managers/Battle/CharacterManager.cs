@@ -69,7 +69,7 @@ public class CharacterManager : MonoBehaviour
         
     void Start()
     {
-        is_1p = (userData.user_id == battleDataforOnline.player1.player_id);// battleOnlineManagerのAwake以降で呼び出すようにする
+        is_1p = (userData.user_id == battleDataforOnline.player1.player_id);
         self     = (is_1p) ? battleDataforOnline.player1 : battleDataforOnline.player2;
         opponent = (is_1p) ? battleDataforOnline.player2 : battleDataforOnline.player1;
     }
@@ -251,6 +251,7 @@ public class CharacterManager : MonoBehaviour
 
     async void TryMove(int moveX, int moveY)
     {
+        Debug.Log("TryMove");
         SEManager.instance?.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
         int currentX = self.characters[selected_character_index].now_character_position.x;
         int currentY = self.characters[selected_character_index].now_character_position.y;
@@ -261,15 +262,20 @@ public class CharacterManager : MonoBehaviour
 
         if(self.current_cost_remaining - characterData.characters[self.characters[selected_character_index].unique_id].default_move_cost < 0) return;
 
+        Debug.Log("cost ok");
     // 進入可能かチェック (Online側のデータを見る)
+    Debug.Log(gridManager.IsMoveable(new Vector2Int(nextX, nextY)));
     if (gridManager.IsMoveable(new Vector2Int(nextX, nextY))/*gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0*/)
     {
+        Debug.Log("moveable");
         // A. 現在の場所（移動元）を元の地形に戻す
         int 直接Gridを変更しない = 0;
         //UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        await battleConnector.SendMove(roomData.room_id, self.player_id, Support.GetUCID(roomData.room_id, self.characters[selected_character_index].unique_id, is_1p), 
+        Debug.Log(NetworkManager.Instance);
+        Debug.Log(NetworkManager.Instance.Battle);
+        await NetworkManager.Instance.Battle.SendMove(roomData.room_id, self.player_id, Support.GetUCID(roomData.room_id, self.characters[selected_character_index].unique_id, is_1p), 
         nextX, nextY);
 
         //デバフマスの処理をする

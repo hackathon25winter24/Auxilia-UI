@@ -284,18 +284,23 @@ public class GridManager : MonoBehaviour
     // 移動可能か判定
     public bool IsMoveable(Vector2Int position)
     {
-        int y = position.y;
-        int x = position.x;
-        int gridIndex = y * 8 + x;
-
+        Debug.Log("IsMoveable");
         // 範囲外()
         if (!IsOnGrid(position)) return false;
-
-        // 侵入不可能マス
-        if (battleDataForOnline.uniqueGrids[gridIndex].gridType == 0) return false;
-        // 不変マス
-        if (battleDataForOnline.uniqueGrids[gridIndex].gridType == 4) return false;
-
+        Debug.Log("first ok");
+        // UniqueGridは全マスの情報を管理しているのではなく、特殊なマスのみを持っています
+        foreach (UniqueGrid ug in battleDataForOnline.uniqueGrids)
+        {
+            if (ug.position == position)// 調べるマスが特殊なマス
+            {
+                // 侵入不可能マス
+                if (ug.gridType == 0) return false;
+                Debug.Log("second ok");
+                // 不変マス
+                if (ug.gridType == 4) return false;
+                Debug.Log("third ok");
+            }
+        }
         return true;
     }
 

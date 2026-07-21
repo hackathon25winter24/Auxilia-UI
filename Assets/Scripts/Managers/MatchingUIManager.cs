@@ -200,6 +200,7 @@ public class MatchingUIManager : MonoBehaviour
 
     private void SetFirstRoomData(List<Room.Room> rooms)
     {
+        Debug.Log("SetFirstRoomData");
         // 中身はRoomUIManagerのUpdateRoomDataModelと同じです
         if (roomData == null) return;
 

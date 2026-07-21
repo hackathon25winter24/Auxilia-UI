@@ -33,7 +33,7 @@ public class RoomUIManager : MonoBehaviour
 
     private bool _isStreaming;
 
-    void Start()
+    async Task Start()
     {
         Debug.Log("RoomUIManager Loaded");
         var startButton = GameObject.Find("StartBattleButton");
@@ -57,6 +57,20 @@ public class RoomUIManager : MonoBehaviour
             _isStreaming = true;
             
             matchingConnector.StartRoomStream(roomData.room_id, userData.user_id, OnRoomStreamUpdated);
+        }
+
+        // 2026年7/20現在、部屋参加時に受け取る自分のStateが0になる問題が発生。暫定的な処理としてバックに問い合わせて取得します。不要になったら削除する
+        var room = await matchingConnector.GetBattlePlayer(roomData.room_id);
+        foreach (var r in room)
+        {
+            if (r == null) continue;
+            for (int i = 0; i < roomData.usersData.Length; i++)
+            {
+                if (r.UserId == roomData.usersData[i].user_id && r.UserId == userData.user_id)
+                {
+                    roomData.usersData[i].user_state = r.State;
+                }
+            }
         }
 
         // 初期情報をUIに反映
@@ -257,6 +271,8 @@ public class RoomUIManager : MonoBehaviour
 
         if (myData.user_state == 1) // 自分が1P（ホスト）なら試合開始
         {
+            bool nextReadyState = !myData.is_ready;
+            await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, myData.user_state, nextReadyState);
             Debug.Log("[RoomUIManager] ホストとして対戦開始リクエストを送信");
             var res = await matchingConnector.StartMatch(roomData.room_id);
             if (res != null)
@@ -295,6 +311,15 @@ public class RoomUIManager : MonoBehaviour
             // ロビーシーンなどへの遷移ロジックをここに記述
             Debug.Log("部屋を退出しました。ロビーへ戻ります。");
             sceneData.next_scene_number = 3;
+        }
+    }
+
+    // for debug
+    void Update()
+    {
+        if (inputData.a_key_ispressed)
+        {
+            sceneData.next_scene_number = 10;
         }
     }
 }
