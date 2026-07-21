@@ -66,38 +66,39 @@ namespace Game.Network {
             "dGVyc1Jlc3BvbnNlEjwKFXJlZ2lzdGVyZWRfY2hhcmFjdGVycxgBIAMoCzId",
             "LmdhbWUubmV0d29yay5VbmlxdWVDaGFyYWN0ZXIiOgoVRmV0Y2hBY3Rpb25M",
             "b2dSZXF1ZXN0Eg8KB3Jvb21faWQYASABKA0SEAoIc2VxdWVuY2UYAiABKA0i",
-            "3wEKDUdhbWVBY3Rpb25Mb2cSCgoCaWQYASABKA0SDwoHcm9vbV9pZBgCIAEo",
+            "kQIKDUdhbWVBY3Rpb25Mb2cSCgoCaWQYASABKA0SDwoHcm9vbV9pZBgCIAEo",
             "DRIQCghzZXF1ZW5jZRgDIAEoDRIRCglwbGF5ZXJfaWQYBCABKAkSEwoLYWN0",
             "aW9uX3R5cGUYBSABKAkSIQoZYWN0b3JfY2hhcmFjdGVyX3VuaXF1ZV9pZBgG",
             "IAEoDRIMCgR0b194GAcgASgNEgwKBHRvX3kYCCABKA0SEwoLYXR0YWNrX3R5",
-            "cGUYCSABKAUSIwobdGFyZ2V0X2NoYXJhY3Rlcl91bmlxdWVfaWRzGAogAygN",
-            "InMKEkFwcGx5RWZmZWN0UmVxdWVzdBIPCgdyb29tX2lkGAEgASgNEhEKCXBs",
-            "YXllcl9pZBgCIAEoCRIUCgxjaGFyYWN0ZXJfaWQYAyABKA0SEwoLZWZmZWN0",
-            "X3R5cGUYBCABKAUSDgoGbmV3X2hwGAUgASgNIjQKDk5ld1R1cm5SZXF1ZXN0",
-            "Eg8KB3Jvb21faWQYASABKA0SEQoJcGxheWVyX2lkGAIgASgJIjIKDkFjY2Vw",
-            "dFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDwoHbWVzc2FnZRgCIAEoCSI0",
-            "Cg5FbmRUdXJuUmVxdWVzdBIPCgdyb29tX2lkGAEgASgNEhEKCXBsYXllcl9p",
-            "ZBgCIAEoCTL5BgoNQmF0dGxlU2VydmljZRJNCgpDcmVhdGVHYW1lEh8uZ2Ft",
-            "ZS5uZXR3b3JrLkNyZWF0ZUdhbWVSZXF1ZXN0Gh4uZ2FtZS5uZXR3b3JrLkdh",
-            "bWVEYXRhUmVzcG9uc2USTwoLR2V0R2FtZURhdGESIC5nYW1lLm5ldHdvcmsu",
-            "R2V0R2FtZURhdGFSZXF1ZXN0Gh4uZ2FtZS5uZXR3b3JrLkdhbWVEYXRhUmVz",
-            "cG9uc2USZwoSUmVnaXN0ZXJDaGFyYWN0ZXJzEicuZ2FtZS5uZXR3b3JrLlJl",
-            "Z2lzdGVyQ2hhcmFjdGVyc1JlcXVlc3QaKC5nYW1lLm5ldHdvcmsuUmVnaXN0",
-            "ZXJDaGFyYWN0ZXJzUmVzcG9uc2USTwoKU3RyZWFtR2FtZRIfLmdhbWUubmV0",
-            "d29yay5TdHJlYW1HYW1lUmVxdWVzdBoeLmdhbWUubmV0d29yay5HYW1lRGF0",
-            "YVJlc3BvbnNlMAESQwoJQXBwbHlNb3ZlEhguZ2FtZS5uZXR3b3JrLk1vdmVB",
-            "Y3Rpb24aHC5nYW1lLm5ldHdvcmsuQWNjZXB0UmVzcG9uc2USRwoLQXBwbHlB",
-            "dHRhY2sSGi5nYW1lLm5ldHdvcmsuQXR0YWNrQWN0aW9uGhwuZ2FtZS5uZXR3",
-            "b3JrLkFjY2VwdFJlc3BvbnNlEk8KD0FwcGx5R3JpZFVwZGF0ZRIeLmdhbWUu",
-            "bmV0d29yay5HcmlkVXBkYXRlQWN0aW9uGhwuZ2FtZS5uZXR3b3JrLkFjY2Vw",
-            "dFJlc3BvbnNlEk0KC0FwcGx5RWZmZWN0EiAuZ2FtZS5uZXR3b3JrLkFwcGx5",
-            "RWZmZWN0UmVxdWVzdBocLmdhbWUubmV0d29yay5BY2NlcHRSZXNwb25zZRJF",
-            "CgdFbmRUdXJuEhwuZ2FtZS5uZXR3b3JrLkVuZFR1cm5SZXF1ZXN0GhwuZ2Ft",
-            "ZS5uZXR3b3JrLkFjY2VwdFJlc3BvbnNlEkUKB05ld1R1cm4SHC5nYW1lLm5l",
-            "dHdvcmsuTmV3VHVyblJlcXVlc3QaHC5nYW1lLm5ldHdvcmsuQWNjZXB0UmVz",
-            "cG9uc2USUgoORmV0Y2hBY3Rpb25Mb2cSIy5nYW1lLm5ldHdvcmsuRmV0Y2hB",
-            "Y3Rpb25Mb2dSZXF1ZXN0GhsuZ2FtZS5uZXR3b3JrLkdhbWVBY3Rpb25Mb2dC",
-            "G1oKYXV4aWxpYS9wYqoCDEdhbWUuTmV0d29ya2IGcHJvdG8z"));
+            "cGUYCSABKAUSHAoUdGFyZ2V0X2NoYXJhY3Rlcl9pZHMYCiABKAkSEgoKZGFt",
+            "YWdlX2xvZxgLIAEoCRITCgtlZmZlY3RfdHlwZRgMIAEoBRIOCgZuZXdfaHAY",
+            "DSABKA0icwoSQXBwbHlFZmZlY3RSZXF1ZXN0Eg8KB3Jvb21faWQYASABKA0S",
+            "EQoJcGxheWVyX2lkGAIgASgJEhQKDGNoYXJhY3Rlcl9pZBgDIAEoDRITCgtl",
+            "ZmZlY3RfdHlwZRgEIAEoBRIOCgZuZXdfaHAYBSABKA0iNAoOTmV3VHVyblJl",
+            "cXVlc3QSDwoHcm9vbV9pZBgBIAEoDRIRCglwbGF5ZXJfaWQYAiABKAkiMgoO",
+            "QWNjZXB0UmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIPCgdtZXNzYWdlGAIg",
+            "ASgJIjQKDkVuZFR1cm5SZXF1ZXN0Eg8KB3Jvb21faWQYASABKA0SEQoJcGxh",
+            "eWVyX2lkGAIgASgJMvkGCg1CYXR0bGVTZXJ2aWNlEk0KCkNyZWF0ZUdhbWUS",
+            "Hy5nYW1lLm5ldHdvcmsuQ3JlYXRlR2FtZVJlcXVlc3QaHi5nYW1lLm5ldHdv",
+            "cmsuR2FtZURhdGFSZXNwb25zZRJPCgtHZXRHYW1lRGF0YRIgLmdhbWUubmV0",
+            "d29yay5HZXRHYW1lRGF0YVJlcXVlc3QaHi5nYW1lLm5ldHdvcmsuR2FtZURh",
+            "dGFSZXNwb25zZRJnChJSZWdpc3RlckNoYXJhY3RlcnMSJy5nYW1lLm5ldHdv",
+            "cmsuUmVnaXN0ZXJDaGFyYWN0ZXJzUmVxdWVzdBooLmdhbWUubmV0d29yay5S",
+            "ZWdpc3RlckNoYXJhY3RlcnNSZXNwb25zZRJPCgpTdHJlYW1HYW1lEh8uZ2Ft",
+            "ZS5uZXR3b3JrLlN0cmVhbUdhbWVSZXF1ZXN0Gh4uZ2FtZS5uZXR3b3JrLkdh",
+            "bWVEYXRhUmVzcG9uc2UwARJDCglBcHBseU1vdmUSGC5nYW1lLm5ldHdvcmsu",
+            "TW92ZUFjdGlvbhocLmdhbWUubmV0d29yay5BY2NlcHRSZXNwb25zZRJHCgtB",
+            "cHBseUF0dGFjaxIaLmdhbWUubmV0d29yay5BdHRhY2tBY3Rpb24aHC5nYW1l",
+            "Lm5ldHdvcmsuQWNjZXB0UmVzcG9uc2USTwoPQXBwbHlHcmlkVXBkYXRlEh4u",
+            "Z2FtZS5uZXR3b3JrLkdyaWRVcGRhdGVBY3Rpb24aHC5nYW1lLm5ldHdvcmsu",
+            "QWNjZXB0UmVzcG9uc2USTQoLQXBwbHlFZmZlY3QSIC5nYW1lLm5ldHdvcmsu",
+            "QXBwbHlFZmZlY3RSZXF1ZXN0GhwuZ2FtZS5uZXR3b3JrLkFjY2VwdFJlc3Bv",
+            "bnNlEkUKB0VuZFR1cm4SHC5nYW1lLm5ldHdvcmsuRW5kVHVyblJlcXVlc3Qa",
+            "HC5nYW1lLm5ldHdvcmsuQWNjZXB0UmVzcG9uc2USRQoHTmV3VHVybhIcLmdh",
+            "bWUubmV0d29yay5OZXdUdXJuUmVxdWVzdBocLmdhbWUubmV0d29yay5BY2Nl",
+            "cHRSZXNwb25zZRJSCg5GZXRjaEFjdGlvbkxvZxIjLmdhbWUubmV0d29yay5G",
+            "ZXRjaEFjdGlvbkxvZ1JlcXVlc3QaGy5nYW1lLm5ldHdvcmsuR2FtZUFjdGlv",
+            "bkxvZ0IbWgphdXhpbGlhL3BiqgIMR2FtZS5OZXR3b3JrYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -115,7 +116,7 @@ namespace Game.Network {
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.RegisterCharactersRequest), global::Game.Network.RegisterCharactersRequest.Parser, new[]{ "RoomId", "Is1P", "CharacterIds" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.RegisterCharactersResponse), global::Game.Network.RegisterCharactersResponse.Parser, new[]{ "RegisteredCharacters" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.FetchActionLogRequest), global::Game.Network.FetchActionLogRequest.Parser, new[]{ "RoomId", "Sequence" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.GameActionLog), global::Game.Network.GameActionLog.Parser, new[]{ "Id", "RoomId", "Sequence", "PlayerId", "ActionType", "ActorCharacterUniqueId", "ToX", "ToY", "AttackType", "TargetCharacterUniqueIds" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.GameActionLog), global::Game.Network.GameActionLog.Parser, new[]{ "Id", "RoomId", "Sequence", "PlayerId", "ActionType", "ActorCharacterUniqueId", "ToX", "ToY", "AttackType", "TargetCharacterIds", "DamageLog", "EffectType", "NewHp" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.ApplyEffectRequest), global::Game.Network.ApplyEffectRequest.Parser, new[]{ "RoomId", "PlayerId", "CharacterId", "EffectType", "NewHp" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.NewTurnRequest), global::Game.Network.NewTurnRequest.Parser, new[]{ "RoomId", "PlayerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.Network.AcceptResponse), global::Game.Network.AcceptResponse.Parser, new[]{ "Success", "Message" }, null, null, null, null),
@@ -4785,7 +4786,10 @@ namespace Game.Network {
       toX_ = other.toX_;
       toY_ = other.toY_;
       attackType_ = other.attackType_;
-      targetCharacterUniqueIds_ = other.targetCharacterUniqueIds_.Clone();
+      targetCharacterIds_ = other.targetCharacterIds_;
+      damageLog_ = other.damageLog_;
+      effectType_ = other.effectType_;
+      newHp_ = other.newHp_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -4883,7 +4887,7 @@ namespace Game.Network {
     public const int ToXFieldNumber = 7;
     private uint toX_;
     /// <summary>
-    ///（action_type == "MOVE" の時のみ使用）
+    /// 移動用 (action_type == "MOVE")
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -4910,7 +4914,7 @@ namespace Game.Network {
     public const int AttackTypeFieldNumber = 9;
     private int attackType_;
     /// <summary>
-    ///（action_type == "ATTACK" の時のみ使用）
+    /// 攻撃用 (action_type == "ATTACK")
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -4921,15 +4925,61 @@ namespace Game.Network {
       }
     }
 
-    /// <summary>Field number for the "target_character_unique_ids" field.</summary>
-    public const int TargetCharacterUniqueIdsFieldNumber = 10;
-    private static readonly pb::FieldCodec<uint> _repeated_targetCharacterUniqueIds_codec
-        = pb::FieldCodec.ForUInt32(82);
-    private readonly pbc::RepeatedField<uint> targetCharacterUniqueIds_ = new pbc::RepeatedField<uint>();
+    /// <summary>Field number for the "target_character_ids" field.</summary>
+    public const int TargetCharacterIdsFieldNumber = 10;
+    private string targetCharacterIds_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<uint> TargetCharacterUniqueIds {
-      get { return targetCharacterUniqueIds_; }
+    public string TargetCharacterIds {
+      get { return targetCharacterIds_; }
+      set {
+        targetCharacterIds_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "damage_log" field.</summary>
+    public const int DamageLogFieldNumber = 11;
+    private string damageLog_ = "";
+    /// <summary>
+    /// ダメージログ
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string DamageLog {
+      get { return damageLog_; }
+      set {
+        damageLog_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "effect_type" field.</summary>
+    public const int EffectTypeFieldNumber = 12;
+    private int effectType_;
+    /// <summary>
+    /// 特殊効果用 (action_type == "EFFECT")
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int EffectType {
+      get { return effectType_; }
+      set {
+        effectType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "new_hp" field.</summary>
+    public const int NewHpFieldNumber = 13;
+    private uint newHp_;
+    /// <summary>
+    /// 変更後のHP
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint NewHp {
+      get { return newHp_; }
+      set {
+        newHp_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -4956,7 +5006,10 @@ namespace Game.Network {
       if (ToX != other.ToX) return false;
       if (ToY != other.ToY) return false;
       if (AttackType != other.AttackType) return false;
-      if(!targetCharacterUniqueIds_.Equals(other.targetCharacterUniqueIds_)) return false;
+      if (TargetCharacterIds != other.TargetCharacterIds) return false;
+      if (DamageLog != other.DamageLog) return false;
+      if (EffectType != other.EffectType) return false;
+      if (NewHp != other.NewHp) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4973,7 +5026,10 @@ namespace Game.Network {
       if (ToX != 0) hash ^= ToX.GetHashCode();
       if (ToY != 0) hash ^= ToY.GetHashCode();
       if (AttackType != 0) hash ^= AttackType.GetHashCode();
-      hash ^= targetCharacterUniqueIds_.GetHashCode();
+      if (TargetCharacterIds.Length != 0) hash ^= TargetCharacterIds.GetHashCode();
+      if (DamageLog.Length != 0) hash ^= DamageLog.GetHashCode();
+      if (EffectType != 0) hash ^= EffectType.GetHashCode();
+      if (NewHp != 0) hash ^= NewHp.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -5028,7 +5084,22 @@ namespace Game.Network {
         output.WriteRawTag(72);
         output.WriteInt32(AttackType);
       }
-      targetCharacterUniqueIds_.WriteTo(output, _repeated_targetCharacterUniqueIds_codec);
+      if (TargetCharacterIds.Length != 0) {
+        output.WriteRawTag(82);
+        output.WriteString(TargetCharacterIds);
+      }
+      if (DamageLog.Length != 0) {
+        output.WriteRawTag(90);
+        output.WriteString(DamageLog);
+      }
+      if (EffectType != 0) {
+        output.WriteRawTag(96);
+        output.WriteInt32(EffectType);
+      }
+      if (NewHp != 0) {
+        output.WriteRawTag(104);
+        output.WriteUInt32(NewHp);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -5075,7 +5146,22 @@ namespace Game.Network {
         output.WriteRawTag(72);
         output.WriteInt32(AttackType);
       }
-      targetCharacterUniqueIds_.WriteTo(ref output, _repeated_targetCharacterUniqueIds_codec);
+      if (TargetCharacterIds.Length != 0) {
+        output.WriteRawTag(82);
+        output.WriteString(TargetCharacterIds);
+      }
+      if (DamageLog.Length != 0) {
+        output.WriteRawTag(90);
+        output.WriteString(DamageLog);
+      }
+      if (EffectType != 0) {
+        output.WriteRawTag(96);
+        output.WriteInt32(EffectType);
+      }
+      if (NewHp != 0) {
+        output.WriteRawTag(104);
+        output.WriteUInt32(NewHp);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -5113,7 +5199,18 @@ namespace Game.Network {
       if (AttackType != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(AttackType);
       }
-      size += targetCharacterUniqueIds_.CalculateSize(_repeated_targetCharacterUniqueIds_codec);
+      if (TargetCharacterIds.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(TargetCharacterIds);
+      }
+      if (DamageLog.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DamageLog);
+      }
+      if (EffectType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(EffectType);
+      }
+      if (NewHp != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(NewHp);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -5153,7 +5250,18 @@ namespace Game.Network {
       if (other.AttackType != 0) {
         AttackType = other.AttackType;
       }
-      targetCharacterUniqueIds_.Add(other.targetCharacterUniqueIds_);
+      if (other.TargetCharacterIds.Length != 0) {
+        TargetCharacterIds = other.TargetCharacterIds;
+      }
+      if (other.DamageLog.Length != 0) {
+        DamageLog = other.DamageLog;
+      }
+      if (other.EffectType != 0) {
+        EffectType = other.EffectType;
+      }
+      if (other.NewHp != 0) {
+        NewHp = other.NewHp;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -5209,9 +5317,20 @@ namespace Game.Network {
             AttackType = input.ReadInt32();
             break;
           }
-          case 82:
-          case 80: {
-            targetCharacterUniqueIds_.AddEntriesFrom(input, _repeated_targetCharacterUniqueIds_codec);
+          case 82: {
+            TargetCharacterIds = input.ReadString();
+            break;
+          }
+          case 90: {
+            DamageLog = input.ReadString();
+            break;
+          }
+          case 96: {
+            EffectType = input.ReadInt32();
+            break;
+          }
+          case 104: {
+            NewHp = input.ReadUInt32();
             break;
           }
         }
@@ -5269,9 +5388,20 @@ namespace Game.Network {
             AttackType = input.ReadInt32();
             break;
           }
-          case 82:
-          case 80: {
-            targetCharacterUniqueIds_.AddEntriesFrom(ref input, _repeated_targetCharacterUniqueIds_codec);
+          case 82: {
+            TargetCharacterIds = input.ReadString();
+            break;
+          }
+          case 90: {
+            DamageLog = input.ReadString();
+            break;
+          }
+          case 96: {
+            EffectType = input.ReadInt32();
+            break;
+          }
+          case 104: {
+            NewHp = input.ReadUInt32();
             break;
           }
         }
