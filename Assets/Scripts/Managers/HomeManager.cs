@@ -6,7 +6,6 @@ public class HomeManager : MonoBehaviour
 {
     public TextMeshProUGUI HomeCharacterName;
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public Image backImage;
     public Sprite back_image;

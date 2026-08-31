@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ResultUIManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public RoomData roomData;
     public BattleDataForOnline battleDataForOnline;
@@ -156,7 +155,7 @@ public class ResultUIManager : MonoBehaviour
                 {
                     await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 }
-                sceneData.next_scene_number = 1;
+                SceneChangeManager.MoveScene(1);
                 break;
 
             case "BackToMatchingRoom": // 退出して部屋一覧へ
@@ -165,7 +164,7 @@ public class ResultUIManager : MonoBehaviour
                 {
                     await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
                 }
-                sceneData.next_scene_number = 9;
+                SceneChangeManager.MoveScene(9);
                 break;
 
             case "Rematch": // 新設ボタン名: 再戦
@@ -175,12 +174,12 @@ public class ResultUIManager : MonoBehaviour
                     // 部屋に留まったまま Ready を false に更新
                     await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);// 一旦StateをSpectatorにしときます
                 }
-                sceneData.next_scene_number = 10; // 待機室 (MatchingRoom) へ戻る
+                SceneChangeManager.MoveScene(10);
                 break;
 
             case "BackToMatching":
                 SEManager.instance?.PlayToNextSE();
-                sceneData.next_scene_number = 3;
+                SceneChangeManager.MoveScene(3);
                 break;
 
             default:
@@ -191,7 +190,6 @@ public class ResultUIManager : MonoBehaviour
 
     private void InitializeFields()
     {
-        sceneData = GetSO(sceneData);
         userData = GetSO(userData);
         battleDataForOnline = GetSO(battleDataForOnline);
         roomData = GetSO(roomData);

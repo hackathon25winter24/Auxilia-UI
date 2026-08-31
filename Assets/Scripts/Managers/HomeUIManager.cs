@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 public class HomeUIManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public TextMeshProUGUI playerName;
     public TextMeshProUGUI playerRate;
@@ -93,7 +92,7 @@ public class HomeUIManager : MonoBehaviour
         isExiting = false;
         if (nextScene != -1) 
         {
-        sceneData.next_scene_number = nextScene;
+        SceneChangeManager.MoveScene(nextScene);
         }
     }
     IEnumerator AnimateEnter()
@@ -190,7 +189,7 @@ public class HomeUIManager : MonoBehaviour
         }
         if (nextScene != -1) 
         {
-        sceneData.next_scene_number = nextScene;
+        SceneChangeManager.MoveScene(nextScene);
         }
     }
 
@@ -233,7 +232,7 @@ public class HomeUIManager : MonoBehaviour
         }
         if (nextScene != -1) 
         {
-        sceneData.next_scene_number = nextScene;
+        SceneChangeManager.MoveScene(nextScene);
         }
     }
 
@@ -344,8 +343,8 @@ public class HomeUIManager : MonoBehaviour
                 #endif
             break;
             case "GotoTitle":
-                SEManager.instance?.PlayToNextSE();
-                sceneData.next_scene_number = 0;
+            SEManager.instance?.PlayToNextSE();
+            SceneChangeManager.MoveScene(0);
             break;
             case "OpenCredit":
                 SEManager.instance?.PlaySelectSE();

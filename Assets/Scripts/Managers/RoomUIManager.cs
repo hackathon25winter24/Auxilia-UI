@@ -13,7 +13,6 @@ using Cysharp.Threading.Tasks;
 public class RoomUIManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public RoomData roomData;
 
@@ -310,7 +309,7 @@ public class RoomUIManager : MonoBehaviour
             
             // ロビーシーンなどへの遷移ロジックをここに記述
             Debug.Log("部屋を退出しました。ロビーへ戻ります。");
-            sceneData.next_scene_number = 3;
+            SceneChangeManager.MoveScene(3);
         }
     }
 
@@ -319,7 +318,7 @@ public class RoomUIManager : MonoBehaviour
     {
         if (inputData.a_key_ispressed)
         {
-            sceneData.next_scene_number = 10;
+            SceneChangeManager.MoveScene(10);
         }
     }
 }
