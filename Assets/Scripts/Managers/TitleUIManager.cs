@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 public class TitleUIManager : MonoBehaviour
 {
     public UserData userData;
-    public SceneData sceneData;
     public StoryManagerData storyManagerData;
     public GameObject login_ui;
     public GameObject signup_ui;
@@ -75,12 +74,12 @@ public class TitleUIManager : MonoBehaviour
                 login_ui.SetActive(false);
                 now_loading_ui.SetActive(true);
                 storyManagerData.now_story_number = 0;
-                sceneData.next_scene_number = 8;
+                SceneChangeManager.MoveScene(8);
             }else
             {
                 login_ui.SetActive(false);
                 now_loading_ui.SetActive(true);
-                sceneData.next_scene_number = 1;
+                SceneChangeManager.MoveScene(1);
             }
                 break;
             case "Signup":
@@ -100,12 +99,12 @@ public class TitleUIManager : MonoBehaviour
                 signup_ui.SetActive(false);
                 now_loading_ui.SetActive(true);
                 storyManagerData.now_story_number = 0;
-                sceneData.next_scene_number = 8;
+                SceneChangeManager.MoveScene(8);
             }else
             {
                 signup_ui.SetActive(false);
                 now_loading_ui.SetActive(true);
-                sceneData.next_scene_number = 1;
+                SceneChangeManager.MoveScene(1);
             }
                 break;
             case "GotoSignup":

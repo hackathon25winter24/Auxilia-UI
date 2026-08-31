@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 public class TutorialBattleManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     // バトルデータはBattleDataForOnlineの設計を利用しているが、問題が生じたら新たに作り直すべき
     public BattleDataForOnline battleDataForTutorial;

@@ -60,10 +60,6 @@ public class CharacterDetailManager : MonoBehaviour
     [Header("キャラクタープロフィール（ScriptableObject）")]
     public CharacterProfiles charProfs;
 
-    [Header("シーンデータ（ScriptableObject）")]
-    public SceneData sceneData;
-
-
     [System.Serializable]
     public class AttackData
     {
@@ -173,7 +169,7 @@ public class CharacterDetailManager : MonoBehaviour
 
     void BackToTitle()
     {
-        sceneData.next_scene_number = 1;
+        SceneChangeManager.MoveScene(1);
     }
 
     // フェード（暗転）の本体

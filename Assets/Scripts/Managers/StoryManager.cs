@@ -8,7 +8,6 @@ public class StoryManager : MonoBehaviour
 {
     [Header("Data References")]
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public StoryData storyData;
     public StoryManagerData storyManagerData;
@@ -242,10 +241,10 @@ IEnumerator AutoSelectFirstChoice()
     {
         if(storyManagerData.now_story_number == 0)
         {
-            sceneData.next_scene_number = 12;
+            SceneChangeManager.MoveScene(12);
         }else
         {
-            sceneData.next_scene_number = 11;
+            SceneChangeManager.MoveScene(11);
         }
     }
 

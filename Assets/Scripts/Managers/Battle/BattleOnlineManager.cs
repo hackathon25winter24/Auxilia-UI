@@ -10,7 +10,6 @@ public class BattleOnlineManager : MonoBehaviour
     [Header("Data & ScriptableObjects")]
     public CharacterData characterData;
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
@@ -148,12 +147,12 @@ public class BattleOnlineManager : MonoBehaviour
 
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
-            sceneData.next_scene_number = 6;
+            SceneChangeManager.MoveScene(6);
         }
 
         if (battleDataforOnline.is_finished)
         {
-            sceneData.next_scene_number = 6;
+            SceneChangeManager.MoveScene(6);
         }
 
         if (isTimerRunning)
@@ -266,15 +265,15 @@ public class BattleOnlineManager : MonoBehaviour
 
 
         // 攻撃情報の受け取り
-        if (gameData.GameActionLog?.ActionType == "ATTACK" && gameData.GameActionLog.TargetCharacterUniqueIds.Count > 0)
-        {
-            foreach (var tcuid in gameData.GameActionLog.TargetCharacterUniqueIds)
-            {
-                // すでに処理した情報だった場合は受け取らない
-                if (gameData.GameActionLog.Sequence <= consumed_attack_id) break;
-                consumed_attack_id = gameData.GameActionLog.Sequence;
-                Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={gameData.GameActionLog.PlayerId}, AttackerID={gameData.GameActionLog.ActorCharacterUniqueId}, Type={gameData.GameActionLog.AttackType}</color>");
-                
+        //if (gameData.GameActionLog?.ActionType == "ATTACK" && gameData.GameActionLog.TargetCharacterUniqueIds.Count > 0)
+        //{
+        //    foreach (var tcuid in gameData.GameActionLog.TargetCharacterUniqueIds)
+        //    {
+        //        // すでに処理した情報だった場合は受け取らない
+        //        if (gameData.GameActionLog.Sequence <= consumed_attack_id) break;
+        //        consumed_attack_id = gameData.GameActionLog.Sequence;
+        //        Debug.Log($"<color=red><b>[GetBattleData] 攻撃情報を受信</b>: FromSide={gameData.GameActionLog.PlayerId}, AttackerID={gameData.GameActionLog.ActorCharacterUniqueId}, Type={gameData.GameActionLog.AttackType}</color>");
+        //        
 
                 // イベントの発火 (攻撃ログ?)
                 /*
@@ -288,8 +287,8 @@ public class BattleOnlineManager : MonoBehaviour
                 */
 
                 // ここで攻撃されたキャラに演出をする
-            }
-        }
+        //    }
+        //}
         // 【デバッグ】受信データをコンソールに出力（UIには反映しない）
         var sb = new System.Text.StringBuilder();
         sb.AppendLine($"<color=cyan>[GetBattleData] サーバーからゲームデータ受信</color>");

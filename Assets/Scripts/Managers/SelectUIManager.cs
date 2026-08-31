@@ -9,7 +9,6 @@ using Cysharp.Threading.Tasks;
 public class SelectUIManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public CharacterData characterData;
     public BattleDataForOnline battleDataforOnline;
@@ -368,7 +367,7 @@ public class SelectUIManager : MonoBehaviour
                     if (p1count >= 3 && p2count >= 3)
                     {
                         SetFirstGameData(data);
-                        sceneData.next_scene_number = 5;
+                        SceneChangeManager.MoveScene(5);
                         return; // ループ終了
                     }
                 }

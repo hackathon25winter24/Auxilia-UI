@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class MatchingUIManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public MatchingData matchingData;
     public RoomData roomData;
@@ -50,7 +49,7 @@ public class MatchingUIManager : MonoBehaviour
         {
             case "Back":
                 SEManager.instance?.PlayBackSE();
-                sceneData.next_scene_number = 1;
+                SceneChangeManager.MoveScene(1);
                 break;
             case "newmake":
                 SEManager.instance?.PlayToNextSE();
@@ -185,8 +184,7 @@ public class MatchingUIManager : MonoBehaviour
 
                 var rooms = new List<Room.Room>(response.Rooms);
                 SetFirstRoomData(rooms);
-
-                sceneData.next_scene_number = 9;
+                SceneChangeManager.MoveScene(9);
             }
         }else
         {
@@ -321,7 +319,7 @@ public class MatchingUIManager : MonoBehaviour
             var rooms = new List<Room.Room>(joinRoomResponse.Rooms);
             SetFirstRoomData(rooms);
 
-            sceneData.next_scene_number = 9;
+            SceneChangeManager.MoveScene(9);
         }
     }
 

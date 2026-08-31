@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class TitleManager : MonoBehaviour
 {
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public Image titleImage;
     public Image rogoImage;
