@@ -19,6 +19,7 @@ public class CharacterManager : MonoBehaviour
     public List<Vector2Int> attackRange = new List<Vector2Int>();
     public RectTransform BackButton;
     public BattleViewManager battleViewManager;
+    public GridManager gridManager;
     public int attack_number;
     public bool is_attacking = false;
     public RoomData roomData;
@@ -68,7 +69,7 @@ public class CharacterManager : MonoBehaviour
         
     void Start()
     {
-        is_1p = (userData.user_id == battleDataforOnline.player1.player_id);// battleOnlineManagerのAwake以降で呼び出すようにする
+        is_1p = (userData.user_id == battleDataforOnline.player1.player_id);
         self     = (is_1p) ? battleDataforOnline.player1 : battleDataforOnline.player2;
         opponent = (is_1p) ? battleDataforOnline.player2 : battleDataforOnline.player1;
     }
@@ -250,25 +251,31 @@ public class CharacterManager : MonoBehaviour
 
     async void TryMove(int moveX, int moveY)
     {
+        Debug.Log("TryMove");
         SEManager.instance?.PlayClickSE();// 移動の可否問わず音が流れます。うるさかったら移動してね
         int currentX = self.characters[selected_character_index].now_character_position.x;
         int currentY = self.characters[selected_character_index].now_character_position.y;
         int nextX = currentX + moveX;
         int nextY = currentY + moveY;
 
-        if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;// 長方形グリッドの外にはいかない
+        //if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 5) return;// 長方形グリッドの外にはいかない
 
         if(self.current_cost_remaining - characterData.characters[self.characters[selected_character_index].unique_id].default_move_cost < 0) return;
 
+        Debug.Log("cost ok");
     // 進入可能かチェック (Online側のデータを見る)
-    if (gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0)
+    Debug.Log(gridManager.IsMoveable(new Vector2Int(nextX, nextY)));
+    if (gridManager.IsMoveable(new Vector2Int(nextX, nextY))/*gridDataforOnline.grid_state_y[nextY].grid_state_x[nextX] >= 0*/)
     {
+        Debug.Log("moveable");
         // A. 現在の場所（移動元）を元の地形に戻す
         int 直接Gridを変更しない = 0;
-        UpdateGridState(currentX, currentY, 0);
+        //UpdateGridState(currentX, currentY, 0);
 
         // 座標更新
-        await battleConnector.SendMove(roomData.room_id, self.player_id, Support.GetUCID(roomData.room_id, self.characters[selected_character_index].unique_id, is_1p), 
+        Debug.Log(NetworkManager.Instance);
+        Debug.Log(NetworkManager.Instance.Battle);
+        await NetworkManager.Instance.Battle.SendMove(roomData.room_id, self.player_id, Support.GetUCID(roomData.room_id, self.characters[selected_character_index].unique_id, is_1p), 
         nextX, nextY);
 
         //デバフマスの処理をする
@@ -286,7 +293,7 @@ public class CharacterManager : MonoBehaviour
         }
 
         // B. 新しい場所（移動先）を「キャラあり」状態にする
-        UpdateGridState(nextX, nextY, -1);
+        //UpdateGridState(nextX, nextY, -1);
 
         // コストは少なくともBattleDataForOnlineの移動コストを利用するはず。新たに計算する必要はない
         /*
@@ -393,6 +400,10 @@ public class CharacterManager : MonoBehaviour
 
     public void ClearAttackRange()
     {
+        foreach (Vector2Int range in attackRange)
+        {
+            gridManager.ClearAttackGrid(range);
+        }
         attackRange.Clear();
         // gridManagerの攻撃範囲を消す処理はここで叩く？
         /*
@@ -677,6 +688,7 @@ public class CharacterManager : MonoBehaviour
         for (int i = 0; i <= 2; i++)
         {
             self.characters[i].character_isSelected = false;
+            gridManager.ClearSelectedCharacterGrid(self.characters[i].now_character_position);
         }
         battleViewManager.HideAttackWindow();
         is_attacking = false;

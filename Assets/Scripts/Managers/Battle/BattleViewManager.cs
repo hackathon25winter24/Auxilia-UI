@@ -44,7 +44,6 @@ public class BattleViewManager : MonoBehaviour
         void Start()
     {
         userData = GetSo(userData);
-        // battleOnlineManagerのAwakeでgameData.Player1/2Idが入ってる
         is_1p = (userData.user_id == battleDataForOnline.player1.player_id);
         self     = (is_1p) ? battleDataForOnline.player1 : battleDataForOnline.player2;
         opponent = (is_1p) ? battleDataForOnline.player2 : battleDataForOnline.player1;
@@ -57,8 +56,8 @@ public class BattleViewManager : MonoBehaviour
         UpdateCharacterPosition();
         UpdateAttackWindow();
 
-        cost[0].text = "cost:" + self.current_cost_remaining;
-        cost[1].text = "cost:" + opponent.current_cost_remaining;
+        cost[0].text = "" + self.current_cost_remaining;
+        cost[1].text = "" + opponent.current_cost_remaining;
         // 元はこっちだったけどどちらにする？
         // cost[0].text = battleDataForOnline.now_my_cost.ToString();
         // cost[1].text = battleDataForOnline.now_enemy_cost.ToString();

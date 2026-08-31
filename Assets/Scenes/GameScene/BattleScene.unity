@@ -604,8 +604,10 @@ MonoBehaviour:
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   selected_character_index: -1
+  attackRange: []
   BackButton: {fileID: 712360788}
   battleViewManager: {fileID: 441793170}
+  gridManager: {fileID: 1061844918}
   attack_number: 0
   is_attacking: 0
   roomData: {fileID: 0}
@@ -860,7 +862,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.6
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -968,16 +970,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b597258f1345c4ca5a1c7a66b3d44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterData: {fileID: 0}
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
   sceneData: {fileID: 11400000, guid: a87c6aee6c4ff724d8782bf20e3291fd, type: 2}
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
-  battleViewManager: {fileID: 441793170}
   gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  gridManager: {fileID: 0}
   roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
+  battleViewManager: {fileID: 441793170}
+  gridManager: {fileID: 0}
   gametext: {fileID: 649590194}
   gameTextObject: {fileID: 649590193}
   timerSlider: {fileID: 222250393}
@@ -5818,7 +5820,8 @@ MonoBehaviour:
   AttackGrid: {fileID: -5848888792363991607, guid: 3897784cf3a7932429efa5a38f733182, type: 3}
   MakibishiGrid: {fileID: -6893078568485714706, guid: 19e22a87479b3a5458f0e9787f2ce5cd, type: 3}
   LandmineGrid: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
-  gameConnector: {fileID: 0}
+  PoisonGasGrid: {fileID: 0}
+  RestrainingGrid: {fileID: 0}
   roomData: {fileID: 0}
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
 --- !u!4 &1061844919
@@ -7628,7 +7631,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.6
+  m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

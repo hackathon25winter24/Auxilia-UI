@@ -12,37 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 418c93214552b60438de32050a673848, type: 3}
   m_Name: RoomData
   m_EditorClassIdentifier: 
-  room_id: 154
-  room_name: "Mira2\u306E\u90E8\u5C4B"
+  room_id: 162
+  room_name: "\u3055\u3089\u306B\u3082\u3046\u3061\u3087\u3063\u3068\u3060\u3051\u9577\u3044\u540D\u524D\u306E\u90E8\u5C4B"
   room_my_index: 1
   usersData:
-  - user_name: Mira2
-    user_rate: 0
-    is_host: 1
-    user_state: 0
-    is_ready: 1
-  - user_name: aspara
+  - user_id: ff695510-be16-462f-be4f-bbeeec89e8ca
     user_rate: 0
     is_host: 0
-    user_state: 0
-    is_ready: 1
-  - user_name: 
+    user_state: 2
+    is_ready: 0
+  - user_id: fb271def-4ab9-4f15-954d-7171412a8574
     user_rate: 0
     is_host: 0
     user_state: 0
     is_ready: 0
-  - user_name: 
+  - user_id: 
     user_rate: 0
     is_host: 0
-    user_state: 0
+    user_state: -1
     is_ready: 0
-  - user_name: 
+  - user_id: 
     user_rate: 0
     is_host: 0
-    user_state: 0
+    user_state: -1
     is_ready: 0
-  - user_name: 
+  - user_id: 
     user_rate: 0
     is_host: 0
-    user_state: 0
+    user_state: -1
+    is_ready: 0
+  - user_id: 
+    user_rate: 0
+    is_host: 0
+    user_state: -1
+    is_ready: 0
+  - user_id: 
+    user_rate: 0
+    is_host: 0
+    user_state: -1
+    is_ready: 0
+  - user_id: 
+    user_rate: 0
+    is_host: 0
+    user_state: -1
     is_ready: 0

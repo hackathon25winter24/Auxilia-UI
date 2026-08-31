@@ -183,6 +183,9 @@ public class MatchingUIManager : MonoBehaviour
                     }
                 }
 
+                var rooms = new List<Room.Room>(response.Rooms);
+                SetFirstRoomData(rooms);
+
                 sceneData.next_scene_number = 9;
             }
         }else
@@ -192,6 +195,67 @@ public class MatchingUIManager : MonoBehaviour
             matchingData.selected_room_id = matchingData.rooms[index].room_id;
             }
             CreateJoinnerNames(index);
+        }
+    }
+
+    private void SetFirstRoomData(List<Room.Room> rooms)
+    {
+        Debug.Log("SetFirstRoomData");
+        // 中身はRoomUIManagerのUpdateRoomDataModelと同じです
+        if (roomData == null) return;
+
+        // 1. 全枠（最大4枠など）を一旦初期化 (-1: 空席)
+        for (int i = 0; i < roomData.usersData.Length; i++)
+        {
+            roomData.usersData[i].user_state = -1;
+            roomData.usersData[i].is_ready = false;
+            roomData.usersData[i].user_id = "";
+            roomData.usersData[i].is_host = false;
+        }
+
+        int uiIndex = 0;
+
+        // 2. ファーストパス：対戦プレイヤー（1P=State1, 2P=State2）を優先して前方に配置
+        foreach (var r in rooms)
+        {
+            if (r.State == 1 || r.State == 2) 
+            {
+                if (uiIndex < roomData.usersData.Length)
+                {
+                    roomData.usersData[uiIndex].user_id = r.UserId;
+                    roomData.usersData[uiIndex].user_state = r.State;
+                    roomData.usersData[uiIndex].is_ready = r.IsReady;
+                    roomData.usersData[uiIndex].is_host = (r.State == 1); // 1Pを厳格にホストとして扱う
+                    uiIndex++;
+                }
+            }
+        }
+
+        // 3. セカンドパス：空いた枠に観戦者（State = 0）を順番に詰める
+        foreach (var r in rooms)
+        {
+            if (r.State == 0) 
+            {
+                if (uiIndex < roomData.usersData.Length)
+                {
+                    roomData.usersData[uiIndex].user_id = r.UserId;
+                    roomData.usersData[uiIndex].user_state = r.State;
+                    roomData.usersData[uiIndex].is_ready = false; // 観戦者は準備完了不要
+                    roomData.usersData[uiIndex].is_host = false;
+                    uiIndex++;
+                }
+            }
+        }
+
+        // 4. 自分のインデックス（roomData上のどこに自分が格納されたか）を確定
+        roomData.room_my_index = -1;
+        for (int i = 0; i < roomData.usersData.Length; i++)
+        {
+            if (userData != null && roomData.usersData[i].user_id == userData.user_id)
+            {
+                roomData.room_my_index = i;
+                break;
+            }
         }
     }
 
@@ -247,12 +311,15 @@ public class MatchingUIManager : MonoBehaviour
         var response = await NetworkManager.Instance.Matching.CreateRoomMatch(room_name, userData.user_id, false);
         if (response != null)
         {
-            await NetworkManager.Instance.Matching.JoinRoom(response.RoomId, response.OwnerId);
+            var joinRoomResponse = await NetworkManager.Instance.Matching.JoinRoom(response.RoomId, response.OwnerId);
             await NetworkManager.Instance.Matching.UpdateRoomState(response.RoomId, response.OwnerId, 1, false);
 
             // 新たにRoomDataにIDを追加
             roomData.room_id = response.RoomId;
             roomData.room_name = room_name;
+
+            var rooms = new List<Room.Room>(joinRoomResponse.Rooms);
+            SetFirstRoomData(rooms);
 
             sceneData.next_scene_number = 9;
         }

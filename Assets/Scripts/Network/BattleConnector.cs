@@ -211,8 +211,7 @@ public class BattleConnector : MonoBehaviour
             {
                 PositionX = (uint)g.PositionX,
                 PositionY = (uint)g.PositionY,
-                GridType = g.GridType,
-                DebuffType = g.DebuffType
+                GridType = g.GridType
             });
         }
         

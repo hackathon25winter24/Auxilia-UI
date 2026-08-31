@@ -1,22 +1,23 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-
-public class SceneChangeManager : MonoBehaviour
+public static class SceneChangeManager
 {
-    public SceneData sceneData;
-    private void Awake()
+    public static void MoveScene(int scene_num)
     {
-        DontDestroyOnLoad(gameObject);
-        sceneData.now_scene_number = 0;
-        sceneData.next_scene_number = 0;
-    }
-    void Update()
-    {
-        if (sceneData.now_scene_number != sceneData.next_scene_number)
+        if (scene_num >= 0 && scene_num < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings)
         {
-            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneData.next_scene_number);
-            sceneData.now_scene_number = sceneData.next_scene_number;
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(scene_num);
         }
+        else
+        {
+            Debug.LogError($"不明なシーン番号 {scene_num} ");
+        }
+    }
+
+    // 現在のシーンをリロードする
+    public static void ReloadScene()
+    {
+        int scene_num = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(scene_num);
     }
 }

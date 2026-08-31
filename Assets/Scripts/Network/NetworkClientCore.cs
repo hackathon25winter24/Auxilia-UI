@@ -18,7 +18,7 @@ public class NetworkClientCore : MonoBehaviour
 
     public void Initialize()
     {
-        // 通常リクエスト用チャンネルの初期化
+        //  通常リクエスト用チャンネルの初期化
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         _channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
@@ -26,13 +26,15 @@ public class NetworkClientCore : MonoBehaviour
         });
 
         // ストリーム専用の独立チャンネルを作成
-        var streamHandler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
+        // GrpcWebMode.GrpcWebText または GrpcWeb を明示し、ストリーミングを有効化
+        var streamHandler = new GrpcWebHandler(GrpcWebMode.GrpcWebText, new System.Net.Http.HttpClientHandler());
+        
         _streamChannel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
         {
             HttpHandler = streamHandler
         });
 
-        Debug.Log("[NetworkClientCore] Channels initialized successfully.");
+        Debug.Log("[NetworkClientCore] Channels initialized successfully with Streaming support.");
     }
 
     public void ShowErrorMessage(string message)

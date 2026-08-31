@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -7,7 +8,7 @@ using Grpc.Core;
 using Room;
 using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks; // 💡 UniTaskの活用
+using Cysharp.Threading.Tasks;
 
 public class RoomUIManager : MonoBehaviour
 {
@@ -22,110 +23,126 @@ public class RoomUIManager : MonoBehaviour
     public TextMeshProUGUI[] userRate;
     private NetworkManager Net => NetworkManager.Instance;
     private MatchingConnector matchingConnector => Net?.Matching;
+    private AuthenticationConnector authenticationConnector => Net?.Auth;
     public GameObject renameRoomUI;
     public TMP_InputField renameRoomText;
 
     private TextMeshProUGUI startBattleButtonText;
-    private TextMeshProUGUI roomNameText; // 部屋名表示用
-    private GameObject editButton;        // ホスト用編集ボタン
+    [SerializeField] TextMeshProUGUI roomNameText; 
+    private GameObject editButton;        
 
     private bool _isStreaming;
 
-    void Start()
+    async Task Start()
     {
-        // 💡 ボタンやUIコンポーネントの初期キャッシュ処理
+        Debug.Log("RoomUIManager Loaded");
         var startButton = GameObject.Find("StartBattleButton");
         if (startButton != null)
         {
             startBattleButtonText = startButton.GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        var rNameObj = GameObject.Find("RoomNameText");
-        if (rNameObj != null)
-        {
-            roomNameText = rNameObj.GetComponent<TextMeshProUGUI>();
-        }
+        roomNameText.text = roomData.room_name;
+
 
         editButton = GameObject.Find("EditButton");
 
-        // 💡 部屋に入った瞬間に双方向ストリームの同期を開始
+        Debug.Log($"[RoomUIManager] Start called. " +
+                $"RoomID: {roomData?.room_id}, " +
+                $"UserID: {userData?.user_id}, " +
+                $"Connector IsNull: {matchingConnector == null}");
+        // 部屋に入った瞬間に双方向ストリームの同期を開始
         if (matchingConnector != null && roomData != null && userData != null)
         {
             _isStreaming = true;
             
-            // マッチングコネクター側で定義した新しいストリームAPIを叩く
-            matchingConnector.StartRoomStream(roomData.room_id, userData.user_id, (response) =>
-            {
-                // 💡 サーバーから部屋の更新通知が届くたびに、この中身がメインスレッドで安全に実行されます
-                if (_isStreaming && response?.Rooms != null)
-                {
-                    OnRoomStreamUpdated(new List<Room.Room>(response.Rooms));
-                }
-            });
+            matchingConnector.StartRoomStream(roomData.room_id, userData.user_id, OnRoomStreamUpdated);
         }
+
+        // 2026年7/20現在、部屋参加時に受け取る自分のStateが0になる問題が発生。暫定的な処理としてバックに問い合わせて取得します。不要になったら削除する
+        var room = await matchingConnector.GetBattlePlayer(roomData.room_id);
+        foreach (var r in room)
+        {
+            if (r == null) continue;
+            for (int i = 0; i < roomData.usersData.Length; i++)
+            {
+                if (r.UserId == roomData.usersData[i].user_id && r.UserId == userData.user_id)
+                {
+                    roomData.usersData[i].user_state = r.State;
+                }
+            }
+        }
+
+        // 初期情報をUIに反映
+        UpDateRoomVisuals(null);
     }
 
     private void OnDestroy()
     {
         _isStreaming = false;
         
-        // 💡 シーン遷移やコンポーネント消滅時にストリームを確実に切断する
         if (matchingConnector != null)
         {
-            _ = matchingConnector.StopRoomStream();
+            // 破棄時に安全にストリームを切断
+            matchingConnector.StopRoomStream().Forget();
         }
     }
 
     /// <summary>
     /// ストリームから部屋の最新データを受信した時のハンドラー
     /// </summary>
-    private void OnRoomStreamUpdated(List<Room.Room> rooms)
+    private void OnRoomStreamUpdated(ListRoomResponse response)
     {
-        Debug.Log($"[RoomUIManager] リアルタイムルーム更新を受信。参加者数: {rooms.Count}");
-        
-        // 1. 受信データを元に、RoomData(ScriptableObject等)の中身を書き換える
-        UpdateRoomDataModel(rooms);
+        Debug.Log($"[RoomUIManager] OnRoomStreamUpdated called. _isStreaming: {_isStreaming}, response.Rooms.Count: {response?.Rooms?.Count ?? 0}");
+        if (!_isStreaming || response?.Rooms == null) return;
 
-        // 2. 書き換えたデータモデルをUIコンポーネントへレンダリング（描画反映）
-        UpDateRoom(rooms);
+        Debug.Log($"[RoomUIManager] リアルタイムルーム更新を受信。参加者数: {response.Rooms.Count}");
+        
+        // 1. 受信データ（gRPCのRepeatedField）を List<Room.Room> に変換してモデルを更新
+        var roomsList = new List<Room.Room>(response.Rooms);
+        UpdateRoomDataModel(roomsList);
+
+        // 2. 画面のUI表示を最新状態に書き換え
+        UpDateRoomVisuals(roomsList);
     }
 
     private void UpdateRoomDataModel(List<Room.Room> rooms)
     {
         if (roomData == null) return;
 
-        // 1. 全枠（UI表示用の4席）を一旦初期化
-        for (int i = 0; i < 4; i++)
+        // 1. 全枠（最大4枠など）を一旦初期化 (-1: 空席)
+        for (int i = 0; i < roomData.usersData.Length; i++)
         {
             roomData.usersData[i].user_state = -1;
             roomData.usersData[i].is_ready = false;
             roomData.usersData[i].user_id = "";
+            roomData.usersData[i].is_host = false;
         }
 
         int uiIndex = 0;
 
-        // 2. ファーストパス：対戦プレイヤー（State = 1 や 2）を優先してUI枠（前方）に配置
+        // 2. ファーストパス：対戦プレイヤー（1P=State1, 2P=State2）を優先して前方に配置
         foreach (var r in rooms)
         {
-            if (r.State == 1 || r.State == 2) // 1Pまたは2P
+            if (r.State == 1 || r.State == 2) 
             {
-                if (uiIndex < 4)
+                if (uiIndex < roomData.usersData.Length)
                 {
                     roomData.usersData[uiIndex].user_id = r.UserId;
                     roomData.usersData[uiIndex].user_state = r.State;
                     roomData.usersData[uiIndex].is_ready = r.IsReady;
-                    roomData.usersData[uiIndex].is_host = (r.State == 1); // 1Pをホスト扱い
+                    roomData.usersData[uiIndex].is_host = (r.State == 1); // 1Pを厳格にホストとして扱う
                     uiIndex++;
                 }
             }
         }
 
-        // 3. セカンドパス：空いた枠に観戦者（State = 0など）を順番に詰める
+        // 3. セカンドパス：空いた枠に観戦者（State = 0）を順番に詰める
         foreach (var r in rooms)
         {
-            if (r.State != 1 && r.State != 2) // 観戦者など
+            if (r.State == 0) 
             {
-                if (uiIndex < 4)
+                if (uiIndex < roomData.usersData.Length)
                 {
                     roomData.usersData[uiIndex].user_id = r.UserId;
                     roomData.usersData[uiIndex].user_state = r.State;
@@ -136,9 +153,9 @@ public class RoomUIManager : MonoBehaviour
             }
         }
 
-        // 4. 自分のインデックスを確定させる（何人入っていても自分がどこにいるかを探す）
+        // 4. 自分のインデックス（roomData上のどこに自分が格納されたか）を確定
         roomData.room_my_index = -1;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < roomData.usersData.Length; i++)
         {
             if (userData != null && roomData.usersData[i].user_id == userData.user_id)
             {
@@ -151,7 +168,7 @@ public class RoomUIManager : MonoBehaviour
     /// <summary>
     /// 部屋のビジュアル要素（テキスト・ボタン・アウトライン）を最新データに書き換える
     /// </summary>
-    public void UpDateRoom(List<Room.Room> rooms)
+    public async void UpDateRoomVisuals(List<Room.Room> rooms)
     {
         if (roomData == null || roomData.usersData == null) return;
 
@@ -173,8 +190,15 @@ public class RoomUIManager : MonoBehaviour
 
             // 誰かが入っている場合
             joinnersUI[i].sprite = joinnersUIImage[1]; // プレイヤー画像
-            userName[i].text = "ID: " + roomData.usersData[i].user_id;
-            userRate[i].text = "Rate: 1500"; // 仮値
+            
+            string roleStr = roomData.usersData[i].user_state switch {
+                1 => "[1P] ",
+                2 => "[2P] ",
+                _ => "[観戦] "
+            };
+            var userInfo = await authenticationConnector.GetUser(roomData.usersData[i].user_id);
+            userName[i].text = (userInfo != null)? userInfo.Name : "???";
+            userRate[i].text = "Rate: " + ((userInfo != null)? userInfo.Rate : "???"); 
 
             // 準備完了状態の枠を光らせる（Outline制御）
             var optOutline = joinnersUI[i].GetComponent<Outline>();
@@ -184,10 +208,11 @@ public class RoomUIManager : MonoBehaviour
                 optOutline.effectDistance = new Vector2(3, -3);
             }
             
-            if (roomData.usersData[i].is_ready)
+            // 1Pは常に準備完了扱い、それ以外は is_ready フラグを見る
+            if (roomData.usersData[i].user_state == 1 || roomData.usersData[i].is_ready)
             {
                 optOutline.enabled = true;
-                optOutline.effectColor = Color.green; // 準備完了はわかりやすく緑などに
+                optOutline.effectColor = Color.green; 
             }
             else
             {
@@ -195,40 +220,46 @@ public class RoomUIManager : MonoBehaviour
             }
         }
 
-        // 対戦ボタン・テキストまわりの文言制御
-        if (startBattleButtonText != null && roomData.room_my_index >= 0 && roomData.room_my_index < roomData.usersData.Length)
+        if (startBattleButtonText != null && roomData.room_my_index >= 0)
         {
-            bool amIHost = roomData.usersData[roomData.room_my_index].is_host;
-            bool amIReady = roomData.usersData[roomData.room_my_index].is_ready;
+            var myData = roomData.usersData[roomData.room_my_index];
             
-            if (amIHost)
+            if (myData.user_state == 1) // 自分が1P（ホスト）の場合
             {
                 startBattleButtonText.text = "対戦開始";
+                if (editButton != null) editButton.SetActive(true);
             }
-            else
+            else if (myData.user_state == 2) // 自分が2Pの場合
             {
-                startBattleButtonText.text = amIReady ? "ホストの開始を待っています..." : "準備完了";
+                startBattleButtonText.text = myData.is_ready ? "準備完了解除" : "準備完了";
+                if (editButton != null) editButton.SetActive(false);
             }
-
-            if (editButton != null) editButton.SetActive(amIHost);
+            else // 自分が観戦者の場合
+            {
+                startBattleButtonText.text = "観戦中 (ホストの開始待ち)";
+                if (editButton != null) editButton.SetActive(false);
+            }
         }
 
-        // 💡 全員の準備状態またはサーバー側フラグを監視して、試合が開始されたか判定して遷移
-        // (注: room_match.proto 側の IsGaming 状態の変更をここで検知してシーン遷移させるロジック等へ繋げてください)
-        CheckAndTransitionToBattle(rooms);
+        // 試合開始フラグなどの監視・遷移チェック
+        if (rooms != null)
+        {
+            CheckAndTransitionToBattle(rooms);
+        }
     }
 
     private void CheckAndTransitionToBattle(List<Room.Room> rooms)
     {
-        // 試合シーンへの移行条件チェックをここに記述します
-        // 例: サーバー側から特定のState（ゲーム中）がプッシュされたら、
-        // sceneData.battle_online にシーン名を詰めてロード画面に遷移させるなど
+        // 必要に応じて、サーバーの RoomMatch.IsGaming などをトリガーにしたシーン遷移をここに記述します
     }
 
     // =================================================================
-    // ボタン等から呼ばれる各種パブリックアクション
+    // ボタン等から呼ばれるパブリックアクション
     // =================================================================
 
+    /// <summary>
+    /// 対戦開始、または準備完了ボタンが押された時の処理
+    /// </summary>
     public async void OnClickReadyOrStart()
     {
         if (roomData == null || matchingConnector == null || userData == null) return;
@@ -236,20 +267,36 @@ public class RoomUIManager : MonoBehaviour
         int myIdx = roomData.room_my_index;
         if (myIdx < 0 || myIdx >= roomData.usersData.Length) return;
 
-        bool amIHost = roomData.usersData[myIdx].is_host;
+        var myData = roomData.usersData[myIdx];
 
-        if (amIHost)
+        if (myData.user_state == 1) // 自分が1P（ホスト）なら試合開始
         {
+            bool nextReadyState = !myData.is_ready;
+            await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, myData.user_state, nextReadyState);
             Debug.Log("[RoomUIManager] ホストとして対戦開始リクエストを送信");
-            // 例: await matchingConnector.StartMatch(roomData.room_id);
+            var res = await matchingConnector.StartMatch(roomData.room_id);
+            if (res != null)
+            {
+                Debug.Log("試合開始リクエスト成功");
+            }
+        }
+        else if (myData.user_state == 2) // 自分が2Pなら準備完了状態のトグル切り替え
+        {
+            bool nextReadyState = !myData.is_ready;
+            Debug.Log($"[RoomUIManager] 2Pとして準備完了状態を {nextReadyState} に更新リクエスト");
+            
+            // サーバーの UpdateRoomState を叩く (引数: roomId, userId, state, isReady)
+            await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, myData.user_state, nextReadyState);
         }
         else
         {
-            Debug.Log("[RoomUIManager] ゲストとして準備完了切り替えを送信");
-            // 例: await matchingConnector.SetReady(roomData.room_id, userData.user_id);
+            Debug.Log("[RoomUIManager] 観戦者はボタンを操作できません");
         }
     }
 
+    /// <summary>
+    /// 部屋を退出するボタンが押された時の処理
+    /// </summary>
     public async void OnClickLeaveRoom()
     {
         if (matchingConnector == null || roomData == null || userData == null) return;
@@ -257,10 +304,22 @@ public class RoomUIManager : MonoBehaviour
         var result = await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
         if (result != null)
         {
-            // 部屋から正常に抜けたら、ストリームを止めてルーム選択画面へ遷移
             _isStreaming = false;
+            // 安全にストリームを止めてから画面を戻す
             await matchingConnector.StopRoomStream();
             
+            // ロビーシーンなどへの遷移ロジックをここに記述
+            Debug.Log("部屋を退出しました。ロビーへ戻ります。");
+            sceneData.next_scene_number = 3;
+        }
+    }
+
+    // for debug
+    void Update()
+    {
+        if (inputData.a_key_ispressed)
+        {
+            sceneData.next_scene_number = 10;
         }
     }
 }
