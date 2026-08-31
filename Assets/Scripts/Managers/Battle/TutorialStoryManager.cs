@@ -8,7 +8,6 @@ public class TutorialStoryManager : MonoBehaviour
 {
     [Header("Data References")]
     public InputData inputData;
-    public SceneData sceneData;
     public StoryManagerData storyManagerData;
     public UserData userData;
     public BattleDataForOnline battleDataForTutorial;
@@ -200,10 +199,10 @@ public class TutorialStoryManager : MonoBehaviour
         {
             userData.story_progress = 2;
             if (authenticationConnector != null) await authenticationConnector.UpdateUser();
-            sceneData.next_scene_number = 1;
+            SceneChangeManager.MoveScene(1);
         }else
         {
-            sceneData.next_scene_number = 11;
+            SceneChangeManager.MoveScene(11);
         }
     }
 

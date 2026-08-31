@@ -56,9 +56,6 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("プレイヤーデータ（ScriptableObject）")]
     public UserData userData;
 
-    [Header("シーンデータ（ScriptableObject）")]
-    public SceneData sceneData;
-
     [Header("Network")]
 
     private NetworkManager Net => NetworkManager.Instance;
@@ -341,7 +338,7 @@ public class CharacterSelectManager : MonoBehaviour
     void BackToTitle()
     {
         SEManager.instance?.PlayToNextSE();
-        sceneData.next_scene_number = 1;
+        SceneChangeManager.MoveScene(1);
         // 実際のシーン遷移処理が必要であれば、ここに記述します
         // SceneManager.LoadScene(sceneData.next_scene_number);
     }

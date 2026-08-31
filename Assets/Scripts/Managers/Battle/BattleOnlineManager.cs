@@ -10,7 +10,6 @@ public class BattleOnlineManager : MonoBehaviour
     [Header("Data & ScriptableObjects")]
     public CharacterData characterData;
     public InputData inputData;
-    public SceneData sceneData;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
@@ -148,12 +147,12 @@ public class BattleOnlineManager : MonoBehaviour
 
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
-            sceneData.next_scene_number = 6;
+            SceneChangeManager.MoveScene(6);
         }
 
         if (battleDataforOnline.is_finished)
         {
-            sceneData.next_scene_number = 6;
+            SceneChangeManager.MoveScene(6);
         }
 
         if (isTimerRunning)
