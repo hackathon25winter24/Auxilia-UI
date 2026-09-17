@@ -22,6 +22,15 @@ public class BattleModel
 
     public BattleModel(DefaultCharactersData[] defaultCharactersDatas1, DefaultCharactersData[] defaultCharactersDatas2, CharacterData characterDatas)
     {
+        if (defaultCharactersDatas1 == null)
+        {
+            defaultCharactersDatas1 = Array.Empty<DefaultCharactersData>();
+        }
+        if (defaultCharactersDatas2 == null)
+        {
+            defaultCharactersDatas2 = Array.Empty<DefaultCharactersData>();
+        }
+
         defaultGridState[0,2] = GridStateEnum.Base;
         defaultGridState[7,2] = GridStateEnum.Base;
         
@@ -47,10 +56,12 @@ public class BattleModel
 
         foreach(var character in player1.characters)
         {
+            if (character == null) continue;
             nowGridState[character.position.x, character.position.y] = GridStateEnum.Character;
         }
         foreach(var character in player2.characters)
         {
+            if (character == null) continue;
             nowGridState[character.position.x, character.position.y] = GridStateEnum.Character;
         }
     }
@@ -97,6 +108,7 @@ public class BattleModel
         }
         
         public int remainingCost;
+        
         public CharacterBattleData[] characters = new CharacterBattleData[3];
 
 
@@ -108,9 +120,18 @@ public class BattleModel
             baseHpValue = maxBaseHp;
             remainingCost = maxCost;
 
+            if (defaultCharactersDatas == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < defaultCharactersDatas.Length; i++)
             {
                 if(i >= 3) break;
+                if (defaultCharactersDatas[i] == null)
+                {
+                    continue;
+                }
                 characters[i] = new CharacterBattleData(defaultCharactersDatas[i], characterDatas);
             }
         }
@@ -167,17 +188,35 @@ public class BattleModel
 
         public CharacterBattleData(DefaultCharactersData data, CharacterData characterDatas)
         {
+            if (data == null)
+            {
+                return;
+            }
+
             id = data.characterId;
             view = data.view;
 
             CharactersData characterData = null;
-            foreach (var chData in characterDatas.characters)
+            if (characterDatas != null)
             {
-                if(chData.default_id == id)
+                foreach (var chData in characterDatas.characters)
                 {
-                    characterData = chData;
-                    break;
+                    if(chData.default_id == id)
+                    {
+                        characterData = chData;
+                        break;
+                    }
                 }
+            }
+
+            if (characterData == null)
+            {
+                maxHp = 0;
+                hpValue = 0;
+                moveCost = 0;
+                position = data.pos;
+                statusSprite = data.statusSprite;
+                return;
             }
 
             maxHp = characterData.default_hp;
@@ -186,7 +225,10 @@ public class BattleModel
 
             for(int i = 0; i < 3; i++)
             {
-                attacks[i] = new AttackModel(characterData.attacks[i]);
+                if (i < characterData.attacks.Length)
+                {
+                    attacks[i] = new AttackModel(characterData.attacks[i]);
+                }
             }
             
             for(int i = 0; i < buffAndDebuffs.Length; i++)

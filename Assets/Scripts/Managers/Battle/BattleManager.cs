@@ -12,7 +12,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] BattleView battleView;
     [SerializeField] GridView gridView;
     private AttackManager attackManager;
-    [SerializeField] StoryManagerData sotryManagerData;
+    [SerializeField] StoryManagerData storyManagerData;
 
     [Space]
 
@@ -22,21 +22,14 @@ public class BattleManager : MonoBehaviour
     [SerializeField] Transform gridsParentTs;
     [SerializeField] GameObject gridPrefab;
     
-    private void Start()
+    private void Awake()
     {
         InitBattleModel();
         attackManager = new AttackManager(inputData, battleModel);
 
         InitGrids();
         InitCharacters();
-    }
-
-    private void Update()
-    {
-        if(battleModel.is1pTurn)
-        {
-            if(!battleModel.isAttack) Move();
-        }
+        battleView.Init(battleModel.player1.playerName, battleModel.player2.playerName, battleModel.maxCost, this);
     }
 
     private void InitBattleModel()
@@ -47,6 +40,18 @@ public class BattleManager : MonoBehaviour
         battleModel.player2.BaseHpChanged += baseHpChanged2;
 
         // ## 各CharacterのHpChangedイベントも登録する
+    }
+
+    private void Update()
+    {
+        if(battleModel.is1pTurn)
+        {
+            if(!battleModel.isAttack) Move();
+            else
+            {
+                attackManager.Attack();
+            }
+        }
     }
 
     private void InitGrids()
@@ -87,13 +92,48 @@ public class BattleManager : MonoBehaviour
         {
             if(chData.default_id == character.id)
             {
-                character.view.Init(chData);
+                character.view.Init(chData, this);
                 break;
             }
         }
 
         // 位置の初期化
-        character.view.SetPosition(character.position);
+        character.view.SetPosition(character.position, false);
+    }
+
+    public void SelectedCharacter(bool is1p, int charactedIndex)
+    {
+        if (battleModel.isAttack) return;
+
+        if(is1p && battleModel.is1pTurn)
+        {
+            if (battleModel.selected != -1)
+            {
+                var selectedCharacter = battleModel.player1.characters[battleModel.selected];
+                if(selectedCharacter != null)
+                {
+                    selectedCharacter.view.HideAttackWindow();
+                    UpdateGridState(selectedCharacter.position, battleModel.defaultGridState[selectedCharacter.position.x, selectedCharacter.position.y]);
+                }
+            }
+
+            battleModel.selected = charactedIndex;
+
+            // 選択したキャラクターの攻撃ボタンを表示
+            if(charactedIndex != -1)
+            {
+                var selectedCharacter = battleModel.player1.characters[charactedIndex];
+                if(selectedCharacter != null)
+                {
+                    UpdateGridState(selectedCharacter.position, GridStateEnum.Character);
+                    selectedCharacter.view.ShowAttackWindow();
+                }
+            }
+        }
+        else
+        {
+            battleModel.selected = -1;
+        }
     }
 
     private void Move()
@@ -105,18 +145,46 @@ public class BattleManager : MonoBehaviour
                 
             if(inputData.left_key_ispressed) movedPos.x--;
             if(inputData.right_key_ispressed) movedPos.x++;
-            if(inputData.up_key_ispressed) movedPos.y++;
-            if(inputData.down_key_ispressed) movedPos.y--;
+            if(inputData.up_key_ispressed) movedPos.y--;
+            if(inputData.down_key_ispressed) movedPos.y++;
+            
+            if(movedPos == selectedCharacter.position) return;
+
+            Debug.Log(battleModel.player1.remainingCost);
 
             if(0 <= movedPos.x && movedPos.x < 8 && 0 <= movedPos.y && movedPos.y < 5)
             {
                 var state = battleModel.nowGridState[movedPos.x, movedPos.y];
                 if(state != GridStateEnum.Prohibit && state != GridStateEnum.Base && state != GridStateEnum.Character && state != GridStateEnum.Stop)
                 {
+                    if(battleModel.player1.remainingCost < selectedCharacter.moveCost)
+                    {
+                        // コストが足りなかった時の効果音
+                        SEManager.instance.PlayBackSE(); // 仮
+                        return;
+                    }
+
                     UpdateGridState(selectedCharacter.position, battleModel.defaultGridState[selectedCharacter.position.x, selectedCharacter.position.y]);
                     UpdateGridState(movedPos, GridStateEnum.Character);
                     selectedCharacter.position = movedPos;
+                    selectedCharacter.view.SetPosition(movedPos, true);
+
+                    battleModel.player1.remainingCost -= selectedCharacter.moveCost;
                 }
+            }
+        }
+    }
+
+    public void AttackButtonClicked(int attackIndex)
+    {
+        if(battleModel.selected != -1)
+        {
+            var selectedCharacter = battleModel.player1.characters[battleModel.selected];
+            if(selectedCharacter != null)
+            {
+                battleModel.isAttack = true;
+                selectedCharacter.view.HideAttackWindow();
+                attackManager.SetAttack(battleModel.is1pTurn, selectedCharacter.attacks[attackIndex], selectedCharacter.position);
             }
         }
     }

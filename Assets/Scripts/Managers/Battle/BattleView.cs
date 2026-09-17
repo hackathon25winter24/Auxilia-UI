@@ -4,6 +4,7 @@ using TMPro;
 
 public class BattleView : MonoBehaviour
 {
+    private BattleManager battleManager;
     [SerializeField] private TextMeshProUGUI player1NameText;
     [SerializeField] private TextMeshProUGUI player2NameText;
     [SerializeField] private Slider timeBar;
@@ -14,14 +15,14 @@ public class BattleView : MonoBehaviour
     [SerializeField] private GameObject characterStatus;
     [SerializeField] private Image characterStatusImage;
 
-    public void Init(string player1Name, string player2Name, int initCost)
+    public void Init(string player1Name, string player2Name, int initCost, BattleManager battleManager)
     {
+        this.battleManager = battleManager;
+
         player1NameText.text = player1Name;
         player2NameText.text = player2Name;
         player1CostText.text = initCost.ToString();
         player2CostText.text = initCost.ToString();
-
-        
     }
 
     public void SetRemainingCost(bool isPlayer1, int cost)
@@ -72,6 +73,11 @@ public class BattleView : MonoBehaviour
         {
             characterStatus.SetActive(false);
         }
+    }
+
+    public void AttackButtonClicked(int attackIndex)
+    {
+        battleManager.AttackButtonClicked(attackIndex);
     }
 
     [System.Serializable]
