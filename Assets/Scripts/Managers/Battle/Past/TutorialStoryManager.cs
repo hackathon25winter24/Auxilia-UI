@@ -108,8 +108,8 @@ public class TutorialStoryManager : MonoBehaviour
                 storyManagerData.is_serif = false;
             }else
             {
-            OnPlayerClick();
-            storyManagerData.is_serif = true;
+                OnPlayerClick();
+                storyManagerData.is_serif = true;
             }
     }
 

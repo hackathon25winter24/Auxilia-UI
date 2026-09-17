@@ -35,6 +35,20 @@ public class TutorialBattleManager : MonoBehaviour
 
     void Update()
     {
+<<<<<<< HEAD:Assets/Scripts/Managers/Battle/TutorialBattleManager.cs
+=======
+        if(storyManagerData.Tutorial_progress > 2)
+        {
+            if(storyManagerData.is_serif == false)
+            {
+                if (inputData.space_key_ispressed)
+                {
+                    EndMyTurn();
+                }
+            }
+        }
+
+>>>>>>> 30f0a0e (setUp):Assets/Scripts/Managers/Battle/Past/TutorialBattleManager.cs
         if (isTimerRunning)
         {
             if (currentTime > 0)
@@ -56,7 +70,7 @@ public class TutorialBattleManager : MonoBehaviour
 
     public void StartMyTurn()
     {
-        gameText.text = "your turn";
+        gameText.text = "Your Turn";
         StartCoroutine(MoveRoutine());
         battleDataForTutorial.is_1p_turn = true;
         battleDataForTutorial.player1.current_cost_remaining = 50;
@@ -65,6 +79,7 @@ public class TutorialBattleManager : MonoBehaviour
 
     public void EndMyTurn()
     {
+<<<<<<< HEAD:Assets/Scripts/Managers/Battle/TutorialBattleManager.cs
         if(storyManagerData.Tutorial_progress > 2)
         {
         if(storyManagerData.is_serif == false)
@@ -75,6 +90,12 @@ public class TutorialBattleManager : MonoBehaviour
                 StartMyTurn();
             }
         }
+=======
+        gameText.text = "Enemy Turn";
+        StartCoroutine(MoveRoutine());
+        battleDataForTutorial.is_1p_turn = false;
+        StartMyTurn();
+>>>>>>> 30f0a0e (setUp):Assets/Scripts/Managers/Battle/Past/TutorialBattleManager.cs
     }
 
     void TimerStart()
@@ -86,30 +107,35 @@ public class TutorialBattleManager : MonoBehaviour
     }
 
     IEnumerator MoveRoutine()
-{
-    is_text_moving = true;
-
-    float elapsed = 0f;
-
-    while (elapsed < duration)
     {
-        elapsed += Time.deltaTime;
-        float t = elapsed / duration; // 0.0 ～ 1.0
+        is_text_moving = true;
 
-        // 【ここがポイント！】中間で緩やかになるカスタム曲線
-        // 3次関数を使って「S字を横に倒したような形」を作ります
-        float easedT = t * t * (3f - 2f * t); // 基本のスムーズ曲線
-        
-        // もしもっと極端に「中間で止まりそう」にしたいなら、
-        // サイン波を使って t の進み具合を調整します
-        // 下記は「0.5付近で時間の進みが遅くなる」計算の一例です
-        float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
-        // ※ 0.15f の値を大きくすると、中間での減速がより強くなります
+        float elapsed = 0f;
 
-        gametext.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration; // 0.0 ～ 1.0
 
-        yield return null;
+            // 【ここがポイント！】中間で緩やかになるカスタム曲線
+            // 3次関数を使って「S字を横に倒したような形」を作ります
+            float easedT = t * t * (3f - 2f * t); // 基本のスムーズ曲線
+            
+            // もしもっと極端に「中間で止まりそう」にしたいなら、
+            // サイン波を使って t の進み具合を調整します
+            // 下記は「0.5付近で時間の進みが遅くなる」計算の一例です
+            float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
+            // ※ 0.15f の値を大きくすると、中間での減速がより強くなります
+
+            gametext.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+
+            yield return null;
+        }
+        gametext.anchoredPosition = destination;
+
+        is_text_moving = false;
     }
+<<<<<<< HEAD:Assets/Scripts/Managers/Battle/TutorialBattleManager.cs
     gametext.anchoredPosition = destination;
 
     is_text_moving = false;
@@ -118,4 +144,6 @@ public class TutorialBattleManager : MonoBehaviour
     {
         inputManager.OnSpaceKeyClicked -= EndMyTurn;
     }
+=======
+>>>>>>> 30f0a0e (setUp):Assets/Scripts/Managers/Battle/Past/TutorialBattleManager.cs
 }

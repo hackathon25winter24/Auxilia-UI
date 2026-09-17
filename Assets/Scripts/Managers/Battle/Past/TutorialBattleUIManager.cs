@@ -25,16 +25,16 @@ public class TutorialBattleUIManager : MonoBehaviour
         cost[1].text = "cost:" + battleDataForTutorial.player2.current_cost_remaining;
     }
 
-        public void OnButtonClick(string buttonName)
+    public void OnButtonClick(string buttonName)
     {
         switch(buttonName)
         {
             case "smallwindow":
-            characterStates.sprite = characterStatesImage[0];
-            characterStatus.gameObject.SetActive(true);
+                characterStates.sprite = characterStatesImage[0];
+                characterStatus.gameObject.SetActive(true);
                 break;
             case "backfromcharacterstates":
-            characterStatus.gameObject.SetActive(false);
+                characterStatus.gameObject.SetActive(false);
                 break;
         }
     }
