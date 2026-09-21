@@ -42,10 +42,10 @@ public class AttackManager
     {
         ClearAttackGrid();
 
+        var dir = GetMouseDirection();
         foreach (Vector2Int pos in attack.attackRange)
         {
-            var dir = GetMouseDirection();
-            var rotatedPos = RotatePosition(pos, dir);
+            var rotatedPos = characterPos + RotatePosition(pos, dir);
             if(0 <= rotatedPos.x && rotatedPos.x < 8 && 0 <= rotatedPos.y && rotatedPos.y < 5) 
                     battleModel.isAttackGrid[rotatedPos.x, rotatedPos.y] = true;
         }
@@ -84,7 +84,7 @@ public class AttackManager
             // 拠点の処理
             if (battleModel.isAttackGrid[enemyData.basePos.x, enemyData.basePos.y])
             {
-                enemyData.DamageBaseHp(attack.attackPower);
+                enemyData.baseHp -= attack.attackPower;
                 isHit = true;
             }
 
@@ -94,7 +94,7 @@ public class AttackManager
                 {
                     if(battleModel.isAttackGrid[character.position.x, character.position.y])
                     {
-                        character.damage(attack.attackPower);
+                        character.hp -= attack.attackPower;
                         isHit = true;
                     }
                 }
@@ -106,7 +106,7 @@ public class AttackManager
         {
             if (battleModel.isAttackGrid[playerData.basePos.x, playerData.basePos.y])
             {
-                playerData.DamageBaseHp(attack.attackPower);
+                playerData.baseHp -= attack.attackPower;
                 isHit = true;
             }
 
@@ -116,7 +116,7 @@ public class AttackManager
                 {
                     if(battleModel.isAttackGrid[character.position.x, character.position.y])
                     {
-                        character.damage(attack.attackPower);
+                        character.hp -= attack.attackPower;
                         isHit = true;
                     }
                 }
@@ -126,6 +126,13 @@ public class AttackManager
         if(isHit)
         {
             playerData.remainingCost -= attack.attackCost;
+            battleModel.isAttack = false;
+            ClearAttackGrid();
+        }
+        else
+        {
+            // 攻撃が当たらなかった時の効果音
+            SEManager.instance.PlayBackSE(); // 仮
             battleModel.isAttack = false;
             ClearAttackGrid();
         }
@@ -146,9 +153,9 @@ public class AttackManager
 
     private RotationEnum GetMouseDirection()
     {
-        // キャラクターのUI座標とマウスの座標（中心原点）の差分を取る
+        Vector2 characterWorldPos = new Vector2(characterPos.x * 50f - 175f, characterPos.y * -50f + 60f);
         Vector2 mousePos = inputData.mouse_position;
-        Vector2 diff = mousePos - characterPos;
+        Vector2 diff = mousePos - characterWorldPos;
 
         // XとYの絶対値を比較して、どちらの方向に大きく動いているか判定
         if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))

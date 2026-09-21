@@ -1,5 +1,8 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
+using TMPro;
 
 public class BattleCharacterView : MonoBehaviour
 {
@@ -7,6 +10,8 @@ public class BattleCharacterView : MonoBehaviour
     private BattleManager battleManager;
     private RectTransform myTransform;
     private Image myImage;
+    private Slider hpSlider;
+    private TextMeshProUGUI hpText;
     [SerializeField] private GameObject attackWindow;
     private RectTransform attackWindowTransform;
     [SerializeField] private Image attackWindowBackground;
@@ -15,10 +20,19 @@ public class BattleCharacterView : MonoBehaviour
     [SerializeField] Vector2 attackWindowOffset = new Vector2(390, -150);
 
     // 初期化
-    public void Init(CharactersData _characterData, BattleManager battleManager)
+    public void Init(CharactersData _characterData, BattleManager battleManager, GameObject smallWindow, bool isPlayer1, int index)
     {
         characterData = _characterData;
         this.battleManager = battleManager;
+
+        hpSlider = smallWindow.GetComponentInChildren<Slider>();
+        hpText = smallWindow.GetComponentInChildren<TextMeshProUGUI>();
+
+        smallWindow.SetActive(true);
+        smallWindow.GetComponent<Image>().sprite = characterData.default_sprite_smallwindow;
+
+        var statusButton = smallWindow.GetComponentInChildren<Button>();
+        statusButton.onClick.AddListener(() => battleManager.ShowStatus(isPlayer1, index));
 
         if (myTransform == null)
         {
@@ -36,6 +50,9 @@ public class BattleCharacterView : MonoBehaviour
         }
 
         myImage.sprite = characterData.default_sprite_mini;
+
+        hpSlider.maxValue = characterData.default_hp;
+        SetHp(characterData.default_hp);
     }
 
     // キャラクター位置の反映
@@ -83,13 +100,14 @@ public class BattleCharacterView : MonoBehaviour
         }
     }
 
+    public void SetHp(int hp)
+    {
+        hpSlider.value = hp;
+        hpText.text = hp.ToString() + "/" + hpSlider.maxValue.ToString();
+    }
+
     public void Selected(int characterIndex)
     {
         battleManager.SelectedCharacter(true, characterIndex);
-    }
-
-    public void AttackButtonClicked(int attackIndex)
-    {
-        //battleManager.AttackButtonClicked(attackIndex);
     }
 }

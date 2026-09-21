@@ -14,9 +14,25 @@ public class BattleModel
     public bool is1pTurn;
     public int selected;
     public bool isAttack;
-    public float maxTime = 10.0f; // 暫定
-    public float remainingTime;
-    public int maxCost = 50;
+    public float maxTime = 60.0f; // 暫定
+    public bool isTimerRunning = false;
+    public Action RemainingTimeChanged;
+    private float remainingTimeValue;
+    public float remainingTime
+    {
+        get => remainingTimeValue;
+        set
+        {
+            float previousTime = remainingTimeValue;
+            remainingTimeValue = Mathf.Clamp(value, 0, maxTime);
+
+            if (previousTime != remainingTimeValue)
+            {
+                RemainingTimeChanged?.Invoke();
+            }
+        }
+    }
+
     public PlayerState player1;
     public PlayerState player2;
 
@@ -51,8 +67,8 @@ public class BattleModel
         isAttack = false;
         remainingTime = maxTime;
 
-        player1 = new PlayerState(new Vector2Int(0,2), maxCost, defaultCharactersDatas1, characterDatas);
-        player2 = new PlayerState(new Vector2Int(7,2), maxCost, defaultCharactersDatas2, characterDatas);
+        player1 = new PlayerState(new Vector2Int(0,2), 50, defaultCharactersDatas1, characterDatas);
+        player2 = new PlayerState(new Vector2Int(7,2), 50, defaultCharactersDatas2, characterDatas);
 
         foreach(var character in player1.characters)
         {
@@ -77,7 +93,7 @@ public class BattleModel
         public int baseHp
         {
             get => baseHpValue;
-            private set
+            set
             {
                 int previousHp = baseHpValue;
                 baseHpValue = Mathf.Clamp(value, 0, maxBaseHp);
@@ -88,28 +104,26 @@ public class BattleModel
                 }
             }
         }
-        public void DamageBaseHp(int damage)
-        {
-            if (damage <= 0)
-            {
-                return;
-            }
-
-            baseHp -= damage;
-        }
-        public void HealBaseHp(int healAmount)
-        {
-            if (healAmount <= 0)
-            {
-                return;
-            }
-
-            baseHp += healAmount;
-        }
         
-        public int remainingCost;
-        
-        public CharacterBattleData[] characters = new CharacterBattleData[3];
+        public int maxCost;
+        public Action<int> RemainingCostChanged;
+        private int remainingCostValue;
+        public int remainingCost
+        {
+            get => remainingCostValue;
+            set
+            {
+                int previousCost = remainingCostValue;
+                remainingCostValue = Mathf.Clamp(value, 0, maxCost);
+
+                if (previousCost != remainingCostValue)
+                {
+                    RemainingCostChanged?.Invoke(previousCost);
+                }
+            }
+        }
+
+        public CharacterBattleData[] characters;
 
 
         public PlayerState(Vector2Int basePos, int maxCost, DefaultCharactersData[] defaultCharactersDatas, CharacterData characterDatas)
@@ -118,12 +132,15 @@ public class BattleModel
             playerName = "playerName";
             this.basePos = basePos;
             baseHpValue = maxBaseHp;
+            this.maxCost = maxCost;
             remainingCost = maxCost;
 
             if (defaultCharactersDatas == null)
             {
                 return;
             }
+
+            characters = new CharacterBattleData[defaultCharactersDatas.Length];
 
             for (int i = 0; i < defaultCharactersDatas.Length; i++)
             {
@@ -143,40 +160,22 @@ public class BattleModel
         public BattleCharacterView view {get; private set;}
         public int maxHp;
 
-        Action<int> hpChanged;
+        public Action<BattleCharacterView, int, int> hpChanged;
         private int hpValue;
         public int hp
         {
             get => hpValue;
 
-            private set
+            set
             {
                 int previousHp = hpValue;
                 hpValue = Mathf.Clamp(value, 0, maxHp);
 
                 if (previousHp != hpValue)
                 {
-                    hpChanged?.Invoke(previousHp);
+                    hpChanged?.Invoke(view, previousHp, hpValue);
                 }
             }
-        }
-        public void damage(int damage)
-        {
-            if(damage <= 0)
-            {
-                return;
-            }
-
-            hp -= damage;
-        }
-        public void heal(int heal)
-        {
-            if(heal <= 0)
-            {
-                return;
-            }
-
-            hp += heal;
         }
 
         public int moveCost;
@@ -249,6 +248,7 @@ public enum GridStateEnum
     Prohibit,
     Base,
     Character,
+    Selected,
     Makibishi,
     Landmine,
     Poison,
