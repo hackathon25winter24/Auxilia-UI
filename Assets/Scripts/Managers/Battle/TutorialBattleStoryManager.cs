@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections;
+using Cysharp.Threading.Tasks.Triggers;
 
 public class TutorialBattleStoryManager : MonoBehaviour
 {
@@ -57,6 +58,12 @@ public class TutorialBattleStoryManager : MonoBehaviour
         }
 
         storyView.FlashUIs();
+
+        if (inputData.space_key_ispressed)
+        {
+            OnPlayerClick();
+            return;
+        }
 
         if (!isStoryHidden && storyData.is_auto && !storyData.serif_loading)
         {
@@ -207,6 +214,7 @@ public class TutorialBattleStoryManager : MonoBehaviour
     
     public void ToggleAutoMode()
     {
+        SEManager.instance.PlaySelectSE();
         storyData.is_auto = !storyData.is_auto;
         storyView.ShowAutoText(storyData.is_auto);
         storyView.ResetUIsAlpha(false, true);
@@ -214,6 +222,7 @@ public class TutorialBattleStoryManager : MonoBehaviour
 
     public void SkipStory()
     {
+        SEManager.instance.PlayToNextSE();
         EndStory();
     }
 }

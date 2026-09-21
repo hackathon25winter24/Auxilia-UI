@@ -67,6 +67,11 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        if (!tutorialBattleStoryManager.isStoryHidden)
+        {
+            return;
+        }
+        
         if(battleModel.is1pTurn)
         {
             if(!battleModel.isAttack) Move();
