@@ -22,6 +22,7 @@ public class EnemyManager
         yield return new WaitForSeconds(0.5f);
 
         // 敵の行動処理（ToDo）
+        Debug.Log("Enemy is taking its turn.");
 
         battleManager.EndTurn();
     }

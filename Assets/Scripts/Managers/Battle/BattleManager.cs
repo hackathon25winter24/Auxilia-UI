@@ -7,13 +7,14 @@ public class BattleManager : MonoBehaviour
 {
     [Header("クラス")]
     [SerializeField] InputData inputData;
+    [SerializeField] UserData userData;
     private BattleModel battleModel;
     [SerializeField] CharacterData characterData;
     [SerializeField] BattleView battleView;
     [SerializeField] GridView gridView;
     private AttackManager attackManager;
     private EnemyManager enemyManager;
-    [SerializeField] StoryManagerData storyManagerData;
+    private StoryManagerData storyData;
     [SerializeField] TutorialBattleStoryManager tutorialBattleStoryManager;
 
     [Space]
@@ -23,17 +24,20 @@ public class BattleManager : MonoBehaviour
     [SerializeField] DefaultCharactersData[] player2CharactersData;
     [SerializeField] Transform gridsParentTs;
     [SerializeField] GameObject gridPrefab;
+
+
+    private Coroutine activeEnemyCoroutine;
     
     private void Awake()
     {
         InitBattleModel();
         attackManager = new AttackManager(inputData, battleModel);
         enemyManager = new EnemyManager(this, battleModel, battleView);
-        tutorialBattleStoryManager.Init(battleModel);
+        tutorialBattleStoryManager.Init(battleModel, out storyData);
 
         InitGrids();
         InitCharacters();
-        battleView.Init(battleModel.player1.playerName, battleModel.player2.playerName, battleModel.player1.maxCost, this, battleModel);
+        battleView.Init(userData.user_name, "Bot", battleModel.player1.maxCost, this, battleModel);
         TimerStop();
     }
 
@@ -94,7 +98,15 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            
+            if(storyData.serif_number <= 14)
+            {
+                // 敵のターン処理を中断
+                if(activeEnemyCoroutine != null)
+                {
+                    StopCoroutine(activeEnemyCoroutine);
+                }
+                EndTurn();
+            }
         }
 
         if(battleModel.isTimerRunning)
@@ -248,7 +260,15 @@ public class BattleManager : MonoBehaviour
         battleModel.is1pTurn = !battleModel.is1pTurn;
         battleModel.selected = -1;
         battleModel.isAttack = false;
-        battleModel.remainingTime = battleModel.maxTime;
+        TimerReset();
+
+        for(int x = 0; x < 8; x++)
+        {
+            for(int y = 0; y < 5; y++)
+            {
+                UpdateGridState(new Vector2Int(x, y), battleModel.nowGridState[x, y]);
+            }
+        }
 
         void resetView(BattleModel.CharacterBattleData character)
         {
@@ -274,7 +294,7 @@ public class BattleManager : MonoBehaviour
             // 次が自分のターンのときの処理
             battleModel.player2.remainingCost = battleModel.player2.maxCost;
 
-            battleView.SetGameText("Enemy Turn");
+            battleView.SetGameText("Your Turn");
             StartCoroutine(battleView.MoveRoutine());
         }
         else
@@ -282,10 +302,10 @@ public class BattleManager : MonoBehaviour
             // 次が敵のターンのときの処理
             battleModel.player1.remainingCost = battleModel.player1.maxCost;
             
-            battleView.SetGameText("Your Turn");
+            battleView.SetGameText("Enemy Turn");
             StartCoroutine(battleView.MoveRoutine());
 
-            StartCoroutine(enemyManager.EnemyTurn());
+            activeEnemyCoroutine = StartCoroutine(enemyManager.EnemyTurn());
         }
     }
 

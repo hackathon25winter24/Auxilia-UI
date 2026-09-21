@@ -84,8 +84,6 @@ public class BattleModel
 
     public class PlayerState
     {
-        public string playerId;
-        public string playerName;
         public Vector2Int basePos;
         public int maxBaseHp = 200;
         public event Action<int> BaseHpChanged;
@@ -128,8 +126,6 @@ public class BattleModel
 
         public PlayerState(Vector2Int basePos, int maxCost, DefaultCharactersData[] defaultCharactersDatas, CharacterData characterDatas)
         {
-            playerId = "playerId";
-            playerName = "playerName";
             this.basePos = basePos;
             baseHpValue = maxBaseHp;
             this.maxCost = maxCost;
