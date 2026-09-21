@@ -1215,54 +1215,6 @@ RectTransform:
   m_AnchoredPosition: {x: 300.00006, y: 209.99998}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &229289779
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 229289781}
-  - component: {fileID: 229289780}
-  m_Layer: 0
-  m_Name: TutorialBattleStoryManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &229289780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 229289779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ad1cc549b4eb2f49b25ec435f9d9af7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputData: {fileID: 0}
-  storyData: {fileID: 0}
-  storyView: {fileID: 0}
-  selifs: []
---- !u!4 &229289781
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 229289779}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1044.1077, y: 456.54907, z: -3.7195976}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &239263459
 GameObject:
   m_ObjectHideFlags: 0
@@ -13757,8 +13709,8 @@ MonoBehaviour:
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
   battleView: {fileID: 1665738818}
   gridView: {fileID: 288669761}
-  storyManagerData: {fileID: 0}
-  tutorialBattleStoryManager: {fileID: 0}
+  storyManagerData: {fileID: 11400000, guid: ee4517df9ad7e93439920f1d97ae78b6, type: 2}
+  tutorialBattleStoryManager: {fileID: 1685609894}
   player1CharactersData:
   - characterId: 0
     view: {fileID: 1402128808}
@@ -14694,7 +14646,6 @@ SceneRoots:
   - {fileID: 1318891755}
   - {fileID: 2076516626}
   - {fileID: 2000766762}
-  - {fileID: 229289781}
   - {fileID: 1665738819}
   - {fileID: 288669762}
   - {fileID: 1685609895}
