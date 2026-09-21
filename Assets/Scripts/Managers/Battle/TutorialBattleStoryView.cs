@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class TutorialBattleStoryView : MonoBehaviour
 {
@@ -12,11 +11,19 @@ public class TutorialBattleStoryView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI autoText;
     private string[] selifs;
     private StoryManagerData storyData;
+    private float downArrowFlashElapsed;
+    private float autoTextFlashElapsed;
 
     [Header("Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
     [SerializeField] private float autoWaitTime = 1.0f;
     [SerializeField] private float flashSpeed = 5.0f; // 点滅速度
+
+    public void Init(string[] _selifs, StoryManagerData _storyData)
+    {
+        selifs = _selifs;
+        storyData = _storyData;
+    }
 
     public IEnumerator StoryFlowRoutine()
     {
@@ -47,30 +54,49 @@ public class TutorialBattleStoryView : MonoBehaviour
     }
 
 
-    public void ShowAutoText()
+    public void ShowAutoText(bool isShow)
     {
-        autoText.gameObject.SetActive(true);
-    }
-
-    public void HideAutoText()
-    {
-        autoText.gameObject.SetActive(false);
+        autoText.gameObject.SetActive(isShow);
     }
 
     public void FlashUIs()
     {
-        float alpha = (Mathf.Sin(Time.time * flashSpeed) + 1.0f) / 2.0f;
-        downArrow.color = new Color(downArrow.color.r, downArrow.color.g, downArrow.color.b, alpha);
-        if (storyData.is_auto) autoText.color = new Color(autoText.color.r, autoText.color.g, autoText.color.b, alpha);
+        downArrowFlashElapsed += Time.deltaTime;
+        autoTextFlashElapsed += Time.deltaTime;
+
+        SetAlpha(downArrow, GetFlashAlpha(downArrowFlashElapsed));
+        SetAlpha(autoText, GetFlashAlpha(autoTextFlashElapsed));
     }
 
-    public void ShowStory()
+    private float GetFlashAlpha(float elapsedTime)
     {
-        storyObject.SetActive(true);
+        return (Mathf.Cos(elapsedTime * flashSpeed) + 1.0f) * 0.5f;
     }
 
-    public void HideStory()
+    private void SetAlpha(Graphic graphic, float alpha)
     {
-        storyObject.SetActive(false);
+        Color color = graphic.color;
+        color.a = alpha;
+        graphic.color = color;
+    }
+
+    public void ResetUIsAlpha(bool downArrow, bool autoText)
+    {
+        if (downArrow)
+        {
+            downArrowFlashElapsed = 0.0f;
+            SetAlpha(this.downArrow, 1.0f);
+        }
+        if (autoText)
+        {
+            autoTextFlashElapsed = 0.0f;
+            SetAlpha(this.autoText, 1.0f);
+        }
+    }
+
+
+    public void ShowStory(bool isShow)
+    {
+        storyObject.SetActive(isShow);
     }
 }

@@ -12,6 +12,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] BattleView battleView;
     [SerializeField] GridView gridView;
     private AttackManager attackManager;
+    private EnemyManager enemyManager;
     [SerializeField] StoryManagerData storyManagerData;
     [SerializeField] TutorialBattleStoryManager tutorialBattleStoryManager;
 
@@ -27,11 +28,13 @@ public class BattleManager : MonoBehaviour
     {
         InitBattleModel();
         attackManager = new AttackManager(inputData, battleModel);
+        enemyManager = new EnemyManager(this, battleModel, battleView);
         tutorialBattleStoryManager.Init(battleModel);
 
         InitGrids();
         InitCharacters();
         battleView.Init(battleModel.player1.playerName, battleModel.player2.playerName, battleModel.player1.maxCost, this, battleModel);
+        TimerStop();
     }
 
     private void InitBattleModel()
@@ -91,14 +94,12 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            EndTurn();
+            
         }
 
-        TimerStart();
         if(battleModel.isTimerRunning)
         {
             UpdateTimer();
-            Debug.Log(battleModel.remainingTime);
         }
     }
 
@@ -237,40 +238,54 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void EndTurn()
+    public void EndTurn()
     {
+        if (battleView.IsMoveRoutineRunning)
+        {
+            return;
+        }
+
         battleModel.is1pTurn = !battleModel.is1pTurn;
         battleModel.selected = -1;
         battleModel.isAttack = false;
         battleModel.remainingTime = battleModel.maxTime;
 
+        void resetView(BattleModel.CharacterBattleData character)
+        {
+            if(character != null)
+            {
+                character.view.HideAttackWindow();
+                UpdateGridState(character.position, GridStateEnum.Character);
+            }
+        }
+
+        foreach(var character in battleModel.player1.characters)
+        {
+            resetView(character);
+        }
+
+        foreach(var character in battleModel.player2.characters)
+        {
+            resetView(character);
+        }
+
         if(battleModel.is1pTurn)
         {
+            // 次が自分のターンのときの処理
             battleModel.player2.remainingCost = battleModel.player2.maxCost;
 
-            // 2Pのターン開始時に攻撃ボタンを消す
-            foreach(var character in battleModel.player1.characters)
-            {
-                if(character != null)
-                {
-                    character.view.HideAttackWindow();
-                    UpdateGridState(character.position, GridStateEnum.Character);
-                }
-            }
+            battleView.SetGameText("Enemy Turn");
+            StartCoroutine(battleView.MoveRoutine());
         }
         else
         {
+            // 次が敵のターンのときの処理
             battleModel.player1.remainingCost = battleModel.player1.maxCost;
+            
+            battleView.SetGameText("Your Turn");
+            StartCoroutine(battleView.MoveRoutine());
 
-            // 1Pのターン開始時に攻撃ボタンを消す
-            foreach(var character in battleModel.player2.characters)
-            {
-                if(character != null)
-                {
-                    character.view.HideAttackWindow();
-                    UpdateGridState(character.position, GridStateEnum.Character);
-                }
-            }
+            StartCoroutine(enemyManager.EnemyTurn());
         }
     }
 

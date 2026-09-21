@@ -17,13 +17,15 @@ public class TutorialBattleStoryManager : MonoBehaviour
 
     private void Start()
     {
+        storyView.Init(selifs, storyData);
+
         storyData.serif_number = 0;
         storyData.serif_loading = false;
         storyData.is_auto = false;
         storyData.is_serif = false;
 
-        storyView.ShowStory();
-        storyView.HideAutoText();
+        storyView.ShowStory(true);
+        storyView.ShowAutoText(false);
 
         // 最初のセリフを開始
         //StartNewSerif();
@@ -44,6 +46,13 @@ public class TutorialBattleStoryManager : MonoBehaviour
     public void Init(BattleModel _battleModel)
     {
         battleModel = _battleModel;
+
+        storyData.serif_number = 0;
+        storyData.serif_loading = false;
+        storyData.is_auto = false;
+        storyData.is_serif = false;
+
+        storyView.ResetUIsAlpha(true, true);
         
         isInit = true;
     }
@@ -72,6 +81,8 @@ public class TutorialBattleStoryManager : MonoBehaviour
     public void ToggleAutoMode()
     {
         storyData.is_auto = !storyData.is_auto;
+        storyView.ShowAutoText(storyData.is_auto);
+        storyView.ResetUIsAlpha(false, true);
     }
 
     public void SkipStory()

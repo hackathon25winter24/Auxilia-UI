@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class BattleView : MonoBehaviour
 {
+    [Header("Components")]
     private BattleManager battleManager;
     private BattleModel battleModel;
     [SerializeField] private TextMeshProUGUI player1NameText;
@@ -15,6 +17,14 @@ public class BattleView : MonoBehaviour
     [SerializeField] private Base player2Base;
     [SerializeField] private GameObject characterStatus;
     [SerializeField] private Image characterStatusImage;
+    [SerializeField] private TextMeshProUGUI gameText;
+
+    [Header("Settings")]
+    [SerializeField] private float movingTextDuration = 2.0f;
+    [SerializeField] private Vector2 startPosition = new Vector2(1000, 0);
+    [SerializeField] private Vector2 destination = new Vector2(-1000, 0);
+
+    public bool IsMoveRoutineRunning { get; private set; }
 
     public void Init(string player1Name, string player2Name, int initCost, BattleManager battleManager, BattleModel battleModel)
     {
@@ -33,6 +43,33 @@ public class BattleView : MonoBehaviour
 
         timeBar.maxValue = battleModel.maxTime;
         timeBar.value = battleModel.maxTime;
+    }
+
+    public void SetGameText(string text)
+    {
+        if (gameText != null)
+        {
+            gameText.text = text;
+        }
+    }
+
+    public IEnumerator MoveRoutine()
+    {
+        IsMoveRoutineRunning = true;
+        float elapsed = 0f;
+
+        while (elapsed < movingTextDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / movingTextDuration;
+            float slowingT = t + Mathf.Sin(t * Mathf.PI * 2f) * 0.15f; 
+
+            gameText.rectTransform.anchoredPosition = Vector2.Lerp(startPosition, destination, slowingT);
+
+            yield return null;
+        }
+        gameText.rectTransform.anchoredPosition = destination;
+        IsMoveRoutineRunning = false;
     }
 
     public void SetRemainingCost(bool isPlayer1, int cost)
