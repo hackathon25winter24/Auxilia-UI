@@ -103,12 +103,13 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            if(storyData.serif_number <= 14)
+            if(storyData.serif_number < 14)
             {
                 // 敵のターン処理を中断
                 if(activeEnemyCoroutine != null)
                 {
                     StopCoroutine(activeEnemyCoroutine);
+                    activeEnemyCoroutine = null;
                 }
                 EndTurn();
             }
@@ -218,25 +219,34 @@ public class BattleManager : MonoBehaviour
             
             if(movedPos == selectedCharacter.position) return;
 
-            if(0 <= movedPos.x && movedPos.x < 8 && 0 <= movedPos.y && movedPos.y < 5)
+            TryMove(true, selectedCharacter, movedPos);
+        }
+    }
+
+    public void TryMove(bool is1p, BattleModel.CharacterBattleData character, Vector2Int targetPosition)
+    {
+        if(character == null) return;
+
+        var player = is1p ? battleModel.player1 : battleModel.player2;
+
+        if(0 <= targetPosition.x && targetPosition.x < 8 && 0 <= targetPosition.y && targetPosition.y < 5)
+        {
+            var state = battleModel.nowGridState[targetPosition.x, targetPosition.y];
+            if(state != GridStateEnum.Prohibit && state != GridStateEnum.Base && state != GridStateEnum.Character && state != GridStateEnum.Stop)
             {
-                var state = battleModel.nowGridState[movedPos.x, movedPos.y];
-                if(state != GridStateEnum.Prohibit && state != GridStateEnum.Base && state != GridStateEnum.Character && state != GridStateEnum.Stop)
+                if(player.remainingCost < character.moveCost)
                 {
-                    if(battleModel.player1.remainingCost < selectedCharacter.moveCost)
-                    {
-                        // コストが足りなかった時の効果音
-                        SEManager.instance.PlayBackSE(); // 仮
-                        return;
-                    }
-
-                    UpdateGridState(selectedCharacter.position, battleModel.defaultGridState[selectedCharacter.position.x, selectedCharacter.position.y]);
-                    UpdateGridState(movedPos, GridStateEnum.Selected);
-                    selectedCharacter.position = movedPos;
-                    selectedCharacter.view.SetPosition(movedPos, true);
-
-                    battleModel.player1.remainingCost -= selectedCharacter.moveCost;
+                    // コストが足りなかった時の効果音
+                    SEManager.instance.PlayBackSE(); // 仮
+                    return;
                 }
+
+                UpdateGridState(character.position, battleModel.defaultGridState[character.position.x, character.position.y]);
+                UpdateGridState(targetPosition, GridStateEnum.Selected);
+                character.position = targetPosition;
+                character.view.SetPosition(targetPosition, true);
+
+                player.remainingCost -= character.moveCost;
             }
         }
     }
@@ -259,6 +269,7 @@ public class BattleManager : MonoBehaviour
     {
         if (battleView.IsMoveRoutineRunning)
         {
+            Debug.Log("Fail");
             return;
         }
 
@@ -340,7 +351,7 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    private void UpdateGridState(Vector2Int pos, GridStateEnum gridState)
+    public void UpdateGridState(Vector2Int pos, GridStateEnum gridState)
     {
         battleModel.nowGridState[pos.x, pos.y] = gridState;
         gridView.UpdateGridImage(pos.x, pos.y, gridState);

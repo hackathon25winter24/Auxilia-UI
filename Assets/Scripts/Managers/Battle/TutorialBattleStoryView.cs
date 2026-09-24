@@ -74,6 +74,7 @@ public class TutorialBattleStoryView : MonoBehaviour
     public void ShowStory(bool isShow)
     {
         storyObject.SetActive(isShow);
+        downArrow.gameObject.SetActive(isShow);
         if(storyManager != null)
         {
             storyManager.isStoryHidden = !isShow;
