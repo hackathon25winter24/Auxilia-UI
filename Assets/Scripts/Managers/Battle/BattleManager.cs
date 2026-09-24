@@ -115,7 +115,9 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        if(battleModel.isTimerRunning)
+        battleModel.isTimerRunning = storyData.serif_number >= 14;
+
+        if(battleModel.isTimerRunning && tutorialBattleStoryManager.isStoryHidden)
         {
             UpdateTimer();
         }
