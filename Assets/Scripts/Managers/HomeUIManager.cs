@@ -32,7 +32,6 @@ public class HomeUIManager : MonoBehaviour
     public Vector2 exitBattleUIPosition = new Vector2(600, 0);
     public float duration = 0.5f;
     public bool isExiting = false;
-    private bool isHomeCharacterSelecting = false;
     public float scrollSpeed = 500f;
     public bool isPlayerNameRemain = false;
 
@@ -264,14 +263,12 @@ public class HomeUIManager : MonoBehaviour
                 StartCoroutine(AnimateExit(-1));
                 // StartCoroutine(AnimateBackKeyEnter()); // Removed as we use the modal's close button
                 HomeCharacterSetUI.gameObject.SetActive(true);
-                isHomeCharacterSelecting = true;
                 break;
             case "Back":
                 SEManager.instance?.PlayBackSE();
                 StartCoroutine(AnimateEnter());
                 StartCoroutine(AnimateBackKeyExit());
                 HomeCharacterSetUI.gameObject.SetActive(false);
-                isHomeCharacterSelecting = false;
                 break;
             case "BackfromBattleUI":
                 SEManager.instance?.PlayBackSE();
