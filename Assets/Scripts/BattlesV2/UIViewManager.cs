@@ -26,4 +26,11 @@ public class UIViewManager : MonoBehaviour
     {}
     public void ShowLog()
     {}
+    private void OnDestroy() // ゲーム終了時にイベント登録を解除する
+    {
+        if (NetworkManager.Instance != null)
+        {
+            
+        }
+    }
 }

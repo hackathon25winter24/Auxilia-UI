@@ -8,7 +8,7 @@ public class ShowCharacter : MonoBehaviour
 
     public void Start() // 始めにこのクラス内のメソッドをイベントに登録する
     {}
-    
+
     public void PutCharacter() // キャラクターの位置の変更及びその演出
     {
         if(characterPosition.Length == 6)
@@ -26,4 +26,11 @@ public class ShowCharacter : MonoBehaviour
 
     public void DamageCharacter() // キャラクターがダメージを受けたときの演出
     {}
+    private void OnDestroy() // ゲーム終了時にイベント登録を解除する
+    {
+        if (NetworkManager.Instance != null)
+        {
+            
+        }
+    }
 }

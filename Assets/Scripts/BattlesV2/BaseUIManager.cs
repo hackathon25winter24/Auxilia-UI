@@ -21,4 +21,11 @@ public class BaseUIManager : MonoBehaviour
     }
     public void ShowCharacterSmallwindow() //左右のキャラクターウィンドウの登録
     {}
+    private void OnDestroy() // ゲーム終了時にイベント登録を解除する
+    {
+        if (NetworkManager.Instance != null)
+        {
+            
+        }
+    }
 }
