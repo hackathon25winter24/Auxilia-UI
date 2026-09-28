@@ -1,13 +1,22 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
-    public InputData inputData;
-
     private RectTransform canvasRect;
-
+    public event Action OnMouseRightButtonClicked;
+    public event Action OnMouseLeftButtonClicked;
+    public event Action OnUpKeyClicked;
+    public event Action OnDownKeyClicked;
+    public event Action OnRightKeyClicked;
+    public event Action OnLeftKeyClicked;
+    public event Action OnWKeyClicked;
+    public event Action OnAKeyClicked;
+    public event Action OnSKeyClicked;
+    public event Action OnDKeyClicked;
+    public event Action OnSpaceKeyClicked;
     private void Awake()
     {
         // 重複チェック
@@ -30,26 +39,21 @@ public class InputManager : MonoBehaviour
     void Update()
 {
     // マウスボタン
-    inputData.left_mouse_button_ispressed = Mouse.current.leftButton.wasPressedThisFrame;
-    inputData.right_mouse_button_ispressed = Mouse.current.rightButton.wasPressedThisFrame;
-
-    //マウス座標（キャンバス座標に揃える）
-    Vector2 rawMousePos = Mouse.current.position.ReadValue();
-    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, rawMousePos, null, out inputData.mouse_position);
-
-    inputData.mouse_wheel = Mouse.current.scroll.ReadValue();
-
+    if(Mouse.current.leftButton.wasPressedThisFrame) OnMouseLeftButtonClicked?.Invoke();
+    if(Mouse.current.rightButton.wasPressedThisFrame) OnMouseRightButtonClicked?.Invoke();
     // キーボード（以下略）
     var kb = Keyboard.current;
     if (kb == null) return;
 
-    inputData.up_key_ispressed    = kb.upArrowKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame;
-    inputData.down_key_ispressed  = kb.downArrowKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame;
-    inputData.right_key_ispressed = kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame;
-    inputData.left_key_ispressed  = kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame;
-    inputData.space_key_ispressed = kb.spaceKey.wasPressedThisFrame;
-    inputData.a_key_ispressed = kb.aKey.wasPressedThisFrame;
-    inputData.s_key_ispressed = kb.sKey.wasPressedThisFrame;
+    if(kb.upArrowKey.wasPressedThisFrame) OnUpKeyClicked?.Invoke();
+    if(kb.downArrowKey.wasPressedThisFrame) OnDownKeyClicked?.Invoke();
+    if(kb.rightArrowKey.wasPressedThisFrame) OnRightKeyClicked?.Invoke();
+    if(kb.leftArrowKey.wasPressedThisFrame) OnLeftKeyClicked?.Invoke();
+    if(kb.wKey.wasPressedThisFrame) OnWKeyClicked?.Invoke();
+    if(kb.sKey.wasPressedThisFrame) OnSKeyClicked?.Invoke();
+    if(kb.dKey.wasPressedThisFrame) OnDKeyClicked?.Invoke();
+    if(kb.aKey.wasPressedThisFrame) OnAKeyClicked?.Invoke();
+    if(kb.spaceKey.wasPressedThisFrame) OnSpaceKeyClicked?.Invoke();
 }
     void OnDestroy()
     {

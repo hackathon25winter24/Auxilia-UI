@@ -6,7 +6,6 @@ using TMPro;
 public class TutorialBattleUIManager : MonoBehaviour
 {
     public BattleDataForOnline battleDataForTutorial;
-    public InputData inputData;
     public CharacterData characterData;
     public TextMeshProUGUI[] cost;
     public Sprite[] characterStatesImage;

@@ -9,7 +9,7 @@ public class BattleOnlineManager : MonoBehaviour
 {
     [Header("Data & ScriptableObjects")]
     public CharacterData characterData;
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
@@ -81,6 +81,7 @@ public class BattleOnlineManager : MonoBehaviour
         {
             Debug.LogError($"[BattleOnlineManager] Awake Exception: {e.Message}\n{e.StackTrace}");
         }
+        inputManager.OnSpaceKeyClicked += EndMyTurn;
     }
     void Start()
     {
@@ -125,12 +126,6 @@ public class BattleOnlineManager : MonoBehaviour
                 gametext.text = "opponent turn";
             }
         }
-
-        if (inputData.space_key_ispressed)
-        {
-            EndMyTurn();
-        }
-
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             SceneChangeManager.MoveScene(6);
@@ -458,5 +453,8 @@ public class BattleOnlineManager : MonoBehaviour
 
         is_text_moving = false;
     }
-
+    public void Oestroy()
+    {
+        inputManager.OnSpaceKeyClicked -= EndMyTurn;
+    }
 }
