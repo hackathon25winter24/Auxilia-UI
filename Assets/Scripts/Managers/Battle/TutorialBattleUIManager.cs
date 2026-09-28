@@ -7,7 +7,6 @@ public class TutorialBattleUIManager : MonoBehaviour
 {
     public BattleDataForOnline battleDataForTutorial;
     public InputData inputData;
-    public GridDataforOnline gridDataforOnline;
     public CharacterData characterData;
     public TextMeshProUGUI[] cost;
     public Sprite[] characterStatesImage;

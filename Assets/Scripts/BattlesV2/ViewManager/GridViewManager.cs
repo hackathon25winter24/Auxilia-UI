@@ -4,11 +4,20 @@ using UnityEngine;
 public class GridViewManager : MonoBehaviour
 {
     [SerializeField] ConstGridData constGridData; 
+    [SerializeField] BattleDataForOnline battleDataForOnline;
     [SerializeField] private Transform canvas;
     public event Action<Vector2> grid_set;
     void Start()
     {
         InitializeGrid(8, 5);
+    }
+    void Update()
+    {
+        if(battleDataForOnline.uniqueGrids.Count != 0)
+        {
+            SetGrids(battleDataForOnline.uniqueGrids[0].position, battleDataForOnline.uniqueGrids[0].gridType);
+            battleDataForOnline.uniqueGrids.RemoveAt(0);
+        }
     }
     public void InitializeGrid(int x, int y) // グリッドの初期化
     {
