@@ -7817,7 +7817,6 @@ GameObject:
   - component: {fileID: 2132367322}
   - component: {fileID: 2132367321}
   - component: {fileID: 2132367320}
-  - component: {fileID: 2132367319}
   - component: {fileID: 2132367318}
   - component: {fileID: 2132367317}
   m_Layer: 0
@@ -7859,18 +7858,6 @@ MonoBehaviour:
   base_hp_text: []
   timer_slider: {fileID: 222250393}
   time_text: {fileID: 409563397}
---- !u!114 &2132367319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2132367316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42ae2c7f682dbbd44897a77f77c46a96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2132367320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7883,6 +7870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5425bc41b03f82346b76e9c52a521e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  constGridData: {fileID: 11400000, guid: ee1b2388513647a47adf3306013a2600, type: 2}
 --- !u!114 &2132367321
 MonoBehaviour:
   m_ObjectHideFlags: 0
