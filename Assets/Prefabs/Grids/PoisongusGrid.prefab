@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3141956853591862066}
   - component: {fileID: 6988605075083527438}
   - component: {fileID: 2842428255318245719}
+  - component: {fileID: 501350653125615049}
   m_Layer: 5
   m_Name: PoisongusGrid
   m_TagString: Untagged
@@ -75,3 +76,17 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &501350653125615049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4825012023493777865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6754c8a860b2ce48b737fdec6735b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridViewManager: {fileID: 0}
+  position: {x: 0, y: 0}

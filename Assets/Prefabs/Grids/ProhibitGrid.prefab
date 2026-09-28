@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6258380406813025748}
   - component: {fileID: 3292319416964926512}
   - component: {fileID: 8129979895631135272}
+  - component: {fileID: 7828867634217455904}
   m_Layer: 5
   m_Name: ProhibitGrid
   m_TagString: Untagged
@@ -75,3 +76,17 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7828867634217455904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7765326935637899358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6754c8a860b2ce48b737fdec6735b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridViewManager: {fileID: 0}
+  position: {x: 0, y: 0}

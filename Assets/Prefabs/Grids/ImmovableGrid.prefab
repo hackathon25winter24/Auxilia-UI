@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 468634633342572268}
   - component: {fileID: 6051185647611152389}
   - component: {fileID: 3650941138652298256}
+  - component: {fileID: 824591580931315855}
   m_Layer: 5
   m_Name: ImmovableGrid
   m_TagString: Untagged
@@ -75,3 +76,17 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &824591580931315855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378701604893382468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6754c8a860b2ce48b737fdec6735b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridViewManager: {fileID: 0}
+  position: {x: 0, y: 0}
