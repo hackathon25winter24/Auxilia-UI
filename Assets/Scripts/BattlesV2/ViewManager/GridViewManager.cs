@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GridViewManager : MonoBehaviour
 {
-    public GameObject grid;
-    public List<List<Image>> grids_image;
+    [SerializeField] ConstGridData constGridData; 
+    public event EventHandler GridSet;
     void Start()
     {
         
@@ -17,12 +17,11 @@ public class GridViewManager : MonoBehaviour
         {
             for(int j = 0; j < 8; i++)
             {
-                GameObject mono_grid = Instantiate(grid, new Vector3(-175 + j * 50, 30 - i * 50, 0), Quaternion.identity);
-                grids_image[j][i] = mono_grid.GetComponent<Image>();
+                GameObject mono_grid = Instantiate(constGridData.grids[0].grid, new Vector3(-175 + j * 50, 30 - i * 50, 0), Quaternion.identity);
             }
         }
     }
-    public void ShowGrid() // グリッドの表示の更新
+    public void ShowGrid(Vector2 reset_grid) // グリッドの表示の更新
     {
         for(int i = 0; i < 40; i++)
         {

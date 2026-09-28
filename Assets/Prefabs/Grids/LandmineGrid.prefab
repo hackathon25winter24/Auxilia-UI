@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7702991306931362182}
   - component: {fileID: 7082940343737362957}
   m_Layer: 5
-  m_Name: Grid
+  m_Name: LandmineGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

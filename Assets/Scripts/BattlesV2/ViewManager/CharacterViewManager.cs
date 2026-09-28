@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public class ShowCharacter : MonoBehaviour
+public class CharacterViewManager : MonoBehaviour
 {
     public GameObject[] characters;
     public Vector2[] characterPosition;//ここはScriptableobjectを参照するようにする

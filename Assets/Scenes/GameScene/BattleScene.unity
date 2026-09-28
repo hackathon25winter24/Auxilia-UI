@@ -362,7 +362,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -401,82 +401,6 @@ RectTransform:
   m_AnchoredPosition: {x: -175, y: -140}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &56944128
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 56944130}
-  - component: {fileID: 56944129}
-  m_Layer: 0
-  m_Name: CharacterManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &56944129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 56944128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cacc094ee4969934a9984789a9e3ece4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  is_1p: 0
-  self:
-    player_id: 
-    player_name: 
-    base_position: {x: 0, y: 0}
-    base_hp: 0
-    current_cost_remaining: 0
-    characters: []
-    rate: 0
-    rate_updown: 0
-  opponent:
-    player_id: 
-    player_name: 
-    base_position: {x: 0, y: 0}
-    base_hp: 0
-    current_cost_remaining: 0
-    characters: []
-    rate: 0
-    rate_updown: 0
-  inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
-  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
-  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  selected_character_index: -1
-  attackRange: []
-  BackButton: {fileID: 712360788}
-  battleViewManager: {fileID: 441793170}
-  gridManager: {fileID: 1061844918}
-  attack_number: 0
-  is_attacking: 0
-  roomData: {fileID: 0}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
---- !u!4 &56944130
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 56944128}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 464.95013, y: 188.55183, z: -2.8162246}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &222250391
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,66 +490,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &260079058
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 260079060}
-  - component: {fileID: 260079059}
-  m_Layer: 0
-  m_Name: BattleOnlineManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &260079059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260079058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0b597258f1345c4ca5a1c7a66b3d44f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
-  inputData: {fileID: 11400000, guid: 4141118f1fb84e74d908af2f8a66ca2c, type: 2}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
-  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  battleDataforLocal: {fileID: 11400000, guid: 3910b4b279578bc40b28d37c8786b1ca, type: 2}
-  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
-  battleViewManager: {fileID: 441793170}
-  gridManager: {fileID: 0}
-  gametext: {fileID: 649590194}
-  gameTextObject: {fileID: 649590193}
-  timerSlider: {fileID: 222250393}
-  maxTime: 60
-  duration: 2
-  elapsed: 0
-  is_text_moving: 0
---- !u!4 &260079060
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260079058}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 269.60513, y: 186.98224, z: -4.1982007}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &316465901
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,7 +736,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -1058,6 +922,142 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &409563396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 409563399}
+  - component: {fileID: 409563398}
+  - component: {fileID: 409563397}
+  m_Layer: 5
+  m_Name: Time
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &409563397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409563396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: d7bd3036036b1384782b27df4660dbb8, type: 2}
+  m_sharedMaterial: {fileID: 560165177954206540, guid: d7bd3036036b1384782b27df4660dbb8, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 20
+  m_fontSizeBase: 20
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 4
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &409563398
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409563396}
+  m_CullTransparentMesh: 1
+--- !u!224 &409563399
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409563396}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1318891755}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 175}
+  m_SizeDelta: {x: 400, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &435335762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1133,130 +1133,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435335762}
   m_CullTransparentMesh: 1
---- !u!1 &441793169
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 441793171}
-  - component: {fileID: 441793170}
-  m_Layer: 0
-  m_Name: BattleViewManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &441793170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441793169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2a89d29977a2d843ad164e94fc277a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  userData: {fileID: 0}
-  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
-  characters:
-  - {fileID: 1961868588}
-  - {fileID: 511543635}
-  - {fileID: 37222587}
-  - {fileID: 650600069}
-  - {fileID: 1397172207}
-  - {fileID: 1806626569}
-  attackWindow: {fileID: 966120273}
-  attackButtons:
-  - {fileID: 1900378553}
-  - {fileID: 1940744645}
-  - {fileID: 1870815619}
-  characterSmallwindow:
-  - {fileID: 1220754459}
-  - {fileID: 470910967}
-  - {fileID: 1730774631}
-  - {fileID: 569126653}
-  - {fileID: 1399910092}
-  - {fileID: 1266030268}
-  self:
-    player_id: 
-    player_name: 
-    base_position: {x: 0, y: 0}
-    base_hp: 0
-    current_cost_remaining: 0
-    characters: []
-    rate: 0
-    rate_updown: 0
-  opponent:
-    player_id: 
-    player_name: 
-    base_position: {x: 0, y: 0}
-    base_hp: 0
-    current_cost_remaining: 0
-    characters: []
-    rate: 0
-    rate_updown: 0
-  CharacterHP:
-  - {fileID: 1629088067}
-  - {fileID: 1433219959}
-  - {fileID: 1884490338}
-  - {fileID: 1700965990}
-  - {fileID: 847304716}
-  - {fileID: 1597985950}
-  hpSlider:
-  - {fileID: 2112868409}
-  - {fileID: 1319017722}
-  - {fileID: 316465903}
-  - {fileID: 491966201}
-  - {fileID: 840603033}
-  - {fileID: 1813632468}
-  cost:
-  - {fileID: 630293456}
-  - {fileID: 702537226}
-  playerNames:
-  - {fileID: 1643739406}
-  - {fileID: 1539785020}
-  shadow: {fileID: 323237426}
-  characterStates: {fileID: 452606659}
-  backfromStates: {fileID: 337890647}
-  characterStatesImage:
-  - {fileID: 21300000, guid: a95e4ff99864a514f877be43058a903f, type: 3}
-  - {fileID: 21300000, guid: ffc341d05a042c640a01e415b78d31bb, type: 3}
-  - {fileID: 21300000, guid: 5e6ea8edf1e93a64ab78d01f2d96a50c, type: 3}
-  - {fileID: 21300000, guid: d86d970284f023e40bb724d2796b412f, type: 3}
-  - {fileID: 21300000, guid: 3885c6582e345914caea4b0547c7ec8c, type: 3}
-  - {fileID: 21300000, guid: b3149d4f081aaa742874ca014fa694ba, type: 3}
-  - {fileID: 21300000, guid: 844d76e616fda674b9b0323679b49bd7, type: 3}
-  - {fileID: 21300000, guid: ac2fa62a31842074dbd719a968bf0a24, type: 3}
-  - {fileID: 21300000, guid: c39125e17c146dd43b7aba4564ac4076, type: 3}
-  - {fileID: 21300000, guid: 6c6b145d8f69e364b957a3086594c420, type: 3}
-  characterManager: {fileID: 56944129}
-  logText: {fileID: 1774564587}
-  myBaseSlider: {fileID: 1590124765}
-  enemyBaseSlider: {fileID: 529548674}
-  myBaseHPText: {fileID: 362418971}
-  enemyBaseHPText: {fileID: 1444433474}
---- !u!4 &441793171
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441793169}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 449.69327, y: 202.67078, z: -2.4102023}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &452606657
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,7 +1290,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -1783,7 +1659,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -2068,7 +1944,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -2558,7 +2434,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -2890,7 +2766,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -3715,104 +3591,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1061844917
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1061844919}
-  - component: {fileID: 1061844918}
-  m_Layer: 0
-  m_Name: GridManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1061844918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061844917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1739ea0ae27ed4f45bc8def875d02236, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridDataforOnline: {fileID: 11400000, guid: dac8a06818253504f8137c0c2888369b, type: 2}
-  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  grids:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  NormalGrid: {fileID: 839264422609308747, guid: 8375dc0f266433b4180afb1426d75f0d, type: 3}
-  ProhibitGrid: {fileID: 2414816820938114496, guid: faca9f2a575b7004791b458887a92171, type: 3}
-  BaseGrid: {fileID: 4316716432628579774, guid: 70722fe5093ca854a8de422bfa74747b, type: 3}
-  CharacterGrid: {fileID: -6778192376610836581, guid: e452e4148d13ede418477d1b51a549ba, type: 3}
-  AttackGrid: {fileID: -5848888792363991607, guid: 3897784cf3a7932429efa5a38f733182, type: 3}
-  MakibishiGrid: {fileID: -6893078568485714706, guid: 19e22a87479b3a5458f0e9787f2ce5cd, type: 3}
-  LandmineGrid: {fileID: 3412618092588783395, guid: 01055187718d1e0408179de9ab6e45de, type: 3}
-  PoisonGasGrid: {fileID: 0}
-  RestrainingGrid: {fileID: 0}
-  roomData: {fileID: 0}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
---- !u!4 &1061844919
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061844917}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 409.21738, y: 163.35548, z: -1.929607}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1130791282
 GameObject:
   m_ObjectHideFlags: 0
@@ -4323,7 +4101,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -4466,7 +4244,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -4689,6 +4467,7 @@ RectTransform:
   - {fileID: 452606658}
   - {fileID: 337890647}
   - {fileID: 222250392}
+  - {fileID: 409563399}
   - {fileID: 1590124764}
   - {fileID: 529548673}
   - {fileID: 649590193}
@@ -4920,7 +4699,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -5041,7 +4820,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -6530,7 +6309,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 441793170}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -6809,7 +6588,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -7130,7 +6909,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -7434,7 +7213,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -7566,7 +7345,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -7709,7 +7488,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 56944129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterManager, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 5
@@ -8075,11 +7854,11 @@ MonoBehaviour:
   character_hp: []
   hp_slider: []
   cost_text: []
-  log_text: {fileID: 0}
+  log_text: {fileID: 1774564587}
   base_hp_slider: []
   base_hp_text: []
-  timer_slider: {fileID: 0}
-  time_text: {fileID: 0}
+  timer_slider: {fileID: 222250393}
+  time_text: {fileID: 409563397}
 --- !u!114 &2132367319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8092,8 +7871,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ae2c7f682dbbd44897a77f77c46a96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characters: []
-  characterPosition: []
 --- !u!114 &2132367320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8106,7 +7883,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5425bc41b03f82346b76e9c52a521e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1155254931777110210, guid: f23a734efda853341afed5ef340db10e, type: 3}
 --- !u!114 &2132367321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8151,8 +7927,4 @@ SceneRoots:
   - {fileID: 496374784}
   - {fileID: 1318891755}
   - {fileID: 2076516626}
-  - {fileID: 260079060}
-  - {fileID: 1061844919}
-  - {fileID: 56944130}
-  - {fileID: 441793171}
   - {fileID: 2132367322}
