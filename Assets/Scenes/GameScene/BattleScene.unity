@@ -7871,6 +7871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   constGridData: {fileID: 11400000, guid: ee1b2388513647a47adf3306013a2600, type: 2}
+  canvas: {fileID: 1318891755}
 --- !u!114 &2132367321
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridViewManager : MonoBehaviour
 {
     [SerializeField] ConstGridData constGridData; 
+    [SerializeField] private Transform canvas;
     public event EventHandler GridSet;
     void Start()
     {
@@ -15,9 +14,15 @@ public class GridViewManager : MonoBehaviour
     {
         for(int i = 0; i < y; i++)
         {
-            for(int j = 0; j < x; i++)
+            for(int j = 0; j < x; j++)
             {
-                Instantiate(constGridData.grids[0].grid, new Vector3(-175 + j * 50, 30 - i * 50, 0), Quaternion.identity);
+                GameObject gridObj = Instantiate(constGridData.grids[0].grid, canvas);
+                RectTransform rectTransform = gridObj.GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    rectTransform.anchoredPosition = new Vector2(-175f + j * 50f, 60f - i * 50f);
+                    rectTransform.localScale = Vector3.one;
+                }
             }
         }
     }

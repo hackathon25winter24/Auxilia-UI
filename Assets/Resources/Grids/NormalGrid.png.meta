@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8375dc0f266433b4180afb1426d75f0d
+guid: ae8e6833e446fee4897307818cc7f9b1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 839264422609308747
-    second: "\u30A2\u30A6\u30AF\u30B7\u30EA\u30A2UI\u539F\u6848_0_0"
+      213: 6241370996628557028
+    second: NormalGrid_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,24 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u30A2\u30A6\u30AF\u30B7\u30EA\u30A2UI\u539F\u6848_0_0"
+      name: NormalGrid_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4c4046bb8aa5ab00800000000000000
-      internalID: 839264422609308747
+      spriteID: 4ec887d6addcd9650800000000000000
+      internalID: 6241370996628557028
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u30A2\u30A6\u30AF\u30B7\u30EA\u30A2UI\u539F\u6848_0_0": 839264422609308747
+      NormalGrid_0: 6241370996628557028
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
