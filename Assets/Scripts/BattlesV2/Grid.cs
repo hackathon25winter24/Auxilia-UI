@@ -5,7 +5,7 @@ public class Grid : MonoBehaviour
 {
     [SerializeField] private GridViewManager gridViewManager;
     public Vector2 position;
-    public void Initialize(GridViewManager Manager)
+    public void Initialize(GridViewManager Manager) 
     {
         gridViewManager = Manager;
         gridViewManager.grid_set += Delete;

@@ -9,10 +9,12 @@ public class GridViewManager : MonoBehaviour
     public event Action<Vector2> grid_set;
     void Start()
     {
+        // 一旦8*5のグリッドの生成をするようにする
         InitializeGrid(8, 5);
     }
     void Update()
     {
+        // battleDataForOnlineに変更があるグリッドが書かれるのでそれを参照してグリッドの変更を行う
         if(battleDataForOnline.uniqueGrids.Count != 0)
         {
             SetGrids(battleDataForOnline.uniqueGrids[0].position, battleDataForOnline.uniqueGrids[0].gridType);
