@@ -9,17 +9,14 @@ public class BattleOnlineManager : MonoBehaviour
 {
     [Header("Data & ScriptableObjects")]
     public CharacterData characterData;
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     public BattleDataForOnline battleDataforOnline;
     public BattleDataforLocal battleDataforLocal;
-    public GridDataforOnline gridDataforOnline;
     public RoomData roomData;
 
     [Header("Managers & Views")]
     public BattleViewManager battleViewManager;
-    public GridManager gridManager;
-    private CharacterManager characterManager;
 
     [Header("UI Elements")]
     public TextMeshProUGUI gametext;
@@ -37,15 +34,10 @@ public class BattleOnlineManager : MonoBehaviour
     public float duration = 2.0f;
     public float elapsed = 0f;
     public bool is_text_moving;
-    private uint consumed_attack_id = 0;
-
     private NetworkManager Net => NetworkManager.Instance;
     private AuthenticationConnector authenticationConnector => Net?.Auth;
     private BattleConnector battleConnector => Net?.Battle;
     private float _turnTransitionTime = 0f;
-    private CancellationTokenSource _battleCts;
-
-
     private T GetSo<T>(T existing) where T : ScriptableObject
     {
         if (existing != null) return existing;
@@ -61,10 +53,6 @@ public class BattleOnlineManager : MonoBehaviour
         {
             roomData = GetSo(roomData);
             userData = GetSo(userData);
-
-            characterManager = FindFirstObjectByType<CharacterManager>();
-            gridManager = FindFirstObjectByType<GridManager>();
-
             if (Net != null)
             {
                 Net.battleOnlineManager = this;
@@ -79,8 +67,6 @@ public class BattleOnlineManager : MonoBehaviour
             var battleView = FindFirstObjectByType<BattleViewManager>();
             if (battleView != null)
             {
-                battleView.characterManager = characterManager;
-                battleView.SubscribeToEvents();
                 Debug.Log("[BattleOnlineManager] Early event subscription successful.");
             }
 
@@ -95,6 +81,7 @@ public class BattleOnlineManager : MonoBehaviour
         {
             Debug.LogError($"[BattleOnlineManager] Awake Exception: {e.Message}\n{e.StackTrace}");
         }
+        inputManager.OnSpaceKeyClicked += EndMyTurn;
     }
     void Start()
     {
@@ -118,7 +105,7 @@ public class BattleOnlineManager : MonoBehaviour
         {
             _turnTransitionTime -= Time.deltaTime;
         }
-        int タイマー設定もサーバー側との調整をする = 0;
+        // int タイマー設定もサーバー側との調整をする = 0;
         if (battleDataforOnline.is_1p_turn == (userData.user_id == battleDataforOnline.player1.player_id)) // 自分のターンを検知
         {
             // ターン終了直後（猶予時間中）であれば、サーバーからの自ターン継続情報を無視する
@@ -139,12 +126,6 @@ public class BattleOnlineManager : MonoBehaviour
                 gametext.text = "opponent turn";
             }
         }
-
-        if (inputData.space_key_ispressed)
-        {
-            EndMyTurn();
-        }
-
         if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             SceneChangeManager.MoveScene(6);
@@ -259,7 +240,7 @@ public class BattleOnlineManager : MonoBehaviour
             battleDataforOnline.player1.rate = gameData.P1Rate;
             battleDataforOnline.player2.rate = gameData.P2Rate;
             Debug.Log($"[RateSync] P1: {gameData.P1Rate} (+{gameData.P1RateDelta}), P2: {gameData.P2Rate} (+{gameData.P2RateDelta})");
-            int 自分のレートはどこで更新されるのか要確認 = 0;
+            // int 自分のレートはどこで更新されるのか要確認 = 0;
             //Debug.Log($"<color=yellow>[GetBattleData] Game End: MyRate={battleDataforOnline.self.rate}({battleDataforOnline.self.rate_updown}) OppRate={battleDataforOnline.opponent.rate}({battleDataforOnline.opponent.rate_updown})</color>");
         }
 
@@ -360,10 +341,6 @@ public class BattleOnlineManager : MonoBehaviour
                 // hpの同期
                 player.characters[i].now_character_hp = newHp;
 
-                // キャラ座標の同期（自分が2pなら反転して管理）
-                Vector2Int converted = gridManager.ConvertCoordinateForServer((int)c.PositionX, (int)c.PositionY, is_1p);
-                player.characters[i].now_character_position = converted;
-
                 // 選択状態の同期
                 // キャラ選択状態はバックは持たず、自環境での処理のみに用います
 
@@ -413,7 +390,7 @@ public class BattleOnlineManager : MonoBehaviour
         gametext.text = "turn end";
         StartCoroutine(MoveRoutine());
 
-        int 自ターン終了時のデバフ処理はどこでやるか要検討 = 0;
+        // int 自ターン終了時のデバフ処理はどこでやるか要検討 = 0;
         // 例えば1pはこのように処理する
         for (int i = 0; i <= 2; i++)
         {
@@ -422,13 +399,8 @@ public class BattleOnlineManager : MonoBehaviour
                 // サーバーに毒ダメージでのhp20減少を通知する処理
             }
         }
-
-        // サーバーにターン終了を通知する
-        if (characterManager != null) characterManager.NotifyTurnEnd();
-        // サーバーではターン終了時にターン数増加、1p2pターン切り替え（Is1pTurn）、1p2pコストなどが自動更新される。その情報が次のUpdate時に自身に入ってくる
-
         // ターン終了直後にサーバーからの古い「自ターンのまま」のデータで上書きされないよう猶予を作る
-        int この猶予も必要か要検討 = 0;
+        // int この猶予も必要か要検討 = 0;
         _turnTransitionTime = 2.0f;
 
         // タイマーを念のため止める
@@ -481,5 +453,8 @@ public class BattleOnlineManager : MonoBehaviour
 
         is_text_moving = false;
     }
-
+    public void Oestroy()
+    {
+        inputManager.OnSpaceKeyClicked -= EndMyTurn;
+    }
 }
