@@ -8,13 +8,13 @@ public class Grid : MonoBehaviour
     public void Initialize(GridViewManager Manager) 
     {
         gridViewManager = Manager;
-        gridViewManager.grid_set += Delete;
+        gridViewManager.delete_grid += Delete;
     }
     public void Delete(Vector2 delete_position)
     {
         if(delete_position == position)
         {
-            gridViewManager.grid_set -= Delete;
+            gridViewManager.delete_grid -= Delete;
             Destroy(this.gameObject);
         }
     }
