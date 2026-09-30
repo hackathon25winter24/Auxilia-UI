@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 public class HomeUIManager : MonoBehaviour
 {
-    public InputData inputData;
     public UserData userData;
     public TextMeshProUGUI playerName;
     public TextMeshProUGUI playerRate;

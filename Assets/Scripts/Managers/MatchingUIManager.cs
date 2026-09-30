@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 public class MatchingUIManager : MonoBehaviour
 {
-    public InputData inputData;
     public UserData userData;
     public MatchingData matchingData;
     public RoomData roomData;

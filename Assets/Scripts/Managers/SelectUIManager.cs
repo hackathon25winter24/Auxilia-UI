@@ -8,7 +8,6 @@ using Cysharp.Threading.Tasks;
 
 public class SelectUIManager : MonoBehaviour
 {
-    public InputData inputData;
     public UserData userData;
     public CharacterData characterData;
     public BattleDataForOnline battleDataforOnline;

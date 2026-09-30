@@ -70,6 +70,4 @@ MonoBehaviour:
       now_character_position: {x: 7, y: 4}
     rate: 0
     rate_updown: 0
-  uniqueGrids:
-  - position: {x: 0, y: 0}
-    gridType: 0
+  uniqueGrids: []

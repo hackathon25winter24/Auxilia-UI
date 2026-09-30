@@ -16,7 +16,7 @@ public class SEManager : MonoBehaviour
         }
     }
     private static SEManager _instance;
-    public InputData inputData;
+    public InputManager inputManager;
     public AudioSource audioSource;
     public AudioClip selectSE;
     public AudioClip clickSE;
@@ -43,6 +43,8 @@ public class SEManager : MonoBehaviour
         }
 
         audioSource.volume = PlayerPrefs.GetFloat("SEVolume", 1.0f);
+        inputManager.OnMouseLeftButtonClicked += ClickSE;
+        inputManager.OnMouseRightButtonClicked += ClickSE;
     }
 
     public void SetVolume(float volume)
@@ -51,12 +53,9 @@ public class SEManager : MonoBehaviour
         PlayerPrefs.SetFloat("SEVolume", volume);
         PlayerPrefs.Save();
     }
-
-    public void Update()
+    public void ClickSE()
     {
-        if (inputData.left_mouse_button_ispressed || inputData.right_mouse_button_ispressed)
-        {
-            obj = EventSystem.current.currentSelectedGameObject;
+        obj = EventSystem.current.currentSelectedGameObject;
             if (obj != null)
             {
                 if (obj.GetComponent<UnityEngine.UI.Button>())
@@ -76,7 +75,6 @@ public class SEManager : MonoBehaviour
             {
                 //PlayClickSE();
             }
-        }
     }
 
     public void PlaySelectSE()
@@ -115,5 +113,10 @@ public class SEManager : MonoBehaviour
     public void PlayDefeatSE()
     {
         audioSource.PlayOneShot(DefeatSE);
+    }
+    private void OnDestroy() // 一応、ゲーム終了時にイベント登録を解除する
+    {
+        inputManager.OnMouseLeftButtonClicked += ClickSE;
+        inputManager.OnMouseRightButtonClicked += ClickSE;
     }
 }
