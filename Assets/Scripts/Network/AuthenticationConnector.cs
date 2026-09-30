@@ -11,12 +11,14 @@ public class AuthenticationConnector : MonoBehaviour
     private NetworkClientCore _core;
     private UserService.UserServiceClient _userClient;
     private UserData _userData;
+    private Game.Network.V2.BattleServiceV2.BattleServiceV2Client _sessionClient;
 
     public void Initialize(NetworkClientCore core, UserData userData)
     {
         _core = core;
         _userData = userData;
         _userClient = new UserService.UserServiceClient(_core.Channel);
+        _sessionClient = new Game.Network.V2.BattleServiceV2.BattleServiceV2Client(_core.Channel);
     }
 
     public async UniTask<UserResponse> SignUp(string userName, string password)
@@ -26,7 +28,7 @@ public class AuthenticationConnector : MonoBehaviour
             var request = new CreateUserRequest { Name = userName, Password = password };
             var response = await _userClient.CreateUserAsync(request);
 
-            Debug.Log($"SignUp Success: UserID={response.Id}, Name={response.Name}");
+            await CreateSession(userName, password);
 
             if (_userData != null)
             {
@@ -59,8 +61,8 @@ public class AuthenticationConnector : MonoBehaviour
     {
         try
         {
-            var request = new LoginRequest { Name = userName, Password = password };
-            var response = await _userClient.LoginAsync(request);
+            await CreateSession(userName, password);
+            var response = await _userClient.GetUserAsync(new GetUserRequest { Id = _core.PlayerId }, _core.SessionHeaders);
 
             if (_userData != null)
             {
@@ -93,6 +95,13 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 
+    private async UniTask CreateSession(string name, string password)
+    {
+        _core.SetSession(null, null);
+        var response = await _sessionClient.LoginAsync(new Game.Network.V2.LoginRequest { Name = name, Password = password });
+        await UniTask.SwitchToMainThread();
+        _core.SetSession(response.Token, response.PlayerId);
+    }
     public async UniTask<List<UserResponse>> GetAllUsers()
     {
         try
@@ -130,7 +139,7 @@ public class AuthenticationConnector : MonoBehaviour
             if (string.IsNullOrEmpty(targetId)) return false;
 
             var request = new DeleteUserRequest { Id = targetId };
-            var response = await _userClient.DeleteUserAsync(request);
+            var response = await _userClient.DeleteUserAsync(request, _core.SessionHeaders);
 
             if (response.Success)
             {
@@ -168,7 +177,7 @@ public class AuthenticationConnector : MonoBehaviour
                 Deck2 = _userData.deck2,
                 Deck3 = _userData.deck3,
             };
-            return await _userClient.UpdateUserAsync(request);
+            return await _userClient.UpdateUserAsync(request, _core.SessionHeaders);
         }
         catch (Exception e)
         {
@@ -196,7 +205,7 @@ public class AuthenticationConnector : MonoBehaviour
                 Deck2 = _userData.deck2,
                 Deck3 = _userData.deck3,
             };
-            var response = await _userClient.UpdateUserAsync(request);
+            var response = await _userClient.UpdateUserAsync(request, _core.SessionHeaders);
             return response != null;
         }
         catch (Exception e) {
@@ -205,3 +214,4 @@ public class AuthenticationConnector : MonoBehaviour
         }
     }
 }
+
