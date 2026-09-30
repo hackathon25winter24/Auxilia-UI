@@ -6,6 +6,7 @@ public class NetworkManager : MonoBehaviour
     [Header("Dependencies")]
     public BattleOnlineManager battleOnlineManager;
     public UserData userData;
+    public BattleDataForOnline battleDataForOnline;
 
     private NetworkClientCore _core;
     private AuthenticationConnector _auth;
@@ -55,7 +56,9 @@ public class NetworkManager : MonoBehaviour
         _core.Initialize();
         _auth.Initialize(_core, userData);
         _matching.Initialize(_core);
-        _battle.Initialize(_core, battleOnlineManager);
+        if (battleDataForOnline == null)
+            battleDataForOnline = ScriptableObject.CreateInstance<BattleDataForOnline>();
+        _battle.Initialize(_core, battleDataForOnline);
         //_battle.Initialize(_core);
 
         Debug.Log("[NetworkManager] All split connectors initialized and grouped under NetworkManager.");

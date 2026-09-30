@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package roommatch;
+
+option go_package = "auxilia/pb";
+
+service RoomMatchService {
+    rpc CreateRoomMatch (CreateRoomMatchRequest) returns (RoomMatchResponse);
+
+    rpc ListRoomMatch (ListRoomMatchRequest) returns (ListRoomMatchResponse);
+
+    rpc UpdateRoomMatch (UpdateRoomMatchRequest) returns (RoomMatchResponse);
+}
+
+message RoomMatch {
+    int32 room_id = 1;
+    string room_name = 2;
+    string owner_id = 3;
+    bool is_gaming = 4;
+}
+
+message CreateRoomMatchRequest {
+    string room_name = 1;
+    string owner_id = 2;
+    bool is_gaming = 3;
+}
+
+message RoomMatchResponse {
+    RoomMatch room = 1;
+}
+
+message ListRoomMatchRequest {}
+
+message ListRoomMatchResponse {
+    repeated RoomMatch rooms = 1;
+}
+
+message UpdateRoomMatchRequest{
+    int32 room_id = 1;
+    string room_name = 2;
+    string owner_id = 3;
+    bool is_gaming = 4;
+}
