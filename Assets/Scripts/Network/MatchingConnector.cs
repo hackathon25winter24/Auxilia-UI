@@ -15,8 +15,8 @@ public class MatchingConnector : MonoBehaviour
     private RoomMatchServiceV2.RoomMatchServiceV2Client _roomMatchClient;
     private RoomServiceV2.RoomServiceV2Client _roomClient;
 
-private CancellationTokenSource _roomStreamCts;
-    private bool _isRoomStreamActive;
+    private CancellationTokenSource _roomStreamCts;
+    public event Action<int> MatchStarted;
 
     public void Initialize(NetworkClientCore core)
     {
@@ -240,14 +240,12 @@ private CancellationTokenSource _roomStreamCts;
     {
         StopRoomStream().Forget();
         _roomStreamCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-        _isRoomStreamActive = true;
         RoomStreamLoop(roomId, onRoomUpdated, _roomStreamCts.Token).Forget();
     }
     public UniTask StopRoomStream()
     {
         var source = _roomStreamCts;
         _roomStreamCts = null;
-        _isRoomStreamActive = false;
         source?.Cancel();
         source?.Dispose();
         return UniTask.CompletedTask;
@@ -266,6 +264,16 @@ private CancellationTokenSource _roomStreamCts;
                     await UniTask.SwitchToMainThread(ct);
                     if (!response.Equals(previous)) callback?.Invoke(response);
                     previous = response;
+                    using var matchesCall = _roomMatchClient.ListRoomMatchAsync(new ListRoomMatchRequest(), _core.SessionHeaders, cancellationToken: ct);
+                    var matches = await matchesCall.ResponseAsync;
+                    await UniTask.SwitchToMainThread(ct);
+                    ct.ThrowIfCancellationRequested();
+                    foreach (var room in matches.Rooms)
+                        if (room.RoomId == roomId && room.IsGaming)
+                        {
+                            MatchStarted?.Invoke(roomId);
+                            return;
+                        }
                 }
                 catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled && ct.IsCancellationRequested) { return; }
                 catch (RpcException e)

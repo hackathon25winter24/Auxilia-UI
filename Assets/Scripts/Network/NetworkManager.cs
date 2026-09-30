@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 
+[DefaultExecutionOrder(-100)]
 public class NetworkManager : MonoBehaviour
 {
     [Header("Dependencies")]
@@ -57,11 +58,18 @@ public class NetworkManager : MonoBehaviour
         _auth.Initialize(_core, userData);
         _matching.Initialize(_core);
         if (battleDataForOnline == null)
-            battleDataForOnline = ScriptableObject.CreateInstance<BattleDataForOnline>();
+        {
+            var assets = Resources.FindObjectsOfTypeAll<BattleDataForOnline>();
+            battleDataForOnline = assets.Length > 0 ? assets[0] : ScriptableObject.CreateInstance<BattleDataForOnline>();
+        }
         _battle.Initialize(_core, battleDataForOnline);
         //_battle.Initialize(_core);
 
         Debug.Log("[NetworkManager] All split connectors initialized and grouped under NetworkManager.");
+    }
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 }
 

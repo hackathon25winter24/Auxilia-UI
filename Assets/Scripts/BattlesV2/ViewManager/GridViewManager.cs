@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GridViewManager : MonoBehaviour
 {
@@ -7,19 +8,34 @@ public class GridViewManager : MonoBehaviour
     [SerializeField] BattleDataForOnline battleDataForOnline;
     [SerializeField] private Transform canvas;
     public event Action<Vector2> grid_set;
+    private readonly Dictionary<Vector2Int, int> displayedGrids = new();
     void Start()
     {
         // 一旦8*5のグリッドの生成をするようにする
         InitializeGrid(8, 5);
     }
-    void Update()
+    public void ChangeView(BattleDataForOnline data, UserData user)
     {
-        // battleDataForOnlineに変更があるグリッドが書かれるのでそれを参照してグリッドの変更を行う
-        if(battleDataForOnline.uniqueGrids.Count != 0)
+        battleDataForOnline = data;
+        bool flip = data.State.Players.Count > 1 && user != null && data.State.Players[1].Id == user.user_id;
+        var desired = new Dictionary<Vector2Int, int>();
+        foreach (var cell in data.uniqueGrids)
         {
-            SetGrids(battleDataForOnline.uniqueGrids[0].position, battleDataForOnline.uniqueGrids[0].gridType);
-            battleDataForOnline.uniqueGrids.RemoveAt(0);
+            var p = cell.position;
+            if (flip) p.x = 7 - p.x;
+            // ConstGridData prefab order differs from the protocol tile type mapping.
+            int prefab = cell.gridType switch { 0 => 1, 1 => 6, 2 => 5, 3 => 7, 4 => 8, _ => 0 };
+            desired[p] = prefab;
         }
+        foreach (var b in data.State.Bases)
+            desired[new Vector2Int(flip ? 7 - b.Position.X : b.Position.X, b.Position.Y)] = 2;
+        for (int y = 0; y < 5; y++)
+            for (int x = 0; x < 8; x++)
+            {
+                var p = new Vector2Int(x, y);
+                int type = desired.TryGetValue(p, out var value) ? value : 0;
+                if (!displayedGrids.TryGetValue(p, out var old) || old != type) ShowGrid(p, type);
+            }
     }
     public void InitializeGrid(int x, int y) // グリッドの初期化
     {
@@ -27,13 +43,13 @@ public class GridViewManager : MonoBehaviour
         {
             for(int j = 0; j < x; j++)
             {
-                SetGrids(new Vector2(j, i), 0);
+                if (!displayedGrids.ContainsKey(new Vector2Int(j, i))) SetGrids(new Vector2(j, i), 0);
             }
         }
     }
     public void SetGrids(Vector2 position, int grid_id) // グリッドの生成
     {
-        if(0 <= grid_id && grid_id < constGridData.grids.Length)
+        if(constGridData != null && canvas != null && 0 <= grid_id && grid_id < constGridData.grids.Length)
         {
             GameObject gridObj = Instantiate(constGridData.grids[grid_id].grid, canvas);
             RectTransform rectTransform = gridObj.GetComponent<RectTransform>();
@@ -47,8 +63,9 @@ public class GridViewManager : MonoBehaviour
             if (grid != null)
             {
                 grid.Initialize(this);
+                grid.position = position;
             }
-            grid.position = position;
+            displayedGrids[Vector2Int.RoundToInt(position)] = grid_id;
         }
     }
     public void ShowGrid(Vector2 grid_position, int grid_id) // グリッドの更新
