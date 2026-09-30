@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Grpc.Core;
 using UnityEngine;
@@ -70,11 +68,12 @@ public class BattleConnector : MonoBehaviour
     }
 
     // Room IDs locate a match; commands and streaming always use the returned string MatchId.
-    public UniTask<Snapshot> GetGameData(int roomId, CancellationToken ct = default)
+    public UniTask<Snapshot> GetRoomGameData(int roomId, CancellationToken ct = default)
     {
         EnterRoom(checked((uint)roomId));
         return Receive(() => client.GetRoomGameAsync(new CreateGameRequest { RoomId = (uint)roomId }, Headers, cancellationToken: ct), null, ct);
     }
+    public UniTask<Snapshot> GetGameData(int roomId, CancellationToken ct = default) => GetRoomGameData(roomId, ct);
     public UniTask<Snapshot> GetGameData(CancellationToken ct = default)
     {
         var request = CurrentGame();
@@ -171,7 +170,9 @@ public class BattleConnector : MonoBehaviour
         try
         {
             await UniTask.SwitchToMainThread(ct);
+            ct.ThrowIfCancellationRequested();
             if (generation != roomGeneration || (expectedMatch != null && Data.State?.MatchId != expectedMatch)) return;
+            if (response?.State == null || (expectedMatch != null && response.State.MatchId != expectedMatch)) return;
             if (Data.State != null && response.State.MatchId != Data.State.MatchId) StopStream().Forget();
             changed = Data.StoreSnapshot(response);
             // Only gaps beyond the bundled window need history RPCs.
@@ -191,8 +192,8 @@ public class BattleConnector : MonoBehaviour
         finally
         {
             await UniTask.SwitchToMainThread();
-            if (changed && generation == roomGeneration) Data.NotifyChanged();
             receiveLock.Release();
+            if (changed && generation == roomGeneration && !ct.IsCancellationRequested) Data.NotifyChanged();
         }
     }
 
@@ -204,8 +205,16 @@ public class BattleConnector : MonoBehaviour
         {
             using var call = client.FetchActionLogAsync(new LogRequest { MatchId = matchId, AfterSequence = afterSequence, Limit = limit }, Headers, cancellationToken: ct);
             var response = await call.ResponseAsync;
-            await UniTask.SwitchToMainThread(ct);
-            if (generation == roomGeneration && Data.State?.MatchId == matchId && Data.StoreLogs(response)) Data.NotifyChanged();
+            await receiveLock.WaitAsync(ct);
+            bool changed = false;
+            try
+            {
+                await UniTask.SwitchToMainThread(ct);
+                ct.ThrowIfCancellationRequested();
+                if (generation == roomGeneration && Data.State?.MatchId == matchId) changed = Data.StoreLogs(response);
+            }
+            finally { receiveLock.Release(); }
+            if (changed) Data.NotifyChanged();
             return response;
         }
         catch (RpcException e) { await Report(e, ct); return null; }

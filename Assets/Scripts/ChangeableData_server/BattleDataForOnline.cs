@@ -16,6 +16,7 @@ public class BattleDataForOnline : ScriptableObject
     [SerializeField, TextArea(3, 8)] private string actionLogsJson;
     [NonSerialized] private V2.Snapshot snapshot;
     [NonSerialized] private V2.DefinitionsResponse definitions;
+    [NonSerialized] private DefinitionCosts definitionCosts;
     [NonSerialized] private readonly SortedDictionary<ulong, V2.ActionLog> actionLogs = new();
     [NonSerialized] private readonly Queue<V2.PresentationBatch> pendingPresentation = new();
     [NonSerialized] private readonly SortedDictionary<ulong, V2.PresentationBatch> waitingPresentation = new();
@@ -42,6 +43,7 @@ public class BattleDataForOnline : ScriptableObject
     {
         snapshot = null;
         definitions = null;
+        definitionCosts = null;
         snapshotJson = definitionsJson = actionLogsJson = "";
         actionLogs.Clear();
         pendingPresentation.Clear();
@@ -60,8 +62,14 @@ public class BattleDataForOnline : ScriptableObject
         if (response == null || response.Equals(definitions)) return false;
         definitions = response.Clone();
         definitionsJson = JsonFormatter.Default.Format(definitions);
+        definitionCosts = JsonUtility.FromJson<DefinitionCosts>("{\"items\":" + definitions.DefinitionsJson + "}");
         return true;
     }
+
+    public int? BaseMoveCost(string definitionId) => definitionCosts?.items?.FirstOrDefault(d => d.id == definitionId)?.moveCost;
+
+    [Serializable] private class DefinitionCosts { public DefinitionCost[] items; }
+    [Serializable] private class DefinitionCost { public string id; public int moveCost; }
 
     public bool StoreSnapshot(V2.Snapshot response)
     {
@@ -88,6 +96,7 @@ public class BattleDataForOnline : ScriptableObject
         ReceivedAtRealtime = Time.realtimeSinceStartupAsDouble;
         if (!first)
             foreach (var batch in snapshot.PresentationBatches) QueuePresentation(batch);
+        DrainPresentation();
         ProjectState();
         return true;
     }
@@ -119,7 +128,13 @@ public class BattleDataForOnline : ScriptableObject
     {
         if (batch.Sequence <= PresentationSequence) return;
         waitingPresentation[batch.Sequence] = batch.Clone();
-        while (waitingPresentation.TryGetValue(PresentationSequence + 1, out var next))
+        DrainPresentation();
+    }
+
+    private void DrainPresentation()
+    {
+        while (snapshot != null && PresentationSequence < snapshot.LastLogSequence &&
+            waitingPresentation.TryGetValue(PresentationSequence + 1, out var next))
         {
             waitingPresentation.Remove(next.Sequence);
             pendingPresentation.Enqueue(next);
@@ -146,7 +161,7 @@ public class BattleDataForOnline : ScriptableObject
         uniqueGrids = State.BlockedCells.Select(p => new UniqueGrid { position = Position(p), gridType = 0 }).ToList();
         uniqueGrids.AddRange(State.TileEffects.Select(t => new UniqueGrid {
             position = Position(t.Position), gridType = t.Type switch {
-                "地雷" => 1, "撒菱" => 2, "毒ガス" => 3, "不変" => 4, _ => -1
+                "地雷" => 1, "まきびし" => 2, "毒ガス" => 3, "不変" => 4, _ => -1
             }, type = t.Type, owner_id = t.OwnerId, hp = t.Hp
         }));
     }
@@ -164,6 +179,7 @@ public class BattleDataForOnline : ScriptableObject
                 character_id = c.Id, definition_id = c.DefinitionId,
                 unique_id = BattleCharacterIds.ToLocal(c.DefinitionId),
                 now_character_hp = c.Hp, max_hp = c.MaxHp,
+                now_character_move_cost = -1, // V1/tutorial field: V2 does not transmit an effective move cost.
                 now_character_position = Position(c.Position), effects = c.Effects.ToArray(),
                 character_isSelected = previous?.characters?.FirstOrDefault(x => x.character_id == c.Id)?.character_isSelected ?? false,
                 debuffs = new[] { "威力上昇", "俊足", "俊敏化", "毒", "麻痺", "鈍足", "鈍化", "出血" }.Select(c.Effects.Contains).ToArray()
