@@ -7,8 +7,7 @@ public class GridViewManager : MonoBehaviour
     [SerializeField] ConstGridData constGridData; 
     [SerializeField] BattleDataForOnline battleDataForOnline;
     [SerializeField] private Transform canvas;
-    public event Action<Vector2> grid_set;
-    private readonly Dictionary<Vector2Int, int> displayedGrids = new();
+    public event Action<Vector2> delete_grid;
     void Start()
     {
         // 一旦8*5のグリッドの生成をするようにする
@@ -21,11 +20,8 @@ public class GridViewManager : MonoBehaviour
         var desired = new Dictionary<Vector2Int, int>();
         foreach (var cell in data.uniqueGrids)
         {
-            var p = cell.position;
-            if (flip) p.x = 7 - p.x;
-            // ConstGridData prefab order differs from the protocol tile type mapping.
-            int prefab = cell.gridType switch { 0 => 1, 1 => 6, 2 => 5, 3 => 7, 4 => 8, _ => 0 };
-            desired[p] = prefab;
+            ShowGrid(battleDataForOnline.uniqueGrids[0].position, battleDataForOnline.uniqueGrids[0].gridType);
+            battleDataForOnline.uniqueGrids.RemoveAt(0);
         }
         foreach (var b in data.State.Bases)
             desired[new Vector2Int(flip ? 7 - b.Position.X : b.Position.X, b.Position.Y)] = 2;
@@ -70,7 +66,7 @@ public class GridViewManager : MonoBehaviour
     }
     public void ShowGrid(Vector2 grid_position, int grid_id) // グリッドの更新
     {
-        grid_set?.Invoke(grid_position);
+        delete_grid?.Invoke(grid_position);
         SetGrids(grid_position, grid_id);
     }
     private void OnDestroy() // ゲーム終了時にイベント登録を解除する
