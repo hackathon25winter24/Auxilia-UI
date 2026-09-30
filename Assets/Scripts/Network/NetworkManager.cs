@@ -4,7 +4,6 @@ using System;
 public class NetworkManager : MonoBehaviour
 {
     [Header("Dependencies")]
-    public BattleOnlineManager battleOnlineManager;
     public UserData userData;
     public BattleDataForOnline battleDataForOnline;
 
