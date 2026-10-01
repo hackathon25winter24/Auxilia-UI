@@ -36,7 +36,7 @@ public class RoomUIManager : MonoBehaviour
         inputManager.OnAKeyClicked += DebugBack; // デバッグ用
     }
 
-    async void Start()
+    async Task Start()
     {
         Debug.Log("RoomUIManager Loaded");
         var startButton = GameObject.Find("StartBattleButton");
@@ -58,14 +58,12 @@ public class RoomUIManager : MonoBehaviour
         if (matchingConnector != null && roomData != null && userData != null)
         {
             _isStreaming = true;
-            matchingConnector.MatchStarted += OnMatchStarted;
             
             matchingConnector.StartRoomStream(roomData.room_id, userData.user_id, OnRoomStreamUpdated);
         }
 
         // 2026年7/20現在、部屋参加時に受け取る自分のStateが0になる問題が発生。暫定的な処理としてバックに問い合わせて取得します。不要になったら削除する
         var room = await matchingConnector.GetBattlePlayer(roomData.room_id);
-        if (this == null || !_isStreaming || room == null) return;
         foreach (var r in room)
         {
             if (r == null) continue;
@@ -85,21 +83,12 @@ public class RoomUIManager : MonoBehaviour
     private void OnDestroy()
     {
         _isStreaming = false;
-        if (inputManager != null) inputManager.OnAKeyClicked -= DebugBack;
         
         if (matchingConnector != null)
         {
-            matchingConnector.MatchStarted -= OnMatchStarted;
             // 破棄時に安全にストリームを切断
             matchingConnector.StopRoomStream().Forget();
         }
-    }
-
-    private void OnMatchStarted(int roomId)
-    {
-        if (!_isStreaming || roomData.room_id != roomId) return;
-        _isStreaming = false;
-        SceneChangeManager.MoveScene(10);
     }
 
     /// <summary>
@@ -211,7 +200,6 @@ public class RoomUIManager : MonoBehaviour
                 _ => "[観戦] "
             };
             var userInfo = await authenticationConnector.GetUser(roomData.usersData[i].user_id);
-            if (this == null || !_isStreaming) return;
             userName[i].text = (userInfo != null)? userInfo.Name : "???";
             userRate[i].text = "Rate: " + ((userInfo != null)? userInfo.Rate : "???"); 
 
