@@ -8,7 +8,7 @@ public class GridViewManager : MonoBehaviour
     [SerializeField] private Transform canvas;
     [SerializeField] private ViewManager viewManager;
     public event Action<Vector2> delete_grid;
-    public event Action<bool> delete_all_grid;
+    public event Action delete_all_grid;
     void Start()
     {
         InitializeGrid(8, 5); // 一旦8*5のグリッドの生成をするようにする
