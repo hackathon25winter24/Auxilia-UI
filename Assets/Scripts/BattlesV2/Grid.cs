@@ -9,13 +9,21 @@ public class Grid : MonoBehaviour
     {
         gridViewManager = Manager;
         gridViewManager.delete_grid += Delete;
+        gridViewManager.delete_all_grid += DeleteAll;
     }
     public void Delete(Vector2 delete_position)
     {
         if(delete_position == position)
         {
             gridViewManager.delete_grid -= Delete;
+            gridViewManager.delete_all_grid -= DeleteAll;
             Destroy(this.gameObject);
         }
+    }
+    public void DeleteAll()
+    {
+        gridViewManager.delete_grid -= Delete;
+        gridViewManager.delete_all_grid -= DeleteAll;
+        Destroy(this.gameObject);
     }
 }
