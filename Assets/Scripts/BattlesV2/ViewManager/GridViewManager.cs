@@ -6,12 +6,13 @@ public class GridViewManager : MonoBehaviour
     [SerializeField] ConstGridData constGridData; 
     [SerializeField] BattleDataForOnline battleDataForOnline;
     [SerializeField] private Transform canvas;
+    [SerializeField] private ViewManager viewManager;
     public event Action<Vector2> delete_grid;
     public event Action<bool> delete_all_grid;
     void Start()
     {
-        // 一旦8*5のグリッドの生成をするようにする
-        InitializeGrid(8, 5);
+        InitializeGrid(8, 5); // 一旦8*5のグリッドの生成をするようにする
+        viewManager.grid_changed += ShowGrid;
     }
     public void ShowGrid()
     {
@@ -60,9 +61,6 @@ public class GridViewManager : MonoBehaviour
     }
     private void OnDestroy() // ゲーム終了時にイベント登録を解除する
     {
-        if (NetworkManager.Instance != null)
-        {
-            
-        }
+        viewManager.grid_changed -= ShowGrid;
     }
 }

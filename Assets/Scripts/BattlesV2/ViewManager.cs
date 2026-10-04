@@ -1,6 +1,7 @@
 using System;
+using UnityEngine;
 
-public class ViewManager
+public class ViewManager : MonoBehaviour
 {
     public BattleDataForOnline battleDataForOnline;
     public event Action skill_used;
