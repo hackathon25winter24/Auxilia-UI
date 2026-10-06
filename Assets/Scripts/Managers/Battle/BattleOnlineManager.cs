@@ -88,7 +88,7 @@ public class BattleOnlineManager : MonoBehaviour
         if (roomData != null && userData != null && Net != null && Net.Battle != null)
         {
             Debug.Log("[BattleOnlineManager] StartStream starting in Start()");
-            Net.Battle.StartStream((uint)roomData.room_id, userData.user_id);
+            // Net.Battle.StartStream((uint)roomData.room_id, userData.user_id);
         }
         else
         {
@@ -174,43 +174,43 @@ public class BattleOnlineManager : MonoBehaviour
                 Debug.LogError("[BattleOnlineManager] ゲームデータの取得に失敗しました。");
                 return;
             }
-            Debug.Log("[BattleOnlineManager] GameData received successfully. Player1Id=" + gameData.Player1Id);
+            // Debug.Log("[BattleOnlineManager] GameData received successfully. Player1Id=" + gameData.Player1Id);
 
             // プレイヤー情報やコスト、HP初期値はゲームデータ作成時にサーバー側で代入済み
             // ここではデータを受け取ってbattleDataForOnlineを更新するだけ
             // レート情報はサーバー側にいつ代入されるのか？
 
             // 1p2pのユーザーネームを取得して反映（初回のみ実行のためここに記述）
-            var user1 = await authenticationConnector.GetUser(gameData.Player1Id);
-            var user2 = await authenticationConnector.GetUser(gameData.Player2Id);
-            battleDataforOnline.player1.player_name = user1?.Name ?? "1P";
-            battleDataforOnline.player2.player_name = user2?.Name ?? "2P";
-            battleDataforOnline.player1.player_id = user1?.Id ?? "unknown";
-            battleDataforOnline.player2.player_id = user2?.Id ?? "unknown";
+            // var user1 = await authenticationConnector.GetUser(gameData.Player1Id);
+            // var user2 = await authenticationConnector.GetUser(gameData.Player2Id);
+            // battleDataforOnline.player1.player_name = user1?.Name ?? "1P";
+            // battleDataforOnline.player2.player_name = user2?.Name ?? "2P";
+            // battleDataforOnline.player1.player_id = user1?.Id ?? "unknown";
+            // battleDataforOnline.player2.player_id = user2?.Id ?? "unknown";
 
             // キャラクターデータを振り分ける（初回のみ実行のためここに記述）
-            int player1Idx = 0;
-            int player2Idx = 0;// インデックスは両方0..2
-            foreach (var c in gameData.Characters)
-            {
-                if (c.Is1P)
-                {
-                    battleDataforOnline.player1.characters[player1Idx].unique_id = (int)c.CharacterId;
-                    player1Idx++;
-                }
-                else if (!c.Is1P)
-                {
-                    battleDataforOnline.player2.characters[player2Idx].unique_id = (int)c.CharacterId;
-                    player2Idx++;
-                }
-            }
+            // int player1Idx = 0;
+            // int player2Idx = 0;// インデックスは両方0..2
+            // foreach (var c in gameData.Characters)
+            // {
+            //     if (c.Is1P)
+            //     {
+            //         battleDataforOnline.player1.characters[player1Idx].unique_id = (int)c.CharacterId;
+            //         player1Idx++;
+            //     }
+            //     else if (!c.Is1P)
+            //     {
+            //         battleDataforOnline.player2.characters[player2Idx].unique_id = (int)c.CharacterId;
+            //         player2Idx++;
+            //     }
+            // }
 
 
         // 全体のコストやHPなどを更新・ログ表示
-        ReceiveBattleData(gameData);
+        // ReceiveBattleData(gameData);
 
         // キャラの配置・モデル表示を初期化
-        battleViewManager.SetupCharacters(gameData.Characters);
+        // battleViewManager.SetupCharacters(gameData.Characters);
         Debug.Log("[BattleOnlineManager] CharacterManager.InitCharacterUI finished.");
 
         // UI（スライダーや名前）を最新データで更新
