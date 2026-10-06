@@ -94,7 +94,7 @@ public class SelectUIManager : MonoBehaviour
             if (decidedButtonText != null) decidedButtonText.text = "決定";
 
             // プレイヤーも準備完了監視を開始（自分が決定した後のため。または自動遷移のため）
-            StartCoroutine(WaitForBothPlayersReady());
+            // StartCoroutine(WaitForBothPlayersReady());
         }
         else
         {
@@ -106,7 +106,7 @@ public class SelectUIManager : MonoBehaviour
             nameText2.text = p2.Name;
             
             // 観戦者もバトル開始を待つ
-            StartCoroutine(WaitForBothPlayersReady());
+            // StartCoroutine(WaitForBothPlayersReady());
         }
         TimerStart();
     }
@@ -155,7 +155,7 @@ public class SelectUIManager : MonoBehaviour
                     if (decidedButtonText != null)
                         decidedButtonText.text = "相手の準備を待っています...";
                     // 両者が準備できるまでポーリングで待機し、完了次第バトルシーンへ自動遷移
-                    StartCoroutine(WaitForBothPlayersReady());
+                    // StartCoroutine(WaitForBothPlayersReady());
                 }
                 break;
             case "BackShadow":
@@ -289,33 +289,33 @@ public class SelectUIManager : MonoBehaviour
 
     private async Task SyncRoomStatus()
     {
-        var data = await GetDatas();
-        if (data == null) return;
+        // var data = await GetDatas();
+        // if (data == null) return;
 
         int p1Count = 0;
         int p2Count = 0;
         int p1Cost = 0;
         int p2Cost = 0;
 
-        foreach (var c in data.Characters)
-        {
-            int cost = 0;
-            if (c.CharacterId < characterData.characters.Length)
-            {
-                cost = characterData.characters[c.CharacterId].default_move_cost;
-            }
+        // foreach (var c in data.Characters)
+        // {
+        //     int cost = 0;
+        //     if (c.CharacterId < characterData.characters.Length)
+        //     {
+        //         cost = characterData.characters[c.CharacterId].default_move_cost;
+        //     }
 
-            if (c.Is1P)
-            {
-                p1Count++;
-                p1Cost += cost;
-            }
-            else
-            {
-                p2Count++;
-                p2Cost += cost;
-            }
-        }
+        //     if (c.Is1P)
+        //     {
+        //         p1Count++;
+        //         p1Cost += cost;
+        //     }
+        //     else
+        //     {
+        //         p2Count++;
+        //         p2Cost += cost;
+        //     }
+        // }
 
         // おそらくやりたいことはこういうことだと思う。観戦者用の双方コスト表示テキストと予想
         // ↑Updateのテキスト表示処理のこと
@@ -343,39 +343,39 @@ public class SelectUIManager : MonoBehaviour
         isTimerRunning = true;
     }
 
-    private IEnumerator WaitForBothPlayersReady()
-    {
+    // private IEnumerator WaitForBothPlayersReady()
+    // {
         // UniTask をコルーチン内で扱うためのブリッジ (UniTask.ToCoroutine)
-        yield return UniTask.ToCoroutine(async () =>
-        {
-            while (true)
-            {
+        // yield return UniTask.ToCoroutine(async () =>
+        // {
+        //     while (true)
+        //     {
                 // 1. await で直接結果を受け取る（Resultプロパティは不要）
-                var data = await NetworkManager.Instance.Battle.GetGameData(roomData.room_id);
+        //         var data = await NetworkManager.Instance.Battle.GetGameData(roomData.room_id);
 
                 // 2. 正常にデータが取れたか判定
-                if (data != null && data.Characters != null)
-                {
-                    int p1count = 0, p2count = 0;
-                    foreach (var c in data.Characters)
-                    {
-                        if (c.Is1P) p1count++;
-                        else p2count++;
-                    }
+        //         if (data != null && data.Characters != null)
+        //         {
+        //             int p1count = 0, p2count = 0;
+        //             foreach (var c in data.Characters)
+        //             {
+        //                 if (c.Is1P) p1count++;
+        //                 else p2count++;
+        //             }
 
-                    if (p1count >= 3 && p2count >= 3)
-                    {
-                        SetFirstGameData(data);
-                        SceneChangeManager.MoveScene(5);
-                        return; // ループ終了
-                    }
-                }
+        //             if (p1count >= 3 && p2count >= 3)
+        //             {
+        //                 SetFirstGameData(data);
+        //                 SceneChangeManager.MoveScene(5);
+        //                 return; // ループ終了
+        //             }
+        //         }
 
                 // 3. 次の確認まで待機
-                await UniTask.Delay(1000);
-            }
-        });
-    }
+        //         await UniTask.Delay(1000);
+        //     }
+        // });
+    // }
 
     void UpDateCharacterUI()
     {
@@ -423,17 +423,17 @@ public class SelectUIManager : MonoBehaviour
         //ここに自分の編成とコストを送る関数を書いてください
 
         int[] charas = {selectedCharacter1, selectedCharacter2, selectedCharacter3};
-        bool is1p = false;
+        // bool is1p = false;
 
         var room = await matchingConnector.ListRoom(roomData.room_id);
         for (int i = 0; i < room.Count; i++)
         {
             if (room[i].UserId == userData.user_id && room[i].State == 1)
             {
-                is1p = true;
+                // is1p = true;
             }
         }
-        await battleConnector.RegisterCharacters(roomData.room_id, is1p, charas);
+        // await battleConnector.RegisterCharacters(roomData.room_id, is1p, charas);
     }
 
     public async Task<List<int>> GetOpponentDatas()
@@ -441,32 +441,25 @@ public class SelectUIManager : MonoBehaviour
         //ここに相手の編成とコストを受け取る関数を書いてください
         var data = await battleConnector.GetGameData(roomData.room_id);
         var room = await matchingConnector.ListRoom(roomData.room_id);
-        bool is1p = false;
+        // bool is1p = false;
         var opponent_characters = new List<int>(3);
-        for (int i = 0; i < room.Count; i++)
-        {
-            if (room[i].UserId == userData.user_id && room[i].State == 1)
-            {
-                is1p = true;
-            }
-        }
-        for (int i = 0; i < data.Characters.Count; i++)
-        {
-            if(data.Characters[i].Is1P != is1p)// 相手のキャラを抜き出す
-            {
-                opponent_characters.Add((int)data.Characters[i].CharacterId);
-            }
-        }
+        // for (int i = 0; i < data.Characters.Count; i++)
+        // {
+        //     if(data.Characters[i].Is1P != is1p)// 相手のキャラを抜き出す
+        //     {
+        //         opponent_characters.Add((int)data.Characters[i].CharacterId);
+        //     }
+        // }
         // 相手の編成のキャラIDを返せばコストはこっちで計算できるので、IDだけ返します
         return opponent_characters;
     }
 
-    public async Task<Game.Network.GameDataResponse> GetDatas()
-    {
+    // public async Task<Game.Network.GameDataResponse> GetDatas()
+    // {
         //ここに試合中の全体の編成とコストを受け取る関数を書いてください
-        var data = await battleConnector.GetGameData(roomData.room_id);
-        return data;
-    }
+        // var data = await battleConnector.GetGameData(roomData.room_id);
+        // return data;
+    // }
 
     public async void SetFirstGameData(Game.Network.GameDataResponse gameData)
     {
