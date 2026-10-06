@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Data;
 
 public class UIViewManager : MonoBehaviour
 {
@@ -14,10 +13,16 @@ public class UIViewManager : MonoBehaviour
     public TextMeshProUGUI[] base_hp_text;
     public Slider timer_slider; 
     public TextMeshProUGUI time_text;
-    void Start() // メソッドのイベントへの登録
+    void Awake() // メソッドのイベントへの登録
     {
         viewManager.cost_changed += ShowCost;
+        viewManager.damaged += ShowCharacterHp;
+        viewManager.damaged += ShowBaseHp;
+        viewManager.healed += ShowCharacterHp;
         viewManager.turn_changed += StartTimer;
+        viewManager.turn_changed += TurnChange;
+        viewManager.turn_changed += ShowCost;
+        viewManager.turn_changed += ShowCharacterHp;
     }
     public void ShowCost()
     {
@@ -45,9 +50,17 @@ public class UIViewManager : MonoBehaviour
     }
     public void ShowLog()
     {}
+    public void TurnChange()
+    {}
     private void OnDestroy() // ゲーム終了時にイベント登録を解除する
     {
         viewManager.cost_changed -= ShowCost;
-        viewManager.cost_changed -= StartTimer;
+        viewManager.damaged -= ShowCharacterHp;
+        viewManager.damaged -= ShowBaseHp;
+        viewManager.healed -= ShowCharacterHp;
+        viewManager.turn_changed -= StartTimer;
+        viewManager.turn_changed -= TurnChange;
+        viewManager.turn_changed -= ShowCost;
+        viewManager.turn_changed -= ShowCharacterHp;
     }
 }
