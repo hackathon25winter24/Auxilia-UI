@@ -5,12 +5,23 @@ public class CharacterViewManager : MonoBehaviour
 {
     [SerializeField] private ViewManager viewManager;
     [SerializeField] private GameObject[] characters;
+    [SerializeField] private Transform canvas;
+    [SerializeField] private GameObject character_button;
     [SerializeField] private float character_move_time;
+    [SerializeField] private CharacterData characterData;
     public Vector2[] characterPosition;//ここはScriptableobjectを参照するようにする
     Vector2 character_now_position;//ここはScriptableobjectを参照するようにする
     Vector2 character_past_position;//ここはScriptableobjectを参照するようにする
     int character; // 選択されたキャラクター。ここはScriptableobjectを参照するようにする
-
+    public void Awake()
+    {
+        PutCharacter(new Vector2(-175, 60), 0, 0);
+        PutCharacter(new Vector2(-125, -40), 0, 1);
+        PutCharacter(new Vector2(-175, -140), 0, 2);
+        PutCharacter(new Vector2(175, 60), 0, 3);
+        PutCharacter(new Vector2(125, -40), 0, 4);
+        PutCharacter(new Vector2(175, -140), 0, 5);
+    }
     public void Start() // 始めにこのクラス内のメソッドをイベントに登録する
     {
         viewManager.moved += MoveCharacter;
@@ -21,21 +32,27 @@ public class CharacterViewManager : MonoBehaviour
         viewManager.attack_blocked += CharacterAttackBlocked;
         viewManager.effect_blocked += CharacterEffectBlocked;
         viewManager.form_changed += CharacterFormChanged;
-        PutCharacter();
     }
 
-    public void PutCharacter() // 全キャラクターの位置の変更
+    public void PutCharacter(Vector2 position, int character_id, int object_id) // キャラクターの生成
     {
-        if(characterPosition.Length == 6)
+        if(0 <= character_id && character_id < characterData.characters.Length)
         {
-            for(int i = 0; i < 6; i++)
+            GameObject characterObj = Instantiate(character_button, canvas);
+            RectTransform rectTransform = characterObj.GetComponent<RectTransform>();
+            if (rectTransform != null)
             {
-                characters[i].transform.position = characterPosition[i];
+                rectTransform.anchoredPosition = position;
+                rectTransform.localScale = Vector3.one;
+                characterObj.transform.SetSiblingIndex(3);
             }
-        }
-        else
-        {
-            Debug.Log("位置が不明なキャラが存在します");
+            CharacterObject character = characterObj.GetComponent<CharacterObject>();
+            if (character != null)
+            {
+                character.Initialize(this, characterData, character_id);
+            }
+            character.object_num = object_id;
+            character.move_time = character_move_time;
         }
     }
     public void MoveCharacter() // キャラクターが移動するときの位置の変更及びその演出
