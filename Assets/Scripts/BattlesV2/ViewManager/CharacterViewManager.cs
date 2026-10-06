@@ -9,6 +9,7 @@ public class CharacterViewManager : MonoBehaviour
     public Vector2[] characterPosition;//ここはScriptableobjectを参照するようにする
     Vector2 character_now_position;//ここはScriptableobjectを参照するようにする
     Vector2 character_past_position;//ここはScriptableobjectを参照するようにする
+    int character; // 選択されたキャラクター。ここはScriptableobjectを参照するようにする
 
     public void Start() // 始めにこのクラス内のメソッドをイベントに登録する
     {
@@ -20,9 +21,10 @@ public class CharacterViewManager : MonoBehaviour
         viewManager.attack_blocked += CharacterAttackBlocked;
         viewManager.effect_blocked += CharacterEffectBlocked;
         viewManager.form_changed += CharacterFormChanged;
+        PutCharacter();
     }
 
-    public void PutCharacter() // キャラクターの位置の変更及びその演出
+    public void PutCharacter() // 全キャラクターの位置の変更
     {
         if(characterPosition.Length == 6)
         {
@@ -42,7 +44,7 @@ public class CharacterViewManager : MonoBehaviour
         while(time < character_move_time)
         {
             time += Time.deltaTime;
-            characters[0].transform.position = character_now_position + (character_past_position - character_now_position)* time / character_move_time;
+            characters[character].transform.position = character_now_position + (character_past_position - character_now_position)* time / character_move_time;
         }
     }
     public void CharacterDamaged() // キャラクターがダメージを受けたときの演出
