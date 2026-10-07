@@ -10,8 +10,14 @@ V2 RPC / StreamGame
     → BattleDataForOnline（保存・投影・演出の重複排除）
     → Changed(type)
     → ViewManager.ChangeView(type)
-    → Grid / Character / UI / BaseUI
+    → type別イベントの通知（ここまでが受信側の責務）
 ```
+
+コネクタとSOは描画Manager、アニメーション、シーン遷移のメソッドを直接呼ばない。
+`ViewManager`もtype別のイベント発火までを担当する。イベントの購読と描画処理は
+フロントエンド担当者が実装する。購読者がなくてもデータの受信・保存は成立する。
+通信エラーも`NetworkClientCore.OnErrorMessage`への通知までで、表示方法はUI側に委ねる。
+実際の戦闘通信はWebSocketではなく、gRPC-Webのサーバーストリームである。
 
 ## 保存するデータ
 
@@ -48,11 +54,11 @@ Battle・ルーム・プロフィール更新にはBearer認証を付ける。
 既存のユーザープロフィールAPIはバックエンドに残っているものを利用する。
 
 1. `RoomServiceV2.StartMatch`で試合を作成する。
-2. `Battle.GetRoomGameData(roomId, ct)`で現在のmatchIdを取得・保存する。
+2. `Battle.GetRoomGameData(roomId, ct)`で現在のmatchIdを取得・保存する。成功後、コネクタ自身が`StreamGame`を開始する（`CreateGameData`も同様）。同じ試合の再取得では受信接続を増やさない。
 3. `Battle.GetDefinitions(ct)`で定義を取得・保存する。
 4. `Battle.RegisterCharacters(definitionIds, ct)`、`Battle.Ready(ct)`で準備する。
 5. サーバーの`State.Started`を確認してBattleSceneへ進む。
-6. BattleSceneの`BattleOnlineManager`が初期取得後に`StartStream(ct)`を開始する。
+6. シーンを移動してもコネクタが継続受信する。描画Managerからの`StartStream`呼び出しは不要。
 
 ```csharp
 // いずれも成功応答は自動的にSOへ保存され、ChangeViewが呼ばれる。
@@ -79,7 +85,13 @@ await NetworkManager.Instance.Battle.Surrender(ct);
 BattleSceneのManagersには`BattleOnlineManager`と`ViewManager`を配置済み。
 TitleSceneのNetworkManagerを含め、同じ`BattleDataForOnline.asset`を参照する。
 別のシーンで使用する場合も、受信先とViewの参照先を同じSOに設定する。
-シーン終了で戦闘ストリームをキャンセルし、Viewの購読を解除する。
+SO未設定時に別のアセットを探索・生成する処理は廃止し、設定エラーとして扱う。
+TitleSceneのNetworkManagerとBattleSceneのViewManagerは同じSOを設定済み。
+シーン終了ではViewの購読を解除する。ストリームはコネクタの破棄、別ルームへの切り替え、
+SOの変更、終了状態の受信、または明示的な`Battle.StopStream()`で終了する。
+試合取得RPCのキャンセルトークンは継続接続には引き継がない。
+オンライン対戦から離脱して接続だけを止める場合は`StopStream()`を呼ぶ。
+停止後の再開は`StartStream(ct)`または`GetRoomGameData(roomId, ct)`で行える。
 
 受信した`presentation_batches[].events[].type`をそのまま通知する。
 `State.LastEvent.Type`だけでは、1操作内の追撃・複数対象・復活などが失われるので使用しない。
@@ -132,6 +144,8 @@ Unity 6000.0.84f1の`Tools > Auxilia > Validate V2 receive pipeline`から、
 実サーバーにアクセスせずに受信処理を検証できる。
 完全な応答の保持、個体IDの区別、巻き戻り防止、演出順序・重複排除・履歴補完、
 保存後のChangeView通知、コマンドの認証・revision・commandIdを確認する。
+模擬サーバーストリームでも、試合取得後の自動接続、同一接続の維持、重複受信の抑制、
+SO保存後のtype通知、終了時の接続解放を確認する。描画Managerは配置せずに検証する。
 `Validate typed view events`では、typeの順序、同じtypeの複数発火、重複排除、
 履歴補完、通知中のイベント情報、SO変更時の購読解除を確認する。
 
