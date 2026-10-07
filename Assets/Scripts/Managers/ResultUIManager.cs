@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class ResultUIManager : MonoBehaviour
 {
-    public InputData inputData;
     public UserData userData;
     public RoomData roomData;
     public BattleDataForOnline battleDataForOnline;
