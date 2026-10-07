@@ -2,14 +2,14 @@
 
 `BattleConnector`がV2の応答を受信し、Unityのメインスレッドで
 `BattleDataForOnline`に保存する。更新があれば`Changed`を通知し、
-それを購読した`ViewManager.ChangeView()`が表示を更新する。
+それを購読した`ViewManager.ChangeView(string type)`がtypeに対応するイベントを発火する。
 
 ```text
 V2 RPC / StreamGame
     → BattleConnector
     → BattleDataForOnline（保存・投影・演出の重複排除）
-    → Changed
-    → ViewManager.ChangeView()
+    → Changed(type)
+    → ViewManager.ChangeView(type)
     → Grid / Character / UI / BaseUI
 ```
 
@@ -81,14 +81,42 @@ TitleSceneのNetworkManagerを含め、同じ`BattleDataForOnline.asset`を参�
 別のシーンで使用する場合も、受信先とViewの参照先を同じSOに設定する。
 シーン終了で戦闘ストリームをキャンセルし、Viewの購読を解除する。
 
-通常の更新は`ViewManager.ChangeView()`内で各表示Managerに振り分ける。
-追加の表示・演出は`ViewChanged`イベントかInspectorの`On View Changed`に登録できる。
-既存の盤面、HP、コスト、名前、期限に基づくタイマー表示は実装済み。
-個別の攻撃アニメーションや入力UIの実装はこの通信処理とは別に追加する。
+受信した`presentation_batches[].events[].type`をそのまま通知する。
+`State.LastEvent.Type`だけでは、1操作内の追撃・複数対象・復活などが失われるので使用しない。
+SOの`Changed`は`Action<string>`で、購読は`Changed += ChangeView`とする。
+`Changed += ChangeView()`はメソッド呼び出しになり、イベントの購読にはならない。
+`Initialize(data)`でSOを変更すると、以前のSOの購読を解除して新しいSOを購読する。
 
-演出を実装する側はSOの`TryDequeuePresentation(out batch)`で未再生バッチを取り出す。
-バッチ内は`Events`の順番で扱い、技や原因・対象は各イベントのフィールドを参照する。
-キューの消費者は一つにし、そこから各演出コンポーネントに配る。
+`ChangeView(type)`は既存の`moved`、`damaged`、`healed`等の引数なしイベントに振り分ける。
+1応答に`MOVED → DAMAGED → DAMAGED → COST_CHANGED`があれば、この4回すべてを順に通知する。
+受信トランザクションの保存完了後に発火するため、各コールバックから最新盤面を読める。
+アニメーションに必要な途中の座標やHPは、最終Stateの差分ではなく演出イベントを使う。
+
+```csharp
+// 登録先のViewManagerと受信先は同じBattleDataForOnlineを参照させる。
+viewManager.damaged += OnDamaged;
+
+void OnDamaged()
+{
+    // 通知中の対象・原因・数値。非同期演出に渡すときはクローンを保持する。
+    var damage = viewManager.CurrentEvent.Clone();
+    ulong sequence = viewManager.CurrentSequence;
+    // damage.TargetId / Amount / BeforeValue / AfterValue / Cause などを使って描画する。
+}
+```
+
+`CurrentEvent`と`CurrentSequence`は通知中のみ有効で、通知終了後はnullと0に戻る。
+既存の`TryDequeuePresentation(out batch)`も利用可能だが、同じ演出を
+typeイベントとキューの両方から再生しないこと。
+
+| 戦闘イベントを持たない更新 | type | ViewManagerのイベント |
+| --- | --- | --- |
+| 初回同期、時計だけの更新、演出なしの盤面更新 | `STATE_SYNC` | `state_synced` |
+| キャラクター定義の更新 | `DEFINITIONS_CHANGED` | `definitions_changed` |
+| 取得した履歴・履歴カーソルの更新 | `ACTION_LOG_CHANGED` | `action_logs_changed` |
+
+これら3種類はフロント側の同期通知で、サーバーの攻撃イベントではない。
+`state_synced`は現在のStateをそのまま描画する用途に使う。
 初回取得は過去の攻撃を再生せず、受信した盤面をそのまま表示する。
 以後のUnary応答・Stream・再接続に含まれる同じsequenceは重複しない。
 32遷移の同梱範囲から漏れた場合だけ、ConnecterがFetchActionLogをページ取得して補完する。
@@ -103,7 +131,9 @@ TitleSceneのNetworkManagerを含め、同じ`BattleDataForOnline.asset`を参�
 Unity 6000.0.84f1の`Tools > Auxilia > Validate V2 receive pipeline`から、
 実サーバーにアクセスせずに受信処理を検証できる。
 完全な応答の保持、個体IDの区別、巻き戻り防止、演出順序・重複排除・履歴補完、
-保存後のChangeView通知、コマンドの認証・revision・commandId、シーン参照を確認する。
+保存後のChangeView通知、コマンドの認証・revision・commandIdを確認する。
+`Validate typed view events`では、typeの順序、同じtypeの複数発火、重複排除、
+履歴補完、通知中のイベント情報、SO変更時の購読解除を確認する。
 
 ```powershell
 Unity.exe -batchmode -nographics -quit -projectPath "<Auxilia-UI>" `

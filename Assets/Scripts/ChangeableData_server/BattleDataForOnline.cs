@@ -20,6 +20,11 @@ public class BattleDataForOnline : ScriptableObject
     [NonSerialized] private readonly SortedDictionary<ulong, V2.ActionLog> actionLogs = new();
     [NonSerialized] private readonly Queue<V2.PresentationBatch> pendingPresentation = new();
     [NonSerialized] private readonly SortedDictionary<ulong, V2.PresentationBatch> waitingPresentation = new();
+    [NonSerialized] private readonly List<V2.PresentationBatch> pendingViewBatches = new();
+    [NonSerialized] private bool snapshotChanged;
+    [NonSerialized] private bool definitionsChanged;
+    [NonSerialized] private bool logsChanged;
+    [NonSerialized] private int notificationGeneration;
     public V2.Snapshot Snapshot => snapshot;
     public V2.State State => snapshot?.State;
     public V2.DefinitionsResponse Definitions => definitions;
@@ -28,7 +33,13 @@ public class BattleDataForOnline : ScriptableObject
     public ulong NextLogSequence { get; private set; }
     public bool HasPresentationGap => snapshot != null && PresentationSequence < snapshot.LastLogSequence;
     public double ReceivedAtRealtime { get; private set; }
-    public event Action Changed;
+    public const string StateSyncType = "STATE_SYNC";
+    public const string DefinitionsChangedType = "DEFINITIONS_CHANGED";
+    public const string ActionLogsChangedType = "ACTION_LOG_CHANGED";
+    public event Action<string> Changed;
+    // Valid during Changed callbacks. Clone the event when retaining it for asynchronous animation.
+    public V2.PresentationEvent CurrentPresentationEvent { get; private set; }
+    public ulong CurrentPresentationSequence { get; private set; }
 
     // Existing UI/tutorial fields remain available. Coordinates use server space.
     public int turn_number;
@@ -41,6 +52,7 @@ public class BattleDataForOnline : ScriptableObject
 
     public void ResetRuntime()
     {
+        ResetViewNotifications();
         snapshot = null;
         definitions = null;
         definitionCosts = null;
@@ -63,6 +75,7 @@ public class BattleDataForOnline : ScriptableObject
         definitions = response.Clone();
         definitionsJson = JsonFormatter.Default.Format(definitions);
         definitionCosts = JsonUtility.FromJson<DefinitionCosts>("{\"items\":" + definitions.DefinitionsJson + "}");
+        definitionsChanged = true;
         return true;
     }
 
@@ -83,6 +96,10 @@ public class BattleDataForOnline : ScriptableObject
         if (response.Equals(snapshot)) return false;
         if (first)
         {
+            // A new match invalidates queued notifications for the previous match.
+            bool keepDefinitionsChanged = definitionsChanged;
+            ResetViewNotifications();
+            definitionsChanged = keepDefinitionsChanged;
             actionLogs.Clear();
             actionLogsJson = "";
             pendingPresentation.Clear();
@@ -98,6 +115,7 @@ public class BattleDataForOnline : ScriptableObject
             foreach (var batch in snapshot.PresentationBatches) QueuePresentation(batch);
         DrainPresentation();
         ProjectState();
+        snapshotChanged = true;
         return true;
     }
 
@@ -121,6 +139,7 @@ public class BattleDataForOnline : ScriptableObject
         var all = new V2.LogResponse { NextSequence = NextLogSequence };
         all.Logs.Add(actionLogs.Values);
         actionLogsJson = JsonFormatter.Default.Format(all);
+        logsChanged |= changed;
         return changed;
     }
 
@@ -138,6 +157,7 @@ public class BattleDataForOnline : ScriptableObject
         {
             waitingPresentation.Remove(next.Sequence);
             pendingPresentation.Enqueue(next);
+            pendingViewBatches.Add(next.Clone());
             PresentationSequence = next.Sequence;
         }
     }
@@ -148,7 +168,50 @@ public class BattleDataForOnline : ScriptableObject
         return batch != null;
     }
 
-    public void NotifyChanged() => Changed?.Invoke();
+    public void NotifyChanged()
+    {
+        // Snapshot and any recovered history have already been committed. Do not use
+        // State.LastEvent: it describes only the last change and loses intermediate hits.
+        var batches = pendingViewBatches.ToArray();
+        bool sync = snapshotChanged && !batches.Any(b => b.Events.Count > 0);
+        bool notifyDefinitions = definitionsChanged;
+        bool notifyLogs = logsChanged;
+        int generation = notificationGeneration;
+        pendingViewBatches.Clear();
+        snapshotChanged = definitionsChanged = logsChanged = false;
+        try
+        {
+            if (sync) Changed?.Invoke(StateSyncType);
+            foreach (var batch in batches)
+                foreach (var change in batch.Events)
+                {
+                    if (generation != notificationGeneration) return;
+                    CurrentPresentationSequence = batch.Sequence;
+                    CurrentPresentationEvent = change;
+                    Changed?.Invoke(change.Type);
+                }
+            CurrentPresentationSequence = 0;
+            CurrentPresentationEvent = null;
+            if (generation != notificationGeneration) return;
+            if (notifyDefinitions) Changed?.Invoke(DefinitionsChangedType);
+            if (generation != notificationGeneration) return;
+            if (notifyLogs) Changed?.Invoke(ActionLogsChangedType);
+        }
+        finally
+        {
+            CurrentPresentationSequence = 0;
+            CurrentPresentationEvent = null;
+        }
+    }
+
+    private void ResetViewNotifications()
+    {
+        notificationGeneration++;
+        pendingViewBatches.Clear();
+        snapshotChanged = definitionsChanged = logsChanged = false;
+        CurrentPresentationSequence = 0;
+        CurrentPresentationEvent = null;
+    }
 
     private void ProjectState()
     {

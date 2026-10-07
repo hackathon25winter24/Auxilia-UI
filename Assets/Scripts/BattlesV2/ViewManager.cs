@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class ViewManager : MonoBehaviour
@@ -23,14 +22,58 @@ public class ViewManager : MonoBehaviour
     public event Action turn_changed;
     public event Action phase_changed;
     public event Action match_finished;
+    public event Action state_synced;
+    public event Action definitions_changed;
+    public event Action action_logs_changed;
+    public event Action character_spawned;
+    public event Action character_removed;
+    public event Action match_created;
+    public Game.Network.V2.PresentationEvent CurrentEvent => battleDataForOnline?.CurrentPresentationEvent;
+    public ulong CurrentSequence => battleDataForOnline?.CurrentPresentationSequence ?? 0;
+    private BattleDataForOnline subscribedData;
+
+    private void OnEnable()
+    {
+        Subscribe();
+    }
+
+    private void OnDisable()
+    {
+        Unsubscribe();
+    }
     public void Initialize(BattleDataForOnline battleData)
     {
         battleDataForOnline = battleData;
+        if (isActiveAndEnabled) Subscribe();
+        else Unsubscribe();
     }
+
+    private void Subscribe()
+    {
+        Unsubscribe();
+        subscribedData = battleDataForOnline;
+        if (subscribedData != null) subscribedData.Changed += ChangeView;
+    }
+
+    private void Unsubscribe()
+    {
+        if (subscribedData != null) subscribedData.Changed -= ChangeView;
+        subscribedData = null;
+    }
+
+    private void OnDestroy() => Unsubscribe();
+
     public void ChangeView(string type)
     {
+        if (this == null || !isActiveAndEnabled) return;
         switch(type)
         {
+            case BattleDataForOnline.StateSyncType : state_synced?.Invoke(); break;
+            case BattleDataForOnline.DefinitionsChangedType : definitions_changed?.Invoke(); break;
+            case BattleDataForOnline.ActionLogsChangedType : action_logs_changed?.Invoke(); break;
+            case "MATCH_CREATED" : match_created?.Invoke(); break;
+            case "CHARACTER_SPAWNED" : character_spawned?.Invoke(); break;
+            case "CHARACTER_REMOVED" : character_removed?.Invoke(); break;
             case "SKILL_USED" : skill_used?.Invoke(); break;
             case "TARGETED" : targeted?.Invoke(); break;
             case "DAMAGED" : damaged?.Invoke(); break;
