@@ -59,8 +59,7 @@ public class NetworkManager : MonoBehaviour
         _matching.Initialize(_core);
         if (battleDataForOnline == null)
         {
-            var assets = Resources.FindObjectsOfTypeAll<BattleDataForOnline>();
-            battleDataForOnline = assets.Length > 0 ? assets[0] : ScriptableObject.CreateInstance<BattleDataForOnline>();
+            throw new InvalidOperationException("NetworkManagerにはViewManagerと同じBattleDataForOnlineアセットを設定してください。");
         }
         _battle.Initialize(_core, battleDataForOnline);
         //_battle.Initialize(_core);

@@ -8,7 +8,6 @@ using Game.Network.V2;
 using Google.Protobuf;
 using Grpc.Core;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /// <summary>Offline receive-path regression checks. No login or live server is required.</summary>
@@ -19,8 +18,9 @@ public static class BattleV2Validation
     {
         CheckDataStore();
         CheckConnectorAndView();
-        CheckSceneBindings();
-        Debug.Log("BATTLE_V2_VALIDATION_PASSED: data fidelity, ordering, deduplication, history gaps, view notifications, commands and scene references.");
+        CheckStreamAndView();
+        BattleViewEventValidation.Run();
+        Debug.Log("BATTLE_V2_VALIDATION_PASSED: data fidelity, ordering, deduplication, history gaps, commands and typed view notifications.");
     }
 
     private static void Require(bool value, string reason)
@@ -140,16 +140,19 @@ public static class BattleV2Validation
             var fake = new FakeClient { Response = Sample(1) };
             typeof(BattleConnector).GetField("core", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(connector, core);
             typeof(BattleConnector).GetField("client", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(connector, fake);
+            typeof(BattleConnector).GetField("streamClient", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(connector, fake);
             connector.BindData(data);
             var view = go.AddComponent<ViewManager>();
-            view.Bind(data);
+            view.Initialize(data);
             int notifications = 0;
-            view.ViewChanged += () => {
+            data.Changed += type => {
                 Require(data.State != null && data.player1.base_hp == data.State.Bases[0].Hp, "SO projection committed before ChangeView");
                 notifications++;
             };
             Complete(connector.GetRoomGameData(7));
             Require(notifications == 1, "first receive invokes ChangeView exactly once");
+            Complete(connector.GetRoomGameData(7));
+            Require(fake.StreamCalls == 1, "room lookup starts streaming without a scene manager and does not duplicate subscriptions");
             Complete(connector.GetGameData());
             Require(notifications == 1, "duplicate receive does not invoke ChangeView");
             fake.Response = Sample(5);
@@ -157,20 +160,60 @@ public static class BattleV2Validation
             for (ulong i = 2; i <= 4; i++) fake.History.Logs.Add(Log(i));
             Complete(connector.GetGameData());
             Require(fake.HistoryCalls == 1 && !data.HasPresentationGap, "connector fetches history only for a gap");
-            Require(notifications == 2, "snapshot plus recovered history is a single notification");
+            Require(notifications == 6, "initial sync, four combat events and one history update");
             fake.Response = Sample(6);
             Complete(connector.SendMove("p1-instance", 2, 1));
             Require(fake.Command.ExpectedRevision == 5 && fake.Command.MatchId == "test-match" &&
                 fake.Command.CharacterId == "p1-instance" && !string.IsNullOrEmpty(fake.Command.CommandId), "V2 intent contains instance, match, revision and command ID");
-            Require(fake.SawAuthorization && notifications == 3, "authenticated action response stored and notified");
-            view.Bind(data);
+            Require(fake.SawAuthorization && notifications == 7, "authenticated action response stored and notified");
+            view.Initialize(data);
             fake.Response = Sample(7);
             Complete(connector.GetGameData());
-            Require(notifications == 4, "rebinding does not double subscribe");
+            Require(notifications == 8, "rebinding does not double subscribe");
             view.enabled = false;
             fake.Response = Sample(8);
             Complete(connector.GetGameData());
-            Require(notifications == 4, "disabled view does not render");
+            Require(notifications == 9, "SO still notifies when view is disabled");
+        }
+        finally { UnityEngine.Object.DestroyImmediate(go); UnityEngine.Object.DestroyImmediate(data); }
+    }
+
+    private static void CheckStreamAndView()
+    {
+        var go = new GameObject("V2 stream boundary validation");
+        var data = ScriptableObject.CreateInstance<BattleDataForOnline>();
+        try
+        {
+            var core = go.AddComponent<NetworkClientCore>();
+            core.SetSession("test-token", "p1");
+            var connector = go.AddComponent<BattleConnector>();
+            var final = Sample(3);
+            final.State.Finished = true;
+            var fake = new FakeClient { Response = Sample(1), StreamSnapshots = new[] { Sample(1), Sample(2), Sample(2), final } };
+            foreach (var field in new[] { "client", "streamClient" })
+                typeof(BattleConnector).GetField(field, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(connector, fake);
+            typeof(BattleConnector).GetField("core", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(connector, core);
+            connector.BindData(data);
+            var view = go.AddComponent<ViewManager>();
+            view.Initialize(data);
+            int syncs = 0, damages = 0;
+            view.state_synced += () => syncs++;
+            view.damaged += () => {
+                damages++;
+                Require(data.State.Revision == (ulong)(damages + 1), "stream state stored before ViewManager event");
+                Require(view.CurrentEvent.Type == "DAMAGED" && view.CurrentSequence == data.State.Revision,
+                    "stream event type and sequence reach ChangeView");
+                Require(data.player1.base_hp == data.State.Bases[0].Hp, "stream projections committed before redraw");
+            };
+            Complete(connector.GetRoomGameData(7));
+            Require(syncs == 1 && damages == 2, "stream duplicates suppressed without any drawing manager");
+            Require(data.Snapshot.Equals(final) && fake.HistoryCalls == 0, "complete streamed snapshot retained without unnecessary history fetch");
+            Require(fake.StreamCalls == 1 && fake.StreamDisposed && fake.StreamAuthorized,
+                "authenticated stream uses match ID and closes at finished state");
+            Require(typeof(BattleConnector).GetField("streamCts", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connector) == null,
+                "completed stream releases its lifetime");
+            Complete(connector.GetRoomGameData(7));
+            Require(fake.StreamCalls == 1, "stale room response cannot restart a finished match");
         }
         finally { UnityEngine.Object.DestroyImmediate(go); UnityEngine.Object.DestroyImmediate(data); }
     }
@@ -182,24 +225,6 @@ public static class BattleV2Validation
         Require(awaiter.GetResult() != null, "RPC succeeds");
     }
 
-    private static void CheckSceneBindings()
-    {
-        var scene = EditorSceneManager.OpenPreviewScene("Assets/Scenes/GameScene/BattleScene.unity");
-        try
-        {
-            var managers = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<BattleOnlineManager>(true)).ToArray();
-            Require(managers.Length == 1, "one battle receiver in game scene");
-            var receiver = managers[0];
-            var view = receiver.GetComponent<ViewManager>();
-            Require(receiver.roomData != null && receiver.battleDataforOnline != null && view != null && view.Data == receiver.battleDataforOnline, "receiver and view reference the same SO");
-            var characters = receiver.GetComponent<CharacterViewManager>();
-            Require(characters != null && characters.characters.Length == 6 && characters.characters.All(c => c != null), "character view scene references");
-            var ui = receiver.GetComponent<UIViewManager>();
-            Require(ui.hp_slider.Length == 6 && ui.character_hp.Length == 6 && ui.cost_text.Length == 2, "HP and cost scene references");
-        }
-        finally { EditorSceneManager.ClosePreviewScene(scene); }
-    }
-
     private sealed class FakeClient : BattleServiceV2.BattleServiceV2Client
     {
         public Snapshot Response;
@@ -207,6 +232,18 @@ public static class BattleV2Validation
         public int HistoryCalls;
         public ActionRequest Command;
         public bool SawAuthorization;
+        public Snapshot[] StreamSnapshots = Array.Empty<Snapshot>();
+        public int StreamCalls;
+        public bool StreamDisposed;
+        public bool StreamAuthorized;
+        public override AsyncServerStreamingCall<Snapshot> StreamGame(GameRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
+        {
+            StreamCalls++;
+            Require(request.MatchId == "test-match", "stream uses returned match ID");
+            StreamAuthorized = headers.Any(h => h.Key == "authorization" && h.Value == "Bearer test-token");
+            return new AsyncServerStreamingCall<Snapshot>(new FakeReader(StreamSnapshots), Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess, () => new Metadata(), () => StreamDisposed = true);
+        }
         private AsyncUnaryCall<T> Reply<T>(T value, Metadata headers)
         {
             SawAuthorization |= headers.Any(h => h.Key == "authorization" && h.Value == "Bearer test-token");
@@ -218,5 +255,28 @@ public static class BattleV2Validation
         { Command = request.Clone(); return Reply(Response, headers); }
         public override AsyncUnaryCall<LogResponse> FetchActionLogAsync(LogRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
         { HistoryCalls++; return Reply(History, headers); }
+    }
+
+    private sealed class FakeReader : IAsyncStreamReader<Snapshot>
+    {
+        private readonly Snapshot[] snapshots;
+        private int index;
+        public Snapshot Current { get; private set; }
+        public FakeReader(Snapshot[] values) { snapshots = values; }
+        public Task<bool> MoveNext(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (index < snapshots.Length)
+            {
+                Current = snapshots[index++];
+                return Task.FromResult(true);
+            }
+            return WaitForCancellation(cancellationToken);
+        }
+        private static async Task<bool> WaitForCancellation(CancellationToken ct)
+        {
+            await Task.Delay(Timeout.Infinite, ct);
+            return false;
+        }
     }
 }

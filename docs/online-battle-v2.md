@@ -2,16 +2,22 @@
 
 `BattleConnector`がV2の応答を受信し、Unityのメインスレッドで
 `BattleDataForOnline`に保存する。更新があれば`Changed`を通知し、
-それを購読した`ViewManager.ChangeView()`が表示を更新する。
+それを購読した`ViewManager.ChangeView(string type)`がtypeに対応するイベントを発火する。
 
 ```text
 V2 RPC / StreamGame
     → BattleConnector
     → BattleDataForOnline（保存・投影・演出の重複排除）
-    → Changed
-    → ViewManager.ChangeView()
-    → Grid / Character / UI / BaseUI
+    → Changed(type)
+    → ViewManager.ChangeView(type)
+    → type別イベントの通知（ここまでが受信側の責務）
 ```
+
+コネクタとSOは描画Manager、アニメーション、シーン遷移のメソッドを直接呼ばない。
+`ViewManager`もtype別のイベント発火までを担当する。イベントの購読と描画処理は
+フロントエンド担当者が実装する。購読者がなくてもデータの受信・保存は成立する。
+通信エラーも`NetworkClientCore.OnErrorMessage`への通知までで、表示方法はUI側に委ねる。
+実際の戦闘通信はWebSocketではなく、gRPC-Webのサーバーストリームである。
 
 ## 保存するデータ
 
@@ -48,11 +54,11 @@ Battle・ルーム・プロフィール更新にはBearer認証を付ける。
 既存のユーザープロフィールAPIはバックエンドに残っているものを利用する。
 
 1. `RoomServiceV2.StartMatch`で試合を作成する。
-2. `Battle.GetRoomGameData(roomId, ct)`で現在のmatchIdを取得・保存する。
+2. `Battle.GetRoomGameData(roomId, ct)`で現在のmatchIdを取得・保存する。成功後、コネクタ自身が`StreamGame`を開始する（`CreateGameData`も同様）。同じ試合の再取得では受信接続を増やさない。
 3. `Battle.GetDefinitions(ct)`で定義を取得・保存する。
 4. `Battle.RegisterCharacters(definitionIds, ct)`、`Battle.Ready(ct)`で準備する。
 5. サーバーの`State.Started`を確認してBattleSceneへ進む。
-6. BattleSceneの`BattleOnlineManager`が初期取得後に`StartStream(ct)`を開始する。
+6. シーンを移動してもコネクタが継続受信する。描画Managerからの`StartStream`呼び出しは不要。
 
 ```csharp
 // いずれも成功応答は自動的にSOへ保存され、ChangeViewが呼ばれる。
@@ -79,16 +85,50 @@ await NetworkManager.Instance.Battle.Surrender(ct);
 BattleSceneのManagersには`BattleOnlineManager`と`ViewManager`を配置済み。
 TitleSceneのNetworkManagerを含め、同じ`BattleDataForOnline.asset`を参照する。
 別のシーンで使用する場合も、受信先とViewの参照先を同じSOに設定する。
-シーン終了で戦闘ストリームをキャンセルし、Viewの購読を解除する。
+SO未設定時に別のアセットを探索・生成する処理は廃止し、設定エラーとして扱う。
+TitleSceneのNetworkManagerとBattleSceneのViewManagerは同じSOを設定済み。
+シーン終了ではViewの購読を解除する。ストリームはコネクタの破棄、別ルームへの切り替え、
+SOの変更、終了状態の受信、または明示的な`Battle.StopStream()`で終了する。
+試合取得RPCのキャンセルトークンは継続接続には引き継がない。
+オンライン対戦から離脱して接続だけを止める場合は`StopStream()`を呼ぶ。
+停止後の再開は`StartStream(ct)`または`GetRoomGameData(roomId, ct)`で行える。
 
-通常の更新は`ViewManager.ChangeView()`内で各表示Managerに振り分ける。
-追加の表示・演出は`ViewChanged`イベントかInspectorの`On View Changed`に登録できる。
-既存の盤面、HP、コスト、名前、期限に基づくタイマー表示は実装済み。
-個別の攻撃アニメーションや入力UIの実装はこの通信処理とは別に追加する。
+受信した`presentation_batches[].events[].type`をそのまま通知する。
+`State.LastEvent.Type`だけでは、1操作内の追撃・複数対象・復活などが失われるので使用しない。
+SOの`Changed`は`Action<string>`で、購読は`Changed += ChangeView`とする。
+`Changed += ChangeView()`はメソッド呼び出しになり、イベントの購読にはならない。
+`Initialize(data)`でSOを変更すると、以前のSOの購読を解除して新しいSOを購読する。
 
-演出を実装する側はSOの`TryDequeuePresentation(out batch)`で未再生バッチを取り出す。
-バッチ内は`Events`の順番で扱い、技や原因・対象は各イベントのフィールドを参照する。
-キューの消費者は一つにし、そこから各演出コンポーネントに配る。
+`ChangeView(type)`は既存の`moved`、`damaged`、`healed`等の引数なしイベントに振り分ける。
+1応答に`MOVED → DAMAGED → DAMAGED → COST_CHANGED`があれば、この4回すべてを順に通知する。
+受信トランザクションの保存完了後に発火するため、各コールバックから最新盤面を読める。
+アニメーションに必要な途中の座標やHPは、最終Stateの差分ではなく演出イベントを使う。
+
+```csharp
+// 登録先のViewManagerと受信先は同じBattleDataForOnlineを参照させる。
+viewManager.damaged += OnDamaged;
+
+void OnDamaged()
+{
+    // 通知中の対象・原因・数値。非同期演出に渡すときはクローンを保持する。
+    var damage = viewManager.CurrentEvent.Clone();
+    ulong sequence = viewManager.CurrentSequence;
+    // damage.TargetId / Amount / BeforeValue / AfterValue / Cause などを使って描画する。
+}
+```
+
+`CurrentEvent`と`CurrentSequence`は通知中のみ有効で、通知終了後はnullと0に戻る。
+既存の`TryDequeuePresentation(out batch)`も利用可能だが、同じ演出を
+typeイベントとキューの両方から再生しないこと。
+
+| 戦闘イベントを持たない更新 | type | ViewManagerのイベント |
+| --- | --- | --- |
+| 初回同期、時計だけの更新、演出なしの盤面更新 | `STATE_SYNC` | `state_synced` |
+| キャラクター定義の更新 | `DEFINITIONS_CHANGED` | `definitions_changed` |
+| 取得した履歴・履歴カーソルの更新 | `ACTION_LOG_CHANGED` | `action_logs_changed` |
+
+これら3種類はフロント側の同期通知で、サーバーの攻撃イベントではない。
+`state_synced`は現在のStateをそのまま描画する用途に使う。
 初回取得は過去の攻撃を再生せず、受信した盤面をそのまま表示する。
 以後のUnary応答・Stream・再接続に含まれる同じsequenceは重複しない。
 32遷移の同梱範囲から漏れた場合だけ、ConnecterがFetchActionLogをページ取得して補完する。
@@ -103,7 +143,11 @@ TitleSceneのNetworkManagerを含め、同じ`BattleDataForOnline.asset`を参�
 Unity 6000.0.84f1の`Tools > Auxilia > Validate V2 receive pipeline`から、
 実サーバーにアクセスせずに受信処理を検証できる。
 完全な応答の保持、個体IDの区別、巻き戻り防止、演出順序・重複排除・履歴補完、
-保存後のChangeView通知、コマンドの認証・revision・commandId、シーン参照を確認する。
+保存後のChangeView通知、コマンドの認証・revision・commandIdを確認する。
+模擬サーバーストリームでも、試合取得後の自動接続、同一接続の維持、重複受信の抑制、
+SO保存後のtype通知、終了時の接続解放を確認する。描画Managerは配置せずに検証する。
+`Validate typed view events`では、typeの順序、同じtypeの複数発火、重複排除、
+履歴補完、通知中のイベント情報、SO変更時の購読解除を確認する。
 
 ```powershell
 Unity.exe -batchmode -nographics -quit -projectPath "<Auxilia-UI>" `

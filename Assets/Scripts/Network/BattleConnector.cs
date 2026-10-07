@@ -12,6 +12,7 @@ public class BattleConnector : MonoBehaviour
     private BattleServiceV2.BattleServiceV2Client client;
     private BattleServiceV2.BattleServiceV2Client streamClient;
     private CancellationTokenSource streamCts;
+    private string streamingMatchId;
     private readonly SemaphoreSlim receiveLock = new(1, 1);
     private readonly SemaphoreSlim actionLock = new(1, 1);
     private int roomGeneration;
@@ -64,14 +65,29 @@ public class BattleConnector : MonoBehaviour
     public UniTask<Snapshot> CreateGameData(uint roomId, CancellationToken ct = default)
     {
         EnterRoom(roomId);
-        return Receive(() => client.CreateGameAsync(new CreateGameRequest { RoomId = roomId }, Headers, cancellationToken: ct), null, ct);
+        return ReceiveRoom(() => client.CreateGameAsync(new CreateGameRequest { RoomId = roomId }, Headers, cancellationToken: ct), ct);
     }
 
     // Room IDs locate a match; commands and streaming always use the returned string MatchId.
     public UniTask<Snapshot> GetRoomGameData(int roomId, CancellationToken ct = default)
     {
         EnterRoom(checked((uint)roomId));
-        return Receive(() => client.GetRoomGameAsync(new CreateGameRequest { RoomId = (uint)roomId }, Headers, cancellationToken: ct), null, ct);
+        return ReceiveRoom(() => client.GetRoomGameAsync(new CreateGameRequest { RoomId = (uint)roomId }, Headers, cancellationToken: ct), ct);
+    }
+    private async UniTask<Snapshot> ReceiveRoom(Func<AsyncUnaryCall<Snapshot>> send, CancellationToken ct)
+    {
+        var generation = roomGeneration;
+        var response = await Receive(send, null, ct);
+        await UniTask.SwitchToMainThread(ct);
+        if (generation == roomGeneration && response?.State != null &&
+            Data.State?.MatchId == response.State.MatchId && !Data.State.Finished &&
+            (streamCts == null || streamingMatchId != Data.State.MatchId))
+        {
+            // The connection belongs to the connector, not to a scene or a drawing manager.
+            // The unary caller's token must not terminate the stream when changing scenes.
+            StartStream();
+        }
+        return response;
     }
     public UniTask<Snapshot> GetGameData(int roomId, CancellationToken ct = default) => GetRoomGameData(roomId, ct);
     public UniTask<Snapshot> GetGameData(CancellationToken ct = default)
@@ -225,7 +241,22 @@ public class BattleConnector : MonoBehaviour
         StopStream().Forget();
         var matchId = CurrentGame().MatchId;
         streamCts = CancellationTokenSource.CreateLinkedTokenSource(ct, this.GetCancellationTokenOnDestroy());
-        StreamLoop(matchId, roomGeneration, streamCts.Token).Forget();
+        streamingMatchId = matchId;
+        RunStream(matchId, roomGeneration, streamCts).Forget();
+    }
+
+    private async UniTask RunStream(string matchId, int generation, CancellationTokenSource source)
+    {
+        try { await StreamLoop(matchId, generation, source.Token); }
+        finally
+        {
+            if (ReferenceEquals(streamCts, source))
+            {
+                streamCts = null;
+                streamingMatchId = null;
+                source.Dispose();
+            }
+        }
     }
 
     private async UniTask StreamLoop(string matchId, int generation, CancellationToken ct)
@@ -238,7 +269,10 @@ public class BattleConnector : MonoBehaviour
                 {
                     using var call = streamClient.StreamGame(new GameRequest { MatchId = matchId }, Headers, cancellationToken: ct);
                     while (await call.ResponseStream.MoveNext(ct))
+                    {
                         await StoreResponse(call.ResponseStream.Current, generation, matchId, ct);
+                        if (Data.State?.Finished == true) return;
+                    }
                     if (Data.State?.Finished == true) return;
                 }
                 catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled && ct.IsCancellationRequested) { return; }
@@ -264,6 +298,7 @@ public class BattleConnector : MonoBehaviour
     {
         var source = streamCts;
         streamCts = null;
+        streamingMatchId = null;
         source?.Cancel();
         source?.Dispose();
         return UniTask.CompletedTask;
