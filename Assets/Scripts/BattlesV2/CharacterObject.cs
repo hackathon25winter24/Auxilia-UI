@@ -30,4 +30,6 @@ public class CharacterObject : MonoBehaviour
         }
         }
     }
+    public void CharacterOnClicked()
+    {}
 }
