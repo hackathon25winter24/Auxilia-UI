@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Xml;
 
 // 戦闘中に変わらない部分のUIの登録用のクラス
 public class BaseUIManager : MonoBehaviour
@@ -25,13 +24,19 @@ public class BaseUIManager : MonoBehaviour
     {
         for(int i = 0; i < 3; i++)
         {
-            int chara_id = battleDataForOnline.player1.characters[i].character_id;
-            character_smallwindow[i] = characterData.characters[chara_id].default_sprite_mini;
+            int chara_id = int.Parse(battleDataForOnline.player1.characters[i].character_id);
+            if(character_smallwindow[i] != null && characterData.characters[chara_id].default_image_mini != null)
+            {
+                character_smallwindow[i] = characterData.characters[chara_id].default_image_mini;
+            }
         }
         for(int i = 0; i < 3; i++)
         {
-            int chara_id = battleDataForOnline.player1.characters[i].character_id;
-            character_smallwindow[i + 3] = characterData.characters[chara_id].default_sprite_mini;
+            int chara_id = int.Parse(battleDataForOnline.player1.characters[i].character_id);
+            if(character_smallwindow[i + 3] != null && characterData.characters[chara_id].default_image_mini != null)
+            {
+                character_smallwindow[i + 3] = characterData.characters[chara_id].default_image_mini;
+            }
         }
     }
     private void OnDestroy() // ゲーム終了時にイベント登録を解除する

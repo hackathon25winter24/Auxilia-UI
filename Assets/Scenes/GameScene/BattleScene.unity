@@ -7837,6 +7837,7 @@ GameObject:
   - component: {fileID: 2140000000}
   - component: {fileID: 2140000001}
   - component: {fileID: 2140000002}
+  - component: {fileID: 2140000003}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -7868,14 +7869,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b76f348ce2448d34ea94a7bb76c0e60a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character_hp:
+  viewManager: {fileID: 2140000000}
+  character_hp_text:
   - {fileID: 1629088067}
   - {fileID: 1433219959}
   - {fileID: 1884490338}
   - {fileID: 1700965990}
   - {fileID: 847304716}
   - {fileID: 1597985950}
-  hp_slider:
+  character_hp_slider:
   - {fileID: 2112868409}
   - {fileID: 1319017722}
   - {fileID: 316465903}
@@ -7886,8 +7888,12 @@ MonoBehaviour:
   - {fileID: 630293456}
   - {fileID: 702537226}
   log_text: {fileID: 1774564587}
-  base_hp_slider: []
-  base_hp_text: []
+  base_hp_slider:
+  - {fileID: 1590124765}
+  - {fileID: 529548674}
+  base_hp_text:
+  - {fileID: 362418971}
+  - {fileID: 1444433474}
   timer_slider: {fileID: 222250393}
   time_text: {fileID: 409563397}
 --- !u!114 &2132367320
@@ -7905,6 +7911,7 @@ MonoBehaviour:
   constGridData: {fileID: 11400000, guid: ee1b2388513647a47adf3306013a2600, type: 2}
   battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   canvas: {fileID: 1318891755}
+  viewManager: {fileID: 2140000000}
 --- !u!114 &2132367321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7917,16 +7924,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708bf11b92a471d4397f3eaa4f3ed3b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewManager: {fileID: 2140000000}
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
+  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
   player_name_texts:
   - {fileID: 1643739406}
   - {fileID: 1539785020}
-  characterSmallwindow:
-  - {fileID: 1220754459}
-  - {fileID: 470910967}
-  - {fileID: 1730774631}
-  - {fileID: 569126653}
-  - {fileID: 1399910092}
-  - {fileID: 1266030268}
+  character_smallwindow:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &2132367322
 Transform:
   m_ObjectHideFlags: 0
@@ -7955,15 +7965,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
-  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
-  gridViewManager: {fileID: 2132367320}
-  characterViewManager: {fileID: 2140000002}
-  uiViewManager: {fileID: 2132367318}
-  baseUIManager: {fileID: 2132367321}
-  onViewChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2140000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7976,10 +7977,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b597258f1345c4ca5a1c7a66b3d44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
-  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
-  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
+  inputManager: {fileID: 0}
+  userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
+  battleDataforOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
+  battleDataforLocal: {fileID: 0}
+  roomData: {fileID: 11400000, guid: a95cc37ad29611442a79161eacba49db, type: 2}
+  battleViewManager: {fileID: 0}
+  gametext: {fileID: 0}
+  gameTextObject: {fileID: 0}
+  timerSlider: {fileID: 0}
+  maxTime: 60
+  duration: 2
+  elapsed: 0
+  is_text_moving: 0
 --- !u!114 &2140000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7992,6 +8003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be988a5f451bf0b4b863d10463d881c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewManager: {fileID: 2140000000}
   characters:
   - {fileID: 1961868588}
   - {fileID: 511543635}
@@ -7999,7 +8011,24 @@ MonoBehaviour:
   - {fileID: 650600069}
   - {fileID: 1397172207}
   - {fileID: 1806626569}
+  canvas: {fileID: 0}
+  character_button: {fileID: 0}
+  character_move_time: 0
+  characterData: {fileID: 0}
   characterPosition: []
+--- !u!114 &2140000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132367316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 091774c9c56514844ac703b4422e8f93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,5 +1,5 @@
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "CharacterData", menuName = "Scriptable Objects/CharacterData")]
 public class CharacterData : ScriptableObject
@@ -24,6 +24,7 @@ public class CharactersData
     [SerializeField] Sprite _select_image;
     [SerializeField] Sprite _detail_image;
     [SerializeField] Sprite _default_sprite_mini;
+    [SerializeField] Image _default_image_mini;
     [SerializeField] Sprite _default_sprite_smallwindow;
     [SerializeField] int _default_hp;
     [SerializeField] int _default_move_cost;
@@ -63,6 +64,10 @@ public class CharactersData
     public Sprite default_sprite_mini
     {
         get{return _default_sprite_mini;}
+    }
+    public Image default_image_mini
+    {
+        get{return _default_image_mini;}
     }
 
     public Sprite default_sprite_smallwindow
