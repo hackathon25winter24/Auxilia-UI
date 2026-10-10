@@ -8012,7 +8012,7 @@ MonoBehaviour:
   - {fileID: 1397172207}
   - {fileID: 1806626569}
   canvas: {fileID: 1318891755}
-  character_button: {fileID: 0}
+  character_button: {fileID: 3853382968106412881, guid: 60a2c44e198cbba4b9b2906b4c8ebe52, type: 3}
   character_move_time: 0.3
   characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
 --- !u!114 &2140000003
