@@ -7931,12 +7931,12 @@ MonoBehaviour:
   - {fileID: 1643739406}
   - {fileID: 1539785020}
   character_smallwindow:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1220754459}
+  - {fileID: 470910967}
+  - {fileID: 1730774631}
+  - {fileID: 569126653}
+  - {fileID: 1399910092}
+  - {fileID: 1266030268}
 --- !u!4 &2132367322
 Transform:
   m_ObjectHideFlags: 0
@@ -8011,11 +8011,10 @@ MonoBehaviour:
   - {fileID: 650600069}
   - {fileID: 1397172207}
   - {fileID: 1806626569}
-  canvas: {fileID: 0}
+  canvas: {fileID: 1318891755}
   character_button: {fileID: 0}
-  character_move_time: 0
-  characterData: {fileID: 0}
-  characterPosition: []
+  character_move_time: 0.3
+  characterData: {fileID: 11400000, guid: 67109e9139ce843fa81d8d69cdfd6a4e, type: 2}
 --- !u!114 &2140000003
 MonoBehaviour:
   m_ObjectHideFlags: 0

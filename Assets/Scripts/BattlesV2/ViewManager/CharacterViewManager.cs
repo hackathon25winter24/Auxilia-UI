@@ -9,7 +9,6 @@ public class CharacterViewManager : MonoBehaviour
     [SerializeField] private GameObject character_button;
     [SerializeField] private float character_move_time;
     [SerializeField] private CharacterData characterData;
-    public Vector2[] characterPosition;//ここはScriptableobjectを参照するようにする
     Vector2 character_now_position;//ここはScriptableobjectを参照するようにする
     Vector2 character_past_position;//ここはScriptableobjectを参照するようにする
     int character; // 選択されたキャラクター。ここはScriptableobjectを参照するようにする
