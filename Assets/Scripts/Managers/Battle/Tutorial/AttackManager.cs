@@ -7,15 +7,13 @@ using UnityEngine.UIElements;
 
 public class AttackManager
 {
-    private InputData inputData;
     private BattleModel battleModel;
     private bool isPlayer1;
     private AttackModel attack;
     private Vector2Int characterPos;
 
-    public AttackManager(InputData _inputData, BattleModel _battleModel)
+    public AttackManager(BattleModel _battleModel)
     {
-        inputData = _inputData;
         battleModel = _battleModel;
     }
 

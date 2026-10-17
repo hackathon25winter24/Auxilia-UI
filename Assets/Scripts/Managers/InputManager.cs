@@ -37,24 +37,24 @@ public class InputManager : MonoBehaviour
     }
 
     void Update()
-{
-    // マウスボタン
-    if(Mouse.current.leftButton.wasPressedThisFrame) OnMouseLeftButtonClicked?.Invoke();
-    if(Mouse.current.rightButton.wasPressedThisFrame) OnMouseRightButtonClicked?.Invoke();
-    // キーボード（以下略）
-    var kb = Keyboard.current;
-    if (kb == null) return;
+    {
+        // マウスボタン
+        if(Mouse.current.leftButton.wasPressedThisFrame) OnMouseLeftButtonClicked?.Invoke();
+        if(Mouse.current.rightButton.wasPressedThisFrame) OnMouseRightButtonClicked?.Invoke();
+        // キーボード（以下略）
+        var kb = Keyboard.current;
+        if (kb == null) return;
 
-    if(kb.upArrowKey.wasPressedThisFrame) OnUpKeyClicked?.Invoke();
-    if(kb.downArrowKey.wasPressedThisFrame) OnDownKeyClicked?.Invoke();
-    if(kb.rightArrowKey.wasPressedThisFrame) OnRightKeyClicked?.Invoke();
-    if(kb.leftArrowKey.wasPressedThisFrame) OnLeftKeyClicked?.Invoke();
-    if(kb.wKey.wasPressedThisFrame) OnWKeyClicked?.Invoke();
-    if(kb.sKey.wasPressedThisFrame) OnSKeyClicked?.Invoke();
-    if(kb.dKey.wasPressedThisFrame) OnDKeyClicked?.Invoke();
-    if(kb.aKey.wasPressedThisFrame) OnAKeyClicked?.Invoke();
-    if(kb.spaceKey.wasPressedThisFrame) OnSpaceKeyClicked?.Invoke();
-}
+        if(kb.upArrowKey.wasPressedThisFrame) OnUpKeyClicked?.Invoke();
+        if(kb.downArrowKey.wasPressedThisFrame) OnDownKeyClicked?.Invoke();
+        if(kb.rightArrowKey.wasPressedThisFrame) OnRightKeyClicked?.Invoke();
+        if(kb.leftArrowKey.wasPressedThisFrame) OnLeftKeyClicked?.Invoke();
+        if(kb.wKey.wasPressedThisFrame) OnWKeyClicked?.Invoke();
+        if(kb.sKey.wasPressedThisFrame) OnSKeyClicked?.Invoke();
+        if(kb.dKey.wasPressedThisFrame) OnDKeyClicked?.Invoke();
+        if(kb.aKey.wasPressedThisFrame) OnAKeyClicked?.Invoke();
+        if(kb.spaceKey.wasPressedThisFrame) OnSpaceKeyClicked?.Invoke();
+    }
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
