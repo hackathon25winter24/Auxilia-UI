@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks.Triggers;
 public class TutorialBattleStoryManager : MonoBehaviour
 {
     [SerializeField] private UserData userData;
-    [SerializeField] private InputData inputData;
+    [SerializeField] private InputManager inputManager;
     [SerializeField] private StoryManagerData storyData;
     [SerializeField] private TutorialBattleStoryView storyView;
     private BattleModel battleModel;
@@ -44,6 +44,8 @@ public class TutorialBattleStoryManager : MonoBehaviour
         
         isInit = true;
 
+        inputManager.OnSpaceKeyClicked += OnPlayerClick;
+
         // 最初のセリフを開始
         StartSerif();
         storyData.Tutorial_progress = 0;
@@ -58,12 +60,6 @@ public class TutorialBattleStoryManager : MonoBehaviour
         }
 
         storyView.FlashUIs();
-
-        if (inputData.space_key_ispressed)
-        {
-            OnPlayerClick();
-            return;
-        }
 
         if (!isStoryHidden && storyData.is_auto && !storyData.serif_loading)
         {
@@ -224,5 +220,10 @@ public class TutorialBattleStoryManager : MonoBehaviour
     {
         SEManager.instance.PlayToNextSE();
         EndStory();
+    }
+
+    private void OnDestroy()
+    {
+        inputManager.OnSpaceKeyClicked -= OnPlayerClick;
     }
 }

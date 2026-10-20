@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 public class BattleManager : MonoBehaviour
 {
     [Header("クラス")]
-    [SerializeField] InputData inputData;
+    [SerializeField] private InputManager inputManager;
     [SerializeField] UserData userData;
     private BattleModel battleModel;
     [SerializeField] CharacterData characterData;
@@ -31,9 +31,15 @@ public class BattleManager : MonoBehaviour
     private void Awake()
     {
         InitBattleModel();
-        attackManager = new AttackManager(inputData, battleModel);
+        attackManager = new AttackManager(battleModel, inputManager);
         enemyManager = new EnemyManager(this, battleModel, battleView);
         tutorialBattleStoryManager.Init(battleModel, out storyData);
+
+        inputManager.OnSpaceKeyClicked += EndPlayerTurn;
+        inputManager.OnLeftKeyClicked += PlayerMoveL;
+        inputManager.OnRightKeyClicked += PlayerMoveR;
+        inputManager.OnUpKeyClicked += PlayerMoveU;
+        inputManager.OnDownKeyClicked += PlayerMoveD;
 
         InitGrids();
         InitCharacters();
@@ -74,8 +80,7 @@ public class BattleManager : MonoBehaviour
         
         if(battleModel.is1pTurn)
         {
-            if(!battleModel.isAttack) Move();
-            else
+            if(battleModel.isAttack)
             {
                 attackManager.Attack();
                 
@@ -94,11 +99,6 @@ public class BattleManager : MonoBehaviour
                         }
                     }
                 }
-            }
-
-            if (inputData.space_key_ispressed)
-            {
-                EndTurn();
             }
         }
         else
@@ -207,23 +207,22 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void Move()
+    private void PlayerMove(Vector2Int deltaPosition)
     {
-        if(battleModel.selected != -1)
+        if(battleModel.is1pTurn && !battleModel.isAttack && battleModel.selected != -1)
         {
             var selectedCharacter = battleModel.player1.characters[battleModel.selected];
-            var movedPos = selectedCharacter.position;
-                
-            if(inputData.left_key_ispressed) movedPos.x--;
-            if(inputData.right_key_ispressed) movedPos.x++;
-            if(inputData.up_key_ispressed) movedPos.y--;
-            if(inputData.down_key_ispressed) movedPos.y++;
-            
+            var movedPos = selectedCharacter.position + deltaPosition;
+
             if(movedPos == selectedCharacter.position) return;
 
             TryMove(true, selectedCharacter, movedPos);
         }
     }
+    private void PlayerMoveL() => PlayerMove(Vector2Int.left);
+    private void PlayerMoveR() => PlayerMove(Vector2Int.right);
+    private void PlayerMoveU() => PlayerMove(Vector2Int.up);
+    private void PlayerMoveD() => PlayerMove(Vector2Int.down);
 
     public void TryMove(bool is1p, BattleModel.CharacterBattleData character, Vector2Int targetPosition)
     {
@@ -264,6 +263,14 @@ public class BattleManager : MonoBehaviour
                 selectedCharacter.view.HideAttackWindow();
                 attackManager.SetAttack(battleModel.is1pTurn, selectedCharacter.attacks[attackIndex], selectedCharacter.position);
             }
+        }
+    }
+
+    private void EndPlayerTurn()
+    {
+        if(tutorialBattleStoryManager.isStoryHidden && battleModel.is1pTurn)
+        {
+            EndTurn();
         }
     }
 
@@ -388,6 +395,15 @@ public class BattleManager : MonoBehaviour
     {
         Sprite statusSprite = (isPlayer1 ? battleModel.player1 : battleModel.player2).characters[characterIndex].statusSprite;
         battleView.ShowStatus(statusSprite);
+    }
+
+    private void OnDestroy()
+    {
+        inputManager.OnSpaceKeyClicked -= EndPlayerTurn;
+        inputManager.OnLeftKeyClicked -= PlayerMoveL;
+        inputManager.OnRightKeyClicked -= PlayerMoveR;
+        inputManager.OnUpKeyClicked -= PlayerMoveU;
+        inputManager.OnDownKeyClicked -= PlayerMoveD;
     }
 }
 

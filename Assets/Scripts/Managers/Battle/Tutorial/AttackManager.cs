@@ -8,13 +8,22 @@ using UnityEngine.UIElements;
 public class AttackManager
 {
     private BattleModel battleModel;
+    private InputManager inputManager;
     private bool isPlayer1;
     private AttackModel attack;
     private Vector2Int characterPos;
+    private RotationEnum attackDirection;
 
-    public AttackManager(BattleModel _battleModel)
+    public AttackManager(BattleModel _battleModel, InputManager _inputManager)
     {
         battleModel = _battleModel;
+        inputManager = _inputManager;
+
+        inputManager.OnMouseLeftButtonClicked += ConfirmAttack;
+        inputManager.OnLeftKeyClicked += SetAttackDirectionL;
+        inputManager.OnRightKeyClicked += SetAttackDirectionR;
+        inputManager.OnUpKeyClicked += SetAttackDirectionU;
+        inputManager.OnDownKeyClicked += SetAttackDirectionD;
     }
 
     public void SetAttack(bool _isPlayer1, AttackModel _attack, Vector2Int _characterPos)
@@ -22,6 +31,7 @@ public class AttackManager
         isPlayer1 = _isPlayer1;
         attack = _attack;
         characterPos = _characterPos;
+        attackDirection = RotationEnum.right;
     }
 
     public void Attack()
@@ -29,21 +39,15 @@ public class AttackManager
         if(attack == null || characterPos == null) return;
 
         SetAttackGrid();
-
-        if(inputData.left_mouse_button_ispressed)
-        {
-            ConfirmAttack();
-        }
     }
 
     private void SetAttackGrid()
     {
         ClearAttackGrid();
 
-        var dir = GetMouseDirection();
         foreach (Vector2Int pos in attack.attackRange)
         {
-            var rotatedPos = characterPos + RotatePosition(pos, dir);
+            var rotatedPos = characterPos + RotatePosition(pos, attackDirection);
             if(0 <= rotatedPos.x && rotatedPos.x < 8 && 0 <= rotatedPos.y && rotatedPos.y < 5) 
                     battleModel.isAttackGrid[rotatedPos.x, rotatedPos.y] = true;
         }
@@ -62,6 +66,8 @@ public class AttackManager
 
     public void ConfirmAttack()
     {
+        if(!battleModel.isAttack || !battleModel.is1pTurn) return;
+
         var playerData =  isPlayer1 ? battleModel.player1 : battleModel.player2;
         var enemyData = !isPlayer1 ? battleModel.player1 : battleModel.player2;
 
@@ -149,24 +155,18 @@ public class AttackManager
         return pos;
     }
 
-    private RotationEnum GetMouseDirection()
-    {
-        Vector2 characterWorldPos = new Vector2(characterPos.x * 50f - 175f, characterPos.y * -50f + 60f);
-        Vector2 mousePos = inputData.mouse_position;
-        Vector2 diff = mousePos - characterWorldPos;
+    private void SetAttackDirectionL() => attackDirection = RotationEnum.left;
+    private void SetAttackDirectionR() => attackDirection = RotationEnum.right;
+    private void SetAttackDirectionU() => attackDirection = RotationEnum.up;
+    private void SetAttackDirectionD() => attackDirection = RotationEnum.down;
 
-        // XとYの絶対値を比較して、どちらの方向に大きく動いているか判定
-        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
-        {
-            // 左右方向
-            return diff.x > 0 ? RotationEnum.right : RotationEnum.left;
-        }
-        else
-        {
-            // 上下方向
-            // UIの座標系に合わせる（上がプラスならup、下がマイナスならdown）
-            return diff.y > 0 ? RotationEnum.up : RotationEnum.down;
-        }
+    private void OnDestroy()
+    {
+        inputManager.OnMouseLeftButtonClicked -= ConfirmAttack;
+        inputManager.OnLeftKeyClicked -= SetAttackDirectionL;
+        inputManager.OnRightKeyClicked -= SetAttackDirectionR;
+        inputManager.OnUpKeyClicked -= SetAttackDirectionU;
+        inputManager.OnDownKeyClicked -= SetAttackDirectionD;
     }
     
     private enum RotationEnum
