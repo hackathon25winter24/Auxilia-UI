@@ -6,7 +6,29 @@ using Grpc.Core;
 
 public class NetworkClientCore : MonoBehaviour
 {
-    private const string ServerUrl = "https://auxilia.trap.show/";
+    public const string ProductionServerUrl = "https://auxilia.trap.show/";
+    public const string LocalServerUrl = "http://localhost:18080/";
+    public const string EditorServerUrlKey = "Auxilia.ServerUrl";
+    public string ServerUrl { get; private set; }
+
+    public static string ResolveServerUrl()
+    {
+        // Environment override is useful for standalone clients and custom local ports.
+        string value = Environment.GetEnvironmentVariable("AUXILIA_SERVER_URL");
+        if (string.IsNullOrWhiteSpace(value))
+        {
+#if UNITY_EDITOR
+            value = UnityEditor.EditorPrefs.GetString(EditorServerUrlKey, LocalServerUrl);
+#else
+            value = ProductionServerUrl;
+#endif
+        }
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) ||
+            !string.IsNullOrEmpty(uri.UserInfo) || !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment))
+            throw new InvalidOperationException("AUXILIA_SERVER_URL must be an absolute HTTP(S) URL without credentials, query or fragment.");
+        return uri.AbsoluteUri;
+    }
     
     private GrpcChannel _channel;
     private GrpcChannel _streamChannel;
@@ -28,6 +50,7 @@ public class NetworkClientCore : MonoBehaviour
 
     public void Initialize()
     {
+        ServerUrl = ResolveServerUrl();
         //  通常リクエスト用チャンネルの初期化
         var handler = new GrpcWebHandler(new System.Net.Http.HttpClientHandler());
         _channel = GrpcChannel.ForAddress(ServerUrl, new GrpcChannelOptions
@@ -44,7 +67,7 @@ public class NetworkClientCore : MonoBehaviour
             HttpHandler = streamHandler
         });
 
-        Debug.Log("[NetworkClientCore] Channels initialized successfully with Streaming support.");
+        Debug.Log($"[NetworkClientCore] Connecting to {ServerUrl} (gRPC-Web).");
     }
 
     public void ShowErrorMessage(string message)

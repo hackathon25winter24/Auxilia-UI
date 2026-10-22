@@ -55,7 +55,7 @@ public class BattleOnlineManager : MonoBehaviour
             userData = GetSo(userData);
             if (Net != null)
             {
-                Net.battleOnlineManager = this;
+                Net.SetBattleOnlineManager(this);
             }
             else
             {

@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 public class NetworkManager : MonoBehaviour
 {
     [Header("Dependencies")]
-    public BattleOnlineManager battleOnlineManager;
+    BattleOnlineManager battleOnlineManager;
     public UserData userData;
     public BattleDataForOnline battleDataForOnline;
 
@@ -83,6 +83,11 @@ public class NetworkManager : MonoBehaviour
     {
         Room?.Dispose();
         if (Instance == this) Instance = null;
+    }
+
+    public void SetBattleOnlineManager(BattleOnlineManager bom)
+    {
+        this.battleOnlineManager = bom;
     }
 }
 
