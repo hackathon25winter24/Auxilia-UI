@@ -68,15 +68,21 @@ public class RoomUIManager : MonoBehaviour
         var snapshot = roomData.Snapshot;
         if (snapshot == null) return;
         if (roomNameText != null) roomNameText.text = snapshot.RoomName;
+        // Keep players ahead of spectators, without changing server-owned SO data.
+        var displayedMembers = snapshot.Members.OrderBy(m => m.Seat == 0 ? 1 : 0).ToArray();
         for (int i = 0; i < joinnersUI.Length; i++)
         {
-            var member = i < snapshot.Members.Count ? snapshot.Members[i] : null;
+            var member = i < displayedMembers.Length ? displayedMembers[i] : null;
             joinnersUI[i].sprite = joinnersUIImage[member == null ? 0 : 1];
             if (i < userName.Length) userName[i].text = member == null ? "-----" :
                 (member.Seat == 1 ? "[1P] " : member.Seat == 2 ? "[2P] " : "[観戦] ") + member.Name;
             if (i < userRate.Length) userRate[i].text = member == null ? "Rate: ----" : "Rate: " + member.Rate;
             var outline = joinnersUI[i].GetComponent<Outline>();
-            if (outline == null) outline = joinnersUI[i].gameObject.AddComponent<Outline>();
+            if (outline == null)
+            {
+                outline = joinnersUI[i].gameObject.AddComponent<Outline>();
+                outline.effectDistance = new Vector2(3, -3);
+            }
             outline.enabled = member?.Ready == true;
             outline.effectColor = Color.green;
         }

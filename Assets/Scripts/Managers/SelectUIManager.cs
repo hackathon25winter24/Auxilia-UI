@@ -46,7 +46,8 @@ public class SelectUIManager : MonoBehaviour
     public TextMeshProUGUI decidedButtonText;
 
     public float maxTime = 100f; 
-
+    private float currentTime;
+    private bool isTimerRunning;
 
     private int selectedCharacter1;// デッキ1枠目の選択キャラ保存用変数。以下同様
     private int selectedCharacter2;
@@ -79,8 +80,7 @@ public class SelectUIManager : MonoBehaviour
             characterTub.SetActive(false);
             start_game_text.gameObject.SetActive(false);
             if (isPlayer) UpDateCharacterUI();
-            // Deadline and start authority belong to the server, not the local countdown.
-            timertext.text = timertext2.text = "";
+            TimerStart();
             initialized = true;
             battleDataforOnline.Changed += OnBattleChanged;
             OnBattleChanged(BattleDataForOnline.StateSyncType);
@@ -92,6 +92,34 @@ public class SelectUIManager : MonoBehaviour
     private void OnDestroy()
     {
         if (battleDataforOnline != null) battleDataforOnline.Changed -= OnBattleChanged;
+    }
+
+    // Preserve the original local countdown as a display only. Reaching zero
+    // must not submit a formation, mark ready, or start a server-owned match.
+    private void TimerStart()
+    {
+        currentTime = Mathf.Max(0, maxTime);
+        isTimerRunning = true;
+        UpdateTimerText();
+    }
+
+    private void Update()
+    {
+        if (!isTimerRunning || navigating) return;
+        currentTime = Mathf.Max(0, currentTime - Time.deltaTime);
+        UpdateTimerText();
+        if (currentTime <= 0)
+        {
+            isTimerRunning = false;
+            Debug.Log("タイムアップ！");
+        }
+    }
+
+    private void UpdateTimerText()
+    {
+        string remaining = Mathf.CeilToInt(currentTime).ToString();
+        if (timertext != null) timertext.text = remaining;
+        if (timertext2 != null) timertext2.text = remaining;
     }
 
     private void OnBattleChanged(string type)

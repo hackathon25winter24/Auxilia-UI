@@ -138,6 +138,9 @@ public class ResultUIManager : MonoBehaviour
     public async void OnButtonClick(string buttonName)
     {
         if (navigating) return;
+        if (buttonName != "BackToHome" && buttonName != "BackToMatching" &&
+            buttonName != "BackToMatchingRoom" && buttonName != "Rematch") return;
+        SEManager.instance?.PlayToNextSE();
         navigating = true;
         try
         {

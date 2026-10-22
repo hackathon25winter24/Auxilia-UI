@@ -9,6 +9,8 @@
 5. 部屋の `Selecting` を検知してSelectSceneへ進む。途中復帰で `Battling` の場合も、SelectSceneで現在の戦闘状態を取得してからBattleSceneへ進む。
 6. SelectSceneは `GetGameData(roomId)` で試合IDとストリームを確立し、`GetDefinitions` を取得する。「決定」は `BattleCharacterIds.ToServer` による定義ID変換 → `RegisterCharacters` → `Ready`。登録失敗時はReadyを送らない。
 7. BattleDataForOnlineの通知で `State.Started` を確認したときだけBattleSceneへ進む。観戦者も同じ状態を購読する。ローカルの選択タイマーによる開始は行わない。
+
+選択画面の元のカウントダウン表示は維持する。これは各クライアントで開始する表示用タイマーであり、サーバーの締切ではない。0になっても編成確定・Ready・シーン遷移は行わない（元の処理もログ表示のみ）。
 8. `State.Finished` を確認してResultSceneへ一度だけ遷移する。
 9. 「部屋に戻る」はRoomUseCaseの `Refresh`（未接続なら `Resume`）後にRoomSceneへ戻る。退室せず席を維持する。再戦は部屋で再び準備・開始する。
 10. リザルトからホーム・一覧へ出る場合は `Leave` 成功後に移動する。
