@@ -21,6 +21,7 @@ public class NetworkManager : MonoBehaviour
     public BattleConnector Battle => _battle;
     public NetworkClientCore Core => _core;
     public RoomUseCase Room { get; private set; }
+    private string roomPlayerId;
 
     // Called after login with the same RoomData asset observed by the caller.
     // No implicit asset search/creation or dependency on a scene/view manager.
@@ -28,7 +29,9 @@ public class NetworkManager : MonoBehaviour
     {
         if (data == null) throw new ArgumentNullException(nameof(data));
         if (string.IsNullOrEmpty(_core?.PlayerId)) throw new InvalidOperationException("Login first.");
+        if (Room != null && Room.Data == data && roomPlayerId == _core.PlayerId) return Room;
         Room?.Dispose();
+        roomPlayerId = _core.PlayerId;
         Room = new RoomUseCase(new LobbyConnector(_core), data, _core.PlayerId, this.GetCancellationTokenOnDestroy());
         return Room;
     }
