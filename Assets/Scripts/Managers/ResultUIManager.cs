@@ -27,7 +27,6 @@ public class ResultUIManager : MonoBehaviour
     public Sprite[] UpDownImage;
 
     private NetworkManager Net => NetworkManager.Instance;
-    private MatchingConnector matchingConnector => Net?.Matching;
     private BattleConnector battleConnector => Net?.Battle;
 
     void Awake()
@@ -41,7 +40,7 @@ public class ResultUIManager : MonoBehaviour
         if (playerName != null) playerName.text = opponent.player_name;
         
         
-        if ((self.characters != null && self.characters.Length >= 3) || (opponent.characters != null && opponent.characters.Length >= 3))
+        if ((self.characters != null && self.characters.Length >= 3) && (opponent.characters != null && opponent.characters.Length >= 3))
         {
             // 自分のキャラクター表示（リザルト大画像を使用）
             for (int i = 0; i <= 2; i++)
@@ -135,62 +134,46 @@ public class ResultUIManager : MonoBehaviour
         }
     }
 
-    public void OnButtonClick(string buttonName)
+    private bool navigating;
+    public async void OnButtonClick(string buttonName)
     {
-        // Unityイベントから非同期メソッドを呼ぶ
-        _ = HandleButtonClick(buttonName);
-    }
-
-    private async System.Threading.Tasks.Task HandleButtonClick(string buttonName)
-    {
-        // 念のためバトルストリームを停止
-        if (battleConnector != null) await battleConnector.StopStream();
-
-        switch (buttonName)
+        if (navigating) return;
+        if (buttonName != "BackToHome" && buttonName != "BackToMatching" &&
+            buttonName != "BackToMatchingRoom" && buttonName != "Rematch") return;
+        SEManager.instance?.PlayToNextSE();
+        navigating = true;
+        try
         {
-            case "BackToHome":
-                SEManager.instance?.PlayToNextSE();
-                if (matchingConnector != null && roomData != null)
-                {
-                    await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
-                }
-                SceneChangeManager.MoveScene(1);
-                break;
-
-            case "BackToMatchingRoom": // 退出して部屋一覧へ
-                SEManager.instance?.PlayToNextSE();
-                if (matchingConnector != null && roomData != null)
-                {
-                    await matchingConnector.LeaveRoom(roomData.room_id, userData.user_id);
-                }
-                SceneChangeManager.MoveScene(9);
-                break;
-
-            case "Rematch": // 新設ボタン名: 再戦
-                SEManager.instance?.PlayToNextSE();
-                if (matchingConnector != null && roomData != null)
-                {
-                    // 部屋に留まったまま Ready を false に更新
-                    await matchingConnector.UpdateRoomState(roomData.room_id, userData.user_id, 0, false);// 一旦StateをSpectatorにしときます
-                }
-                SceneChangeManager.MoveScene(10);
-                break;
-
-            case "BackToMatching":
-                SEManager.instance?.PlayToNextSE();
-                SceneChangeManager.MoveScene(3);
-                break;
-
-            default:
-                Debug.Log("不明なボタン: " + buttonName);
-                break;
+            if (battleConnector != null) await battleConnector.StopStream();
+            int id = roomData.room_id;
+            var useCase = NetworkManager.Instance.ConfigureRoom(roomData);
+            if (roomData.Snapshot == null) await useCase.Resume(checked((uint)id));
+            else await useCase.Refresh();
+            switch (buttonName)
+            {
+                case "BackToHome":
+                case "BackToMatching":
+                    await useCase.Leave();
+                    if (this != null) SceneChangeManager.MoveScene(buttonName == "BackToHome" ? 1 : 3);
+                    break;
+                case "BackToMatchingRoom":
+                case "Rematch":
+                    // Preserve membership and seats. The next match requires a new room start.
+                    if (this != null) SceneChangeManager.MoveScene(9);
+                    break;
+                default: navigating = false; break;
+            }
+        }
+        catch (System.Exception e)
+        {
+            navigating = false;
+            Debug.LogError($"リザルトからの移動に失敗しました: {e.Message}");
         }
     }
-
     private void InitializeFields()
     {
         userData = GetSO(userData);
-        battleDataForOnline = GetSO(battleDataForOnline);
+        battleDataForOnline = Net?.Battle?.Data ?? GetSO(battleDataForOnline);
         roomData = GetSO(roomData);
     }
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RoomData", menuName = "Scriptable Objects/RoomData")]
-public class RoomData : ScriptableObject
+public partial class RoomData : ScriptableObject
 {
     public int room_id;
     public string room_name;

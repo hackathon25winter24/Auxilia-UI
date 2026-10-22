@@ -37,6 +37,7 @@ public class BattleOnlineManager : MonoBehaviour
     private NetworkManager Net => NetworkManager.Instance;
     private AuthenticationConnector authenticationConnector => Net?.Auth;
     private BattleConnector battleConnector => Net?.Battle;
+    private bool resultRequested;
     private float _turnTransitionTime = 0f;
     private T GetSo<T>(T existing) where T : ScriptableObject
     {
@@ -55,7 +56,8 @@ public class BattleOnlineManager : MonoBehaviour
             userData = GetSo(userData);
             if (Net != null)
             {
-                Net.battleOnlineManager = this;
+                Net.SetBattleOnlineManager(this);
+                battleDataforOnline = Net.Battle.Data;
             }
             else
             {
@@ -99,6 +101,13 @@ public class BattleOnlineManager : MonoBehaviour
     
     void Update()
     {
+        if (resultRequested) return;
+        if (battleDataforOnline?.State?.Finished == true)
+        {
+            resultRequested = true;
+            SceneChangeManager.MoveScene(6);
+            return;
+        }
         if (is_text_moving) return;
 
         if (_turnTransitionTime > 0)
@@ -126,16 +135,6 @@ public class BattleOnlineManager : MonoBehaviour
                 gametext.text = "opponent turn";
             }
         }
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            SceneChangeManager.MoveScene(6);
-        }
-
-        if (battleDataforOnline.is_finished)
-        {
-            SceneChangeManager.MoveScene(6);
-        }
-
         if (isTimerRunning)
         {
             if (currentTime > 0)
