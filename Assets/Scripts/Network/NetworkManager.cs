@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Cysharp.Threading.Tasks;
 
 [DefaultExecutionOrder(-100)]
 public class NetworkManager : MonoBehaviour
@@ -19,6 +20,18 @@ public class NetworkManager : MonoBehaviour
     public MatchingConnector Matching => _matching;
     public BattleConnector Battle => _battle;
     public NetworkClientCore Core => _core;
+    public RoomUseCase Room { get; private set; }
+
+    // Called after login with the same RoomData asset observed by the caller.
+    // No implicit asset search/creation or dependency on a scene/view manager.
+    public RoomUseCase ConfigureRoom(RoomData data)
+    {
+        if (data == null) throw new ArgumentNullException(nameof(data));
+        if (string.IsNullOrEmpty(_core?.PlayerId)) throw new InvalidOperationException("Login first.");
+        Room?.Dispose();
+        Room = new RoomUseCase(new LobbyConnector(_core), data, _core.PlayerId, this.GetCancellationTokenOnDestroy());
+        return Room;
+    }
 
     public static NetworkManager Instance { get; private set; }
 
@@ -68,6 +81,7 @@ public class NetworkManager : MonoBehaviour
     }
     private void OnDestroy()
     {
+        Room?.Dispose();
         if (Instance == this) Instance = null;
     }
 }
