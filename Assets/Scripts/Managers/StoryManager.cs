@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class StoryManager : MonoBehaviour
 {
     [Header("Data References")]
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     public StoryData storyData;
     public StoryManagerData storyManagerData;
@@ -45,6 +45,10 @@ public class StoryManager : MonoBehaviour
         RightDownUI.SetActive(true);
         autoText.gameObject.SetActive(false);
         selections.gameObject.SetActive(false);
+        inputManager.OnSpaceKeyClicked += OnPlayerClick;
+        inputManager.OnMouseLeftButtonClicked += OnPlayerClick;
+        inputManager.OnAKeyClicked += ToggleAutoMode;
+        inputManager.OnSKeyClicked += SkipStory;
 
         // 最初のセリフを開始
         StartNewSerif();
@@ -52,27 +56,10 @@ public class StoryManager : MonoBehaviour
 
     void Update()
     {
-        // 1. UIの点滅処理（DownArrowとAutoText）
+        // UIの点滅処理（DownArrowとAutoText）
         float alpha = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
         SetUIAlpha(DownArrow, alpha);
         if (storyManagerData.is_auto) SetUIAlpha(autoText, alpha);
-
-        // 2. 入力判定（Spaceキー、左クリック、Aキー、Sキー）
-        // ※ inputData の変数が「押した瞬間」だけ true になると想定しています
-        if (inputData.space_key_ispressed || inputData.left_mouse_button_ispressed)
-        {
-            OnPlayerClick();
-        }
-
-        if (inputData.a_key_ispressed)
-        {
-            ToggleAutoMode();
-        }
-
-        if (inputData.s_key_ispressed)
-        {
-            SkipStory();
-        }
     }
 
     // 次のセリフに進む準備
@@ -196,7 +183,6 @@ public class StoryManager : MonoBehaviour
         StartCoroutine(AutoSelectFirstChoice());
         }
     }
-
     // オート時に一番上を勝手に選ぶコルーチン
 IEnumerator AutoSelectFirstChoice()
 {
@@ -210,13 +196,11 @@ IEnumerator AutoSelectFirstChoice()
         OnChoiceSelected(0);
     }
 }
-
     void OnChoiceSelected(int index)
     {
         // 選択後の処理（必要に応じて index に基づく分岐を追加）
         AdvanceToNextSerif();
     }
-
     public void ToggleAutoMode()
     {
         SEManager.instance?.PlaySelectSE();
@@ -230,13 +214,11 @@ IEnumerator AutoSelectFirstChoice()
             activeRoutine = StartCoroutine(AutoWaitOnly());
         }
     }
-
     IEnumerator AutoWaitOnly()
     {
         yield return new WaitForSeconds(autoWaitTime);
         AdvanceToNextSerif();
     }
-
     void EndStory()
     {
         if(storyManagerData.now_story_number == 0)
@@ -247,17 +229,22 @@ IEnumerator AutoSelectFirstChoice()
             SceneChangeManager.MoveScene(11);
         }
     }
-
     public void SkipStory()
     {
         SEManager.instance?.PlayToNextSE();
         EndStory();
     }
-
     void SetUIAlpha(Graphic ui, float alpha)
     {
         Color c = ui.color;
         c.a = alpha;
         ui.color = c;
+    }
+    private void OnDestroy() // ゲーム終了時にイベント登録を解除する
+    {
+        inputManager.OnSpaceKeyClicked -= OnPlayerClick;
+        inputManager.OnMouseLeftButtonClicked -= OnPlayerClick;
+        inputManager.OnAKeyClicked -= ToggleAutoMode;
+        inputManager.OnSKeyClicked -= SkipStory;
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class TutorialStoryManager : MonoBehaviour
 {
     [Header("Data References")]
-    public InputData inputData;
+    public InputManager inputManager;
     public StoryManagerData storyManagerData;
     public UserData userData;
     public BattleDataForOnline battleDataForTutorial;
@@ -57,19 +57,37 @@ public class TutorialStoryManager : MonoBehaviour
     {
         battleDataForTutorial = tutorialBattleManager.battleDataForTutorial;// 同じbattleDataForTutorialを取得する
         battleDataForTutorial.player2.base_hp = 100;
+        inputManager.OnSpaceKeyClicked += ProgressCheck;
+        inputManager.OnMouseLeftButtonClicked += ProgressCheck;
     }
 
     void Update()
     {
-        // 1. UIの点滅処理（DownArrowとAutoText）
+        // UIの点滅処理（DownArrowとAutoText）
         float alpha = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
         SetUIAlpha(DownArrow, alpha);
         if (storyManagerData.is_auto) SetUIAlpha(autoText, alpha);
 
-        // 2. 入力判定
-        if (inputData.space_key_ispressed || inputData.left_mouse_button_ispressed)
+        if(storyManagerData.serif_number == 2 && battleDataForTutorial.player1.characters[1].character_isSelected)
         {
-            if(storyManagerData.serif_number == 2)
+            OnPlayerClick();
+        }
+        if(storyManagerData.serif_number == 6 && battleDataForTutorial.player1.current_cost_remaining == 0)
+        {
+            OnPlayerClick();
+        }
+        if(storyManagerData.serif_number == 9 && battleDataForTutorial.player1.current_cost_remaining == 50)
+        {
+            OnPlayerClick();
+        }
+        if(storyManagerData.serif_number == 14 && battleDataForTutorial.player2.base_hp != 100)
+        {
+            OnPlayerClick();
+        }
+    }
+    public void ProgressCheck()
+    {
+        if(storyManagerData.serif_number == 2)
             {
                 Back.SetActive(false);
                 storyManagerData.is_serif = false;
@@ -93,24 +111,6 @@ public class TutorialStoryManager : MonoBehaviour
             OnPlayerClick();
             storyManagerData.is_serif = true;
             }
-        }
-
-        if(storyManagerData.serif_number == 2 && battleDataForTutorial.player1.characters[1].character_isSelected)
-        {
-            OnPlayerClick();
-        }
-        if(storyManagerData.serif_number == 6 && battleDataForTutorial.player1.current_cost_remaining == 0)
-        {
-            OnPlayerClick();
-        }
-        if(storyManagerData.serif_number == 9 && battleDataForTutorial.player1.current_cost_remaining == 50)
-        {
-            OnPlayerClick();
-        }
-        if(storyManagerData.serif_number == 14 && battleDataForTutorial.player2.base_hp != 100)
-        {
-            OnPlayerClick();
-        }
     }
 
     void StartNewSerif()

@@ -5,7 +5,6 @@ using TMPro;
 public class HomeManager : MonoBehaviour
 {
     public TextMeshProUGUI HomeCharacterName;
-    public InputData inputData;
     public UserData userData;
     public Image backImage;
     public Sprite back_image;

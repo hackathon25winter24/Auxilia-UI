@@ -12,7 +12,7 @@ using Cysharp.Threading.Tasks;
 
 public class RoomUIManager : MonoBehaviour
 {
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     public RoomData roomData;
 
@@ -31,6 +31,10 @@ public class RoomUIManager : MonoBehaviour
     private GameObject editButton;        
 
     private bool _isStreaming;
+    void Awake()
+    {
+        inputManager.OnAKeyClicked += DebugBack; // デバッグ用
+    }
 
     async Task Start()
     {
@@ -312,13 +316,9 @@ public class RoomUIManager : MonoBehaviour
             SceneChangeManager.MoveScene(3);
         }
     }
-
-    // for debug
-    void Update()
+    public void DebugBack()
     {
-        if (inputData.a_key_ispressed)
-        {
-            SceneChangeManager.MoveScene(10);
-        }
+        SceneChangeManager.MoveScene(10);
+        inputManager.OnAKeyClicked -= DebugBack; // 終了時にイベント登録を解除する
     }
 }

@@ -7,22 +7,22 @@ using Grpc.Core;
 using Cysharp.Threading.Tasks;
 using Roommatch;
 using Room;
+using Game.Network.V2;
 
 public class MatchingConnector : MonoBehaviour
 {
     private NetworkClientCore _core;
-    private RoomMatchService.RoomMatchServiceClient _roomMatchClient;
-    private RoomService.RoomServiceClient _roomClient;
+    private RoomMatchServiceV2.RoomMatchServiceV2Client _roomMatchClient;
+    private RoomServiceV2.RoomServiceV2Client _roomClient;
 
-    private AsyncDuplexStreamingCall<RoomStreamRequest, ListRoomResponse> _roomStreamCall;
     private CancellationTokenSource _roomStreamCts;
-    private bool _isRoomStreamActive;
+    public event Action<int> MatchStarted;
 
     public void Initialize(NetworkClientCore core)
     {
         _core = core;
-        _roomMatchClient = new RoomMatchService.RoomMatchServiceClient(_core.Channel);
-        _roomClient = new RoomService.RoomServiceClient(_core.Channel);
+        _roomMatchClient = new RoomMatchServiceV2.RoomMatchServiceV2Client(_core.Channel);
+        _roomClient = new RoomServiceV2.RoomServiceV2Client(_core.Channel);
     }
 
     public async UniTask<RoomMatch> CreateRoomMatch(string roomName, string ownerId, bool isGaming)
@@ -30,7 +30,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new CreateRoomMatchRequest { RoomName = roomName, OwnerId = ownerId, IsGaming = isGaming };
-            var response = await _roomMatchClient.CreateRoomMatchAsync(request);
+            var response = await _roomMatchClient.CreateRoomMatchAsync(request, _core.SessionHeaders);
             return response.Room;
         }
         catch (RpcException e)
@@ -50,7 +50,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new UpdateRoomMatchRequest { RoomId = roomId, RoomName = roomName, IsGaming = isGaming, OwnerId = ownerId };
-            var response = await _roomMatchClient.UpdateRoomMatchAsync(request);
+            var response = await _roomMatchClient.UpdateRoomMatchAsync(request, _core.SessionHeaders);
             return response.Room;
         }
         catch (RpcException e)
@@ -70,7 +70,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new ListRoomMatchRequest();
-            var response = await _roomMatchClient.ListRoomMatchAsync(request);
+            var response = await _roomMatchClient.ListRoomMatchAsync(request, _core.SessionHeaders);
             return new List<RoomMatch>(response.Rooms);
         }
         catch (RpcException e)
@@ -85,7 +85,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new UpdateRoomMatchRequest { RoomId = roomId, RoomName = roomName, OwnerId = ownerId, IsGaming = isGaming };
-            return await _roomMatchClient.UpdateRoomMatchAsync(request);
+            return await _roomMatchClient.UpdateRoomMatchAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -99,7 +99,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new StartMatchRequest { RoomId = roomId };
-            return await _roomClient.StartMatchAsync(request);
+            return await _roomClient.StartMatchAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -114,7 +114,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new UpdateRoomStateRequest { RoomId = roomId, UserId = userId, State = state, IsReady = isReady };
-            return await _roomClient.UpdateRoomStateAsync(request);
+            return await _roomClient.UpdateRoomStateAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -128,7 +128,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new JoinRoomRequest { RoomId = roomId, UserId = userId };
-            return await _roomClient.JoinRoomAsync(request);
+            return await _roomClient.JoinRoomAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -147,7 +147,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new LeaveRoomRequest { RoomId = roomId, UserId = userId };
-            return await _roomClient.LeaveRoomAsync(request);
+            return await _roomClient.LeaveRoomAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -161,7 +161,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new EnterRingRequest { RoomId = roomId, UserId = userId };
-            return await _roomClient.EnterRingAsync(request);
+            return await _roomClient.EnterRingAsync(request, _core.SessionHeaders);
         }
         catch (RpcException e)
         {
@@ -175,7 +175,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new ListRoomRequest { RoomId = roomId };
-            var response = await _roomClient.ListRoomAsync(request);
+            var response = await _roomClient.ListRoomAsync(request, _core.SessionHeaders);
             return new List<Room.Room>(response.Rooms);
         }
         catch (RpcException e)
@@ -190,7 +190,7 @@ public class MatchingConnector : MonoBehaviour
         try
         {
             var request = new ListRoomRequest { RoomId = roomId };
-            var response = await _roomClient.ListRoomAsync(request);
+            var response = await _roomClient.ListRoomAsync(request, _core.SessionHeaders);
             var battlePlayer = new List<Room.Room>(new Room.Room[2]);
             for (int i = 0; i < response.Rooms.Count; i++)
             {
@@ -217,7 +217,7 @@ public class MatchingConnector : MonoBehaviour
             // 通常の_channelを使ってクライアントを生成し、非同期でリクエストを送信
             
             // このコンポーネントが破棄されたらキャンセルされるようにトークンを渡す
-            var response = await _roomClient.SetReadyAsync(request, cancellationToken: this.GetCancellationTokenOnDestroy());
+            var response = await _roomClient.SetReadyAsync(request, _core.SessionHeaders, cancellationToken: this.GetCancellationTokenOnDestroy());
             
             Debug.Log($"[MatchingConnector] SetReady Response Received. Total Rooms Count: {response.Rooms.Count}");
             return response;
@@ -235,97 +235,57 @@ public class MatchingConnector : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ルーム同期の双方向ストリームを開始し、監視ループを実行します
-    /// </summary>
+    // gRPC-Web cannot carry a duplex RPC. Poll the authenticated V2 ListRoom endpoint.
     public void StartRoomStream(int roomId, string userId, Action<ListRoomResponse> onRoomUpdated)
     {
-        if (_isRoomStreamActive)
-        {
-            Debug.LogWarning("[MatchingConnector] 既にルームストリームが稼働しています。一度切断します。");
-            _ = StopRoomStream();
-        }
-
-        _roomStreamCts = new CancellationTokenSource();
-        _isRoomStreamActive = true;
-
-        RoomStreamLoop(roomId, userId, onRoomUpdated, _roomStreamCts.Token).Forget();
+        StopRoomStream().Forget();
+        _roomStreamCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+        RoomStreamLoop(roomId, onRoomUpdated, _roomStreamCts.Token).Forget();
     }
-
-    /// <summary>
-    /// ルームストリームを安全に終了・破棄します
-    /// </summary>
-    public async UniTask StopRoomStream()
+    public UniTask StopRoomStream()
     {
-        _isRoomStreamActive = false;
-
-        if (_roomStreamCall != null)
-        {
-            try
-            {
-                // クライアント側からの送信完了をサーバーに通知
-                await _roomStreamCall.RequestStream.CompleteAsync();
-            }
-            catch (Exception) { /* 切断時の例外は無視 */ }
-            
-            _roomStreamCall.Dispose();
-            _roomStreamCall = null;
-        }
-
-        if (_roomStreamCts != null)
-        {
-            _roomStreamCts.Cancel();
-            _roomStreamCts.Dispose();
-            _roomStreamCts = null;
-        }
-
-        Debug.Log("[MatchingConnector] Room stream stopped safely.");
+        var source = _roomStreamCts;
+        _roomStreamCts = null;
+        source?.Cancel();
+        source?.Dispose();
+        return UniTask.CompletedTask;
     }
-
-    /// <summary>
-    /// 双方向ストリームの接続、リクエスト初期シグナルの送信、およびサーバー応答の受信を行う内部ループ
-    /// </summary>
-    private async UniTaskVoid RoomStreamLoop(int roomId, string userId, Action<ListRoomResponse> onRoomUpdated, CancellationToken ct)
+    private async UniTask RoomStreamLoop(int roomId, Action<ListRoomResponse> callback, CancellationToken ct)
     {
-        Debug.Log($"[MatchingConnector] RoomStreamLoop Started. Room:{roomId}, User:{userId}");
-
+        ListRoomResponse previous = null;
         try
         {
-            // 1. 双方向ストリーミングのコール（コネクション）を生成
-            _roomStreamCall = _roomClient.StreamRoom(cancellationToken: ct);
-
-            // 2. 双方向ストリームなので、まず「この部屋に居ます」という最初の要求(RequestStream)を書き込む
-            var initialRequest = new RoomStreamRequest { RoomId = roomId, UserId = userId };
-            await _roomStreamCall.RequestStream.WriteAsync(initialRequest);
-            Debug.Log("[MatchingConnector] Initial RoomStreamRequest written to RequestStream.");
-
-            // 3. サーバーから随時プッシュされてくる部屋の状態（ListRoomResponse）を監視・待機
-            while (await _roomStreamCall.ResponseStream.MoveNext(ct))
+            while (!ct.IsCancellationRequested)
             {
-                ListRoomResponse response = _roomStreamCall.ResponseStream.Current;
-                Debug.Log($"[MatchingConnector] ルーム更新データを受信しました。参加人数: {response.Rooms.Count}");
-
-                if (onRoomUpdated != null)
+                try
                 {
-                    // Unityのメインスレッドに戻して安全にコールバック（UI更新など）を実行
+                    using var call = _roomClient.ListRoomAsync(new ListRoomRequest { RoomId = roomId }, _core.SessionHeaders, cancellationToken: ct);
+                    var response = await call.ResponseAsync;
                     await UniTask.SwitchToMainThread(ct);
-                    onRoomUpdated.Invoke(response);
+                    if (!response.Equals(previous)) callback?.Invoke(response);
+                    previous = response;
+                    using var matchesCall = _roomMatchClient.ListRoomMatchAsync(new ListRoomMatchRequest(), _core.SessionHeaders, cancellationToken: ct);
+                    var matches = await matchesCall.ResponseAsync;
+                    await UniTask.SwitchToMainThread(ct);
+                    ct.ThrowIfCancellationRequested();
+                    foreach (var room in matches.Rooms)
+                        if (room.RoomId == roomId && room.IsGaming)
+                        {
+                            MatchStarted?.Invoke(roomId);
+                            return;
+                        }
                 }
+                catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled && ct.IsCancellationRequested) { return; }
+                catch (RpcException e)
+                {
+                    await UniTask.SwitchToMainThread(ct);
+                    _core.ShowErrorMessage($"ルーム同期に失敗しました: {e.Status.Detail}");
+                    if (e.StatusCode == StatusCode.Unauthenticated || e.StatusCode == StatusCode.PermissionDenied) return;
+                }
+                await UniTask.Delay(1000, cancellationToken: ct);
             }
         }
-        catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled)
-        {
-            Debug.Log("[MatchingConnector] ルームストリームが正常に切断（キャンセル）されました。");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[MatchingConnector] ルームストリームループ内で例外が発生しました: {e.Message}");
-            _core?.ShowErrorMessage("ルームのリアルタイム同期が切断されました。");
-        }
-        finally
-        {
-            _isRoomStreamActive = false;
-            Debug.Log("[MatchingConnector] RoomStreamLoop Finished.");
-        }
+        catch (OperationCanceledException) { }
     }
+    private void OnDestroy() => StopRoomStream().Forget();
 }

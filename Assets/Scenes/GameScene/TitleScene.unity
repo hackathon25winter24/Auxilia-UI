@@ -3366,6 +3366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleOnlineManager: {fileID: 0}
   userData: {fileID: 11400000, guid: 154911852e42a4506ad35b5fe940c50e, type: 2}
+  battleDataForOnline: {fileID: 11400000, guid: f461e46a45683d946b30a98d1e431be6, type: 2}
 --- !u!4 &1194035286
 Transform:
   m_ObjectHideFlags: 0

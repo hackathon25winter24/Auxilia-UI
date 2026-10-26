@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     public Image titleImage;
     public Image rogoImage;
@@ -19,19 +19,13 @@ public class TitleManager : MonoBehaviour
         titleImage.sprite = title_image;
         login_ui.SetActive(false);
         signup_ui.SetActive(false);
+        inputManager.OnMouseLeftButtonClicked += OnClick;
+        inputManager.OnMouseRightButtonClicked += OnClick;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if ((inputData.left_mouse_button_ispressed == true || inputData.right_mouse_button_ispressed == true || inputData.space_key_ispressed == true) && targetUI.activeSelf)
-        {
-            SEManager.instance?.PlayToNextSE();
-            login_ui.SetActive(true);
-            targetUI.SetActive(false);
-        }
-
-
         // サイン波を使用して 0.0 〜 1.0 の値を作成
         // 公式: alpha = (sin(時間 * 速度) + 1) / 2
         float alpha = (Mathf.Sin(Time.time * speed) + 1.0f) / 2.0f;
@@ -40,5 +34,16 @@ public class TitleManager : MonoBehaviour
         Color c = tap_to_startImage.color;
         c.a = alpha;
         tap_to_startImage.color = c;
+    }
+    public void OnClick()
+    {
+        SEManager.instance?.PlayToNextSE();
+        login_ui.SetActive(true);
+        targetUI.SetActive(false);
+    }
+    private void OnDestroy() // 終了時にイベント登録を解除する
+    {
+        inputManager.OnMouseLeftButtonClicked += OnClick;
+        inputManager.OnMouseRightButtonClicked += OnClick;
     }
 }

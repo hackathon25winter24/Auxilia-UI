@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8af4cf8c06c3942b53ea55deffa2c8, type: 3}
+  m_Name: ConstGridData
+  m_EditorClassIdentifier: 
+  _grids:
+  - _grid_name: NormalGrid
+    _grid: {fileID: 7462529826174519481, guid: 1855b285ffcb2f4409bbd2322b67c392, type: 3}
+    _grid_detail: 
+  - _grid_name: ProhibitGrid
+    _grid: {fileID: 7765326935637899358, guid: f23a734efda853341afed5ef340db10e, type: 3}
+    _grid_detail: 
+  - _grid_name: BaseGrid
+    _grid: {fileID: 5511480451345188321, guid: 2e615d1cab2a6f541a30d4a46efdd601, type: 3}
+    _grid_detail: 
+  - _grid_name: CharacterGrid
+    _grid: {fileID: 3090691015542568492, guid: b1ab584890d036147ad088be042d4311, type: 3}
+    _grid_detail: 
+  - _grid_name: AttackGrid
+    _grid: {fileID: 6481347085397360321, guid: be4e6c1fdf847f34c89b22249f074aae, type: 3}
+    _grid_detail: 
+  - _grid_name: MakibishiGrid
+    _grid: {fileID: 8336808628965633995, guid: cc6baedf85ec0844794bddee2e66612d, type: 3}
+    _grid_detail: 
+  - _grid_name: LandmineGrid
+    _grid: {fileID: 1585131531798162939, guid: 1c72a4dacbba15c4587c49513bade4aa, type: 3}
+    _grid_detail: 
+  - _grid_name: PoisongusGrid
+    _grid: {fileID: 4825012023493777865, guid: 0e0ed9ba37dec7b4cb413212b2494a33, type: 3}
+    _grid_detail: 
+  - _grid_name: ImmovableGrid
+    _grid: {fileID: 1378701604893382468, guid: 9b8fbcaed6644964c869c7c4ad7f3716, type: 3}
+    _grid_detail: 

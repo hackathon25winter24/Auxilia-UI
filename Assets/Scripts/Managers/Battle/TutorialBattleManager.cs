@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class TutorialBattleManager : MonoBehaviour
 {
-    public InputData inputData;
+    public InputManager inputManager;
     public UserData userData;
     // バトルデータはBattleDataForOnlineの設計を利用しているが、問題が生じたら新たに作り直すべき
     public BattleDataForOnline battleDataForTutorial;
@@ -30,21 +30,11 @@ public class TutorialBattleManager : MonoBehaviour
         gameText.text = "battle start!";
         StartCoroutine(MoveRoutine());
         StartMyTurn();
+        inputManager.OnSpaceKeyClicked += EndMyTurn;
     }
 
     void Update()
     {
-        if(storyManagerData.Tutorial_progress > 2)
-        {
-        if(storyManagerData.is_serif == false)
-        {
-        if (inputData.space_key_ispressed)
-        {
-            EndMyTurn();
-        }
-        }
-        }
-
         if (isTimerRunning)
         {
             if (currentTime > 0)
@@ -75,10 +65,16 @@ public class TutorialBattleManager : MonoBehaviour
 
     public void EndMyTurn()
     {
-        gameText.text = "turn end";
-        StartCoroutine(MoveRoutine());
-        battleDataForTutorial.is_1p_turn = false;
-        StartMyTurn();
+        if(storyManagerData.Tutorial_progress > 2)
+        {
+        if(storyManagerData.is_serif == false)
+            {
+                gameText.text = "turn end";
+                StartCoroutine(MoveRoutine());
+                battleDataForTutorial.is_1p_turn = false;
+                StartMyTurn();
+            }
+        }
     }
 
     void TimerStart()
@@ -118,4 +114,8 @@ public class TutorialBattleManager : MonoBehaviour
 
     is_text_moving = false;
 }
+    public void Oestroy()
+    {
+        inputManager.OnSpaceKeyClicked -= EndMyTurn;
+    }
 }

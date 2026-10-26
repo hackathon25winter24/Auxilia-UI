@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
+using Grpc.Core;
 
 public class NetworkClientCore : MonoBehaviour
 {
@@ -12,6 +13,15 @@ public class NetworkClientCore : MonoBehaviour
 
     public GrpcChannel Channel => _channel;
     public GrpcChannel StreamChannel => _streamChannel;
+    private string sessionToken;
+    public string PlayerId { get; private set; }
+    public Metadata SessionHeaders => string.IsNullOrEmpty(sessionToken)
+        ? new Metadata() : new Metadata { { "authorization", "Bearer " + sessionToken } };
+    public void SetSession(string token, string playerId)
+    {
+        sessionToken = token;
+        PlayerId = playerId;
+    }
 
     // 通信エラーやサーバーからのメッセージを UI に渡すための共通イベント
     public event Action<string> OnErrorMessage;
